@@ -26,4 +26,8 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [App\Http\Controllers\Masters\UsersMasterController::class, 'index'])->name('masters.users');
     });
+
+    Route::group(['prefix' => 'page'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\PageMasterController::class, 'index'])->name('masters.page');
+    });
 });
