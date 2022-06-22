@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Masters;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Common\Helpers;
 use Yajra\Datatables\Datatables;
 use App\Models\User;
 
 class UsersMasterController extends Controller
 {
+    protected $_helpers;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->_helpers = new Helpers;
     }
     /**
      * Display a listing of the resource.
@@ -20,7 +24,11 @@ class UsersMasterController extends Controller
      */
     public function index()
     {
-        return view('masters.users');
+        $pages = session('pages');
+        return view('masters.users', [
+            'pages' => $pages,
+            'current_url' => route('masters.users')
+        ]);
     }
 
     public function user_list(Request $request)

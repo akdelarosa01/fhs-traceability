@@ -22,6 +22,8 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
-# Menu List
-Route::get('/helpers/menu_list', [App\Common\Helpers::class, 'getMenuList'])->name('getMenuList');
+Route::group(['prefix' => 'masters'], function () {
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\UsersMasterController::class, 'index'])->name('masters.users');
+    });
+});
