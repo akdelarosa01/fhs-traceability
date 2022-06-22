@@ -1,27 +1,27 @@
 
 
-const menu_list = () => {
-    $.ajax({
-        dataType: 'json',
-        type: 'GET',
-        url: '/helpers/menu_list',
-    }).done( function(response, textStatus, xhr) {
-        var url = window.location.href;
-        var currentlUrl = url.replace("http://"+window.location.hostname,'');
-        var menu = response.data;
+// const menu_list = () => {
+//     $.ajax({
+//         dataType: 'json',
+//         type: 'GET',
+//         url: '/helpers/menu_list',
+//     }).done( function(response, textStatus, xhr) {
+//         var url = window.location.href;
+//         var currentlUrl = url.replace("http://"+window.location.hostname,'');
+//         var menu = response.data;
 
-        if (menu.length) {
-            drawUserMenu(menu, currentlUrl);
-            // if (menu.replace(" ", "") != "") {
-            //     drawUserMenu(JSON.parse(menu), currentlUrl);
-            // }
-        }
-    }).fail( function(xhr, textStatus, errorThrown) {
+//         if (menu.length) {
+//             drawUserMenu(menu, currentlUrl);
+//             // if (menu.replace(" ", "") != "") {
+//             //     drawUserMenu(JSON.parse(menu), currentlUrl);
+//             // }
+//         }
+//     }).fail( function(xhr, textStatus, errorThrown) {
 
-    }).always( function() {
+//     }).always( function() {
 
-    });
-}
+//     });
+// }
 
 
 const drawUserMenu = (menu,currentlUrl) => {
@@ -219,8 +219,15 @@ const drawUserMenu = (menu,currentlUrl) => {
 }
 
 $( function() {
-    menu_list();
+    // menu_list();
     var menu = $("#hdnMenu").val();
+    var currentlUrl = $("#hdnMenu").data("currurl");
+
+    if ($("#hdnMenu").length) {
+        if (menu.replace(" ", "") != "") {
+            drawUserMenu(JSON.parse(menu),currentlUrl);
+        }
+    }
     
 });
 

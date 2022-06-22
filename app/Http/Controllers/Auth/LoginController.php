@@ -7,10 +7,9 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\PalletPageAccess;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -67,7 +66,7 @@ class LoginController extends Controller
                 $user = User::where('username', $req->username)->orderBy('id','desc')->first();
             }
 
-            if ($user->password !== bcrypt($req->password)) {
+            if (!Hash::check($req->password, $user->password)) {
                 throw ValidationException::withMessages(['password' => __("Password is incorrect.")]);
             } elseif ($user->is_deleted == 1) {
                 throw ValidationException::withMessages([$this->username() => __("User account was deactivated, Please contact your administrator.")]);
@@ -94,8 +93,8 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $req, $user)
     {
-        $page = new PalletPageAccess();
-        $user_access = $page->menu_list($user->id)->toJson();
-        $req->session()->put('user_accesses', $user_access);
+        $page_access = new PalletPageAccess();
+        $pages = $page_access->menu_list($user->id)->toJson();
+        $req->session()->put('pages', $pages);
     }
 }

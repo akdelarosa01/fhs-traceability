@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Common\Helpers;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+    protected $_helpers;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->_helpers = new Helpers;
     }
 
     /**
@@ -23,6 +22,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $pages = session('pages');
+        return view('home', [
+            'pages' => $pages,
+            'current_url' => route('home')
+        ]);
     }
 }
