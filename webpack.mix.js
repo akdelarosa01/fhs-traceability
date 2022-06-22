@@ -34,4 +34,11 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/masters/customer.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/masters/customer.css");
+    ], "public/css/masters/customer.css")
+    .scripts([
+        "public/js/app.js",
+        "resources/js/masters/qa_disposition.js"
+    ], "public/js/masters/qa_disposition.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/masters/qa_disposition.css");

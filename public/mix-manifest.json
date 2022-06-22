@@ -6,5 +6,7 @@
     "/js/masters/page.js": "/js/masters/page.js",
     "/css/masters/page.css": "/css/masters/page.css",
     "/js/masters/customer.js": "/js/masters/customer.js",
-    "/css/masters/customer.css": "/css/masters/customer.css"
+    "/css/masters/customer.css": "/css/masters/customer.css",
+    "/js/masters/qa_disposition.js": "/js/masters/qa_disposition.js",
+    "/css/masters/qa_disposition.css": "/css/masters/qa_disposition.css"
 }

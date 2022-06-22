@@ -34,4 +34,8 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::get('/', [App\Http\Controllers\Masters\CustomerMasterController::class, 'index'])->name('masters.customers');
     });
+
+    Route::group(['prefix' => 'qa-disposition'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\QADispositionMasterController::class, 'index'])->name('masters.qa-disposition');
+    });
 });
