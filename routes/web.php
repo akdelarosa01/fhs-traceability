@@ -66,4 +66,8 @@ Route::group(['prefix' => 'transactions'], function () {
     Route::group(['prefix' => 'qa-inspection'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
     });
+
+    Route::group(['prefix' => 'warehouse'], function () {
+        Route::get('/', [App\Http\Controllers\Transactions\WarehouseController::class, 'index'])->name('transactions.warehouse');
+    });
 });

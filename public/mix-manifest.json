@@ -20,5 +20,7 @@
     "/js/transactions/box_and_pallet_application.js": "/js/transactions/box_and_pallet_application.js",
     "/css/transactions/box_and_pallet_application.css": "/css/transactions/box_and_pallet_application.css",
     "/js/transactions/qa_inspection.js": "/js/transactions/qa_inspection.js",
-    "/css/transactions/qa_inspection.css": "/css/transactions/qa_inspection.css"
+    "/css/transactions/qa_inspection.css": "/css/transactions/qa_inspection.css",
+    "/js/transactions/warehouse.js": "/js/transactions/warehouse.js",
+    "/css/transactions/warehouse.css": "/css/transactions/warehouse.css"
 }
