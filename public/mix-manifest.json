@@ -10,5 +10,7 @@
     "/js/masters/qa_disposition.js": "/js/masters/qa_disposition.js",
     "/css/masters/qa_disposition.css": "/css/masters/qa_disposition.css",
     "/js/masters/disposition_reasons.js": "/js/masters/disposition_reasons.js",
-    "/css/masters/disposition_reasons.css": "/css/masters/disposition_reasons.css"
+    "/css/masters/disposition_reasons.css": "/css/masters/disposition_reasons.css",
+    "/js/masters/box_pallet_model_matrix.js": "/js/masters/box_pallet_model_matrix.js",
+    "/css/masters/box_pallet_model_matrix.css": "/css/masters/box_pallet_model_matrix.css"
 }

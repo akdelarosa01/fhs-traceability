@@ -42,4 +42,8 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'disposition-reasons'], function () {
         Route::get('/', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'index'])->name('masters.disposition-reasons');
     });
+
+    Route::group(['prefix' => 'model-matrix'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\BoxPalletModelMatrixrMasterController::class, 'index'])->name('masters.model-matrix');
+    });
 });

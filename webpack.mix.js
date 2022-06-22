@@ -48,4 +48,11 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/masters/disposition_reasons.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/masters/disposition_reasons.css");
+    ], "public/css/masters/disposition_reasons.css")
+    .scripts([
+        "public/js/app.js",
+        "resources/js/masters/box_pallet_model_matrix.js"
+    ], "public/js/masters/box_pallet_model_matrix.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/masters/box_pallet_model_matrix.css");

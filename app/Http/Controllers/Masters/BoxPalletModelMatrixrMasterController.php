@@ -4,9 +4,19 @@ namespace App\Http\Controllers\Masters;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Common\Helpers;
+use Yajra\Datatables\Datatables;
 
 class BoxPalletModelMatrixrMasterController extends Controller
 {
+    protected $_helpers;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->_helpers = new Helpers;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,11 @@ class BoxPalletModelMatrixrMasterController extends Controller
      */
     public function index()
     {
-        //
+        $pages = session('pages');
+        return view('masters.box_pallet_model_matrix', [
+            'pages' => $pages,
+            'current_url' => route('masters.model-matrix')
+        ]);
     }
 
     /**
