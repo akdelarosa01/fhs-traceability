@@ -30,4 +30,8 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'page'], function () {
         Route::get('/', [App\Http\Controllers\Masters\PageMasterController::class, 'index'])->name('masters.page');
     });
+
+    Route::group(['prefix' => 'customers'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\CustomerMasterController::class, 'index'])->name('masters.customers');
+    });
 });

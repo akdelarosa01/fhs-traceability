@@ -2,5 +2,9 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/js/masters/users.js": "/js/masters/users.js",
-    "/css/masters/users.css": "/css/masters/users.css"
+    "/css/masters/users.css": "/css/masters/users.css",
+    "/js/masters/page.js": "/js/masters/page.js",
+    "/css/masters/page.css": "/css/masters/page.css",
+    "/js/masters/customer.js": "/js/masters/customer.js",
+    "/css/masters/customer.css": "/css/masters/customer.css"
 }

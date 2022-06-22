@@ -25,7 +25,7 @@ class PageMasterController extends Controller
     public function index()
     {
         $pages = session('pages');
-        return view('masters.page', [
+        return view('masters.pages', [
             'pages' => $pages,
             'current_url' => route('masters.page')
         ]);
