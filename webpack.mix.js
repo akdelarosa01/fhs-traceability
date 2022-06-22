@@ -78,4 +78,11 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/transactions/box_and_pallet_application.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/transactions/box_and_pallet_application.css");
+    ], "public/css/transactions/box_and_pallet_application.css")
+    .scripts([
+        "public/js/app.js",
+        "resources/js/transactions/qa_inspection.js"
+    ], "public/js/transactions/qa_inspection.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/transactions/qa_inspection.css");

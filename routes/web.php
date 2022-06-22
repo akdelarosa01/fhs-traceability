@@ -63,7 +63,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'index'])->name('transactions.box-and-pallet');
     });
 
-    // Route::group(['prefix' => 'shipping-records'], function () {
-    //     Route::get('/', [App\Http\Controllers\Transactions\ShippingRecordsController::class, 'index'])->name('transactions.shipping-records');
-    // });
+    Route::group(['prefix' => 'qa-inspection'], function () {
+        Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
+    });
 });
