@@ -55,4 +55,12 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/masters/box_pallet_model_matrix.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/masters/box_pallet_model_matrix.css");
+    ], "public/css/masters/box_pallet_model_matrix.css")
+
+    .scripts([
+        "public/js/app.js",
+        "resources/js/reports/pallet_tracking_history.js"
+    ], "public/js/reports/pallet_tracking_history.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/reports/pallet_tracking_history.css");

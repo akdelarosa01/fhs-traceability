@@ -4,9 +4,19 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Common\Helpers;
+use Yajra\Datatables\Datatables;
 
 class PalletTrackingHistoryController extends Controller
 {
+    protected $_helpers;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->_helpers = new Helpers;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,11 @@ class PalletTrackingHistoryController extends Controller
      */
     public function index()
     {
-        //
+        $pages = session('pages');
+        return view('reports.pallet_tracking_history', [
+            'pages' => $pages,
+            'current_url' => route('reports.pallet-tracking-history')
+        ]);
     }
 
     /**

@@ -47,3 +47,9 @@ Route::group(['prefix' => 'masters'], function () {
         Route::get('/', [App\Http\Controllers\Masters\BoxPalletModelMatrixrMasterController::class, 'index'])->name('masters.model-matrix');
     });
 });
+
+Route::group(['prefix' => 'reports'], function () {
+    Route::group(['prefix' => 'pallet-tracking-history'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\PalletTrackingHistoryController::class, 'index'])->name('reports.pallet-tracking-history');
+    });
+});
