@@ -63,4 +63,11 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/reports/pallet_tracking_history.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/reports/pallet_tracking_history.css");
+    ], "public/css/reports/pallet_tracking_history.css")
+    .scripts([
+        "public/js/app.js",
+        "resources/js/reports/shipping_records.js"
+    ], "public/js/reports/shipping_records.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/reports/shipping_records.css");

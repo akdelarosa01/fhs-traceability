@@ -59,11 +59,19 @@ const drawUserMenu = (menu,currentlUrl) => {
 
 
                 }
+
+                $("#menuBar").append(menuBar);
+                $(parent_id).append(subMenu);
+                $(parent_id+"_main_li").addClass(mainActive);
+                $(parent_id+"_main_a").addClass(activeMainMenuLink);
+
+                menuBar="";
+                subMenu="";
+                parent_id="";
+                mainActive="";
+                activeMainMenuLink="";
             });
-            $("#menuBar").append(menuBar);
-            $(parent_id).append(subMenu);
-            $(parent_id+"_main_li").addClass(mainActive);
-            $(parent_id+"_main_a").addClass(activeMainMenuLink);
+            
         }
     });
 }
