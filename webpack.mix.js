@@ -41,4 +41,11 @@ mix.js('resources/js/app.js', 'public/js')
     ], "public/js/masters/qa_disposition.js")
     .styles([
         "public/css/app.css",
-    ], "public/css/masters/qa_disposition.css");
+    ], "public/css/masters/qa_disposition.css")
+    .scripts([
+        "public/js/app.js",
+        "resources/js/masters/disposition_reasons.js"
+    ], "public/js/masters/disposition_reasons.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/masters/disposition_reasons.css");

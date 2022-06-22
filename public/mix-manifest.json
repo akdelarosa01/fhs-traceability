@@ -8,5 +8,7 @@
     "/js/masters/customer.js": "/js/masters/customer.js",
     "/css/masters/customer.css": "/css/masters/customer.css",
     "/js/masters/qa_disposition.js": "/js/masters/qa_disposition.js",
-    "/css/masters/qa_disposition.css": "/css/masters/qa_disposition.css"
+    "/css/masters/qa_disposition.css": "/css/masters/qa_disposition.css",
+    "/js/masters/disposition_reasons.js": "/js/masters/disposition_reasons.js",
+    "/css/masters/disposition_reasons.css": "/css/masters/disposition_reasons.css"
 }

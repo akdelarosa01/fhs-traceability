@@ -38,4 +38,8 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'qa-disposition'], function () {
         Route::get('/', [App\Http\Controllers\Masters\QADispositionMasterController::class, 'index'])->name('masters.qa-disposition');
     });
+
+    Route::group(['prefix' => 'disposition-reasons'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'index'])->name('masters.disposition-reasons');
+    });
 });
