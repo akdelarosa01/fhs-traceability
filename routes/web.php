@@ -57,3 +57,13 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [App\Http\Controllers\Reports\ShippingRecordsController::class, 'index'])->name('reports.shipping-records');
     });
 });
+
+Route::group(['prefix' => 'transactions'], function () {
+    Route::group(['prefix' => 'box-and-pallet'], function () {
+        Route::get('/', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'index'])->name('transactions.box-and-pallet');
+    });
+
+    // Route::group(['prefix' => 'shipping-records'], function () {
+    //     Route::get('/', [App\Http\Controllers\Transactions\ShippingRecordsController::class, 'index'])->name('transactions.shipping-records');
+    // });
+});

@@ -16,5 +16,7 @@
     "/js/reports/pallet_tracking_history.js": "/js/reports/pallet_tracking_history.js",
     "/css/reports/pallet_tracking_history.css": "/css/reports/pallet_tracking_history.css",
     "/js/reports/shipping_records.js": "/js/reports/shipping_records.js",
-    "/css/reports/shipping_records.css": "/css/reports/shipping_records.css"
+    "/css/reports/shipping_records.css": "/css/reports/shipping_records.css",
+    "/js/transactions/box_and_pallet_application.js": "/js/transactions/box_and_pallet_application.js",
+    "/css/transactions/box_and_pallet_application.css": "/css/transactions/box_and_pallet_application.css"
 }

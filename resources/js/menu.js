@@ -42,7 +42,7 @@ const drawUserMenu = (menu,currentlUrl) => {
 
                     } else if (link.has_sub == 0 && link.parent_name == "0") {
                         menuBar += "<li class='nav-item " + activeMainMenuLink + "'>" +
-                                        "<a href='"+link.url+"' class='nav-link "+mainActive+"'>" +
+                                        "<a href='"+link.url+"' class='nav-link "+activeMainMenuLink+"'>" +
                                             "<i class='nav-icon "+link.icon+"'></i>"+
                                             "<p>"+link.page_label+"</p>"+
                                         "</a>"+

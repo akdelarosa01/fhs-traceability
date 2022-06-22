@@ -4,9 +4,19 @@ namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Common\Helpers;
+use Yajra\Datatables\Datatables;
 
 class BoxAndPalletApplicationController extends Controller
 {
+    protected $_helpers;
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->_helpers = new Helpers;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,11 @@ class BoxAndPalletApplicationController extends Controller
      */
     public function index()
     {
-        //
+        $pages = session('pages');
+        return view('transactions.box_and_pallet_application', [
+            'pages' => $pages,
+            'current_url' => route('transactions.box-and-pallet')
+        ]);
     }
 
     /**
