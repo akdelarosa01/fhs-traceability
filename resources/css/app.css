@@ -1,0 +1,22 @@
+/* Login */
+.login-page, .register-page {
+    height: 80vh;
+}
+
+/* Home */
+.content-header {
+    padding: 5px 0.5rem;
+}
+
+
+/* Card widgets */
+.card {
+    margin-bottom: 7px;
+}
+
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 15px;
+}
