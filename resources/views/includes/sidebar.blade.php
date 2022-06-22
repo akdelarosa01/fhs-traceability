@@ -11,7 +11,12 @@
 		<!-- Sidebar Menu -->
 		<nav class="mt-2">
 			<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false" id="menuBar">
-				
+				<li class="nav-item @if(str_contains($current_url,'/home')) {{'active'}} @endif">
+					<a href="/home" class="nav-link @if(str_contains($current_url,'/home')) {{'active'}} @endif">
+						<i class="nav-icon fas fa-home"></i>
+						<p>Home</p>
+					</a>
+				</li>
 			</ul>
 		</nav>
 		<!-- /.sidebar-menu -->
