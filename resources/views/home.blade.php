@@ -1,5 +1,5 @@
 @push('styles')
-	<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+	<link href="{{ asset('css/home.css') }}" rel="stylesheet">
 @endpush
 
 @section('title')
@@ -10,7 +10,7 @@ Home
 
 @section('content')
 
-<div class="content-header">
+{{-- <div class="content-header">
 	<div class="container-fluid">
 		<div class="row mb-1">
 			<div class="col-sm-6">
@@ -18,14 +18,19 @@ Home
 			</div>
 		</div>
 	</div>
-</div>
+</div> --}}
 
-<div class="content">
+<div class="content pt-3">
 	<div class="container-fluid">
+		<div class="row" id="HomeMenu">
+
+			
+
+		</div>
 	</div>
 </div>
 @endsection
 
 @push('scripts')
-	<script src="{{ asset('js/app.js') }}" defer></script>
+	<script src="{{ asset('js/home.js') }}" defer></script>
 @endpush

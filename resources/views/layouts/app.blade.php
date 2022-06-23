@@ -22,6 +22,9 @@
         @include('includes.sidebar')
 
         <div class="content-wrapper">
+
+            <div id="page-loader" class="fade show"><span class="spinner"></span></div>
+            @include('includes.dialog')
             @yield('content')
         </div>
 

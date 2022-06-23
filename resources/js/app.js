@@ -1,2 +1,11 @@
 require('./bootstrap');
 require('./menu');
+require('../plugins/iziToast/dist/js/iziToast');
+require('../plugins/iziModal/js/iziModal');
+require('../plugins/Parsleyjs/dist/parsley');
+require('../plugins/gritter/js/jquery.gritter');
+require('./classes/Message');
+require('./classes/Formatter');
+require('./classes/CustomUI');
+require('./classes/Data');
+require('./classes/RealTime');
