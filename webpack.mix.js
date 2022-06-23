@@ -11,11 +11,6 @@ const mix = require('laravel-mix');
  |
  */
 
-<<<<<<< Updated upstream
-mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css')
-    .sourceMaps()
-=======
 
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
@@ -29,7 +24,14 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/app.css",
     ], "public/css/home.css")
 
->>>>>>> Stashed changes
+    .scripts([
+        "public/js/app.js",
+        "resources/js/home.js"
+    ], "public/js/home.js")
+    .styles([
+        "public/css/app.css",
+    ], "public/css/home.css")
+
     .scripts([
         "public/js/app.js",
         "resources/js/masters/users.js"
