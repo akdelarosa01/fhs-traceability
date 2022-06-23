@@ -11,85 +11,139 @@ const mix = require('laravel-mix');
  |
  */
 
+ const TrxJS = [
+    "resources/plugins/iziToast/dist/js/iziToast.min.js",
+    "resources/plugins/iziModal/js/iziModal.js",
+    "resources/plugins/Parsleyjs/dist/parsley.min.js",
+    "resources/plugins/gritter/js/jquery.gritter.js",
+    "resources/js/classes/Message.js",
+    "resources/js/classes/Formatter.js",
+    "resources/js/classes/CustomUI.js",
+    "resources/js/classes/Data.js",
+    "resources/js/classes/RealTime.js"
+];
+
+const TrxCSS = [
+    "resources/plugins/iziToast/dist/css/iziToast.min.css",
+    "resources/plugins/iziModal/css/iziModal.css",
+    "resources/plugins/Parsleyjs/src/parsley.min.css",
+    "resources/plugins/gritter/css/jquery.gritter.css",
+];
+
 mix.js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .sourceMaps()
+    .scripts(TrxJS, "public/js/trx.js")
+    .styles(TrxCSS, "public/css/trx.css")
+
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
+        "resources/js/home.js"
+    ], "public/js/home.js")
+    .styles([
+        "public/css/app.css",
+        "public/css/trx.css",
+    ], "public/css/home.css")
+
+    .scripts([
+        "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/users.js"
     ], "public/js/masters/users.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/users.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/page.js"
     ], "public/js/masters/page.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/page.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/customer.js"
     ], "public/js/masters/customer.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/customer.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/qa_disposition.js"
     ], "public/js/masters/qa_disposition.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/qa_disposition.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/disposition_reasons.js"
     ], "public/js/masters/disposition_reasons.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/disposition_reasons.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/masters/box_pallet_model_matrix.js"
     ], "public/js/masters/box_pallet_model_matrix.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/masters/box_pallet_model_matrix.css")
 
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/reports/pallet_tracking_history.js"
     ], "public/js/reports/pallet_tracking_history.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/reports/pallet_tracking_history.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/reports/shipping_records.js"
     ], "public/js/reports/shipping_records.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/reports/shipping_records.css")
 
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/transactions/box_and_pallet_application.js"
     ], "public/js/transactions/box_and_pallet_application.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/transactions/box_and_pallet_application.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/transactions/qa_inspection.js"
     ], "public/js/transactions/qa_inspection.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/transactions/qa_inspection.css")
     .scripts([
         "public/js/app.js",
+        "public/js/trx.js",
         "resources/js/transactions/warehouse.js"
     ], "public/js/transactions/warehouse.js")
     .styles([
         "public/css/app.css",
+        "public/css/trx.css",
     ], "public/css/transactions/warehouse.css");
