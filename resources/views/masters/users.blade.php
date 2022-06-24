@@ -65,13 +65,15 @@ Users Master
 				</button>
 			</div>
 
-			<form action="/masters/users/save-user" method="post">
+			<form action="/masters/users/save-user" method="post" id="frm_users">
+				@csrf
+				<input type="hidden" class="clear" id="id">
 				<div class="modal-body">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Username</span>
 						</div>
-						<input type="text" class="form-control form-control-sm" id="username" placeholder="Username" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear" id="username" name="username" placeholder="Username" autocomplete="off">
 						<span class="invalid-feedback" role="alert">
 							<strong id="username_err"></strong>
 						</span>
@@ -81,7 +83,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">First Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm" id="firstname" placeholder="First Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear" id="firstname" name="firstname" placeholder="First Name" autocomplete="off">
 						<span class="invalid-feedback" role="alert">
 							<strong id="firstname_err"></strong>
 						</span>
@@ -91,7 +93,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Last Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm" id="lastname" placeholder="Last Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear" id="lastname" name="lastname" placeholder="Last Name" autocomplete="off">
 						<span class="invalid-feedback" role="alert">
 							<strong id="lastname_err"></strong>
 						</span>
@@ -101,7 +103,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Email Address</span>
 						</div>
-						<input type="email" class="form-control form-control-sm" id="email" placeholder="Email Address" autocomplete="off">
+						<input type="email" class="form-control form-control-sm clear" id="email" name="email" placeholder="Email Address" autocomplete="off">
 						<span class="invalid-feedback" role="alert">
 							<strong id="email_err"></strong>
 						</span>
@@ -111,7 +113,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Password</span>
 						</div>
-						<input type="password" class="form-control form-control-sm" id="password" placeholder="Password" autocomplete="off">
+						<input type="password" class="form-control form-control-sm clear" id="password" name="password" placeholder="Password" autocomplete="off">
 						<span class="invalid-feedback" role="alert">
 							<strong id="password_err"></strong>
 						</span>
@@ -121,7 +123,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Confirm Password</span>
 						</div>
-						<input type="password" class="form-control form-control-sm" id="confirm_password" placeholder="Confirm Password" autocomplete="off">
+						<input type="password" class="form-control form-control-sm clear" id="confirm_password" name="confirm_password" placeholder="Confirm Password" autocomplete="off">
 					</div>
 				</div>
 				<div class="modal-footer justify-content-between">

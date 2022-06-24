@@ -110,6 +110,18 @@
             }
             return this;
         },
+        saveUser: function() {
+            var self = this;
+            self.submitType = "POST";
+            self.formAction = $('#frm_users').attr('action');
+            self.jsonData = $('#frm_users').serializeArray();
+            self.sendData().then(function() {
+                // self.clear();
+                // self.GuiState();
+                // self.$tbl_machineno.ajax.reload(null, false);
+            });
+            return this;
+        }
     }
     Users.init.prototype = $.extend(Users.prototype, $D.init.prototype);
     Users.init.prototype = Users.prototype;
@@ -121,6 +133,41 @@
         $('#btn_add_users').on('click', function() {
             $('#modal_form_title').html('Add User');
             $('#modal_users').modal('show');
+        });
+
+        $('#frm_users').on('submit', function(e) {
+            $('#loading_modal').modal('show');
+            e.preventDefault();
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(data, textStatus, xhr) {
+                if (textStatus) {
+                    if (data.status == "failed") {
+                        _Users.showWarning(data.msg);
+                    } else {
+                        _Users.clearForm();
+                        $('#tbl_user').DataTable().ajax.reload();
+                        _Users.showSuccess("User data was successfully saved.");
+                    }
+
+                    _Users.user_type_id = "";
+                    _Users.user_id = "";
+                    $('#tbl_modules').DataTable().ajax.reload();
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _Users.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _Users.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
         });
     });
 })();
