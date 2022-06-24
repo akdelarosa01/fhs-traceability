@@ -5,7 +5,7 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('jquery-ui');
-    require('bootstrap');
+    require('../plugins/bootstrap/js/bootstrap.bundle');
     require('moment');
     require('select2');
     require('datatables.net-bs4');
