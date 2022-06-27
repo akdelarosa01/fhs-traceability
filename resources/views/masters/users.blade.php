@@ -10,7 +10,7 @@ Users Master
 
 @section('content')
 
-<div class="row mb-3">
+<div class="row mb-3 justify-content-center">
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
 		<button class="btn btn-sm btn-success btn-block" id="btn_add_users">
 			<i class="fa fa-user-plus"></i> Add User
@@ -18,13 +18,7 @@ Users Master
 	</div>
 
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-info btn-block">
-			<i class="fa fa-user-pen"></i> Edit User
-		</button>
-	</div>
-
-	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-danger btn-block">
+		<button class="btn btn-sm btn-danger btn-block" id="btn_delete_users">
 			<i class="fa fa-user-times"></i> Delete User
 		</button>
 	</div>

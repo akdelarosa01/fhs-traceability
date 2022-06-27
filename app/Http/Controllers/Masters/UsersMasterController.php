@@ -168,48 +168,42 @@ class UsersMasterController extends Controller
         return $inputs;
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function delete_user(Request $req)
     {
-        //
-    }
+        $data = [
+			'msg' => 'Deleting user was unsuccessful.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+		if (is_array($req->ids)) {
+			foreach ($req->ids as $key => $id) {
+				$type = User::find($id);
+				$type->delete();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+				$data = [
+					'msg' => "User was successfully deleted.",
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+				];
+			}
+		} else {
+			$type = User::find($req->ids);
+			$type->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+			$data = [
+				'msg' => "User was successfully deleted",
+                'data' => [],
+				'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+			];
+		}
+
+        return response()->json($data);
     }
 }

@@ -133,8 +133,14 @@
                 $('#loading_modal').modal('hide');
             });
         },
-        deleteUser: function() {
-
+        deleteUser: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/users/delete-user';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_users.ajax.reload(null, false);
+            });
+            return this;
         },
         clearForm: function(inputs) {
             var self = this;
@@ -174,7 +180,7 @@
             $('#modal_users').modal('show');
         });
 
-        $('#btn_delete_user').on('click', function() {
+        $('#btn_delete_users').on('click', function() {
             var chkArray = [];
             var table = $('#tbl_users').DataTable();
 

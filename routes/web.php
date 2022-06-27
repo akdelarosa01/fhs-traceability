@@ -27,6 +27,7 @@ Route::group(['prefix' => 'masters'], function () {
         Route::get('/', [App\Http\Controllers\Masters\UsersMasterController::class, 'index'])->name('masters.users');
         Route::get('/list', [App\Http\Controllers\Masters\UsersMasterController::class, 'user_list'])->name('masters.user-list');
         Route::post('/save-user', [App\Http\Controllers\Masters\UsersMasterController::class, 'save_user'])->name('masters.save-user');
+        Route::post('/delete-user', [App\Http\Controllers\Masters\UsersMasterController::class, 'delete_user'])->name('masters.delete-user');
     });
 
     Route::group(['prefix' => 'page'], function () {
