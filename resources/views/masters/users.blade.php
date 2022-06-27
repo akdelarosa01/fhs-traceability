@@ -10,38 +10,50 @@ Users Master
 
 @section('content')
 
-<div class="content pt-3">
-	<div class="container-fluid">
-		<div class="row mb-3">
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-				<button class="btn btn-sm btn-success btn-block" id="btn_add_users">
-					<i class="fa fa-user-plus"></i> Add User
-				</button>
-			</div>
+<div class="row mb-3">
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+		<button class="btn btn-sm btn-success btn-block" id="btn_add_users">
+			<i class="fa fa-user-plus"></i> Add User
+		</button>
+	</div>
 
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-				<button class="btn btn-sm btn-info btn-block">
-					<i class="fa fa-user-pen"></i> Edit User
-				</button>
-			</div>
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+		<button class="btn btn-sm btn-info btn-block">
+			<i class="fa fa-user-pen"></i> Edit User
+		</button>
+	</div>
 
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-				<button class="btn btn-sm btn-danger btn-block">
-					<i class="fa fa-user-times"></i> Delete User
-				</button>
-			</div>
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+		<button class="btn btn-sm btn-danger btn-block">
+			<i class="fa fa-user-times"></i> Delete User
+		</button>
+	</div>
 
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-				<button class="btn btn-sm btn-primary btn-block">
-					<i class="fa fa-file-circle-plus"></i> Page Access
-				</button>
-			</div>
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+		<button class="btn btn-sm btn-primary btn-block">
+			<i class="fa fa-file-circle-plus"></i> Page Access
+		</button>
+	</div>
+</div>
+
+<div class="panel panel-inverse">
+
+	<div class="panel-heading">
+		<h4 class="panel-title">Users</h4>
+		<div class="panel-heading-btn">
+			<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></a>
+			<a href="javascript:;" class="btn btn-xs btn-icon btn-circle btn-warning" data-click="panel-collapse"><i class="fa fa-minus"></i></a>
 		</div>
-
+	</div>
+	<div class="panel-body">
 		<div class="row">
 			<div class="col-12">
-				<table class="table table-sm table-striped table-hover" id="tbl_users">
+				<table class="table table-sm table-striped table-hover table-bordered" id="tbl_users" style="width: 100%;">
 					<thead>
+						<th width="15px">
+							<input type="checkbox" class="check_all_users"/>
+						</th>
+						<th width="30px"></th>
 						<th>Username</th>
 						<th>First Name</th>
 						<th>Last Name</th>
@@ -54,6 +66,9 @@ Users Master
 		</div>
 	</div>
 </div>
+
+
+
 
 <div class="modal fade" id="modal_users" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">

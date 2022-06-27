@@ -24,36 +24,34 @@ const drawUserMenu = (menu,currentlUrl) => {
                         activeSubMenuClass = "active";
                         if (mainActive == '') {
                             activeMainMenuLink = "active";
-                            mainActive = "menu-is-opening menu-open";
+                            mainActive = "active";
                         }
                     } else {
                         activeSubMenuClass = "";
                     }
 
                     if (link.has_sub > 0 && link.parent_name == "0") {
-                        menuBar += "<li class='nav-item " + mainActive + "' id='"+link.page_name+"_main_li'>" +
-                                        "<a href='"+link.url+"' class='nav-link "+activeMainMenuLink+"' id='"+link.page_name+"_main_a'>" +
-                                            "<i class='nav-icon "+link.icon+"'></i>"+
-                                            "<p>"+link.page_label+" <i class='right fas fa-angle-left'></i></p>"+
+                        menuBar += "<li class='has-sub " + mainActive + "' id='"+link.page_name+"_main_li'>" +
+                                        "<a href='"+link.url+"' id='"+link.page_name+"_main_a'>" +
+                                            "<b class='caret'></b>"+
+                                            "<i class='"+link.icon+"'></i>"+
+                                            "<span>"+link.page_label+"</span>"+
                                         "</a>"+
-                                        "<ul class='nav nav-treeview' id='"+link.page_name+"'></ul>"+
+                                        "<ul class='sub-menu' id='"+link.page_name+"'></ul>"+
                                     "</li>";
 
 
                     } else if (link.has_sub == 0 && link.parent_name == "0") {
-                        menuBar += "<li class='nav-item " + activeMainMenuLink + "'>" +
-                                        "<a href='"+link.url+"' class='nav-link "+activeMainMenuLink+"'>" +
-                                            "<i class='nav-icon "+link.icon+"'></i>"+
-                                            "<p>"+link.page_label+"</p>"+
+                        menuBar += "<li class='" + activeMainMenuLink + "'>" +
+                                        "<a href='"+link.url+"'>" +
+                                            "<i class='"+link.icon+"'></i>"+
+                                            "<span>"+link.page_label+"</span>"+
                                         "</a>"+
                                     "</li>";
                     } else if (link.has_sub == 0 && link.parent_name != "0") {
                         parent_id = "#"+link.parent_name;
-                        subMenu += "<li class='nav-item'>"+
-                                        "<a href='"+link.url+"' class='nav-link "+activeSubMenuClass+"'>"+
-                                            "<i class='"+link.icon+" nav-icon'></i>"+
-                                            "<p>"+link.page_label+"</p>"+
-                                        "</a>"+
+                        subMenu += "<li>"+
+                                        "<a href='"+link.url+"'>"+link.page_label+"</a>"+
                                     "</li>";
                     }
 

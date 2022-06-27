@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Yajra\Datatables\Datatables;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UsersMasterController extends Controller
 {
@@ -37,7 +38,25 @@ class UsersMasterController extends Controller
     {
         $data = [];
         try {
-            //code...
+            $query = DB::table('users as u')->select([
+                        DB::raw("u.id as id"),
+                        DB::raw("u.username as username"),
+                        DB::raw("u.firstname as firstname"),
+                        DB::raw("u.lastname as lastname"),
+                        DB::raw("u.email as email"),
+                        DB::raw("uu.username as create_user"),
+                        DB::raw("DATE_FORMAT(u.updated_at,'%Y-%m-%d %H:%i:%s') as updated_at")
+                    ])
+                    ->join('users as uu','u.create_user','=','uu.id')
+                    ->where('u.is_deleted',0);
+
+            return Datatables::of($query)
+                            ->addColumn('action', function($data) {
+                                return '<button class="btn btn-sm btn-primary btn_edit_user">
+                                            <i class="fa fa-edit"></i>
+                                        </button>';
+                            })
+                            ->make(true);
         } catch (\Throwable $th) {
             //throw $th;
         }
