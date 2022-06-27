@@ -7,7 +7,7 @@
     Users.init = function() {
         $D.init.call(this);
         this.$tbl_users = "";
-        this.ID = 0;
+        this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
     }
     Users.prototype = {
@@ -110,17 +110,12 @@
             }
             return this;
         },
-        saveUser: function() {
+        clearForm: function(inputs) {
             var self = this;
-            self.submitType = "POST";
-            self.formAction = $('#frm_users').attr('action');
-            self.jsonData = $('#frm_users').serializeArray();
-            self.sendData().then(function() {
-                // self.clear();
-                // self.GuiState();
-                // self.$tbl_machineno.ajax.reload(null, false);
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
             });
-            return this;
         }
     }
     Users.init.prototype = $.extend(Users.prototype, $D.init.prototype);
@@ -129,6 +124,17 @@
     $(document).ready(function() {
         var _Users = Users();
         _Users.drawDatatables();
+
+        iziToast.show({
+            title: "Success",
+            message: "wow",
+            icon: '',
+            position: 'topRight',
+            backgroundColor: '',
+            theme: 'light', // dark
+            color: 'blue', // blue, red, green, yellow
+            timeout: 3000,
+        });
 
         $('#btn_add_users').on('click', function() {
             $('#modal_form_title').html('Add User');
@@ -144,19 +150,18 @@
                 type: 'POST',
                 dataType: 'JSON',
                 data: data
-            }).done(function(data, textStatus, xhr) {
+            }).done(function(response, textStatus, xhr) {
+                console.log(response);
+                console.log(response.inputs);
                 if (textStatus) {
-                    if (data.status == "failed") {
-                        _Users.showWarning(data.msg);
+                    if (response.status == "failed") {
+                        _Users.showWarning(response.msg);
                     } else {
                         _Users.clearForm();
                         $('#tbl_user').DataTable().ajax.reload();
                         _Users.showSuccess("User data was successfully saved.");
                     }
-
-                    _Users.user_type_id = "";
-                    _Users.user_id = "";
-                    $('#tbl_modules').DataTable().ajax.reload();
+                    _Users.id = 0;
                 }
             }).fail(function(xhr, textStatus, errorThrown) {
                 var errors = xhr.responseJSON.errors;

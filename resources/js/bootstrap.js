@@ -13,6 +13,13 @@ try {
     require('tempusdominus-bootstrap-4');
     require('admin-lte');
 
+    require('./menu');
+    window.iziToast = require('izitoast');
+    require('izimodal');
+    require('parsleyjs');
+    require('../plugins/gritter/js/jquery.gritter');
+    
+
 } catch (e) {}
 
 /**

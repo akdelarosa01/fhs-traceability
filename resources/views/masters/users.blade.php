@@ -74,9 +74,7 @@ Users Master
 							<span class="input-group-text" style="min-width: 125px;">Username</span>
 						</div>
 						<input type="text" class="form-control form-control-sm clear" id="username" name="username" placeholder="Username" autocomplete="off">
-						<span class="invalid-feedback" role="alert">
-							<strong id="username_err"></strong>
-						</span>
+						<div id="username_feedback"></div>
 					</div>
 
 					<div class="input-group input-group-sm mb-2">
@@ -84,9 +82,7 @@ Users Master
 							<span class="input-group-text" style="min-width: 125px;">First Name</span>
 						</div>
 						<input type="text" class="form-control form-control-sm clear" id="firstname" name="firstname" placeholder="First Name" autocomplete="off">
-						<span class="invalid-feedback" role="alert">
-							<strong id="firstname_err"></strong>
-						</span>
+						<div id="firstname_feedback"></div>
 					</div>
 
 					<div class="input-group input-group-sm mb-2">
@@ -94,9 +90,7 @@ Users Master
 							<span class="input-group-text" style="min-width: 125px;">Last Name</span>
 						</div>
 						<input type="text" class="form-control form-control-sm clear" id="lastname" name="lastname" placeholder="Last Name" autocomplete="off">
-						<span class="invalid-feedback" role="alert">
-							<strong id="lastname_err"></strong>
-						</span>
+						<div id="lastname_feedback"></div>
 					</div>
 
 					<div class="input-group input-group-sm mb-2">
@@ -104,9 +98,7 @@ Users Master
 							<span class="input-group-text" style="min-width: 125px;">Email Address</span>
 						</div>
 						<input type="email" class="form-control form-control-sm clear" id="email" name="email" placeholder="Email Address" autocomplete="off">
-						<span class="invalid-feedback" role="alert">
-							<strong id="email_err"></strong>
-						</span>
+						<div id="email_feedback"></div>
 					</div>
 
 					<div class="input-group input-group-sm mb-2">
@@ -114,16 +106,14 @@ Users Master
 							<span class="input-group-text" style="min-width: 125px;">Password</span>
 						</div>
 						<input type="password" class="form-control form-control-sm clear" id="password" name="password" placeholder="Password" autocomplete="off">
-						<span class="invalid-feedback" role="alert">
-							<strong id="password_err"></strong>
-						</span>
+						<div id="password_feedback"></div>
 					</div>
 
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Confirm Password</span>
 						</div>
-						<input type="password" class="form-control form-control-sm clear" id="confirm_password" name="confirm_password" placeholder="Confirm Password" autocomplete="off">
+						<input type="password" class="form-control form-control-sm clear" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password" autocomplete="off">
 					</div>
 				</div>
 				<div class="modal-footer justify-content-between">
