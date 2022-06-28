@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletPage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
 class PageMasterController extends Controller
@@ -31,69 +34,148 @@ class PageMasterController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function page_list(Request $request)
     {
-        //
+        $data = [];
+        try {
+            $query = DB::table('pallet_pages as p')->select([
+                        DB::raw("p.id as id"),
+                        DB::raw("p.page_name as page_name"),
+                        DB::raw("p.page_label as page_label"),
+                        DB::raw("p.url as url"),
+                        DB::raw("IF(p.has_sub > 0,'YES','NO') as has_sub"),
+                        DB::raw("p.parent_menu as parent_menu"),
+                        DB::raw("p.parent_name as parent_name"),
+                        DB::raw("p.parent_order as parent_order"),
+                        DB::raw("p.`order` as `order`"),
+                        DB::raw("p.icon as icon"),
+                        DB::raw("uu.username as create_user"),
+                        DB::raw("DATE_FORMAT(p.updated_at,'%Y-%m-%d %H:%i:%s') as updated_at")
+                    ])
+                    ->join('users as uu','p.create_user','=','uu.id')
+                    ->where('p.is_deleted',0);
+
+            return Datatables::of($query)
+                            ->addColumn('action', function($data) {
+                                return '<button class="btn btn-sm btn-primary btn_edit_page">
+                                            <i class="fa fa-edit"></i>
+                                        </button>';
+                            })
+                            ->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return $data;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function save_page(Request $req)
     {
-        //
+        $inputs = $this->get_inputs($req->all());
+        $data = [
+			'msg' => 'Saving user was unsuccessful.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            if (isset($req->id)) {
+                $this->validate($req, [
+                    'page_name' => 'required|string|min:1',
+                    'page_label' => 'required|string|min:1',
+                    'url' => 'required|string|min:1',
+                    'parent_menu' => 'required|string|min:1',
+                    'parent_order' => 'required|numeric|min:1',
+                    'order' => 'required|numeric|min:1'
+                ]);
+
+                $page = PalletPage::find($req->id);
+
+                $page->page_name = $req->page_name;
+                $page->page_label = $req->page_label;
+                $page->url = $req->url;
+                $page->has_sub = (isset($req->has_sub))? 1: 0;
+                $page->parent_menu = $req->parent_menu;
+                $page->parent_order = $req->parent_order;
+                $page->order = $req->order;
+                $page->icon = $req->icon;
+                $page->is_deleted = 0;
+                $page->create_user = Auth::user()->id;
+                $page->update_user = Auth::user()->id;
+    
+                if ($page->update()) {
+                    $data = [
+                        'msg' => 'Updating Page Information was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
+            } else {
+                $this->validate($req, [
+                    'page_name' => 'required|string|min:1',
+                    'page_label' => 'required|string|min:1',
+                    'url' => 'required|string|min:1',
+                    'parent_menu' => 'required|string|min:1',
+                    'parent_order' => 'required|numeric|min:1',
+                    'order' => 'required|numeric|min:1'
+                ]);
+
+                $page = new PalletPage();
+
+                $page->page_name = $req->page_name;
+                $page->page_label = $req->page_label;
+                $page->url = $req->url;
+                $page->has_sub = (isset($req->has_sub))? 1: 0;
+                $page->parent_menu = $req->parent_menu;
+                $page->parent_order = $req->parent_order;
+                $page->order = $req->order;
+                $page->icon = $req->icon;
+                $page->is_deleted = 0;
+                $page->create_user = Auth::user()->id;
+                $page->update_user = Auth::user()->id;
+
+                if ($page->save()) {
+                    $data = [
+                        'msg' => 'Saving Page Information was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'inputs' => $inputs,
+                'success' => true,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    private function get_inputs($req)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $inputs = array_keys($req);
+        for ($i=0; $i < count($inputs); $i++) { 
+            if ($inputs[$i] == "_token") {
+                unset($inputs[$i]);
+                return $inputs;
+            }
+        }
+        
+        return $inputs;
     }
 }

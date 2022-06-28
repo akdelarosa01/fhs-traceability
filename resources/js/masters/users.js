@@ -171,7 +171,7 @@
             $('#modal_users').modal('show');
         });
 
-        $('#btn_delete_user').on('click', function() {
+        $('#btn_delete_users').on('click', function() {
             var chkArray = [];
             var table = $('#tbl_users').DataTable();
 
