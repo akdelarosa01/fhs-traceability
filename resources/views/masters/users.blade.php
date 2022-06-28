@@ -24,7 +24,7 @@ Users Master
 	</div>
 
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-primary btn-block">
+		<button class="btn btn-sm btn-primary btn-block" id="btn_user_access">
 			<i class="fa fa-file-circle-plus"></i> Page Access
 		</button>
 	</div>
