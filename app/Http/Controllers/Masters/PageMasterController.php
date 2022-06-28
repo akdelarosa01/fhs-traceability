@@ -102,7 +102,6 @@ class PageMasterController extends Controller
                 $page->parent_order = $req->parent_order;
                 $page->order = $req->order;
                 $page->icon = $req->icon;
-                $page->is_deleted = 0;
                 $page->create_user = Auth::user()->id;
                 $page->update_user = Auth::user()->id;
     
