@@ -178,4 +178,45 @@ class PageMasterController extends Controller
         
         return $inputs;
     }
+
+    public function delete_page(Request $req)
+    {
+        $data = [
+			'msg' => 'Deleting page was unsuccessful.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+		if (is_array($req->ids)) {
+			foreach ($req->ids as $key => $id) {
+				$page = PalletPage::find($id);
+                $page->is_deleted = 1;
+				$page->update();
+
+				$data = [
+					'msg' => "Page was successfully deleted.",
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+				];
+			}
+		} else {
+			$page = PalletPage::find($req->ids);
+            $page->is_deleted = 1;
+			$page->update();
+
+			$data = [
+				'msg' => "Page was successfully deleted",
+                'data' => [],
+				'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+			];
+		}
+
+        return response()->json($data);
+    }
 }

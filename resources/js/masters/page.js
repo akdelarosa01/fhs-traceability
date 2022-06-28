@@ -195,7 +195,7 @@
 
         $('#btn_delete_pages').on('click', function() {
             var chkArray = [];
-            var table = $('#tbl_pages').DataTable();
+            var table = _Pages.$tbl_pages;
 
             for (var x = 0; x < table.context[0].aoData.length; x++) {
                 var DataRow = table.context[0].aoData[x];
