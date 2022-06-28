@@ -106,39 +106,6 @@
             }
             return this;
         },
-        save_page: function() {
-            $('#loading_modal').modal('show');
-            e.preventDefault();
-            var data = $(this).serializeArray();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                dataType: 'JSON',
-                data: data
-            }).done(function(response, textStatus, xhr) {
-                console.log(response);
-                console.log(response.inputs);
-                if (textStatus) {
-                    if (response.status == "failed") {
-                        _Pages.showWarning(response.msg);
-                    } else {
-                        _Pages.clearForm();
-                        $('#tbl_user').DataTable().ajax.reload();
-                        _Pages.showSuccess("User data was successfully saved.");
-                    }
-                    _Pages.id = 0;
-                }
-            }).fail(function(xhr, textStatus, errorThrown) {
-                var errors = xhr.responseJSON.errors;
-                _Pages.showInputErrors(errors);
-
-                if (errorThrown == "Internal Server Error") {
-                    _Pages.ErrorMsg(xhr);
-                }
-            }).always(function() {
-                $('#loading_modal').modal('hide');
-            });
-        },
         delete_page: function(IDs) {
             var self = this;
             self.formAction = '/masters/page/delete-page';
@@ -170,7 +137,37 @@
         });
 
         $('#frm_pages').on('submit', function(e) {
-            _Pages.save_page();
+            $('#loading_modal').modal('show');
+            e.preventDefault();
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(response, textStatus, xhr) {
+                console.log(response);
+                console.log(response.inputs);
+                if (textStatus) {
+                    if (response.status == "failed") {
+                        _Pages.showWarning(response.msg);
+                    } else {
+                        _Pages.clearForm();
+                        _Pages.$tbl_pages.ajax.reload();
+                        _Pages.showSuccess("Page data was successfully saved.");
+                    }
+                    _Pages.id = 0;
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _Pages.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _Pages.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
         });
 
         $('#tbl_pages').on('click', '.btn_edit_page', function() {
@@ -185,6 +182,12 @@
             $('#parent_order').val(data.parent_order);
             $('#order').val(data.order);
             $('#icon').val(data.icon);
+
+            if (data.has_sub == "YES") {
+                $('#has_sub').prop('checked', true);
+            } else {
+                $('#has_sub').prop('checked', false);
+            }
 
             $('#modal_form_title').html('Edit Page');
             $('#modal_pages').modal('show');

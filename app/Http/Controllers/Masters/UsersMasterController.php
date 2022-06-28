@@ -180,8 +180,9 @@ class UsersMasterController extends Controller
 
 		if (is_array($req->ids)) {
 			foreach ($req->ids as $key => $id) {
-				$type = User::find($id);
-				$type->delete();
+				$user = User::find($id);
+                $user->is_deleted = 1;
+				$user->update();
 
 				$data = [
 					'msg' => "User was successfully deleted.",
@@ -192,8 +193,9 @@ class UsersMasterController extends Controller
 				];
 			}
 		} else {
-			$type = User::find($req->ids);
-			$type->delete();
+			$user = User::find($req->ids);
+            $user->is_deleted = 1;
+			$user->update();
 
 			$data = [
 				'msg' => "User was successfully deleted",

@@ -36,7 +36,7 @@ Page Master
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-12">
-				<table class="table table-sm table-striped table-hover table-bordered" id="tbl_pages" style="width: 100%;">
+				<table class="table table-sm table-striped table-hover table-bordered tbl-no-wrap" id="tbl_pages" style="width: 100%;">
 					<thead>
 						<th width="15px">
 							<input type="checkbox" class="check_all_pages"/>
@@ -72,7 +72,7 @@ Page Master
 
 			<form action="/masters/page/save-page" method="post" id="frm_pages">
 				@csrf
-				<input type="hidden" class="clear" id="id">
+				<input type="hidden" class="clear" id="id" name="id">
 				<div class="modal-body">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
@@ -136,6 +136,15 @@ Page Master
 						</div>
 						<input type="text" class="form-control form-control-sm clear" id="icon" name="icon" placeholder="Icon" autocomplete="off">
 						<div id="icon_feedback"></div>
+					</div>
+
+					<div class="form-group row m-b-10">
+						<div class="col-md-9">
+							<div class="checkbox checkbox-css">
+								<input type="checkbox" id="has_sub" name="has_sub" value="1"/>
+								<label for="has_sub">Has Sub?</label>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="modal-footer justify-content-between">

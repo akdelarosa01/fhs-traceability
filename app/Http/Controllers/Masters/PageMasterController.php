@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletPage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
@@ -65,5 +67,115 @@ class PageMasterController extends Controller
         }
 
         return $data;
+    }
+
+    public function save_page(Request $req)
+    {
+        $inputs = $this->get_inputs($req->all());
+        $data = [
+			'msg' => 'Saving user was unsuccessful.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            if (isset($req->id)) {
+                $this->validate($req, [
+                    'page_name' => 'required|string|min:1',
+                    'page_label' => 'required|string|min:1',
+                    'url' => 'required|string|min:1',
+                    'parent_menu' => 'required|string|min:1',
+                    'parent_order' => 'required|numeric|min:1',
+                    'order' => 'required|numeric|min:1'
+                ]);
+
+                $page = PalletPage::find($req->id);
+
+                $page->page_name = $req->page_name;
+                $page->page_label = $req->page_label;
+                $page->url = $req->url;
+                $page->has_sub = (isset($req->has_sub))? 1: 0;
+                $page->parent_menu = $req->parent_menu;
+                $page->parent_order = $req->parent_order;
+                $page->order = $req->order;
+                $page->icon = $req->icon;
+                $page->is_deleted = 0;
+                $page->create_user = Auth::user()->id;
+                $page->update_user = Auth::user()->id;
+    
+                if ($page->update()) {
+                    $data = [
+                        'msg' => 'Updating Page Information was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
+            } else {
+                $this->validate($req, [
+                    'page_name' => 'required|string|min:1',
+                    'page_label' => 'required|string|min:1',
+                    'url' => 'required|string|min:1',
+                    'parent_menu' => 'required|string|min:1',
+                    'parent_order' => 'required|numeric|min:1',
+                    'order' => 'required|numeric|min:1'
+                ]);
+
+                $page = new PalletPage();
+
+                $page->page_name = $req->page_name;
+                $page->page_label = $req->page_label;
+                $page->url = $req->url;
+                $page->has_sub = (isset($req->has_sub))? 1: 0;
+                $page->parent_menu = $req->parent_menu;
+                $page->parent_order = $req->parent_order;
+                $page->order = $req->order;
+                $page->icon = $req->icon;
+                $page->is_deleted = 0;
+                $page->create_user = Auth::user()->id;
+                $page->update_user = Auth::user()->id;
+
+                if ($page->save()) {
+                    $data = [
+                        'msg' => 'Saving Page Information was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'inputs' => $inputs,
+                'success' => true,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    private function get_inputs($req)
+    {
+        $inputs = array_keys($req);
+        for ($i=0; $i < count($inputs); $i++) { 
+            if ($inputs[$i] == "_token") {
+                unset($inputs[$i]);
+                return $inputs;
+            }
+        }
+        
+        return $inputs;
     }
 }

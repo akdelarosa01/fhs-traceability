@@ -37,3 +37,12 @@
 .info-box:hover {
     text-decoration: none;
 }
+
+
+/* Table */
+.table th,
+.table td,
+.tbl-no-wrap th,
+.tbl-no-wrap td {
+    white-space: nowrap !important;
+}
