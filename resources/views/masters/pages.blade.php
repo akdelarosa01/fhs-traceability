@@ -70,7 +70,7 @@ Page Master
 				</button>
 			</div>
 
-			<form action="/masters/pages/save-page" method="post" id="frm_pages">
+			<form action="/masters/page/save-page" method="post" id="frm_pages">
 				@csrf
 				<input type="hidden" class="clear" id="id">
 				<div class="modal-body">
