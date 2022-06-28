@@ -90,7 +90,6 @@ class UsersMasterController extends Controller
                 $user->lastname = $req->lastname;
                 $user->email = $req->email;
                 $user->active = 1;
-                $user->is_deleted = 0;
                 $user->create_user = Auth::user()->id;
                 $user->update_use = Auth::user()->id;
 
