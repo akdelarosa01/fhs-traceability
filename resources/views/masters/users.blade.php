@@ -82,7 +82,7 @@ Users Master
 
 			<form action="/masters/users/save-user" method="post" id="frm_users">
 				@csrf
-				<input type="hidden" class="clear" id="id">
+				<input type="hidden" class="clear" id="id" name="id" value="">
 				<div class="modal-body">
 					<div class="input-group input-group-sm mb-2">
 						<div class="input-group-prepend">
