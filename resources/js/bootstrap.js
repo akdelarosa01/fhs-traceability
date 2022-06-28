@@ -1,17 +1,20 @@
 window._ = require('lodash');
 
 try {
-    window.Popper = require('popper.js').default;
-    window.$ = window.jQuery = require('jquery');
+    // window.Popper = require('popper.js').default;
+    // window.$ = window.jQuery = require('jquery');
 
-    require('moment');
-    require('select2');
-    require('bootstrap');
-
-    require('datatables.net-bs4');
-    require('datatables.net-select');
-
-    require('admin-lte');
+    // require('jquery-ui');
+    // require('../plugins/bootstrap/js/bootstrap.bundle');
+    // // require('./menu');
+    // require('moment');
+    // require('select2');
+    // require('datatables.net-bs4');
+    // require('datatables.net-select');
+    // require('tempusdominus-bootstrap-4');
+    
+    // require('admin-lte');
+    
 
 } catch (e) {}
 

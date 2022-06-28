@@ -1,79 +1,98 @@
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
-    <!-- Left navbar links -->
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="{{ $current_url }}" class="nav-link">@yield('title')</a>
-        </li>
-    </ul>
 
-    <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
+<div id="header" class="header navbar-default">
 
-        <!-- Notifications Dropdown Menu -->
-        <li class="nav-item dropdown">
-            <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                <i class="far fa-bell"></i>
-                <span class="badge badge-warning navbar-badge">15</span>
+    <div class="navbar-header">
+        <a href="{{ $current_url }}" class="navbar-brand"><span class="navbar-logo"></span> <b>FHS</b> Traceability</a>
+        <button type="button" class="navbar-toggle" data-click="sidebar-toggled">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+    </div>
+
+    <ul class="navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle f-s-14">
+                <i class="fa fa-bell"></i>
+                <span class="label">5</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <span class="dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-envelope mr-2"></i> 4 new messages
-                    <span class="float-right text-muted text-sm">3 mins</span>
+            <div class="dropdown-menu media-list dropdown-menu-right">
+                <div class="dropdown-header">NOTIFICATIONS (5)</div>
+                <a href="javascript:;" class="dropdown-item media">
+                    <div class="media-left">
+                        <i class="fa fa-bug media-object bg-silver-darker"></i>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading">Server Error Reports <i class="fa fa-exclamation-circle text-danger"></i></h6>
+                        <div class="text-muted f-s-10">3 minutes ago</div>
+                    </div>
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-users mr-2"></i> 8 friend requests
-                    <span class="float-right text-muted text-sm">12 hours</span>
+
+                <a href="javascript:;" class="dropdown-item media">
+                    <div class="media-left">
+                        <img src="../assets/img/user/user-1.jpg" class="media-object" alt="" />
+                        <i class="fab fa-facebook-messenger text-blue media-object-icon"></i>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading">John Smith</h6>
+                        <p>Quisque pulvinar tellus sit amet sem scelerisque tincidunt.</p>
+                        <div class="text-muted f-s-10">25 minutes ago</div>
+                    </div>
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-file mr-2"></i> 3 new reports
-                    <span class="float-right text-muted text-sm">2 days</span>
+
+                <a href="javascript:;" class="dropdown-item media">
+                    <div class="media-left">
+                        <img src="../assets/img/user/user-2.jpg" class="media-object" alt="" />
+                        <i class="fab fa-facebook-messenger text-blue media-object-icon"></i>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading">Olivia</h6>
+                        <p>Quisque pulvinar tellus sit amet sem scelerisque tincidunt.</p>
+                        <div class="text-muted f-s-10">35 minutes ago</div>
+                    </div>
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+
+                <a href="javascript:;" class="dropdown-item media">
+                    <div class="media-left">
+                        <i class="fa fa-plus media-object bg-silver-darker"></i>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading"> New User Registered</h6>
+                        <div class="text-muted f-s-10">1 hour ago</div>
+                    </div>
+                </a>
+
+                <a href="javascript:;" class="dropdown-item media">
+                    <div class="media-left">
+                        <i class="fa fa-envelope media-object bg-silver-darker"></i>
+                        <i class="fab fa-google text-warning media-object-icon f-s-14"></i>
+                    </div>
+                    <div class="media-body">
+                        <h6 class="media-heading"> New Email From John</h6>
+                        <div class="text-muted f-s-10">2 hour ago</div>
+                    </div>
+                </a>
+
+                <div class="dropdown-footer text-center">
+                    <a href="javascript:;">View more</a>
+                </div>
             </div>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                <i class="fas fa-expand-arrows-alt"></i>
+        <li class="dropdown navbar-user">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="d-none d-md-inline">{{ Auth::user()->firstname }}</span>
             </a>
-        </li>
-        @guest
-            @if (Route::has('login'))
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                </li>
-            @endif
-
-            @if (Route::has('register'))
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                </li>
-            @endif
-        @else
-            <li class="nav-item dropdown">
-                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                    {{ Auth::user()->firstname }}
+            <div class="dropdown-menu dropdown-menu-right">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
                 </a>
-
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ route('logout') }}"
-                        onclick="event.preventDefault();
-                                        document.getElementById('logout-form').submit();">
-                        {{ __('Logout') }}
-                    </a>
-
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                </div>
-            </li>
-        @endguest
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </div>
+        </li>
     </ul>
-  </nav>
+
+</div>

@@ -2,7 +2,9 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="FHS Traceability" name="description" />
+    <meta content="Arjay Kurt Dela Rosa" name="author" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -11,29 +13,23 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" rel="stylesheet">
-
     @stack('styles')
     
 </head>
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
+<body>
+    <div id="page-loader" class="fade show"><span class="spinner"></span></div>
+
+    <div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed">
         @include('includes.header')
         @include('includes.sidebar')
 
-        <div class="content-wrapper">
-
-            <div id="page-loader" class="fade show"><span class="spinner"></span></div>
-            @include('includes.dialog')
+        <div id="content" class="content">
             @yield('content')
         </div>
-
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-inline">FHS Traceability System</div>
-            <strong>Copyright &copy; 2022 <a href="#">FTL</a>.</strong> All rights reserved.
-          </footer>
     </div>
 
+    @stack('modals')
+    @include('includes.dialog')
     @stack('scripts')
 </body>
 </html>
