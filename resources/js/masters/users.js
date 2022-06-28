@@ -100,8 +100,14 @@
             }
             return this;
         },
-        deleteUser: function() {
-
+        deleteUser: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/users/delete-user';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_users.ajax.reload(null, false);
+            });
+            return this;
         },
         clearForm: function(inputs) {
             var self = this;
