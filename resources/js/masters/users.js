@@ -100,47 +100,8 @@
             }
             return this;
         },
-        save_user: function() {
-            $('#loading_modal').modal('show');
-            e.preventDefault();
-            var data = $(this).serializeArray();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                dataType: 'JSON',
-                data: data
-            }).done(function(response, textStatus, xhr) {
-                console.log(response);
-                console.log(response.inputs);
-                if (textStatus) {
-                    if (response.status == "failed") {
-                        _Users.showWarning(response.msg);
-                    } else {
-                        _Users.clearForm();
-                        $('#tbl_user').DataTable().ajax.reload();
-                        _Users.showSuccess("User data was successfully saved.");
-                    }
-                    _Users.id = 0;
-                }
-            }).fail(function(xhr, textStatus, errorThrown) {
-                var errors = xhr.responseJSON.errors;
-                _Users.showInputErrors(errors);
+        deleteUser: function() {
 
-                if (errorThrown == "Internal Server Error") {
-                    _Users.ErrorMsg(xhr);
-                }
-            }).always(function() {
-                $('#loading_modal').modal('hide');
-            });
-        },
-        deleteUser: function(IDs) {
-            var self = this;
-            self.formAction = '/masters/users/delete-user';
-            self.jsonData = { _token: self.token, ids: IDs };
-            self.sendData().then(function() {
-                self.$tbl_users.ajax.reload(null, false);
-            });
-            return this;
         },
         clearForm: function(inputs) {
             var self = this;
@@ -164,7 +125,37 @@
         });
 
         $('#frm_users').on('submit', function(e) {
-            _Users.save_user();
+            $('#loading_modal').modal('show');
+            e.preventDefault();
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(response, textStatus, xhr) {
+                console.log(response);
+                console.log(response.inputs);
+                if (textStatus) {
+                    if (response.status == "failed") {
+                        _Users.showWarning(response.msg);
+                    } else {
+                        _Users.clearForm();
+                        _Users.$tbl_users.ajax.reload();
+                        _Users.showSuccess("User data was successfully saved.");
+                    }
+                    _Users.id = 0;
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _Users.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _Users.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
         });
 
         $('#tbl_users').on('click', '.btn_edit_user', function() {
