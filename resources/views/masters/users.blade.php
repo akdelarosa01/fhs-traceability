@@ -138,6 +138,45 @@ Users Master
 	</div>
 </div>
 
+<div class="modal fade" id="modal_user_access" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Access</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<form action="" method="post" id="frm_access">
+				@csrf
+				<input type="hidden" class="clear" id="user_id" name="user_id" value="">
+				<div class="modal-body">
+					<table class="table table-sm table-striped table-hover table-bordered" id="tbl_pages" style="width: 100%;">
+						<thead>
+							<th colspan="2">Module Name</th>
+							<th class="text-center">Authorize</th>
+							<th class="text-center">Read & Write</th>
+							<th class="text-center">Delete</th>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn btn-default" data-dismiss="modal">
+						<i class="fa fa-times"></i> Close
+					</button>
+					<button type="button" class="btn btn-primary" id="btn_save_user_access">
+						<i class="fa fa-save"></i> Save
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
 @endsection
 
 @push('scripts')

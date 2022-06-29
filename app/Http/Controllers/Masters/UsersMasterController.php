@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletPage;
+use App\Models\PalletPageAccess;
 use Illuminate\Support\Facades\Hash;
 use Yajra\Datatables\Datatables;
 use App\Models\User;
@@ -206,5 +208,119 @@ class UsersMasterController extends Controller
 		}
 
         return response()->json($data);
+    }
+
+    public function page_list(Request $req)
+    {
+        $data = [
+			'msg' => '',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        $query = [];
+
+        try {
+            $has_access = PalletPageAccess::where('user_id',$req->user_id)->count();
+            if ($has_access > 0) {
+                $query = DB::select("SELECT p.id,
+                                        p.page_label,
+                                        p.parent_name,
+                                        p.has_sub,
+                                        pp.read_and_write as read_and_write,
+                                        pp.`delete` as `delete`,
+                                        pp.authorize as authorize
+                                    FROM pallet_pages as p
+                                    left join pallet_page_accesses as pp
+                                    on p.id = pp.page_id
+                                    where p.is_deleted = 0
+                                    and pp.user_id = ".$req->user_id);
+            } else {
+                $query = PalletPage::select([
+                    'id', 'page_label', 'parent_name','has_sub',
+                    DB::raw("0 as read_and_write"),
+                    DB::raw("0 as `delete`"),
+                    DB::raw("0 as authorize")
+                ])
+                ->where('is_deleted',0)
+                ->get();
+            }
+
+           
+
+            $data = [
+                'data' => $query,
+                'success' => true,
+            ];
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => true,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return $data;
+    }
+
+    public function save_user_access(Request $req)
+    {
+        $data = [
+			'msg' => 'Saving User access has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        $page_id = 0;
+        $read_and_write = 0;
+        $delete = 0;
+        $authorize = 0;
+
+        try {
+            PalletPageAccess::where('user_id',$req->user_id)->delete();
+            foreach ($req->access as $key => $access) {
+                $page_id = $access['page_id'];
+                $read_and_write = $access['read_and_write'];
+                $delete = $access['delete'];
+                $authorize = $access['authorize'];
+
+                PalletPageAccess::create([
+                    'user_id' => $req->user_id,
+                    'page_id' => $page_id,
+                    'status' => 1,
+                    'read_and_write' => $read_and_write,
+                    'delete' => $delete,
+                    'authorize' => $authorize,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id
+                ]);
+            }
+
+            $data = [
+                'msg' => 'Saving User access was successful.',
+                'data' => [],
+                'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+            ];
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => true,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return $data;
     }
 }
