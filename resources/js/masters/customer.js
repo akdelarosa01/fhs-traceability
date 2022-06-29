@@ -132,7 +132,10 @@
         _Customers.drawDatatables();
 
         $('#btn_add_customers').on('click', function() {
-            $('.clear').val('');
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Customers.clearForm(inputs);
             $('#modal_form_title').html('Add Customer');
             $('#modal_customers').modal('show');
         });
@@ -178,6 +181,11 @@
         });
 
         $('#tbl_customers').on('click', '.btn_edit_customer', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Customers.clearForm(inputs);
+
             var data = $('#tbl_customers').DataTable().row($(this).parents('tr')).data();
 
             $('#id').val(data.id);
