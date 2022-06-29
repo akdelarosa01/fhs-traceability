@@ -73,7 +73,7 @@ class PageMasterController extends Controller
     {
         $inputs = $this->_helpers->get_inputs($req->all());
         $data = [
-			'msg' => 'Saving user was unsuccessful.',
+			'msg' => 'Saving page was unsuccessful.',
             'data' => [],
             'inputs' => $inputs,
 			'success' => true,
