@@ -230,6 +230,10 @@
         _Users.drawDatatables();
 
         $('#btn_add_users').on('click', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Users.clearForm(inputs);
             $('.clear').val('');
             $('#modal_form_title').html('Add User');
             $('#modal_users').modal('show');
@@ -264,16 +268,21 @@
                 dataType: 'JSON',
                 data: data
             }).done(function(response, textStatus, xhr) {
-                console.log(response);
-                console.log(response.inputs);
                 if (textStatus) {
-                    if (response.status == "failed") {
-                        _Users.showWarning(response.msg);
-                    } else {
-                        _Users.clearForm();
-                        _Users.$tbl_users.ajax.reload();
-                        _Users.showSuccess("User data was successfully saved.");
+                    switch (response.status) {
+                        case "failed":
+                            _Users.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _Users.ErrorMsg(response.msg);
+                            break;
+                        default:
+                            _Users.clearForm(response.inputs);
+                            _Users.$tbl_users.ajax.reload();
+                            _Users.showSuccess(response.msg);
+                            break;
                     }
+                    
                     _Users.id = 0;
                 }
             }).fail(function(xhr, textStatus, errorThrown) {
@@ -289,6 +298,11 @@
         });
 
         $('#tbl_users').on('click', '.btn_edit_user', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Users.clearForm(inputs);
+            
             var data = $('#tbl_users').DataTable().row($(this).parents('tr')).data();
 
             $('#id').val(data.id);
