@@ -26,6 +26,7 @@ class PalletPageAccess extends Model
         return DB::table('pallet_page_accesses as pa')
                 ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
                 ->where('pa.user_id', $user_id)
+                ->where('pa.authorize',1)
                 ->select(
                     'p.*',
                     'pa.status',
