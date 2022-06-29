@@ -131,7 +131,10 @@
         _Pages.drawDatatables();
 
         $('#btn_add_pages').on('click', function() {
-            $('.clear').val('');
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Pages.clearForm(inputs);
             $('#modal_form_title').html('Add Page');
             $('#modal_pages').modal('show');
         });
@@ -146,16 +149,21 @@
                 dataType: 'JSON',
                 data: data
             }).done(function(response, textStatus, xhr) {
-                console.log(response);
-                console.log(response.inputs);
                 if (textStatus) {
-                    if (response.status == "failed") {
-                        _Pages.showWarning(response.msg);
-                    } else {
-                        _Pages.clearForm();
-                        _Pages.$tbl_pages.ajax.reload();
-                        _Pages.showSuccess("Page data was successfully saved.");
+                    switch (response.status) {
+                        case "failed":
+                            _Pages.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _Pages.ErrorMsg(response.msg);
+                            break;
+                        default:
+                            _Pages.clearForm(response.inputs);
+                            _Pages.$tbl_pages.ajax.reload();
+                            _Pages.showSuccess(response.msg);
+                            break;
                     }
+                    
                     _Pages.id = 0;
                 }
             }).fail(function(xhr, textStatus, errorThrown) {
@@ -171,6 +179,11 @@
         });
 
         $('#tbl_pages').on('click', '.btn_edit_page', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Pages.clearForm(inputs);
+
             var data = $('#tbl_pages').DataTable().row($(this).parents('tr')).data();
 
             $('#id').val(data.id);
