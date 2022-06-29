@@ -71,7 +71,7 @@ class PageMasterController extends Controller
 
     public function save_page(Request $req)
     {
-        $inputs = $this->get_inputs($req->all());
+        $inputs = $this->_helpers->get_inputs($req->all());
         $data = [
 			'msg' => 'Saving user was unsuccessful.',
             'data' => [],
@@ -80,18 +80,19 @@ class PageMasterController extends Controller
             'msgType' => 'warning',
             'msgTitle' => 'Failed!'
         ];
+        
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'page_name' => 'required|string|min:1',
+                'page_label' => 'required|string|min:1',
+                'url' => 'required|string|min:1',
+                'parent_menu' => 'required|string|min:1',
+                'parent_name' => 'required|string|min:1',
+                'parent_order' => 'required|numeric|min:1',
+                'order' => 'required|numeric|min:1'
+            ]);
 
-        try {
-            if (isset($req->id)) {
-                $this->validate($req, [
-                    'page_name' => 'required|string|min:1',
-                    'page_label' => 'required|string|min:1',
-                    'url' => 'required|string|min:1',
-                    'parent_menu' => 'required|string|min:1',
-                    'parent_order' => 'required|numeric|min:1',
-                    'order' => 'required|numeric|min:1'
-                ]);
-
+            try {
                 $page = PalletPage::find($req->id);
 
                 $page->page_name = $req->page_name;
@@ -115,17 +116,29 @@ class PageMasterController extends Controller
                         'msgTitle' => 'Success!'
                     ];
                 }
-                
-            } else {
-                $this->validate($req, [
-                    'page_name' => 'required|string|min:1',
-                    'page_label' => 'required|string|min:1',
-                    'url' => 'required|string|min:1',
-                    'parent_menu' => 'required|string|min:1',
-                    'parent_order' => 'required|numeric|min:1',
-                    'order' => 'required|numeric|min:1'
-                ]);
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => true,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+            
+        } else {
+            $this->validate($req, [
+                'page_name' => 'required|string|min:1',
+                'page_label' => 'required|string|min:1',
+                'url' => 'required|string|min:1',
+                'parent_menu' => 'required|string|min:1',
+                'parent_name' => 'required|string|min:1',
+                'parent_order' => 'required|numeric|min:1',
+                'order' => 'required|numeric|min:1'
+            ]);
 
+            try {
                 $page = new PalletPage();
 
                 $page->page_name = $req->page_name;
@@ -150,32 +163,19 @@ class PageMasterController extends Controller
                         'msgTitle' => 'Success!'
                     ];
                 }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => true,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
             }
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'inputs' => $inputs,
-                'success' => true,
-                'msgType' => 'error',
-                'msgTitle' => 'Error!'
-            ];
         }
 
         return response()->json($data);
-    }
-
-    private function get_inputs($req)
-    {
-        $inputs = array_keys($req);
-        for ($i=0; $i < count($inputs); $i++) { 
-            if ($inputs[$i] == "_token") {
-                unset($inputs[$i]);
-                return $inputs;
-            }
-        }
-        
-        return $inputs;
     }
 
     public function delete_page(Request $req)
