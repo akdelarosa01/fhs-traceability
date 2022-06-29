@@ -7,6 +7,7 @@
     Users.init = function() {
         $D.init.call(this);
         this.$tbl_users = "";
+        this.$tbl_pages = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
     }
@@ -100,8 +101,49 @@
             }
             return this;
         },
+        drawPageDatatables: function(user_id) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = {
+                _token: self.token,
+                user_id: user_id
+            };
+            self.formAction = "/masters/users/page-list";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                self.$tbl_pages = "";
+
+                $.each(response, function(i,x) {
+                    self.$tbl_pages += "<tr>";
+
+                    var authorize = (x.authorize > 0)? "checked":""; 
+                    var read_and_write = (x.read_and_write > 0)? "checked":"";
+                    var deletes = (x.delete > 0)? "checked":"";
+
+                    if (x.has_sub > 0 && x.parent_name == 0) {
+                        self.$tbl_pages += '<td colspan="5">'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-page_label="'+x.page_label +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>';
+                    } else if (x.parent_name == 0 && x.has_sub == 0) {
+                        self.$tbl_pages += '<td colspan="2">'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="authorize_'+x.id+'" class="authorize" name="authorize[]" value="1" '+authorize+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="read_and_write_'+x.id+'" class="read_and_write" name="read_and_write[]" value="1" '+read_and_write+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="delete_'+x.id+'" class="delete" name="delete[]" value="1" '+deletes+'/></td>';
+                    } else {
+                        self.$tbl_pages += '<td></td><td>'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="authorize_'+x.id+'" class="authorize" name="authorize[]" value="1" '+authorize+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="read_and_write_'+x.id+'" class="read_and_write" name="read_and_write[]" value="1" '+read_and_write+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="delete_'+x.id+'" class="delete" name="delete[]" value="1" '+deletes+'/></td>';
+                    }
+                    
+                    self.$tbl_pages += "</tr>";
+                });
+
+                $('#tbl_pages tbody').html(self.$tbl_pages);
+                $('#modal_user_access').modal('show');
+            });
+        },
         deleteUser: function(IDs) {
             var self = this;
+            self.submitType = "POST";
             self.formAction = '/masters/users/delete-user';
             self.jsonData = { _token: self.token, ids: IDs };
             self.sendData().then(function() {
@@ -115,6 +157,69 @@
                 $('#'+x).val('');
                 self.hideInputErrors(x);
             });
+        },
+        saveUserAccess: function() {
+            var read_and_write = 0;
+            var deletes = 0;
+            var authorize = 0;
+
+            var params = $('.page_id').map(function() {
+
+                if ($(this).attr('data-has_sub') > 0) {
+                    var page_label = $(this).attr('data-page_label');
+                    page_label = page_label.replace(' ','');
+
+                    read_and_write = 0;
+                    deletes = 0;
+                    authorize = 0;
+                    
+                    $('.page_id').each(function(i,x) {
+                        var parent_name = $(x).attr('data-parent_name');
+                        parent_name = parent_name.replace(' ','');
+
+                        if (page_label == parent_name) {
+                            if ($('#authorize_'+this.value).is(':checked')) {
+                                read_and_write = 1;
+                                deletes = 1;
+                                authorize = 1;
+                                return false;
+                            }
+                        }
+                    });
+
+                    return {
+                        'page_id': this.value,
+                        'read_and_write': read_and_write,
+                        'delete': deletes,
+                        'authorize': authorize
+                    };
+                } else {
+                    read_and_write = ($('#read_and_write_'+this.value).is(':checked'))? 1 : 0;
+                    deletes = ($('#delete_'+this.value).is(':checked'))? 1 : 0;
+                    authorize = ($('#authorize_'+this.value).is(':checked'))? 1 : 0;
+
+                    return {
+                        'page_id': this.value,
+                        'read_and_write': read_and_write,
+                        'delete': deletes,
+                        'authorize': authorize
+                    };
+                }
+                
+            }).get();
+
+            var self = this;
+            self.submitType = "POST";
+            self.formAction = '/masters/users/save-user-access';
+            self.jsonData = { 
+                _token: self.token,
+                user_id: $('#user_id').val(),
+                access: params
+            };
+            self.sendData().then(function() {
+                
+            });
+            return this;
         }
     }
     Users.init.prototype = $.extend(Users.prototype, $D.init.prototype);
@@ -128,6 +233,25 @@
             $('.clear').val('');
             $('#modal_form_title').html('Add User');
             $('#modal_users').modal('show');
+        });
+
+        $('#btn_user_access').on('click', function() {
+            var chkArray = [];
+            var table = $('#tbl_users').DataTable();
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                }
+            }
+            if (chkArray.length == 1) {
+                $('#user_id').val(chkArray[0]);
+                _Users.drawPageDatatables(chkArray[0]);
+            } else {
+                _Users.showWarning('Please select or check 1 user.');
+            }
+            
         });
 
         $('#frm_users').on('submit', function(e) {
@@ -198,6 +322,24 @@
                 });
             } else {
                 _Users.showWarning('Please select at least 1 user.');
+            }
+        });
+
+        $('#btn_save_user_access').on('click', function() {
+            _Users.saveUserAccess();
+        });
+
+        $('#tbl_pages tbody').on('change', '.authorize', function() {
+            var id = $(this).attr('id');
+            var page_id = id.replace('authorize_','');
+
+            if ($(this).is(':checked')) {
+                console.log(page_id);
+                $('#read_and_write_'+page_id).prop('checked',true);
+                $('#delete_'+page_id).prop('checked',true);
+            } else {
+                $('#read_and_write_'+page_id).prop('checked',false);
+                $('#delete_'+page_id).prop('checked',false);
             }
         });
     });
