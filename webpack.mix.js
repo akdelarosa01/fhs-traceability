@@ -12,18 +12,11 @@ const mix = require('laravel-mix');
  */
 
 const layoutCSS = [
-    "public/css/app.css",
     "resources/css/default/app.min.css",
     "resources/plugins/gritter/css/jquery.gritter.css",
     "resources/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css",
-    "resources/plugins/datatables.net-select-bs4/css/select.bootstrap4.min.css"
-    // "resources/plugins/jquery-ui/jquery-ui.min.css",
-    // "resources/plugins/bootstrap/css/bootstrap.min.css",
-    // "resources/plugins/font-awesome/css/all.min.css",
-    // "resources/plugins/animate/animate.min.css",
-    // "resources/css/default/style.min.css",
-    // "resources/css/default/style-responsive.min.css",
-    // "resources/css/Custom.css"
+    "resources/plugins/datatables.net-select-bs4/css/select.bootstrap4.min.css",
+    "public/css/app.css"
 ];
 
 const layoutJS = [
@@ -35,20 +28,7 @@ const layoutJS = [
     "resources/plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js",
     "resources/plugins/datatables.net-select/js/dataTables.select.min.js",
     "resources/plugins/datatables.net-select-bs4/js/select.bootstrap4.min.js",
-    // "resources/js/bluebird.core.js",
-    // "resources/plugins/jquery-ui/jquery-ui.min.js",
-    // "resources/plugins/bootstrap/js/bootstrap.bundle.min.js",
-    // "resources/plugins/slimscroll/jquery.slimscroll.js",
-    // "resources/plugins/js-cookie/js.cookie.js",
-    // "resources/plugins/moment/moment.min.js",
-    // "resources/js/jquery.cookie.min.js",
-    // "resources/plugins/bootstrap-session-timeout/bootstrap-session-timeout.min.js",
-    // "resources/js/theme/default.min.js",
-    // "resources/js/lodash.min.js",
-    // "resources/js/apps.min.js",
     "resources/js/menu.js"
-    // "resources/js/Custom.js",
-    // "resources/js/SessionTimeout.js"   
 ];
 
 const TrxJS = [

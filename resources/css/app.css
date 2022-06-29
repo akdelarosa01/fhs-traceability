@@ -22,20 +22,10 @@
 }
 
 
-.info-box .info-box-number {
-    display: block;
-    margin-top: 0.25rem;
-    font-weight: 700;
-    color: #243A73;
-    font-size: 20px;
-}
-
-.info-box .info-box-text {
-    color: #243A73;
-}
-
-.info-box:hover {
-    text-decoration: none;
+.widget-stats .stats-info p, .widget.widget-stats .stats-info p {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 0;
 }
 
 
