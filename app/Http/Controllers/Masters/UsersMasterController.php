@@ -68,24 +68,25 @@ class UsersMasterController extends Controller
     
     public function save_user(Request $req)
     {
+        $inputs = $this->_helpers->get_inputs($req->all());
         $data = [
 			'msg' => 'Saving user was unsuccessful.',
             'data' => [],
-            'inputs' => $this->get_inputs($req->all()),
+            'inputs' => $inputs,
 			'success' => true,
             'msgType' => 'warning',
             'msgTitle' => 'Failed!'
         ];
 
-        try {
-            if (isset($req->id)) {
-                $this->validate($req, [
-                    'username' => 'required|string|max:50|min:1',
-                    'firstname' => 'required|string|max:50|min:1',
-                    'lastname' => 'required|string|max:50|min:1',
-                    'email' => 'string'
-                ]);
-
+        
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'username' => 'required|string|max:50|min:1',
+                'firstname' => 'required|string|max:50|min:1',
+                'lastname' => 'required|string|max:50|min:1',
+                'email' => 'string'
+            ]);
+            try {
                 $user = User::find($req->id);
                 $user->username = $req->username;
                 $user->firstname = $req->firstname;
@@ -103,22 +104,33 @@ class UsersMasterController extends Controller
                     $data = [
                         'msg' => 'Updating User Information was successful.',
                         'data' => [],
-                        'inputs' => $this->get_inputs($req->all()),
+                        'inputs' => $inputs,
                         'success' => true,
                         'msgType' => 'success',
                         'msgTitle' => 'Success!'
                     ];
                 }
-                
-            } else {
-                $this->validate($req, [
-                    'username' => 'required|string|max:50|min:1|unique:users,username,is_deleted',
-                    'firstname' => 'required|string|max:50|min:1',
-                    'lastname' => 'required|string|max:50|min:1',
-                    'email' => 'unique:users|string',
-                    'password' => 'required|string|min:8|confirmed',
-                ]);
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => true,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+            
+        } else {
+            $this->validate($req, [
+                'username' => 'required|string|max:50|min:1|unique:users,username,is_deleted',
+                'firstname' => 'required|string|max:50|min:1',
+                'lastname' => 'required|string|max:50|min:1',
+                'email' => 'unique:users|string',
+                'password' => 'required|string|min:8|confirmed',
+            ]);
 
+            try {
                 $user = new User();
 
                 $user->username = $req->username;
@@ -135,38 +147,26 @@ class UsersMasterController extends Controller
                     $data = [
                         'msg' => 'Saving User Information was successful.',
                         'data' => [],
-                        'inputs' => $this->get_inputs($req->all()),
+                        'inputs' => $inputs,
                         'success' => true,
                         'msgType' => 'success',
                         'msgTitle' => 'Success!'
                     ];
                 }
-            }
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'inputs' => $this->get_inputs($req->all()),
-                'success' => true,
-                'msgType' => 'error',
-                'msgTitle' => 'Error!'
-            ];
-        }
-
-        return response()->json($data);
-    }
-
-    private function get_inputs($req)
-    {
-        $inputs = array_keys($req);
-        for ($i=0; $i < count($inputs); $i++) { 
-            if ($inputs[$i] == "_token") {
-                unset($inputs[$i]);
-                return $inputs;
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => true,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
             }
         }
         
-        return $inputs;
+
+        return response()->json($data);
     }
 
     public function delete_user(Request $req)
