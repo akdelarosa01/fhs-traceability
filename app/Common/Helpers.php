@@ -40,4 +40,17 @@ class Helpers
         }
         return response()->json($data);
     }
+
+    public function get_inputs($req)
+    {
+        $inputs = array_keys($req);
+        for ($i=0; $i < count($inputs); $i++) { 
+            if ($inputs[$i] == "_token") {
+                unset($inputs[$i]);
+                return $inputs;
+            }
+        }
+        
+        return $inputs;
+    }
 }

@@ -163,7 +163,14 @@ B. Synopsis: Class Module used to process data
                         console.table(errorThrown);
                         self.responseStatus = jqXHR.status;
                         self.responseError = jqXHR.responseJSON;
-                        self.ErrorMsg(jqXHR);
+                        console.log(self.responseError)
+                        // var errors = self.responseError.errors;
+                        // self.showInputErrors(errors);
+
+                        if (errorThrown == "Internal Server Error") {
+                            self.ErrorMsg(jqXHR);
+                        }
+                        
                         resolve(false);
 
                         if (jqXHR.status == 419) {
