@@ -82,6 +82,15 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
+    ], "public/js/auth.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/auth.css")
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
         "resources/js/home.js"
     ], "public/js/home.js")
     .styles([

@@ -1,60 +1,54 @@
+@push('styles')
+	<link href="{{ asset('css/auth.css') }}" rel="stylesheet">
+@endpush
+
+@section('title')
+Login
+@endsection
+
 @extends('layouts.auth')
 
 @section('content')
-<form method="POST" action="{{ route('login') }}">
-    @csrf
-
-    <div class="input-group mb-3">
-        <input type="test" class="form-control @error('username') is-invalid @enderror" placeholder="{{ __('Username') }}" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-user"></span>
-            </div>
+<div class="login-content">
+    <form action="{{ route('login') }}" method="POST" class="margin-bottom-0">
+        @csrf
+        <div class="form-group m-b-20">
+            <input type="text" class="form-control form-control-lg inverse-mode @error('username') is-invalid @enderror" placeholder="{{ __('Username') }}" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus />
+            @error('username')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
-        @error('username')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
-    </div>
-
-    
-
-    <div class="input-group mb-3">
-        <input type="password" class="form-control @error('password') is-invalid @enderror" placeholder="{{ __('password') }}" name="password" required>
-        <div class="input-group-append">
-            <div class="input-group-text">
-                <span class="fas fa-lock"></span>
-            </div>
+        <div class="form-group m-b-20">
+            <input type="password" class="form-control form-control-lg inverse-mode @error('password') is-invalid @enderror" placeholder="{{ __('password') }}" name="password" required/>
+            @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
         </div>
-        @error('password')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
-    </div>
-
-    
-
-    <div class="row">
-        <div class="col-8">
-            <div class="icheck-primary">
-                <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                <label for="remember">{{ __('Remember Me') }} </label>
-            </div>
+        <div class="checkbox checkbox-css m-b-20">
+            <input type="checkbox" id="remember_checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}/>
+            <label for="remember_checkbox">
+                Remember Me
+            </label>
         </div>
-        
-        <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">{{ __('Login') }}</button>
+        <div class="login-buttons">
+            <button type="submit" class="btn btn-success btn-block btn-lg">{{ __('Login') }}</button>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
 @if (Route::has('password.request'))
-<p class="mb-1">
+{{-- <p class="mb-1">
     <a class="btn btn-link" href="{{ route('password.request') }}">
         {{ __('Forgot Your Password?') }}
     </a>
-</p>
+</p> --}}
 @endif
 @endsection
+
+@push('scripts')
+	<script src="{{ asset('js/auth.js') }}" defer></script>
+@endpush

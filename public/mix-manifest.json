@@ -5,6 +5,8 @@
     "/css/theme.css": "/css/theme.css",
     "/js/trx.js": "/js/trx.js",
     "/css/trx.css": "/css/trx.css",
+    "/js/auth.js": "/js/auth.js",
+    "/css/auth.css": "/css/auth.css",
     "/js/home.js": "/js/home.js",
     "/css/home.css": "/css/home.css",
     "/js/masters/users.js": "/js/masters/users.js",
