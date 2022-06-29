@@ -13,100 +13,100 @@
     }
     Customers.prototype = {
         init: function() {},
-        // drawDatatables: function() {
-        //     var self = this;
-        //     if (!$.fn.DataTable.isDataTable('#tbl_customers')) {
-        //         self.$tbl_customers = $('#tbl_customers').DataTable({
-        //             processing: true,
-        //             ajax: {
-        //                 url: "/masters/customer/list",
-        //                 dataType: "JSON",
-        //                 error: function(response) {
-        //                     console.log(response);
-        //                 }
-        //             },
-        //             deferRender: true,
-        //             language: {
-        //                 aria: {
-        //                     sortAscending: ": activate to sort column ascending",
-        //                     sortDescending: ": activate to sort column descending"
-        //                 },
-        //                 emptyTable: "No data available in table",
-        //                 info: "Showing _START_ to _END_ of _TOTAL_ records",
-        //                 infoEmpty: "No records found",
-        //                 infoFiltered: "(filtered1 from _MAX_ total records)",
-        //                 lengthMenu: "Show _MENU_",
-        //                 search: "Search:",
-        //                 zeroRecords: "No matching records found",
-        //                 paginate: {
-        //                     "previous": "Prev",
-        //                     "next": "Next",
-        //                     "last": "Last",
-        //                     "first": "First"
-        //                 }
-        //             },
-        //             pageLength: 10,
-        //             order: [
-        //                 [13, "desc"]
-        //             ],
-        //             columns: [{
-        //                     data: function(x) {
-        //                         return '<input type="checkbox" class="table-checkbox check_customer" value="' + x.id + '">';
-        //                     },
-        //                     name: 'id',
-        //                     searchable: false,
-        //                     orderable: false
-        //                 },
-        //                 {
-        //                     data: 'action',
-        //                     name: 'action',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 { data: 'customer_name', name: 'customer_name' },
-        //                 { data: 'address', name: 'address' },
-        //                 { data: 'customer_person1', name: 'customer_person1' },
-        //                 { data: 'customer_number1', name: 'customer_number1' },
-        //                 { data: 'extension1', name: 'extension1' },
-        //                 { data: 'email1', name: 'email1' },
-        //                 { data: 'customer_person2', name: 'customer_person2' },
-        //                 { data: 'customer_number2', name: 'customer_number2' },
-        //                 { data: 'extension2', name: 'extension2' },
-        //                 { data: 'email2', name: 'email2' },
-        //                 { data: 'create_user', name: 'create_user' },
-        //                 { data: 'updated_at', name: 'updated_at' },
-        //             ],
-        //             rowCallback: function(row, data) {
-        //                 var td = $(row).find('td:first .check_customer');
-        //                 if (td.is(':checked')) {
-        //                     self.cust_checked++;
-        //                 }
-        //             },
-        //             createdRow: function(row, data, dataIndex) {
-        //                 if (data.is_deleted === 1) {
-        //                     $(row).css('background-color', '#ff6266');
-        //                     $(row).css('color', '#fff');
-        //                 }
-        //             },
-        //             initComplete: function() {
-        //                 $('.check_all_customers').prop('checked', false);
-        //             },
-        //             fnDrawCallback: function() {
-        //                 if (self.cust_checked > 9) {
-        //                     $('.check_all_customers').prop('checked', true);
-        //                 } else {
-        //                     $('.check_all_customers').prop('checked', false);
-        //                 }
-        //                 self.checkCheckboxesInTable('#tbl_customers', '.check_all_customers', '.check_customer');
-        //                 self.checkAllCheckboxesInTable('#tbl_customers', '.check_all_customers', '.check_customer');
-        //                 $("#tbl_customers").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-        //             },
-        //         }).on('page.dt', function() {
-        //             self.cust_checked = 0;
-        //         });
-        //     }
-        //     return this;
-        // },
+        drawDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_customers')) {
+                self.$tbl_customers = $('#tbl_customers').DataTable({
+                    processing: true,
+                    ajax: {
+                        url: "/masters/customers/list",
+                        dataType: "JSON",
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    deferRender: true,
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No data available in table",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    pageLength: 10,
+                    order: [
+                        [13, "desc"]
+                    ],
+                    columns: [{
+                            data: function(x) {
+                                return '<input type="checkbox" class="table-checkbox check_customer" value="' + x.id + '">';
+                            },
+                            name: 'id',
+                            searchable: false,
+                            orderable: false
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        },
+                        { data: 'customer_name', name: 'customer_name' },
+                        { data: 'address', name: 'address' },
+                        { data: 'contact_person1', name: 'contact_person1' },
+                        { data: 'contact_number1', name: 'contact_number1' },
+                        { data: 'extension1', name: 'extension1' },
+                        { data: 'email1', name: 'email1' },
+                        { data: 'contact_person2', name: 'contact_person2' },
+                        { data: 'contact_number2', name: 'contact_number2' },
+                        { data: 'extension2', name: 'extension2' },
+                        { data: 'email2', name: 'email2' },
+                        { data: 'create_user', name: 'create_user' },
+                        { data: 'updated_at', name: 'updated_at' },
+                    ],
+                    rowCallback: function(row, data) {
+                        var td = $(row).find('td:first .check_customer');
+                        if (td.is(':checked')) {
+                            self.cust_checked++;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                        if (data.is_deleted === 1) {
+                            $(row).css('background-color', '#ff6266');
+                            $(row).css('color', '#fff');
+                        }
+                    },
+                    initComplete: function() {
+                        $('.check_all_customers').prop('checked', false);
+                    },
+                    fnDrawCallback: function() {
+                        if (self.cust_checked > 9) {
+                            $('.check_all_customers').prop('checked', true);
+                        } else {
+                            $('.check_all_customers').prop('checked', false);
+                        }
+                        self.checkCheckboxesInTable('#tbl_customers', '.check_all_customers', '.check_customer');
+                        self.checkAllCheckboxesInTable('#tbl_customers', '.check_all_customers', '.check_customer');
+                        $("#tbl_customers").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                    },
+                }).on('page.dt', function() {
+                    self.cust_checked = 0;
+                });
+            }
+            return this;
+        },
         // delete_page: function(IDs) {
         //     var self = this;
         //     self.formAction = '/masters/page/delete-page';
@@ -175,23 +175,19 @@
             var data = $('#tbl_customers').DataTable().row($(this).parents('tr')).data();
 
             $('#id').val(data.id);
-            $('#page_name').val(data.page_name);
-            $('#page_label').val(data.page_label);
-            $('#url').val(data.url);
-            $('#parent_menu').val(data.parent_menu);
-            $('#parent_name').val(data.parent_name);
-            $('#parent_order').val(data.parent_order);
-            $('#order').val(data.order);
-            $('#icon').val(data.icon);
+            $('#customer_name').val(data.customer_name);
+            $('#address').val(data.address);
+            $('#contact_person1').val(data.contact_person1);
+            $('#contact_number1').val(data.contact_number1);
+            $('#extension1').val(data.extension1);
+            $('#email1').val(data.email1);
+            $('#contact_person2').val(data.contact_person2);
+            $('#contact_number2').val(data.contact_number2);
+            $('#extension2').val(data.extension2);
+            $('#email2').val(data.email2);
 
-            if (data.has_sub == "YES") {
-                $('#has_sub').prop('checked', true);
-            } else {
-                $('#has_sub').prop('checked', false);
-            }
-
-            $('#modal_form_title').html('Edit Page');
-            $('#modal_pages').modal('show');
+            $('#modal_form_title').html('Edit Customer');
+            $('#modal_customers').modal('show');
         });
 
         $('#btn_delete_customers').on('click', function() {
