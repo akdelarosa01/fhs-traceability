@@ -42,6 +42,7 @@ Route::group(['prefix' => 'masters'], function () {
     Route::group(['prefix' => 'customers'], function () {
         Route::get('/', [App\Http\Controllers\Masters\CustomerMasterController::class, 'index'])->name('masters.customers');
         Route::get('/list', [App\Http\Controllers\Masters\CustomerMasterController::class, 'customer_list'])->name('masters.customer-list');
+        Route::post('/save-customer', [App\Http\Controllers\Masters\CustomerMasterController::class, 'save_customer'])->name('masters.save-customer');
     });
 
     Route::group(['prefix' => 'qa-disposition'], function () {

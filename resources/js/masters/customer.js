@@ -116,13 +116,13 @@
         //     });
         //     return this;
         // },
-        // clearForm: function(inputs) {
-        //     var self = this;
-        //     $.each(inputs, function(i,x) {
-        //         $('#'+x).val('');
-        //         self.hideInputErrors(x);
-        //     });
-        // }
+        clearForm: function(inputs) {
+            var self = this;
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
+            });
+        }
     }
     Customers.init.prototype = $.extend(Customers.prototype, $D.init.prototype);
     Customers.init.prototype = Customers.prototype;
@@ -150,21 +150,27 @@
                 console.log(response);
                 console.log(response.inputs);
                 if (textStatus) {
-                    if (response.status == "failed") {
-                        _Pages.showWarning(response.msg);
-                    } else {
-                        _Pages.clearForm();
-                        _Pages.$tbl_customers.ajax.reload();
-                        _Pages.showSuccess("Page data was successfully saved.");
+                    switch (response.status) {
+                        case "failed":
+                            _Customers.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _Customers.ErrorMsg(response.msg);
+                            break;
+                        default:
+                            _Customers.clearForm(response.inputs);
+                            _Customers.$tbl_customers.ajax.reload();
+                            _Customers.showSuccess(response.msg);
+                            break;
                     }
-                    _Pages.id = 0;
+                    _Customers.id = 0;
                 }
             }).fail(function(xhr, textStatus, errorThrown) {
                 var errors = xhr.responseJSON.errors;
-                _Pages.showInputErrors(errors);
+                _Customers.showInputErrors(errors);
 
                 if (errorThrown == "Internal Server Error") {
-                    _Pages.ErrorMsg(xhr);
+                    _Customers.ErrorMsg(xhr);
                 }
             }).always(function() {
                 $('#loading_modal').modal('hide');
@@ -192,7 +198,7 @@
 
         $('#btn_delete_customers').on('click', function() {
             var chkArray = [];
-            var table = _Pages.$tbl_customers;
+            var table = _Customers.$tbl_customers;
 
             for (var x = 0; x < table.context[0].aoData.length; x++) {
                 var DataRow = table.context[0].aoData[x];
@@ -202,15 +208,15 @@
             }
 
             if (chkArray.length > 0) {
-                _Pages.msg = "Are you sure you want to delete this page/s?";
-                _Pages.confirmAction().then(function(approve) {
+                _Customers.msg = "Are you sure you want to delete this page/s?";
+                _Customers.confirmAction().then(function(approve) {
                     if (approve)
-                        _Pages.delete_page(chkArray);
+                        _Customers.delete_page(chkArray);
 
                     $('.check_all_customers').prop('checked', false);
                 });
             } else {
-                _Pages.showWarning('Please select at least 1 page.');
+                _Customers.showWarning('Please select at least 1 page.');
             }
         });
     });

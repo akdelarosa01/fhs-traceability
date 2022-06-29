@@ -80,7 +80,7 @@ Customer Master
 				</button>
 			</div>
 
-			<form action="/masters/customers/save-user" method="post" id="frm_customers">
+			<form action="/masters/customers/save-customer" method="post" id="frm_customers">
 				@csrf
 				<input type="hidden" class="clear" id="id" name="id" value="">
 				<div class="modal-body">
