@@ -24,18 +24,20 @@
             $.each(menuObj, function(i, x) {
                 if (x.url != "#") {
                     var parent_name = (x.parent_name == 0)? "Transaction" : x.parent_name;
-                    HomeMenu += "<div class='col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12'>"+
-                    "<a href='"+x.url+"' class='info-box'>"+
-                    "<span class='info-box-icon bg-info'><i class='"+x.icon+"'></i></span>"+
-                    "<div class='info-box-content'>"+
-                    "<span class='info-box-text'>"+parent_name+"</span>"+
-                    "<span class='info-box-number'>"+x.page_label+"</span>"+
-                    "</div>"+
-                    "</a>"+
-                    "</div>";
+                    HomeMenu +='<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12">'+
+                    '<div class="widget widget-stats bg-info">'+
+                    '<div class="stats-icon"><i class="'+x.icon+'"></i></div>'+
+                    '<div class="stats-info">'+
+                    '<h4>'+parent_name+'</h4>'+
+                    '<p>'+x.page_label+'</p>'+
+                    '</div>'+
+                    '<div class="stats-link">'+
+                    '<a href="'+x.url+'">Go to module <i class="fa fa-arrow-alt-circle-right"></i></a>'+
+                    '</div>'+
+                    '</div>'+
+                    '</div>';
                 }
             });
-
             $('#HomeMenu').html(HomeMenu);
         }
     }
