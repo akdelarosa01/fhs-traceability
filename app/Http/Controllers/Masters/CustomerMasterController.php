@@ -161,4 +161,63 @@ class CustomerMasterController extends Controller
 
         return response()->json($data);
     }
+
+    public function delete_customer(Request $req)
+    {
+        $data = [
+			'msg' => 'Deleting customer has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            if (is_array($req->ids)) {
+                $update = DB::table('mcustomermaster')
+                            ->whereIn('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'update_date' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Customer was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
+            } else {
+                $update = DB::table('mcustomermaster')
+                            ->where('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'update_date' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Customer was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+        return response()->json($data);
+    }
 }

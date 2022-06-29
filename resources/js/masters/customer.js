@@ -107,15 +107,15 @@
             }
             return this;
         },
-        // delete_page: function(IDs) {
-        //     var self = this;
-        //     self.formAction = '/masters/page/delete-page';
-        //     self.jsonData = { _token: self.token, ids: IDs };
-        //     self.sendData().then(function() {
-        //         self.$tbl_customers.ajax.reload(null, false);
-        //     });
-        //     return this;
-        // },
+        delete_customers: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/customers/delete-customer';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_customers.ajax.reload(null, false);
+            });
+            return this;
+        },
         clearForm: function(inputs) {
             var self = this;
             $.each(inputs, function(i,x) {
@@ -216,15 +216,15 @@
             }
 
             if (chkArray.length > 0) {
-                _Customers.msg = "Are you sure you want to delete this page/s?";
+                _Customers.msg = "Are you sure you want to delete this customer/s?";
                 _Customers.confirmAction().then(function(approve) {
                     if (approve)
-                        _Customers.delete_page(chkArray);
+                        _Customers.delete_customers(chkArray);
 
                     $('.check_all_customers').prop('checked', false);
                 });
             } else {
-                _Customers.showWarning('Please select at least 1 page.');
+                _Customers.showWarning('Please select at least 1 customer.');
             }
         });
     });
