@@ -70,7 +70,7 @@
                         { data: 'parent_menu', name: 'parent_menu' },
                         { data: 'parent_name', name: 'parent_name' },
                         { data: 'parent_order', name: 'parent_order' },
-                        { data: 'order', name: 'order' },
+                        { data: 'page_order', name: 'page_order' },
                         { data: 'icon', name: 'icon' },
                         { data: 'create_user', name: 'create_user' },
                         { data: 'updated_at', name: 'updated_at' },

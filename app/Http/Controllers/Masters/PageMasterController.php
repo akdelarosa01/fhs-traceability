@@ -43,11 +43,11 @@ class PageMasterController extends Controller
                         DB::raw("p.page_name as page_name"),
                         DB::raw("p.page_label as page_label"),
                         DB::raw("p.url as url"),
-                        DB::raw("IF(p.has_sub > 0,'YES','NO') as has_sub"),
+                        DB::raw("case when p.has_sub > 0 then 'YES' else 'NO' end as has_sub"),
                         DB::raw("p.parent_menu as parent_menu"),
                         DB::raw("p.parent_name as parent_name"),
                         DB::raw("p.parent_order as parent_order"),
-                        "p.order as order",
+                        DB::raw("p.order as page_order"),
                         DB::raw("p.icon as icon"),
                         DB::raw("uu.username as create_user"),
                         DB::raw("p.updated_at as updated_at")
