@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletCustomer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
@@ -37,7 +38,25 @@ class CustomerMasterController extends Controller
     {
         $data = [];
         try {
-            $query = DB::select(DB::raw("CALL spBoxPallet_GetCustomerList()"));
+            $query = DB::table('pallet_customers as c')
+                        ->join('users as u', 'u.id', '=', 'c.create_user')
+                        ->where('c.is_deleted', 0)
+                        ->select([
+                            DB::raw('c.id as id'),
+                            DB::raw('c.customer_name as customer_name'),
+                            DB::raw('c.address as address'),
+                            DB::raw('c.contact_person1 as contact_person1'),
+                            DB::raw('c.contact_number1 as contact_number1'),
+                            DB::raw('c.extension1 as extension1'),
+                            DB::raw('c.email1 as email1'),
+                            DB::raw('c.contact_person2 as contact_person2'),
+                            DB::raw('c.contact_number2 as contact_number2'),
+                            DB::raw('c.extension2 as extension2'),
+                            DB::raw('c.email2 as email2'),
+                            DB::raw('c.is_deleted as is_deleted'),
+                            DB::raw('u.username as create_user'),
+                            DB::raw('c.updated_at as updated_at')
+                        ]);
 
             return Datatables::of($query)
                             ->addColumn('action', function($data) {
@@ -72,24 +91,20 @@ class CustomerMasterController extends Controller
             ]);
 
             try {
-                $update = DB::table('mcustomermaster')
-                            ->where('id', $req->id)
-                            ->update([
-                                'customer_name' => $req->customer_name,
-                                'address' => $req->address,
-                                'contact_person1' => $req->contact_person1,
-                                'contact_number1' => $req->contact_number1,
-                                'extension1' => $req->extension1,
-                                'email1' => $req->email1,
-                                'contact_person2' => $req->contact_person2,
-                                'contact_number2' => $req->contact_number2,
-                                'extension2' => $req->extension2,
-                                'email2' => $req->email2,
-                                'update_user' => Auth::user()->id,
-                                'update_date' => date('Y-m-d H:i:s')
-                            ]);
+                $customer = PalletCustomer::find($req->id);
+                $customer->customer_name = $req->customer_name;
+                $customer->address = $req->address;
+                $customer->contact_person1 = $req->contact_person1;
+                $customer->contact_number1 = $req->contact_number1;
+                $customer->extension1 = $req->extension1;
+                $customer->email1 = $req->email1;
+                $customer->contact_person2 = $req->contact_person2;
+                $customer->contact_number2 = $req->contact_number2;
+                $customer->extension2 = $req->extension2;
+                $customer->email2 = $req->email2;
+                $customer->update_user = Auth::user()->id;
     
-                if ($update) {
+                if ($customer->update()) {
                     $data = [
                         'msg' => 'Updating Customer Information was successful.',
                         'data' => [],
@@ -117,25 +132,22 @@ class CustomerMasterController extends Controller
             ]);
 
             try {
-                $insert = DB::table('mcustomermaster')
-                            ->insert([
-                                'customer_name' => $req->customer_name,
-                                'address' => $req->address,
-                                'contact_person1' => $req->contact_person1,
-                                'contact_number1' => $req->contact_number1,
-                                'extension1' => $req->extension1,
-                                'email1' => $req->email1,
-                                'contact_person2' => $req->contact_person2,
-                                'contact_number2' => $req->contact_number2,
-                                'extension2' => $req->extension2,
-                                'email2' => $req->email2,
-                                'create_user' => Auth::user()->id,
-                                'update_user' => Auth::user()->id,
-                                'create_date' => date('Y-m-d H:i:s'),
-                                'update_date' => date('Y-m-d H:i:s')
-                            ]);
+                $customer = new PalletCustomer();
+                
+                $customer->customer_name = $req->customer_name;
+                $customer->address = $req->address;
+                $customer->contact_person1 = $req->contact_person1;
+                $customer->contact_number1 = $req->contact_number1;
+                $customer->extension1 = $req->extension1;
+                $customer->email1 = $req->email1;
+                $customer->contact_person2 = $req->contact_person2;
+                $customer->contact_number2 = $req->contact_number2;
+                $customer->extension2 = $req->extension2;
+                $customer->email2 = $req->email2;
+                $customer->create_user = Auth::user()->id;
+                $customer->update_user = Auth::user()->id;
 
-                if ($insert) {
+                if ($customer->save()) {
                     $data = [
                         'msg' => 'Saving Customer Information was successful.',
                         'data' => [],
@@ -174,8 +186,7 @@ class CustomerMasterController extends Controller
 
         try {
             if (is_array($req->ids)) {
-                $update = DB::table('mcustomermaster')
-                            ->whereIn('id',$req->ids)
+                $update = PalletCustomer::whereIn('id',$req->ids)
                             ->update([
                                 'is_deleted' => 1,
                                 'update_user' => Auth::user()->id,
@@ -192,8 +203,7 @@ class CustomerMasterController extends Controller
                 }
                 
             } else {
-                $update = DB::table('mcustomermaster')
-                            ->where('id',$req->ids)
+                $update = PalletCustomer::where('id',$req->ids)
                             ->update([
                                 'is_deleted' => 1,
                                 'update_user' => Auth::user()->id,
