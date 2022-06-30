@@ -4586,7 +4586,7 @@ B. Synopsis: Real Time Script
             $('#parent_menu').val(data.parent_menu);
             $('#parent_name').val(data.parent_name);
             $('#parent_order').val(data.parent_order);
-            $('#order').val(data.order);
+            $('#order').val(data.page_order);
             $('#icon').val(data.icon);
 
             if (data.has_sub == "YES") {
