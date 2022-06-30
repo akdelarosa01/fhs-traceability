@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->integer('is_deleted')->default(0)->length(1);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
+            $table->index(['id', 'create_user']);
             $table->timestamps();
         });
     }

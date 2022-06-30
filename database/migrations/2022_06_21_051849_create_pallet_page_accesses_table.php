@@ -23,6 +23,7 @@ class CreatePalletPageAccessesTable extends Migration
             $table->integer('authorize')->default(0)->length(1);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
+            $table->index(['user_id', 'page_id']);
             $table->timestamps();
         });
     }
