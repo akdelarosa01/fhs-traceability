@@ -47,7 +47,7 @@ class PageMasterController extends Controller
                         DB::raw("p.parent_menu as parent_menu"),
                         DB::raw("p.parent_name as parent_name"),
                         DB::raw("p.parent_order as parent_order"),
-                        DB::raw("p.`order` as `order`"),
+                        "p.order as order",
                         DB::raw("p.icon as icon"),
                         DB::raw("uu.username as create_user"),
                         DB::raw("p.updated_at as updated_at")
