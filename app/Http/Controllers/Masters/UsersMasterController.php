@@ -47,7 +47,7 @@ class UsersMasterController extends Controller
                         DB::raw("u.lastname as lastname"),
                         DB::raw("u.email as email"),
                         DB::raw("uu.username as create_user"),
-                        DB::raw("DATE_FORMAT(u.updated_at,'%Y-%m-%d %H:%i:%s') as updated_at")
+                        DB::raw("u.updated_at as updated_at")
                     ])
                     ->join('users as uu','u.create_user','=','uu.id')
                     ->where('u.is_deleted',0);

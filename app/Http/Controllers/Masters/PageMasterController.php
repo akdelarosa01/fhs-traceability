@@ -50,7 +50,7 @@ class PageMasterController extends Controller
                         DB::raw("p.`order` as `order`"),
                         DB::raw("p.icon as icon"),
                         DB::raw("uu.username as create_user"),
-                        DB::raw("DATE_FORMAT(p.updated_at,'%Y-%m-%d %H:%i:%s') as updated_at")
+                        DB::raw("p.updated_at as updated_at")
                     ])
                     ->join('users as uu','p.create_user','=','uu.id')
                     ->where('p.is_deleted',0);
