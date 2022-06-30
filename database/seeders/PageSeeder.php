@@ -39,7 +39,7 @@ class PageSeeder extends Seeder
             'parent_menu' => 'MasterMaintenance',
             'parent_order' => 0,
             'order' => 1,
-            'icon' => 'fa fa-users',
+            'icon' => 'fa fa-user',
             'is_deleted' => 0,
         	'create_user' => 1,
         	'update_user' => 1
@@ -53,7 +53,7 @@ class PageSeeder extends Seeder
             'parent_menu' => 'MasterMaintenance',
             'parent_order' => 0,
             'order' => 2,
-            'icon' => 'fa fa-user',
+            'icon' => 'fa fa-file',
             'is_deleted' => 0,
         	'create_user' => 1,
         	'update_user' => 1
@@ -126,7 +126,7 @@ class PageSeeder extends Seeder
             'parent_menu' => '0',
             'parent_order' => 100,
             'order' => 100,
-            'icon' => 'fa fa-boxes-stacked',
+            'icon' => 'fas fa-box',
             'is_deleted' => 0,
         	'create_user' => 1,
         	'update_user' => 1
@@ -168,7 +168,7 @@ class PageSeeder extends Seeder
             'parent_menu' => '0',
             'parent_order' => 400,
             'order' => 400,
-            'icon' => 'fa fa-file-circle-check',
+            'icon' => 'fas fa-file',
             'is_deleted' => 0,
         	'create_user' => 1,
         	'update_user' => 1
