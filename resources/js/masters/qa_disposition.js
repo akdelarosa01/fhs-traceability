@@ -13,100 +13,92 @@
     }
     Disposition.prototype = {
         init: function() {},
-        // drawDatatables: function() {
-        //     var self = this;
-        //     if (!$.fn.DataTable.isDataTable('#tbl_dispositions')) {
-        //         self.$tbl_dispositions = $('#tbl_dispositions').DataTable({
-        //             processing: true,
-        //             ajax: {
-        //                 url: "/masters/qa-disposition/list",
-        //                 dataType: "JSON",
-        //                 error: function(response) {
-        //                     console.log(response);
-        //                 }
-        //             },
-        //             deferRender: true,
-        //             language: {
-        //                 aria: {
-        //                     sortAscending: ": activate to sort column ascending",
-        //                     sortDescending: ": activate to sort column descending"
-        //                 },
-        //                 emptyTable: "No data available in table",
-        //                 info: "Showing _START_ to _END_ of _TOTAL_ records",
-        //                 infoEmpty: "No records found",
-        //                 infoFiltered: "(filtered1 from _MAX_ total records)",
-        //                 lengthMenu: "Show _MENU_",
-        //                 search: "Search:",
-        //                 zeroRecords: "No matching records found",
-        //                 paginate: {
-        //                     "previous": "Prev",
-        //                     "next": "Next",
-        //                     "last": "Last",
-        //                     "first": "First"
-        //                 }
-        //             },
-        //             pageLength: 10,
-        //             order: [
-        //                 [13, "desc"]
-        //             ],
-        //             columns: [{
-        //                     data: function(x) {
-        //                         return '<input type="checkbox" class="table-checkbox check_disposition" value="' + x.id + '">';
-        //                     },
-        //                     name: 'id',
-        //                     searchable: false,
-        //                     orderable: false
-        //                 },
-        //                 {
-        //                     data: 'action',
-        //                     name: 'action',
-        //                     orderable: false,
-        //                     searchable: false
-        //                 },
-        //                 { data: 'disposition_name', name: 'disposition_name' },
-        //                 { data: 'address', name: 'address' },
-        //                 { data: 'contact_person1', name: 'contact_person1' },
-        //                 { data: 'contact_number1', name: 'contact_number1' },
-        //                 { data: 'extension1', name: 'extension1' },
-        //                 { data: 'email1', name: 'email1' },
-        //                 { data: 'contact_person2', name: 'contact_person2' },
-        //                 { data: 'contact_number2', name: 'contact_number2' },
-        //                 { data: 'extension2', name: 'extension2' },
-        //                 { data: 'email2', name: 'email2' },
-        //                 { data: 'create_user', name: 'create_user' },
-        //                 { data: 'updated_at', name: 'updated_at' },
-        //             ],
-        //             rowCallback: function(row, data) {
-        //                 var td = $(row).find('td:first .check_disposition');
-        //                 if (td.is(':checked')) {
-        //                     self.cust_checked++;
-        //                 }
-        //             },
-        //             createdRow: function(row, data, dataIndex) {
-        //                 if (data.is_deleted === 1) {
-        //                     $(row).css('background-color', '#ff6266');
-        //                     $(row).css('color', '#fff');
-        //                 }
-        //             },
-        //             initComplete: function() {
-        //                 $('.check_all_dispositions').prop('checked', false);
-        //             },
-        //             fnDrawCallback: function() {
-        //                 if (self.cust_checked > 9) {
-        //                     $('.check_all_dispositions').prop('checked', true);
-        //                 } else {
-        //                     $('.check_all_dispositions').prop('checked', false);
-        //                 }
-        //                 self.checkCheckboxesInTable('#tbl_dispositions', '.check_all_dispositions', '.check_disposition');
-        //                 self.checkAllCheckboxesInTable('#tbl_dispositions', '.check_all_dispositions', '.check_disposition');
-        //                 $("#tbl_dispositions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-        //             },
-        //         }).on('page.dt', function() {
-        //             self.cust_checked = 0;
-        //         });
-        //     }
-        //     return this;
-        // },
+        drawDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_dispositions')) {
+                self.$tbl_dispositions = $('#tbl_dispositions').DataTable({
+                    processing: true,
+                    ajax: {
+                        url: "/masters/qa-disposition/list",
+                        dataType: "JSON",
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    deferRender: true,
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No data available in table",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    pageLength: 10,
+                    order: [
+                        [5, "desc"]
+                    ],
+                    columns: [{
+                            data: function(x) {
+                                return '<input type="checkbox" class="table-checkbox check_disposition" value="' + x.id + '">';
+                            },
+                            name: 'id',
+                            searchable: false,
+                            orderable: false
+                        },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        },
+                        { data: 'disposition', name: 'disposition' },
+                        { data: 'color_hex', name: 'color_hex' },
+                        { data: 'create_user', name: 'create_user' },
+                        { data: 'updated_at', name: 'updated_at' },
+                    ],
+                    rowCallback: function(row, data) {
+                        var td = $(row).find('td:first .check_disposition');
+                        if (td.is(':checked')) {
+                            self.cust_checked++;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                        if (data.is_deleted === 1) {
+                            $(row).css('background-color', '#ff6266');
+                            $(row).css('color', '#fff');
+                        }
+                    },
+                    initComplete: function() {
+                        $('.check_all_dispositions').prop('checked', false);
+                    },
+                    fnDrawCallback: function() {
+                        if (self.cust_checked > 9) {
+                            $('.check_all_dispositions').prop('checked', true);
+                        } else {
+                            $('.check_all_dispositions').prop('checked', false);
+                        }
+                        self.checkCheckboxesInTable('#tbl_dispositions', '.check_all_dispositions', '.check_disposition');
+                        self.checkAllCheckboxesInTable('#tbl_dispositions', '.check_all_dispositions', '.check_disposition');
+                        $("#tbl_dispositions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                    },
+                }).on('page.dt', function() {
+                    self.cust_checked = 0;
+                });
+            }
+            return this;
+        },
         // delete_dispositions: function(IDs) {
         //     var self = this;
         //     self.formAction = '/masters/dispositions/delete-disposition';
@@ -129,7 +121,9 @@
 
     $(document).ready(function() {
         var _Disposition = Disposition();
-        // _Disposition.drawDatatables();
+        _Disposition.drawDatatables();
+
+        $('#color_hex').colorpicker();
 
         // $('#btn_add_dispositions').on('click', function() {
         //     var inputs = $('.clear').map(function() {

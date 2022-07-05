@@ -109,11 +109,13 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
+        "resources/plugins/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js",
         "resources/js/masters/qa_disposition.js"
     ], "public/js/masters/qa_disposition.js")
     .styles([
         "public/css/theme.css",
         "public/css/trx.css",
+        "resources/plugins/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css",
     ], "public/css/masters/qa_disposition.css")
     .scripts([
         "public/js/theme.js",
