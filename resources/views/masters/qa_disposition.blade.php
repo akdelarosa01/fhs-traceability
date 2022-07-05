@@ -24,10 +24,19 @@ Q.A. Disposition Master
 			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
 				<div class="input-group input-group-sm mb-2">
 					<div class="input-group-prepend">
-						<span class="input-group-text" style="min-width: 125px;">Disposition</span>
+						<span class="input-group-text">Disposition</span>
 					</div>
 					<input type="text" class="form-control form-control-sm clear" id="disposition" name="disposition" placeholder="Disposition" autocomplete="off">
 					<div id="disposition_feedback"></div>
+				</div>
+			</div>
+			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
+				<div class="input-group input-group-sm mb-2">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Color</span>
+					</div>
+					<input type="text" class="form-control form-control-sm clear" id="color_hex" name="color_hex" placeholder="Color" autocomplete="off">
+					<div id="color_hex_feedback"></div>
 				</div>
 			</div>
 			<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
@@ -53,6 +62,7 @@ Q.A. Disposition Master
 							</th>
 							<th width="30px"></th>
 							<th>Disposition</th>
+							<th>Color</th>
 							<th>Added By</th>
 							<th>Update Date</th>
 						</tr>
