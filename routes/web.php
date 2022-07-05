@@ -55,6 +55,7 @@ Route::group(['prefix' => 'masters'], function () {
 
     Route::group(['prefix' => 'disposition-reasons'], function () {
         Route::get('/', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'index'])->name('masters.disposition-reasons');
+        Route::get('/get-dispositions', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'get_dispositions'])->name('masters.disposition-reasons.get-dispositions');
     });
 
     Route::group(['prefix' => 'model-matrix'], function () {

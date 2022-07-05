@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
-use App\Models\QaDisposition;
+use App\Models\PalletQaDisposition;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,11 +35,11 @@ class QADispositionMasterController extends Controller
         ]);
     }
 
-    public function disposition_list(Request $request)
+    public function disposition_list()
     {
         $data = [];
         try {
-            $query = DB::table('qa_dispositions as d')->select([
+            $query = DB::table('pallet_qa_dispositions as d')->select([
                         DB::raw("d.id as id"),
                         DB::raw("d.disposition as disposition"),
                         DB::raw("d.color_hex as color_hex"),
@@ -82,7 +82,7 @@ class QADispositionMasterController extends Controller
             ]);
 
             try {
-                $qa = QaDisposition::find($req->id);
+                $qa = PalletQaDisposition::find($req->id);
                 $qa->disposition = $req->disposition;
                 $qa->color_hex = $req->color_hex;
                 $qa->update_user = Auth::user()->id;
@@ -114,7 +114,7 @@ class QADispositionMasterController extends Controller
                     'required',
                     'string',
                     'min:1',
-                    Rule::unique('qa_dispositions')->where(function ($query) {
+                    Rule::unique('pallet_qa_dispositions')->where(function ($query) {
                         return $query->where('is_deleted', 0);
                     })
                 ],
@@ -122,7 +122,7 @@ class QADispositionMasterController extends Controller
             ]);
 
             try {
-                $qa = new QaDisposition();
+                $qa = new PalletQaDisposition();
                 
                 $qa->disposition = $req->disposition;
                 $qa->color_hex = $req->color_hex;
@@ -168,7 +168,7 @@ class QADispositionMasterController extends Controller
 
         try {
             if (is_array($req->ids)) {
-                $update = QaDisposition::whereIn('id',$req->ids)
+                $update = PalletQaDisposition::whereIn('id',$req->ids)
                             ->update([
                                 'is_deleted' => 1,
                                 'update_user' => Auth::user()->id,
@@ -185,7 +185,7 @@ class QADispositionMasterController extends Controller
                 }
                 
             } else {
-                $update = QaDisposition::where('id',$req->ids)
+                $update = PalletQaDisposition::where('id',$req->ids)
                             ->update([
                                 'is_deleted' => 1,
                                 'update_user' => Auth::user()->id,

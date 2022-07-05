@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQaDispositionsTable extends Migration
+class CreatePalletQaDispositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateQaDispositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('qa_dispositions', function (Blueprint $table) {
+        Schema::create('pallet_qa_dispositions', function (Blueprint $table) {
             $table->id();
             $table->string('disposition');
             $table->string('color_hex');
@@ -31,6 +31,6 @@ class CreateQaDispositionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('qa_dispositions');
+        Schema::dropIfExists('pallet_qa_dispositions');
     }
 }
