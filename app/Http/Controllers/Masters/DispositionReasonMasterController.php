@@ -35,6 +35,36 @@ class DispositionReasonMasterController extends Controller
         ]);
     }
 
+    public function reason_list()
+    {
+        $data = [];
+        try {
+            $query = DB::table('pallet_disposition_reasons as r')->select([
+                        DB::raw("r.id as id"),
+                        DB::raw("d.id as disposition_id"),
+                        DB::raw("d.disposition as disposition"),
+                        DB::raw("r.reason as reason"),
+                        DB::raw("uu.username as create_user"),
+                        DB::raw("r.updated_at as updated_at")
+                    ])
+                    ->join('users as uu','r.create_user','=','uu.id')
+                    ->join('pallet_qa_dispositions as d','r.disposition','=','d.id')
+                    ->where('r.is_deleted',0);
+
+            return Datatables::of($query)
+                            ->addColumn('action', function($data) {
+                                return '<button class="btn btn-sm btn-primary btn_edit_reason">
+                                            <i class="fa fa-edit"></i>
+                                        </button>';
+                            })
+                            ->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return $data;
+    }
+
     public function get_dispositions(Request $req)
 	{
         $results = [];
@@ -159,6 +189,63 @@ class DispositionReasonMasterController extends Controller
             
         }
 
+        return response()->json($data);
+    }
+
+    public function delete_reason(Request $req)
+    {
+        $data = [
+			'msg' => 'Deleting Reason has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            if (is_array($req->ids)) {
+                $update = PalletDispositionReason::whereIn('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Reason was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
+            } else {
+                $update = PalletDispositionReason::where('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Reason was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
         return response()->json($data);
     }
 }
