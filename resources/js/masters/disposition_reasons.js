@@ -99,6 +99,15 @@
             }
             return this;
         },
+        delete_reasons: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/disposition-reasons/deleted-reason';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_reasons.ajax.reload(null, false);
+            });
+            return this;
+        },
         clearForm: function(inputs) {
             var self = this;
             $('#disposition').val(null).trigger('change');
@@ -184,6 +193,46 @@
             }).always(function() {
                 $('#loading_modal').modal('hide');
             });
+        });
+
+        $('#tbl_reasons').on('click', '.btn_edit_reason', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Reason.clearForm(inputs);
+
+            var data = $('#tbl_reasons').DataTable().row($(this).parents('tr')).data();
+
+            $('#id').val(data.id);
+
+            var $disposition = $("<option selected='selected'></option>").val(data.disposition_id).text(data.disposition);
+            $("#disposition").append($disposition).trigger('change');
+
+            $('#reason').val(data.reason);
+        });
+
+        $('#btn_delete_reasons').on('click', function() {
+            var chkArray = [];
+            var table = _Reason.$tbl_reasons;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                }
+            }
+
+            if (chkArray.length > 0) {
+                _Reason.msg = "Are you sure you want to delete this reason/s?";
+                _Reason.confirmAction().then(function(approve) {
+                    if (approve)
+                        _Reason.delete_reasons(chkArray);
+
+                    $('.check_all_reasons').prop('checked', false);
+                });
+            } else {
+                _Reason.showWarning('Please select at least 1 reason.');
+            }
         });
     });
 })();

@@ -58,6 +58,7 @@ Route::group(['prefix' => 'masters'], function () {
         Route::get('/list', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'reason_list'])->name('masters.disposition-reasons.list');
         Route::get('/get-dispositions', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'get_dispositions'])->name('masters.disposition-reasons.get-dispositions');
         Route::post('/save-reason', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'save_reason'])->name('masters.disposition-reasons.save');
+        Route::post('/delete-reason', [App\Http\Controllers\Masters\DispositionReasonMasterController::class, 'delete_reason'])->name('masters.disposition-reasons.delete');
     });
 
     Route::group(['prefix' => 'model-matrix'], function () {
