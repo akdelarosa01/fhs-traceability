@@ -8,8 +8,8 @@ use App\Common\Helpers;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
 use App\Models\PalletDispositionReason;
+use App\Models\PalletQaDisposition;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class DispositionReasonMasterController extends Controller
 {
@@ -84,17 +84,14 @@ class DispositionReasonMasterController extends Controller
             }
 
             if ($sql_query == null || $sql_query == "") {
+                $results = PalletQaDisposition::select('id as id','disposition as text')->where('is_deleted',0);
 
                 if ($val !== "") {
-                    $where = " AND disposition LIKE '%" . $val . "%'";
+                    $results->where('disposition','like',"%" . $val . "%");
                 }
-
-                $sql_query = "SELECT DISTINCT id as id,  disposition as `text`
-                                FROM pallet_qa_dispositions 
-                                WHERE is_deleted = 0 " . $where;
             }
             
-            $results = DB::select($sql_query);
+            $results = $results->get();
 
         } catch(\Throwable $th) {
             return [
