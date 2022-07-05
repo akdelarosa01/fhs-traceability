@@ -17,7 +17,9 @@
             var self = this;
             $.each(inputs, function(i,x) {
                 $('#'+x).val('');
-                
+                if (i == 'disposition') {
+                    $('#'+x).empty().trigger('change')
+                }
                 self.hideInputErrors(x);
             });
         }
