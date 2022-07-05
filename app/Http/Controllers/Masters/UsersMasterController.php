@@ -12,6 +12,7 @@ use Yajra\Datatables\Datatables;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class UsersMasterController extends Controller
 {
@@ -123,7 +124,15 @@ class UsersMasterController extends Controller
             
         } else {
             $this->validate($req, [
-                'username' => 'required|string|max:50|min:1|unique:users,username,is_deleted',
+                'username' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    'min:1',
+                    Rule::unique('users')->where(function ($query) {
+                        return $query->where('is_deleted', 0);
+                    })
+                ],
                 'firstname' => 'required|string|max:50|min:1',
                 'lastname' => 'required|string|max:50|min:1',
                 'email' => 'unique:users|string',
