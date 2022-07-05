@@ -35,6 +35,36 @@ class DispositionReasonMasterController extends Controller
         ]);
     }
 
+    public function reason_list()
+    {
+        $data = [];
+        try {
+            $query = DB::table('pallet_disposition_reasons as r')->select([
+                        DB::raw("r.id as id"),
+                        DB::raw("d.id as disposition_id"),
+                        DB::raw("d.disposition as disposition"),
+                        DB::raw("r.reason as reason"),
+                        DB::raw("uu.username as create_user"),
+                        DB::raw("r.updated_at as updated_at")
+                    ])
+                    ->join('users as uu','r.create_user','=','uu.id')
+                    ->join('pallet_qa_dispositions as d','r.disposition','=','d.id')
+                    ->where('r.is_deleted',0);
+
+            return Datatables::of($query)
+                            ->addColumn('action', function($data) {
+                                return '<button class="btn btn-sm btn-primary btn_edit_reason">
+                                            <i class="fa fa-edit"></i>
+                                        </button>';
+                            })
+                            ->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return $data;
+    }
+
     public function get_dispositions(Request $req)
 	{
         $results = [];
