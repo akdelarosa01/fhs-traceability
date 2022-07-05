@@ -23,7 +23,7 @@ Disposition Reasons Master
 
 		<div class="row mb-3">
 			<div class="col-4">
-				<form action="/masters/qa-disposition/save-disposition" method="post" id="frm_reasons">
+				<form action="/masters/disposition-reasons/save-reason" method="post" id="frm_reasons">
 					@csrf
 					<input type="hidden" class="clear" id="id" name="id" value="">
 
@@ -42,6 +42,7 @@ Disposition Reasons Master
 					<div class="row mb-2">
 						<div class="col-12">
 							<textarea name="reason" id="reason" rows="5" class="form-control form-control-sm clear" placeholder="Reason..." style="resize:none;"></textarea>
+							<div id="reason_feedback"></div>
 						</div>
 					</div>
 
