@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Common\Helpers;
 use Yajra\Datatables\Datatables;
 use Illuminate\Support\Facades\DB;
+use App\Models\PalletDispositionReason;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class DispositionReasonMasterController extends Controller
 {
@@ -72,4 +75,90 @@ class DispositionReasonMasterController extends Controller
         
         return $results;
 	}
+
+    public function save_reason(Request $req)
+    {
+        $inputs = $this->_helpers->get_inputs($req->all());
+        $data = [
+			'msg' => 'Saving Reason has failed.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'disposition' => 'required|numeric',
+                'reason' => 'required|string|min:1'
+            ]);
+
+            try {
+                $qa = PalletDispositionReason::find($req->id);
+                $qa->disposition = $req->disposition;
+                $qa->reason = $req->reason;
+                $qa->update_user = Auth::user()->id;
+    
+                if ($qa->update()) {
+                    $data = [
+                        'msg' => 'Updating Reason was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+            
+        } else {
+            $this->validate($req, [
+                'disposition' => 'required|numeric',
+                'reason' => 'required|string|min:1'
+            ]);
+
+            try {
+                $qa = new PalletDispositionReason();
+                
+                $qa->disposition = $req->disposition;
+                $qa->reason = $req->reason;
+                $qa->create_user = Auth::user()->id;
+                $qa->update_user = Auth::user()->id;
+
+                if ($qa->save()) {
+                    $data = [
+                        'msg' => 'Saving Disposition was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+
+            
+        }
+
+        return response()->json($data);
+    }
 }
