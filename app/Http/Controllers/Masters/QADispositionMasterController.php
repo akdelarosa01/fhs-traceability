@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use App\Models\QaDisposition;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
@@ -59,5 +60,91 @@ class QADispositionMasterController extends Controller
         }
 
         return $data;
+    }
+
+    public function save_disposition(Request $req)
+    {
+        $inputs = $this->_helpers->get_inputs($req->all());
+        $data = [
+			'msg' => 'Saving Disposition has failed.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'disposition' => 'required|string|min:1',
+                'color_hex' => 'required|string|min:1'
+            ]);
+
+            try {
+                $qa = QaDisposition::find($req->id);
+                $qa->disposition = $req->disposition;
+                $qa->color_hex = $req->color_hex;
+                $qa->update_user = Auth::user()->id;
+    
+                if ($qa->update()) {
+                    $data = [
+                        'msg' => 'Updating Disposition was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+            
+        } else {
+            $this->validate($req, [
+                'disposition' => 'required|string|min:1|unique:qa_dispositions,disposition,is_deleted',
+                'color_hex' => 'required|string|min:1'
+            ]);
+
+            try {
+                $qa = new QaDisposition();
+                
+                $qa->disposition = $req->disposition;
+                $qa->color_hex = $req->color_hex;
+                $qa->create_user = Auth::user()->id;
+                $qa->update_user = Auth::user()->id;
+
+                if ($qa->save()) {
+                    $data = [
+                        'msg' => 'Saving Disposition was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+
+            
+        }
+
+        return response()->json($data);
     }
 }

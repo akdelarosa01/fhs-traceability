@@ -19,38 +19,46 @@ Q.A. Disposition Master
 		</div>
 	</div>
 	<div class="panel-body">
-		
-		<div class="row mb-3 justify-content-center">
-			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
-				<div class="input-group input-group-sm mb-2">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Disposition</span>
+		<form action="/masters/qa-disposition/save-disposition" method="post" id="frm_dispositions">
+			@csrf
+			<input type="hidden" class="clear" id="id" name="id" value="">
+
+			<div class="row mb-3 justify-content-center">
+				<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Disposition</span>
+						</div>
+						<input type="text" class="form-control form-control-sm clear" id="disposition" name="disposition" placeholder="Disposition" autocomplete="off">
+						<div id="disposition_feedback"></div>
 					</div>
-					<input type="text" class="form-control form-control-sm clear" id="disposition" name="disposition" placeholder="Disposition" autocomplete="off">
-					<div id="disposition_feedback"></div>
+				</div>
+				<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
+					<div class="input-group input-group-sm mb-2">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Color</span>
+						</div>
+						<input type="text" class="form-control form-control-sm clear" id="color_hex" name="color_hex" placeholder="Color" autocomplete="off">
+						<span class="input-group-append">
+							<span class="input-group-text colorpicker-input-addon"><i></i></span>
+						  </span>
+						<div id="color_hex_feedback"></div>
+					</div>
+				</div>
+				<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
+					<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_dispositions">
+						<i class="fa fa-save"></i> Save Disposition
+					</button>
+				</div>
+			
+				<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
+					<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_dispositions">
+						<i class="fa fa-user-times"></i> Delete Disposition
+					</button>
 				</div>
 			</div>
-			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-1">
-				<div class="input-group input-group-sm mb-2">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Color</span>
-					</div>
-					<input type="text" class="form-control form-control-sm clear" id="color_hex" name="color_hex" placeholder="Color" autocomplete="off">
-					<div id="color_hex_feedback"></div>
-				</div>
-			</div>
-			<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
-				<button type="button" class="btn btn-sm btn-success btn-block" id="btn_save_dispositions">
-					<i class="fa fa-save"></i> Save Disposition
-				</button>
-			</div>
+		</form>
 		
-			<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
-				<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_dispositions">
-					<i class="fa fa-user-times"></i> Delete Disposition
-				</button>
-			</div>
-		</div>
 
 		<div class="row justify-content-center">
 			<div class="col-xl-8 col-lg-8 col-md-10 col-sm-12 col-xs-12">
