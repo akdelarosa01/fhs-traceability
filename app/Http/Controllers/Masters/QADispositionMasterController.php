@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use App\Models\QaDisposition;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
@@ -109,7 +110,14 @@ class QADispositionMasterController extends Controller
             
         } else {
             $this->validate($req, [
-                'disposition' => 'required|string|min:1|unique:qa_dispositions,disposition,is_deleted',
+                'disposition' => [
+                    'required',
+                    'string',
+                    'min:1',
+                    Rule::unique('qa_dispositions')->where(function ($query) {
+                        return $query->where('is_deleted', 0);
+                    })
+                ],
                 'color_hex' => 'required|string|min:1'
             ]);
 
@@ -145,6 +153,63 @@ class QADispositionMasterController extends Controller
             
         }
 
+        return response()->json($data);
+    }
+
+    public function delete_disposition(Request $req)
+    {
+        $data = [
+			'msg' => 'Deleting Disposition has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            if (is_array($req->ids)) {
+                $update = QaDisposition::whereIn('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Disposition was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
+            } else {
+                $update = QaDisposition::where('id',$req->ids)
+                            ->update([
+                                'is_deleted' => 1,
+                                'update_user' => Auth::user()->id,
+                                'updated_at' => date('Y-m-d H:i:s')
+                            ]);
+                if ($update) {
+                    $data = [
+                        'msg' => "Disposition was successfully deleted.",
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
         return response()->json($data);
     }
 }

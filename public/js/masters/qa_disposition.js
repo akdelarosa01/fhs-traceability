@@ -4509,15 +4509,15 @@ B. Synopsis: Real Time Script
             }
             return false;
         },
-        // delete_dispositions: function(IDs) {
-        //     var self = this;
-        //     self.formAction = '/masters/dispositions/delete-disposition';
-        //     self.jsonData = { _token: self.token, ids: IDs };
-        //     self.sendData().then(function() {
-        //         self.$tbl_dispositions.ajax.reload(null, false);
-        //     });
-        //     return this;
-        // },
+        delete_dispositions: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/qa-disposition/delete-disposition';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_dispositions.ajax.reload(null, false);
+            });
+            return this;
+        },
         clearForm: function(inputs) {
             var self = this;
             $.each(inputs, function(i,x) {
@@ -4599,29 +4599,29 @@ B. Synopsis: Real Time Script
             $('#color_hex').val(data.color_hex).trigger('change');
         });
 
-        // $('#btn_delete_dispositions').on('click', function() {
-        //     var chkArray = [];
-        //     var table = _Disposition.$tbl_dispositions;
+        $('#btn_delete_dispositions').on('click', function() {
+            var chkArray = [];
+            var table = _Disposition.$tbl_dispositions;
 
-        //     for (var x = 0; x < table.context[0].aoData.length; x++) {
-        //         var DataRow = table.context[0].aoData[x];
-        //         if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-        //             chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-        //         }
-        //     }
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                }
+            }
 
-        //     if (chkArray.length > 0) {
-        //         _Disposition.msg = "Are you sure you want to delete this disposition/s?";
-        //         _Disposition.confirmAction().then(function(approve) {
-        //             if (approve)
-        //                 _Disposition.delete_dispositions(chkArray);
+            if (chkArray.length > 0) {
+                _Disposition.msg = "Are you sure you want to delete this disposition/s?";
+                _Disposition.confirmAction().then(function(approve) {
+                    if (approve)
+                        _Disposition.delete_dispositions(chkArray);
 
-        //             $('.check_all_dispositions').prop('checked', false);
-        //         });
-        //     } else {
-        //         _Disposition.showWarning('Please select at least 1 disposition.');
-        //     }
-        // });
+                    $('.check_all_dispositions').prop('checked', false);
+                });
+            } else {
+                _Disposition.showWarning('Please select at least 1 disposition.');
+            }
+        });
     });
 })();
 
