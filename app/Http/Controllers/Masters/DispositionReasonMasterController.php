@@ -57,7 +57,7 @@ class DispositionReasonMasterController extends Controller
                 }
 
                 $sql_query = "SELECT DISTINCT id as id,  disposition as `text`
-                                FROM qa_dispositions 
+                                FROM pallet_qa_dispositions 
                                 WHERE is_deleted = 0 " . $where;
             }
             
