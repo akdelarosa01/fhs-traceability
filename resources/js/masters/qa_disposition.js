@@ -99,6 +99,13 @@
             }
             return this;
         },
+        checkIfHex: function(color_hex) {
+            var color =/^#([0-9a-f]{3}){1,2}$/i;
+            if (color.test(color_hex)) {
+                return true;
+            }
+            return false;
+        },
         // delete_dispositions: function(IDs) {
         //     var self = this;
         //     self.formAction = '/masters/dispositions/delete-disposition';
@@ -108,13 +115,13 @@
         //     });
         //     return this;
         // },
-        // clearForm: function(inputs) {
-        //     var self = this;
-        //     $.each(inputs, function(i,x) {
-        //         $('#'+x).val('');
-        //         self.hideInputErrors(x);
-        //     });
-        // }
+        clearForm: function(inputs) {
+            var self = this;
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
+            });
+        }
     }
     Disposition.init.prototype = $.extend(Disposition.prototype, $D.init.prototype);
     Disposition.init.prototype = Disposition.prototype;
@@ -125,78 +132,69 @@
 
         $('#color_hex').colorpicker();
 
-        // $('#btn_add_dispositions').on('click', function() {
-        //     var inputs = $('.clear').map(function() {
-        //         return this.name;
-        //     });
-        //     _Disposition.clearForm(inputs);
-        //     $('#modal_form_title').html('Add disposition');
-        //     $('#modal_dispositions').modal('show');
-        // });
+        $('#color_hex').on('colorpickerChange', function(event) {
+            $('.colorpicker-input-addon i').css('background-color', event.color.toString());
+          });
 
-        // $('#frm_dispositions').on('submit', function(e) {
-        //     $('#loading_modal').modal('show');
-        //     e.preventDefault();
-        //     var data = $(this).serializeArray();
-        //     $.ajax({
-        //         url: $(this).attr('action'),
-        //         type: 'POST',
-        //         dataType: 'JSON',
-        //         data: data
-        //     }).done(function(response, textStatus, xhr) {
-        //         console.log(response);
-        //         console.log(response.inputs);
-        //         if (textStatus) {
-        //             switch (response.status) {
-        //                 case "failed":
-        //                     _Disposition.showWarning(response.msg);
-        //                     break;
-        //                 case "error":
-        //                     _Disposition.ErrorMsg(response.msg);
-        //                     break;
-        //                 default:
-        //                     _Disposition.clearForm(response.inputs);
-        //                     _Disposition.$tbl_dispositions.ajax.reload();
-        //                     _Disposition.showSuccess(response.msg);
-        //                     break;
-        //             }
-        //             _Disposition.id = 0;
-        //         }
-        //     }).fail(function(xhr, textStatus, errorThrown) {
-        //         var errors = xhr.responseJSON.errors;
-        //         _Disposition.showInputErrors(errors);
+        $('#frm_dispositions').on('submit', function(e) {
+            e.preventDefault();
+            var checkColor = _Disposition.checkIfHex($('#color_hex').val());
 
-        //         if (errorThrown == "Internal Server Error") {
-        //             _Disposition.ErrorMsg(xhr);
-        //         }
-        //     }).always(function() {
-        //         $('#loading_modal').modal('hide');
-        //     });
-        // });
+            if (checkColor) {
+                $('#loading_modal').modal('show');
+                
+                var data = $(this).serializeArray();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data
+                }).done(function(response, textStatus, xhr) {
+                    console.log(response);
+                    console.log(response.inputs);
+                    if (textStatus) {
+                        switch (response.status) {
+                            case "failed":
+                                _Disposition.showWarning(response.msg);
+                                break;
+                            case "error":
+                                _Disposition.ErrorMsg(response.msg);
+                                break;
+                            default:
+                                _Disposition.clearForm(response.inputs);
+                                _Disposition.$tbl_dispositions.ajax.reload();
+                                _Disposition.showSuccess(response.msg);
+                                break;
+                        }
+                        _Disposition.id = 0;
+                    }
+                }).fail(function(xhr, textStatus, errorThrown) {
+                    var errors = xhr.responseJSON.errors;
+                    _Disposition.showInputErrors(errors);
 
-        // $('#tbl_dispositions').on('click', '.btn_edit_disposition', function() {
-        //     var inputs = $('.clear').map(function() {
-        //         return this.name;
-        //     });
-        //     _Disposition.clearForm(inputs);
+                    if (errorThrown == "Internal Server Error") {
+                        _Disposition.ErrorMsg(xhr);
+                    }
+                }).always(function() {
+                    $('#loading_modal').modal('hide');
+                });
+            } else {
+                _Disposition.showWarning("Please use hexed format color code.");
+            }
+        });
 
-        //     var data = $('#tbl_dispositions').DataTable().row($(this).parents('tr')).data();
+        $('#tbl_dispositions').on('click', '.btn_edit_disposition', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Disposition.clearForm(inputs);
 
-        //     $('#id').val(data.id);
-        //     $('#disposition_name').val(data.disposition_name);
-        //     $('#address').val(data.address);
-        //     $('#contact_person1').val(data.contact_person1);
-        //     $('#contact_number1').val(data.contact_number1);
-        //     $('#extension1').val(data.extension1);
-        //     $('#email1').val(data.email1);
-        //     $('#contact_person2').val(data.contact_person2);
-        //     $('#contact_number2').val(data.contact_number2);
-        //     $('#extension2').val(data.extension2);
-        //     $('#email2').val(data.email2);
+            var data = $('#tbl_dispositions').DataTable().row($(this).parents('tr')).data();
 
-        //     $('#modal_form_title').html('Edit disposition');
-        //     $('#modal_dispositions').modal('show');
-        // });
+            $('#id').val(data.id);
+            $('#disposition').val(data.disposition);
+            $('#color_hex').val(data.color_hex).trigger('change');
+        });
 
         // $('#btn_delete_dispositions').on('click', function() {
         //     var chkArray = [];
