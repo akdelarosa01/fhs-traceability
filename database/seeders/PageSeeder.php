@@ -128,7 +128,7 @@ class PageSeeder extends Seeder
         PalletPage::create([
         	'page_name' => 'BoxAndPalletApplication',
         	'page_label' => 'Box And Pallet',
-        	'url' => '/transaction/box-and-pallet',
+        	'url' => '/transactions/box-and-pallet',
         	'has_sub' => 0,
             'parent_menu' => '0',
             'parent_name' => '0',
@@ -143,7 +143,7 @@ class PageSeeder extends Seeder
         PalletPage::create([
         	'page_name' => 'QAInspection',
         	'page_label' => 'QA Inspection',
-        	'url' => '/transaction/qa-inspection',
+        	'url' => '/transactions/qa-inspection',
         	'has_sub' => 0,
             'parent_menu' => '0',
             'parent_name' => '0',
@@ -158,7 +158,7 @@ class PageSeeder extends Seeder
         PalletPage::create([
         	'page_name' => 'Warehouse',
         	'page_label' => 'Warehouse',
-        	'url' => '/transaction/warehouse',
+        	'url' => '/transactions/warehouse',
         	'has_sub' => 0,
             'parent_menu' => '0',
             'parent_name' => '0',
