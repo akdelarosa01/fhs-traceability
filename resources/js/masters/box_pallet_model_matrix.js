@@ -66,6 +66,7 @@
                         { data: 'model', name: 'model' },
                         { data: 'model_name', name: 'model_name' },
                         { data: 'box_count_per_pallet', name: 'box_count_per_pallet' },
+                        { data: 'box_count_to_inspect', name: 'box_count_to_inspect' },
                         { data: 'create_user', name: 'create_user' },
                         { data: 'updated_at', name: 'updated_at' },
                     ],
@@ -177,6 +178,7 @@
             $('#model').val(data.model);
             $('#model_name').val(data.model_name);
             $('#box_count_per_pallet').val(data.box_count_per_pallet);
+            $('#box_count_to_inspect').val(data.box_count_to_inspect);
         });
 
         $('#btn_delete_models').on('click', function() {

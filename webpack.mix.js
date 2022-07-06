@@ -23,6 +23,7 @@ const layoutJS = [
     "public/js/app.js",
     "resources/js/app.min.js",
     "resources/plugins/moment/min/moment.min.js",
+    "resources/plugins/slimscroll/jquery.slimscroll.min.js",
     "resources/js/theme/default.min.js",
     "resources/plugins/gritter/js/jquery.gritter.js",
     "resources/plugins/datatables.net/js/jquery.dataTables.min.js",
@@ -162,11 +163,14 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
+        "resources/plugins/select2/dist/js/select2.full.min.js",
         "resources/js/transactions/box_and_pallet_application.js"
     ], "public/js/transactions/box_and_pallet_application.js")
     .styles([
         "public/css/theme.css",
         "public/css/trx.css",
+        "resources/plugins/select2/dist/css/select2.min.css",
+        "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/box_and_pallet_application.css")
     .scripts([
         "public/js/theme.js",

@@ -82,6 +82,7 @@ Route::group(['prefix' => 'reports'], function () {
 Route::group(['prefix' => 'transactions'], function () {
     Route::group(['prefix' => 'box-and-pallet'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'index'])->name('transactions.box-and-pallet');
+        Route::get('/get-models', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_models'])->name('transactions.box-and-pallet.get-models');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {

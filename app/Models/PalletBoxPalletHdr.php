@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PalletModelMatrix extends Model
+class PalletBoxPalletHdr extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'model',
-        'model_name',
-        'box_count_per_pallet',
-        'box_count_to_inspect',
-        'is_deleted',
+        'transaction_id',
+        'model_id',
+        'pallet_qr',
+        'pallet_status',
+        'pallet_location',
         'create_user',
         'update_user'
     ];
