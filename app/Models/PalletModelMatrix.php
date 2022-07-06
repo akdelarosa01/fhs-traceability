@@ -12,6 +12,7 @@ class PalletModelMatrix extends Model
         'model',
         'model_name',
         'box_count_per_pallet',
+        'box_count_to_inspect',
         'is_deleted',
         'create_user',
         'update_user'

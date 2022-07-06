@@ -80,7 +80,8 @@ class BoxPalletModelMatrixController extends Controller
             $this->validate($req, [
                 'model' => 'required|string|min:1',
                 'model_name' => 'required|string|min:1',
-                'box_count_per_pallet' => 'required|numeric'
+                'box_count_per_pallet' => 'required|numeric',
+                'box_count_to_inspect' => 'required|numeric'
             ]);
 
             try {
@@ -88,6 +89,7 @@ class BoxPalletModelMatrixController extends Controller
                 $mm->model = $req->model;
                 $mm->model_name = $req->model_name;
                 $mm->box_count_per_pallet = $req->box_count_per_pallet;
+                $mm->box_count_to_inspect = $req->box_count_to_inspect;
                 $mm->update_user = Auth::user()->id;
     
                 if ($mm->update()) {
@@ -122,7 +124,8 @@ class BoxPalletModelMatrixController extends Controller
                     })
                 ],
                 'model_name' => 'required|string|min:1',
-                'box_count_per_pallet' => 'required|numeric'
+                'box_count_per_pallet' => 'required|numeric',
+                'box_count_to_inspect' => 'required|numeric'
             ]);
 
             try {
@@ -131,6 +134,7 @@ class BoxPalletModelMatrixController extends Controller
                 $mm->model = $req->model;
                 $mm->model_name = $req->model_name;
                 $mm->box_count_per_pallet = $req->box_count_per_pallet;
+                $mm->box_count_to_inspect = $req->box_count_to_inspect;
                 $mm->create_user = Auth::user()->id;
                 $mm->update_user = Auth::user()->id;
 
