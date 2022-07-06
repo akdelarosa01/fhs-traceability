@@ -62,7 +62,7 @@ Route::group(['prefix' => 'masters'], function () {
     });
 
     Route::group(['prefix' => 'model-matrix'], function () {
-        Route::get('/', [App\Http\Controllers\Masters\BoxPalletModelMatrixrMasterController::class, 'index'])->name('masters.model-matrix');
+        Route::get('/', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'index'])->name('masters.model-matrix');
     });
 });
 
