@@ -23,6 +23,7 @@ const layoutJS = [
     "public/js/app.js",
     "resources/js/app.min.js",
     "resources/plugins/moment/min/moment.min.js",
+    "resources/plugins/slimscroll/jquery.slimscroll.min.js",
     "resources/js/theme/default.min.js",
     "resources/plugins/gritter/js/jquery.gritter.js",
     "resources/plugins/datatables.net/js/jquery.dataTables.min.js",
