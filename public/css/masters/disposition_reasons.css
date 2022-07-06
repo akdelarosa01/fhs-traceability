@@ -208,6 +208,10 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     white-space: nowrap !important;
 }
 
+.content {
+    padding: 10px 15px;
+}
+
 
 /*
 * iziToast | v1.4.0
