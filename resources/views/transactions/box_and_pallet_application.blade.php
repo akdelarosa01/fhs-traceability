@@ -62,20 +62,26 @@ Box and Pallet Application
 								<div class="input-group-prepend">
 									<span class="input-group-text">Present Date & Time</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="present_date_time" name="present_date_time" value="{{ date('Y/m/d H:i:s') }}" autocomplete="off" readonly>
+								<input type="text" class="form-control form-control-sm" id="present_date_time" name="present_date_time" value="{{ date('Y/m/d H:i:s') }}" autocomplete="off" readonly>
 								<div id="present_date_time_feedback"></div>
 							</div>
 						</div>
 					</div>
 
 					<div class="row">
-						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
 							<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_add_new">
 								<i class="fa fa-plus"></i> Add New
 							</button>
 						</div>
+
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+							<button type="submit" class="btn btn-sm btn-danger btn-block" id="btn_cancel">
+								<i class="fa fa-times"></i> Cancel
+							</button>
+						</div>
 					
-						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
 							<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_proceed">
 								<i class="fa fa-check"></i> Proceed
 							</button>
@@ -259,10 +265,10 @@ Box and Pallet Application
 				</div> --}}
 			</div>
 
-			<div class="col-4">
+			<div class="col-5">
 				<table class="table table-bordered table-sm table-hover" id="tbl_pallets">
 					<thead>
-						<th></th>
+						<th style="width: 10px;"></th>
 						<th>Pallet Count: <span id="pallet_scanned_count">1</span> / <span id="pallet_count_full">120</span></th>
 						<th>Status</th>
 						<th>On Track</th>
@@ -344,7 +350,7 @@ Box and Pallet Application
 				</table>
 			</div>
 
-			<div class="col-4">
+			<div class="col-3">
 				<table class="table table-bordered table-sm table-hover" id="tbl_boxes">
 					<thead>
 						<th>Box Count: <span id="box_scanned_count">11</span> / <span id="box_count_full">30</span></th>

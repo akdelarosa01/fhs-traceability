@@ -44,6 +44,7 @@ class BoxPalletModelMatrixController extends Controller
                         DB::raw("m.model as model"),
                         DB::raw("m.model_name as model_name"),
                         DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
+                        DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
                         DB::raw("uu.username as create_user"),
                         DB::raw("m.updated_at as updated_at")
                     ])
