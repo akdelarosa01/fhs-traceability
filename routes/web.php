@@ -65,6 +65,7 @@ Route::group(['prefix' => 'masters'], function () {
         Route::get('/', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'index'])->name('masters.model-matrix');
         Route::get('/list', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'model_matrix_list'])->name('masters.model-matrix.list');
         Route::post('/save-model', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'save_model'])->name('masters.model-matrix.save');
+        Route::post('/delete-model', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'delete_model'])->name('masters.model-matrix.delete');
     });
 });
 

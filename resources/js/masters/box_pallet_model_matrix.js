@@ -100,6 +100,15 @@
             }
             return this;
         },
+        delete_models: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/model-matrix/delete-model';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_models.ajax.reload(null, false);
+            });
+            return this;
+        },
         clearForm: function(inputs) {
             var self = this;
             $.each(inputs, function(i,x) {
@@ -168,6 +177,30 @@
             $('#model').val(data.model);
             $('#model_name').val(data.model_name);
             $('#box_count_per_pallet').val(data.box_count_per_pallet);
+        });
+
+        $('#btn_delete_models').on('click', function() {
+            var chkArray = [];
+            var table = _Model.$tbl_models;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                }
+            }
+
+            if (chkArray.length > 0) {
+                _Model.msg = "Are you sure you want to delete this model/s?";
+                _Model.confirmAction().then(function(approve) {
+                    if (approve)
+                    _Model.delete_models(chkArray);
+
+                    $('.check_all_models').prop('checked', false);
+                });
+            } else {
+                _Model.showWarning('Please select at least 1 model.');
+            }
         });
         
     });
