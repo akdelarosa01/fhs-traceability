@@ -101,7 +101,7 @@
         },
         delete_reasons: function(IDs) {
             var self = this;
-            self.formAction = '/masters/disposition-reasons/deleted-reason';
+            self.formAction = '/masters/disposition-reasons/delete-reason';
             self.jsonData = { _token: self.token, ids: IDs };
             self.sendData().then(function() {
                 self.$tbl_reasons.ajax.reload(null, false);
