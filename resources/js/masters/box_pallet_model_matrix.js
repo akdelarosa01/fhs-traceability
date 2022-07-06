@@ -100,6 +100,13 @@
             }
             return this;
         },
+        clearForm: function(inputs) {
+            var self = this;
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
+            });
+        }
     }
     Model.init.prototype = $.extend(Model.prototype, $D.init.prototype);
     Model.init.prototype = Model.prototype;
@@ -107,6 +114,61 @@
     $(document).ready(function() {
         var _Model = Model();
         _Model.drawDatatables();
+
+        $('#frm_models').on('submit', function(e) {
+            e.preventDefault();
+            $('#loading_modal').modal('show');
+                
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(response, textStatus, xhr) {
+                console.log(response);
+                console.log(response.inputs);
+                if (textStatus) {
+                    switch (response.status) {
+                        case "failed":
+                            _Model.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _Model.ErrorMsg(response.msg);
+                            break;
+                        default:
+                            _Model.clearForm(response.inputs);
+                            _Model.$tbl_models.ajax.reload();
+                            _Model.showSuccess(response.msg);
+                            break;
+                    }
+                    _Model.id = 0;
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _Model.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _Model.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
+        });
+
+        $('#tbl_models tbody').on('click', '.btn_edit_model', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Model.clearForm(inputs);
+
+            var data =  _Model.$tbl_models.row($(this).parents('tr')).data();
+
+            $('#id').val(data.id);
+            $('#model').val(data.model);
+            $('#model_name').val(data.model_name);
+            $('#box_count_per_pallet').val(data.box_count_per_pallet);
+        });
         
     });
 })();

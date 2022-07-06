@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Masters;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletModelMatrix;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class BoxPalletModelMatrixController extends Controller
@@ -59,5 +62,102 @@ class BoxPalletModelMatrixController extends Controller
         }
 
         return $data;
+    }
+
+    public function save_model(Request $req)
+    {
+        $inputs = $this->_helpers->get_inputs($req->all());
+        $data = [
+			'msg' => 'Saving Model has failed.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'model' => 'required|string|min:1',
+                'model_name' => 'required|string|min:1',
+                'box_count_per_pallet' => 'required|numeric'
+            ]);
+
+            try {
+                $mm = PalletModelMatrix::find($req->id);
+                $mm->model = $req->model;
+                $mm->model_name = $req->model_name;
+                $mm->box_count_per_pallet = $req->box_count_per_pallet;
+                $mm->update_user = Auth::user()->id;
+    
+                if ($mm->update()) {
+                    $data = [
+                        'msg' => 'Updating Model was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+            
+        } else {
+            $this->validate($req, [
+                'model' => [
+                    'required',
+                    'string',
+                    'min:1',
+                    Rule::unique('pallet_model_matrices')->where(function ($query) {
+                        return $query->where('is_deleted', 0);
+                    })
+                ],
+                'model_name' => 'required|string|min:1',
+                'box_count_per_pallet' => 'required|numeric'
+            ]);
+
+            try {
+                $mm = new  PalletModelMatrix();
+                
+                $mm->model = $req->model;
+                $mm->model_name = $req->model_name;
+                $mm->box_count_per_pallet = $req->box_count_per_pallet;
+                $mm->create_user = Auth::user()->id;
+                $mm->update_user = Auth::user()->id;
+
+                if ($mm->save()) {
+                    $data = [
+                        'msg' => 'Saving Model was successful.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+
+            
+        }
+
+        return response()->json($data);
     }
 }
