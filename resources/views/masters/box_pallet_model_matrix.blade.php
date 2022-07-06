@@ -64,6 +64,18 @@ Box Pallet Model Matrix
 					</div>
 
 					<div class="row">
+						<div class="col-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Box to Inspect</span>
+								</div>
+								<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_to_inspect" name="box_count_to_inspect" placeholder="Box Count to Inspect" autocomplete="off">
+								<div id="box_count_to_inspect_feedback"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
 							<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_models">
 								<i class="fa fa-save"></i> Save Model
@@ -90,6 +102,7 @@ Box Pallet Model Matrix
 							<th>Model</th>
 							<th>Model Name</th>
 							<th>Box count per Pallet</th>
+							<th>Box count to Inspect</th>
 							<th>Added By</th>
 							<th>Update Date</th>
 						</tr>
