@@ -47,7 +47,7 @@
                     },
                     pageLength: 10,
                     order: [
-                        [6, "desc"]
+                        [7, "desc"]
                     ],
                     columns: [{
                             data: function(x) {
