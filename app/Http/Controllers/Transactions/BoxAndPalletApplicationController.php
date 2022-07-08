@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use App\Models\PalletModelMatrix;
+use App\Models\PalletTransaction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class BoxAndPalletApplicationController extends Controller
@@ -73,5 +76,55 @@ class BoxAndPalletApplicationController extends Controller
         }
         
         return $results;
+    }
+
+    public function proceed(Request $req)
+    {
+        $inputs = $this->_helpers->get_inputs($req->all());
+        $data = [
+			'msg' => 'Creating transaction has failed.',
+            'data' => [],
+            'inputs' => $inputs,
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        $this->validate($req, [
+            'model_id' => 'required',
+            'target_no_of_pallet' => 'required|numeric',
+        ]);
+
+        try {
+            $trans = new PalletTransaction();
+            
+            $trans->model_id = $req->model_id;
+            $trans->target_no_of_pallet = $req->target_no_of_pallet;
+            $trans->model_status = 0;
+            $trans->create_user = Auth::user()->id;
+            $trans->update_user = Auth::user()->id;
+
+            if ($trans->save()) {
+                $data = [
+                    'msg' => 'Transaction has successfully proceeded.',
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'inputs' => $inputs,
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }
