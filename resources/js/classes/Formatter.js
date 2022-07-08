@@ -126,7 +126,7 @@ B. Synopsis: Class Module used to format data
             } else {
                 return (h + " hours, " + m + " minute" + ((m > 1) ? "s" : ""));
             }
-        }
+        },
     }
     FormatterClass.init.prototype = FormatterClass.prototype;
 

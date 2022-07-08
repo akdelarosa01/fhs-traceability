@@ -6,6 +6,7 @@
     }
     BoxPalletApp.init = function() {
         $D.init.call(this);
+        $F.init.call(this);
         this.$tbl_BoxPalletApps = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
@@ -87,15 +88,27 @@
                     $('#btn_start_scan').prop('disabled', false);
                     break;
             }
+        },
+        RunDateTime: function() {
+            const zeroFill = n => {
+				return ('0' + n).slice(-2);
+			}
+
+			const interval = setInterval(() => {
+				const now = new Date();
+				const dateTime =  now.getFullYear() + '/' + zeroFill((now.getMonth() + 1)) + '/' + zeroFill(now.getUTCDate()) + ' ' + zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
+
+				$('#present_date_time').val(dateTime);
+			}, 1000);
         }
     }
-    BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype);
+    BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
 
     $(document).ready(function() {
         var _BoxPalletApp = BoxPalletApp();
-
         _BoxPalletApp.viewState('');
+        _BoxPalletApp.RunDateTime();
 
         $('#btn_add_new').on('click', function() {
             _BoxPalletApp.viewState('NEW');
@@ -104,7 +117,7 @@
         $('#btn_cancel').on('click', function() {
             _BoxPalletApp.viewState('');
             $('.clear').val('');
-            $('#model_id').empty().trigger('change');
+            $('#model_id').empty().trigger('change.select2');
         });
 
         $('#btn_start_scan').on('click', function() {
@@ -129,7 +142,6 @@
                         display: 'id&text',
                         orderBy: '',
                         sql_query: query,
-
                     };
                 },
                 processResults: function(data) {
@@ -139,6 +151,11 @@
                 },
             }
         }).val(null).trigger('change.select2');
+
+        $('#model_id').on('select2:select', function (e) {
+            var data = e.params.data;
+            console.log(data);
+        });
         
     });
 })();
