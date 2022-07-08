@@ -62,7 +62,7 @@ Box and Pallet Application
 								<div class="input-group-prepend">
 									<span class="input-group-text">Present Date & Time</span>
 								</div>
-								<input type="text" class="form-control form-control-sm" id="present_date_time" name="present_date_time" value="{{ date('Y/m/d H:i:s') }}" autocomplete="off" readonly>
+								<input type="text" class="form-control form-control-sm" id="present_date_time" name="present_date_time" autocomplete="off" readonly>
 								<div id="present_date_time_feedback"></div>
 							</div>
 						</div>
