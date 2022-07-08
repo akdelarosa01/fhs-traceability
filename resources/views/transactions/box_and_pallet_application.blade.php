@@ -28,7 +28,7 @@ Box and Pallet Application
 
 		<div class="row mb-2">
 			<div class="col-4">
-				<form action="/transaction/model-matrix/save-model" method="post" id="frm_models">
+				<form action="/transactions/box-and-pallet/proceed" method="post" id="frm_transactions">
 					@csrf
 					<input type="hidden" class="clear" id="id" name="id" value="">
 

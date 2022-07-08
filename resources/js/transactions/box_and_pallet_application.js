@@ -7,7 +7,7 @@
     BoxPalletApp.init = function() {
         $D.init.call(this);
         $F.init.call(this);
-        this.$tbl_BoxPalletApps = "";
+        this.$tbl_models = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.BoxPalletApp_checked = 0;
@@ -100,6 +100,14 @@
 
 				$('#present_date_time').val(dateTime);
 			}, 1000);
+        },
+        clearForm: function(inputs) {
+            var self = this;
+            $('#model_id').val(null).trigger('change.select2');
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
+            });
         }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
@@ -152,9 +160,44 @@
             }
         }).val(null).trigger('change.select2');
 
-        $('#model_id').on('select2:select', function (e) {
-            var data = e.params.data;
-            console.log(data);
+        $('#frm_transactions').on('submit', function(e) {
+            e.preventDefault();
+            $('#loading_modal').modal('show');
+                
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(response, textStatus, xhr) {
+                if (textStatus) {
+                    switch (response.msgType) {
+                        case "failed":
+                            _BoxPalletApp.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _BoxPalletApp.showError(response.msg);
+                            break;
+                        default:
+                            _BoxPalletApp.clearForm(response.inputs);
+                            _BoxPalletApp.viewState('');
+                            // _BoxPalletApp.$tbl_models.ajax.reload();
+                            _BoxPalletApp.showSuccess(response.msg);
+                            break;
+                    }
+                    _BoxPalletApp.id = 0;
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _BoxPalletApp.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _BoxPalletApp.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
         });
         
     });
