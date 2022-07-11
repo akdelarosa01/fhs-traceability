@@ -147,122 +147,12 @@ Box and Pallet Application
 
 		<div class="row">
 			<div class="col-4">
-				<table class="table table-sm table-hover" id="tbl_models">
+				<table class="table table-sm table-hover" id="tbl_transactions" style="width: 100%">
 					<thead>
-						<th colspan="2">Model Count: <span id="model_count">1</span></th>
+						<th>Model Count: <span id="model_count">0</span></th>
+						<th></th>
 					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<span>HS10550</span><br>
-								<small>Target: 120 Pallets</small><br>
-								<small>Created: 2022/07/05 19:00</small>
-							</td>
-							<td>READY</td>
-						</tr>
-						<tr>
-							<td>
-								<span>HS10550</span><br>
-								<small>Target: 120 Pallets</small><br>
-								<small>Created: 2022/07/05 19:00</small>
-							</td>
-							<td>READY</td>
-						</tr>
-						<tr>
-							<td>
-								<span>HS10550</span><br>
-								<small>Target: 120 Pallets</small><br>
-								<small>Created: 2022/07/05 19:00</small>
-							</td>
-							<td>READY</td>
-						</tr>
-						<tr>
-							<td>
-								<span>HS10550</span><br>
-								<small>Target: 120 Pallets</small><br>
-								<small>Created: 2022/07/05 19:00</small>
-							</td>
-							<td>READY</td>
-						</tr>
-						<tr>
-							<td>
-								<span>HS10550</span><br>
-								<small>Target: 120 Pallets</small><br>
-								<small>Created: 2022/07/05 19:00</small>
-							</td>
-							<td>READY</td>
-						</tr>
-					</tbody>
 				</table>
-				{{-- <h5>Model Count: <span id="model_count">8</span></h5>
-				<div class="transaction">
-					<div class="list-group">
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-success">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10550</h5>
-								<small>READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10551</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10552</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10553</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10554</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10555</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10556</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-						<a href="javascript:;" class="list-group-item list-group-item-action list-group-item-warning">
-							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">HS10557</h5>
-								<small>NOT READY</small>
-							</div>
-							<p class="mb-1">Target: 120 Pallets</p>
-							<small>Created: 2022/07/05 19:00</small>
-						</a>
-					</div>
-				</div> --}}
 			</div>
 
 			<div class="col-5">

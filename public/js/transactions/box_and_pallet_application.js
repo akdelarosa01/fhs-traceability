@@ -4420,7 +4420,7 @@ B. Synopsis: Real Time Script
     BoxPalletApp.init = function() {
         $D.init.call(this);
         $F.init.call(this);
-        this.$tbl_models = "";
+        this.$tbl_transactions = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.BoxPalletApp_checked = 0;
@@ -4521,7 +4521,71 @@ B. Synopsis: Real Time Script
                 $('#'+x).val('');
                 self.hideInputErrors(x);
             });
-        }
+        },
+        drawTransactionsDatatables: function() {
+            var self = this;
+            var model_count = 0;
+            if (!$.fn.DataTable.isDataTable('#tbl_transactions')) {
+                self.$tbl_transactions = $('#tbl_transactions').DataTable({
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    select: true,
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-transactions",
+                        dataType: "JSON",
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { data: function(data) {
+                            console.log(data);
+                                return '<span>'+data.model+'</span><br>'+
+                                        '<small>Target: '+data.target_no_of_pallet+' Pallets</small><br>'+
+                                        '<small>Created: '+data.created_at+'</small>';
+                        }, name: 'model', searchable: false, orderable: false },
+                        { data: function(data) {
+                            switch (data.model_status) {
+                                case 1:
+                                    return 'READY';
+                                    break;
+                            
+                                default:
+                                    return 'NOT READY'
+                                    break;
+                            }
+                        }, name: 'model_status', searchable: false, orderable: false, className: 'text-right' },
+                    ],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                        if (data.model_status == 0) {
+                            $(row).css('background-color', '#FF8080'); // YELLOW = NOT READY
+                            $(row).css('color', '#000000');
+                        }
+
+                        if (data.model_status == 1) {
+                            $(row).css('background-color', '#66BFBF'); // GREEN = READY
+                            $(row).css('color', '#000000');
+                        }
+
+                        model_count++;
+                        $('#model_count').html(model_count);
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
+                        // $("#tbl_transactions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -4530,6 +4594,7 @@ B. Synopsis: Real Time Script
         var _BoxPalletApp = BoxPalletApp();
         _BoxPalletApp.viewState('');
         _BoxPalletApp.RunDateTime();
+        _BoxPalletApp.drawTransactionsDatatables();
 
         $('#btn_add_new').on('click', function() {
             _BoxPalletApp.viewState('NEW');
@@ -4595,7 +4660,7 @@ B. Synopsis: Real Time Script
                         default:
                             _BoxPalletApp.clearForm(response.inputs);
                             _BoxPalletApp.viewState('');
-                            // _BoxPalletApp.$tbl_models.ajax.reload();
+                            // _BoxPalletApp.$tbl_transactions.ajax.reload();
                             _BoxPalletApp.showSuccess(response.msg);
                             break;
                     }
