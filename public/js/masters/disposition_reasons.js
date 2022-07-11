@@ -3968,8 +3968,10 @@ B. Synopsis: Class Module used to process data
                         self.responseStatus = jqXHR.status;
                         self.responseError = jqXHR.responseJSON;
                         console.log(self.responseError)
-                        // var errors = self.responseError.errors;
-                        // self.showInputErrors(errors);
+                        if (self.responseError.hasOwnProperty('errors')) {
+                            var errors = self.responseError.errors;
+                            self.showInputErrors(errors);
+                        }
 
                         if (errorThrown == "Internal Server Error") {
                             self.ErrorMsg(jqXHR);

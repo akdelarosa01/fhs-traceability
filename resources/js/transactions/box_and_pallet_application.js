@@ -323,6 +323,34 @@
                 });
             }
             return this;
+        },
+        scanBoxQR: function(param) {
+            var self = this;
+            var running_model = $('#running_model').val();
+
+            self.hideInputErrors('box_qr');
+
+            if (param.box_qr.includes(running_model)) {
+                self.submitType = "POST";
+                self.jsonData = {
+                    _token: self.token,
+                    pallet_id: param.pallet_id,
+                    selected_model_id: param.selected_model_id,
+                    box_qr: param.box_qr
+                };
+                self.formAction = "/transactions/box-and-pallet/save-box";
+                self.sendData().then(function() {
+                    $('#box_qr').val('');
+                });
+            } else {
+                $('#box_qr').val('');
+                var errors = {
+                    box_qr: ["Please scan box with same " + running_model + " model."]
+                };
+                self.showInputErrors(errors);
+            }
+            
+            return this;
         }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
@@ -346,7 +374,12 @@
         });
 
         $('#btn_start_scan').on('click', function() {
-            _BoxPalletApp.viewState('SCAN');
+            var pallet_id = $('#pallet_id').val();
+            if (pallet_id != "") {
+                _BoxPalletApp.viewState('SCAN');
+            } else {
+                _BoxPalletApp.showWarning("Please select a Pallet first.");
+            }
         });
 
         $('#model_id').select2({
@@ -425,7 +458,9 @@
         _BoxPalletApp.$tbl_transactions.on('select', function ( e, dt, type, indexes ) {
             var rowData = _BoxPalletApp.$tbl_transactions.rows( indexes ).data().toArray();
             var data = rowData[0];
+            console.log(data);
             $('#trans_id').val(data.id);
+            $('#selected_model_id').val(data.model_id);
             $('#running_model').val(data.model);
             $('#target_pallet').val(data.target_no_of_pallet);
             $('#box_per_pallet').val(data.box_count_per_pallet);
@@ -465,6 +500,15 @@
 
             // _BoxPalletApp.$tbl_boxes.ajax.reload();
             $('#box_count').html(0);
+        });
+
+        $('#box_qr').on('change', function() {
+            var param = {
+                pallet_id: $('#pallet_id').val(),
+                selected_model_id: $('#selected_model_id').val(),
+                box_qr: $('#box_qr').val()
+            };
+            _BoxPalletApp.scanBoxQR(param);
         });
         
     });
