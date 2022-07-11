@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transactions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
@@ -58,7 +59,9 @@ class BoxAndPalletApplicationController extends Controller
                 $results = PalletModelMatrix::select(
                                 'id as id',
                                 DB::raw("CONCAT(model,' | ', model_name) as text"),
-                                'box_count_per_pallet'
+                                'box_count_per_pallet',
+                                'model',
+                                'model_name'
                             )->where('is_deleted',0);
 
                 if ($val !== "") {
@@ -88,17 +91,12 @@ class BoxAndPalletApplicationController extends Controller
                         DB::raw("t.model_status as model_status"),
                         DB::raw("t.target_no_of_pallet as target_no_of_pallet"),
                         DB::raw("m.model as model"),
+                        DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
                         DB::raw("t.created_at as created_at")
                     ])
                     ->join('pallet_model_matrices as m','t.model_id','=','m.id');
 
-            return Datatables::of($query)
-                            // ->addColumn('model_format', function($data) {
-                            //     return '<span>'.$data->model.'</span><br>
-                            //             <small>Target: '.$data->target_no_of_pallet.' Pallets</small><br>
-                            //             <small>Created: '.$data->created_at.'</small>';
-                            // })
-                            ->make(true);
+            return Datatables::of($query)->make(true);
         } catch (\Throwable $th) {
             //throw $th;
         }
@@ -133,6 +131,17 @@ class BoxAndPalletApplicationController extends Controller
             $trans->update_user = Auth::user()->id;
 
             if ($trans->save()) {
+                $hdr = new PalletBoxPalletHdr();
+                $hdr->transaction_id = $trans->id;
+                $hdr->model_id = $req->model_id;
+                $hdr->pallet_qr = $this->generatePalletID($trans->id,$req);
+                $hdr->pallet_status = 0;
+                $hdr->pallet_location = "ON PROGRESS";
+                $hdr->create_user = Auth::user()->id;
+                $hdr->update_user = Auth::user()->id;
+
+                $hdr->save();
+
                 $data = [
                     'msg' => 'Transaction has successfully proceeded.',
                     'data' => [],
@@ -154,5 +163,26 @@ class BoxAndPalletApplicationController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    private function generatePalletID($trans_id,$req)
+    {
+        $pallet_count = PalletBoxPalletHdr::where([
+                            ['transaction_id', '=', $trans_id],
+                            ['model_id', '=', $req->model_id]
+                        ])->count();
+
+        $pallet_count = $pallet_count + 1;
+        $serial = $this->leadingZeros($pallet_count);
+
+        $date = date('Ymd');
+        $pallet = $req->model."P".$date."-".$serial;
+
+        return $pallet;
+    }
+
+    private function leadingZeros($count)
+    {
+        return sprintf("%03d", $count);
     }
 }

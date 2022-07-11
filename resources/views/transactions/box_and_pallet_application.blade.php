@@ -31,6 +31,7 @@ Box and Pallet Application
 				<form action="/transactions/box-and-pallet/proceed" method="post" id="frm_transactions">
 					@csrf
 					<input type="hidden" class="clear" id="id" name="id" value="">
+					<input type="hidden" class="clear" id="model" name="model" value="">
 
 					<div class="row">
 						<div class="col-12">
@@ -97,7 +98,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<button class="btn btn-success" type="button" id="btn_start_scan">Start Scan</button>
 							</div>
-							<input type="text" class="form-control form-control-lg" placeholder="Scan Pallet QR" aria-describedby="btn_start_scan" id="pallet_qr" name="pallet_qr" autocomplete="off" readonly>
+							<input type="text" class="form-control form-control-lg" placeholder="Scan Box QR" aria-describedby="btn_start_scan" id="box_qr" name="box_qr" autocomplete="off" readonly>
 						</div>
 					</div>
 				</div>
@@ -115,7 +116,7 @@ Box and Pallet Application
 					<div class="col-6">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Target Pallet</span>
+								<span class="input-group-text">Target Pallet Count</span>
 							</div>
 							<input type="text" class="form-control form-control-sm clear" id="target_pallet" name="target_pallet" autocomplete="off" readonly>
 						</div>
@@ -159,7 +160,7 @@ Box and Pallet Application
 				<table class="table table-bordered table-sm table-hover" id="tbl_pallets">
 					<thead>
 						<th style="width: 10px;"></th>
-						<th>Pallet Count: <span id="pallet_scanned_count">1</span> / <span id="pallet_count_full">120</span></th>
+						<th>Pallet Count: <span id="pallet_scanned_count">0</span> / <span id="pallet_count_full">0</span></th>
 						<th>Status</th>
 						<th>On Track</th>
 					</thead>
