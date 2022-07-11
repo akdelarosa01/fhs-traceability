@@ -18,7 +18,7 @@ class CreatePalletBoxPalletHdrsTable extends Migration
             $table->integer('transaction_id');
             $table->integer('model_id');
             $table->text('pallet_qr');
-            $table->integer('pallet_status')->length(1)->default(0); // 0 = PENDING / 1 = ON PROGRESS / 2 = FOR OBA / 3 = GOOD / 4 = REWORK / 5 = HOLD PALLET / 6 = HOLD LOT
+            $table->integer('pallet_status')->length(1)->default(0); // 0 = ON PROGRESS / 1 = FOR OBA / 2 = GOOD / 3 = REWORK / 4 = HOLD PALLET / 5 = HOLD LOT
             $table->string('pallet_location');
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
