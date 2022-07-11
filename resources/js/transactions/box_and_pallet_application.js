@@ -62,6 +62,8 @@
                         $('#btn_start_scan').html("Stop Scan");
                         $('#btn_start_scan').removeClass("btn-success");
                         $('#btn_start_scan').addClass("btn-danger");
+                        $('#box_qr').prop('readonly', false);
+                        $('#box_qr').val('');
                     } else {
                         $('#btn_add_new').prop('disabled', false);
                         $('#btn_cancel').prop('disabled', true);
@@ -69,6 +71,8 @@
                         $('#btn_start_scan').html("Start Scan");
                         $('#btn_start_scan').removeClass("btn-danger");
                         $('#btn_start_scan').addClass("btn-success");
+                        $('#box_qr').prop('readonly', true);
+                        $('#box_qr').val('');
                     }
                     
                     break;
@@ -130,7 +134,6 @@
                     deferRender: true,
                     columns: [
                         { data: function(data) {
-                            console.log(data);
                                 return '<span>'+data.model+'</span><br>'+
                                         '<small>Target: '+data.target_no_of_pallet+' Pallets</small><br>'+
                                         '<small>Created: '+data.created_at+'</small>';
@@ -225,6 +228,11 @@
             }
         }).val(null).trigger('change.select2');
 
+        $('#model_id').on('select2:select', function (e) {
+            var data = e.params.data;
+            $('#model').val(data.model);
+        });
+
         $('#frm_transactions').on('submit', function(e) {
             e.preventDefault();
             $('#loading_modal').modal('show');
@@ -247,7 +255,7 @@
                         default:
                             _BoxPalletApp.clearForm(response.inputs);
                             _BoxPalletApp.viewState('');
-                            // _BoxPalletApp.$tbl_transactions.ajax.reload();
+                            _BoxPalletApp.$tbl_transactions.ajax.reload();
                             _BoxPalletApp.showSuccess(response.msg);
                             break;
                     }
@@ -263,6 +271,17 @@
             }).always(function() {
                 $('#loading_modal').modal('hide');
             });
+        });
+
+        $('#tbl_transactions tbody').on('click', 'tr', function() {
+            var data = _BoxPalletApp.$tbl_transactions.row( this ).data();
+            console.log(data);
+
+            $('#running_model').val(data.model);
+            $('#target_pallet').val(data.target_no_of_pallet);
+            $('#box_per_pallet').val(data.box_count_per_pallet);
+
+            $('#pallet_count_full').html(data.target_no_of_pallet);
         });
         
     });
