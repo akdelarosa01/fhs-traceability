@@ -324,13 +324,91 @@
             }
             return this;
         },
+        drawBoxesDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_boxes')) {
+                self.$tbl_boxes = $('#tbl_boxes').DataTable({
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    select: {
+                        style: 'multiple',
+                    },
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-boxes",
+                        dataType: "JSON",
+                        data: function(d) {
+                            d._token = self.token;
+                            d.pallet_id = $('#pallet_id').val()
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Box ID was scanned.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
+                    ],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {                     
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
+                        // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#box_count').html(data_count);
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         scanBoxQR: function(param) {
+            
             var self = this;
             var running_model = $('#running_model').val();
+            var scanned_box_count = parseInt($('#box_count').html());
+            var pallet_qr = $('#pallet_id_qr').val();
 
             self.hideInputErrors('box_qr');
 
-            if (param.box_qr.includes(running_model)) {
+            if (!param.box_qr.includes(running_model)) {
+                $('#box_qr').val('');
+                var errors = {
+                    box_qr: ["Please scan box with same " + running_model + " model."]
+                };
+                self.showInputErrors(errors);
+            } else if (scanned_box_count == param.box_per_pallet) {
+                $('#box_qr').val('');
+                var errors = {
+                    box_qr: ["Pallet "+pallet_qr+" was already full."]
+                };
+                self.showInputErrors(errors);
+            } else {
                 self.submitType = "POST";
                 self.jsonData = {
                     _token: self.token,
@@ -341,13 +419,8 @@
                 self.formAction = "/transactions/box-and-pallet/save-box";
                 self.sendData().then(function() {
                     $('#box_qr').val('');
+                    self.$tbl_boxes.ajax.reload();
                 });
-            } else {
-                $('#box_qr').val('');
-                var errors = {
-                    box_qr: ["Please scan box with same " + running_model + " model."]
-                };
-                self.showInputErrors(errors);
             }
             
             return this;
@@ -362,6 +435,7 @@
         _BoxPalletApp.RunDateTime();
         _BoxPalletApp.drawTransactionsDatatables();
         _BoxPalletApp.drawPalletsDatatables();
+        _BoxPalletApp.drawBoxesDatatables();
 
         $('#btn_add_new').on('click', function() {
             _BoxPalletApp.viewState('NEW');
@@ -490,7 +564,7 @@
 
             $('#box_count_full').html(data.box_count_per_pallet);
 
-            // _BoxPalletApp.$tbl_boxes.ajax.reload();
+            _BoxPalletApp.$tbl_boxes.ajax.reload();
         })
         .on('deselect', function ( e, dt, type, indexes ) {
             $('#pallet_id').val('');
@@ -498,7 +572,7 @@
 
             $('#box_count_full').html(0);
 
-            // _BoxPalletApp.$tbl_boxes.ajax.reload();
+            _BoxPalletApp.$tbl_boxes.ajax.reload();
             $('#box_count').html(0);
         });
 
@@ -506,7 +580,8 @@
             var param = {
                 pallet_id: $('#pallet_id').val(),
                 selected_model_id: $('#selected_model_id').val(),
-                box_qr: $('#box_qr').val()
+                box_qr: $('#box_qr').val(),
+                box_per_pallet: $('#box_per_pallet').val()
             };
             _BoxPalletApp.scanBoxQR(param);
         });

@@ -86,6 +86,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-transactions', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'model_transaction_list'])->name('transactions.box-and-pallet.get-transactions');
         Route::post('/proceed', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'proceed'])->name('transactions.box-and-pallet.proceed');
         Route::get('/get-pallets', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_pallets'])->name('transactions.box-and-pallet.get-pallets');
+        Route::get('/get-boxes', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_boxes'])->name('transactions.box-and-pallet.get-boxes');
         Route::post('/save-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'save_box'])->name('transactions.box-and-pallet.save-box');
     });
 

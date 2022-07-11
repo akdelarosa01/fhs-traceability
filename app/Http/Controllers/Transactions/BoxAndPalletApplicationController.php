@@ -291,7 +291,8 @@ class BoxAndPalletApplicationController extends Controller
                         'b.updated_at'
                     )
                     ->join('pallet_model_matrices as m','m.id','=','b.model_id')
-                    ->where('b.pallet_id',$pallet_id);
+                    ->where('b.pallet_id',$pallet_id)
+                    ->orderBy('b.id','desc');
         return $query;
     }
 }
