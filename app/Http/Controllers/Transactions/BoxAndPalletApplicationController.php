@@ -78,6 +78,34 @@ class BoxAndPalletApplicationController extends Controller
         return $results;
     }
 
+    public function model_transaction_list()
+    {
+        $data = [];
+        try {
+            $query = DB::table('pallet_transactions as t')->select([
+                        DB::raw("t.id as id"),
+                        DB::raw("t.model_id as model_id"),
+                        DB::raw("t.model_status as model_status"),
+                        DB::raw("t.target_no_of_pallet as target_no_of_pallet"),
+                        DB::raw("m.model as model"),
+                        DB::raw("t.created_at as created_at")
+                    ])
+                    ->join('pallet_model_matrices as m','t.model_id','=','m.id');
+
+            return Datatables::of($query)
+                            // ->addColumn('model_format', function($data) {
+                            //     return '<span>'.$data->model.'</span><br>
+                            //             <small>Target: '.$data->target_no_of_pallet.' Pallets</small><br>
+                            //             <small>Created: '.$data->created_at.'</small>';
+                            // })
+                            ->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+        return $data;
+    }
+
     public function proceed(Request $req)
     {
         $inputs = $this->_helpers->get_inputs($req->all());
