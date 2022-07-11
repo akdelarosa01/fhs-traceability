@@ -4529,7 +4529,6 @@ B. Synopsis: Real Time Script
         },
         drawTransactionsDatatables: function() {
             var self = this;
-            var model_count = 0;
             if (!$.fn.DataTable.isDataTable('#tbl_transactions')) {
                 self.$tbl_transactions = $('#tbl_transactions').DataTable({
                     processing: true,
@@ -4597,14 +4596,14 @@ B. Synopsis: Real Time Script
                             $(row).css('background-color', '#66BFBF'); // GREEN = READY
                             $(row).css('color', '#000000');
                         }
-
-                        model_count++;
-                        $('#model_count').html(model_count);
                     },
                     initComplete: function() {
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_transactions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#model_count').html(data_count);
                     },
                 }).on('page.dt', function() {
                 });
@@ -4613,7 +4612,6 @@ B. Synopsis: Real Time Script
         },
         drawPalletsDatatables: function() {
             var self = this;
-            var pallet_count = 0;
             if (!$.fn.DataTable.isDataTable('#tbl_pallets')) {
                 self.$tbl_pallets = $('#tbl_pallets').DataTable({
                     processing: true,
@@ -4622,7 +4620,8 @@ B. Synopsis: Real Time Script
                     info: false,
                     sorting: false,
                     select: {
-                        style: 'single'
+                        style: 'single',
+                        selector: 'td:not(:first-child)'
                     },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-pallets",
@@ -4723,15 +4722,15 @@ B. Synopsis: Real Time Script
                                 $(row).css('background-color', '#FFDCAE');
                                 $(row).css('color', '#000000');
                                 break;
-                        }
-
-                        pallet_count++;
-                        $('#pallet_count').html(pallet_count);
+                        }                        
                     },
                     initComplete: function() {
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#pallet_count').html(data_count);
                     },
                 }).on('page.dt', function() {
                 });
