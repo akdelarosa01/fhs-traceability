@@ -121,7 +121,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<span class="input-group-text">Target Pallet Count</span>
 							</div>
-							<input type="text" class="form-control form-control-sm clear" id="target_pallet" name="target_pallet" autocomplete="off" readonly>
+							<input type="number" class="form-control form-control-sm clear" id="target_pallet" name="target_pallet" autocomplete="off" readonly>
 						</div>
 					</div>
 				</div>
@@ -142,7 +142,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<span class="input-group-text">Box per Pallet</span>
 							</div>
-							<input type="text" class="form-control form-control-sm clear" id="box_per_pallet" name="box_per_pallet" autocomplete="off" readonly>
+							<input type="number" class="form-control form-control-sm clear" id="box_per_pallet" name="box_per_pallet" autocomplete="off" readonly>
 						</div>
 					</div>
 				</div>
@@ -168,123 +168,14 @@ Box and Pallet Application
 						<th>Status</th>
 						<th>On Track</th>
 					</thead>
-					<tbody>
-						{{-- <tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" class="check_pallet"/></td>
-							<td>
-								<span>HS10557BP220530-120</span><br>
-								<small>2022/07/06 13:00:00</small>
-							</td>
-							<td>GOOD</td>
-							<td>Q.A.</td>
-						</tr> --}}
-					</tbody>
 				</table>
 			</div>
 
 			<div class="col-3">
-				<table class="table table-bordered table-sm table-hover" id="tbl_boxes">
+				<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%">
 					<thead>
 						<th>Box Count: <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
 					</thead>
-					<tbody>
-						<tr>
-							<td>HS10557B220530/2-011</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-010</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-009</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-008</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-007</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-006</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-005</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-004</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-003</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-002</td>
-						</tr>
-						<tr>
-							<td>HS10557B220530/2-001</td>
-						</tr>
-					</tbody>
 				</table>
 			</div>
 		</div>
