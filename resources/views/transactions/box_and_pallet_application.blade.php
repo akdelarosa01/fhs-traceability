@@ -100,6 +100,7 @@ Box and Pallet Application
 							</div>
 							<input type="hidden" class="" id="trans_id" name="trans_id"/>
 							<input type="text" class="form-control form-control-lg" placeholder="Scan Box QR" aria-describedby="btn_start_scan" id="box_qr" name="box_qr" autocomplete="off" readonly>
+							<div id="box_qr_feedback"></div>
 						</div>
 					</div>
 				</div>
@@ -110,6 +111,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<span class="input-group-text">Running Model</span>
 							</div>
+							<input type="hidden" class="" id="selected_model_id" name="selected_model_id"/>
 							<input type="text" class="form-control form-control-sm clear" id="running_model" name="running_model" autocomplete="off" readonly>
 						</div>
 					</div>

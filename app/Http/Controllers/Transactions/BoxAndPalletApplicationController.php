@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transactions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
 use App\Models\PalletTransaction;
@@ -215,6 +216,82 @@ class BoxAndPalletApplicationController extends Controller
                     )
                     ->join('pallet_model_matrices as m','m.id','=','p.model_id')
                     ->where('p.transaction_id',$trans_id);
+        return $query;
+    }
+
+    public function save_box(Request $req)
+    {
+        $data = [
+			'msg' => 'Creating transaction has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        $rules = ['box_qr' => 'unique:pallet_box_pallet_dtls,box_qr'];
+        $customMessages = [
+            'unique' => 'This Box ID was already scanned.'
+        ];
+
+        $this->validate($req, $rules, $customMessages);
+
+        try {
+            $dtl = new PalletBoxPalletDtl();
+
+            $dtl->pallet_id = $req->pallet_id;
+            $dtl->model_id = $req->selected_model_id;
+            $dtl->box_qr = $req->box_qr;
+            $dtl->create_user = Auth::user()->id;
+            $dtl->update_user = Auth::user()->id;
+
+            if ($dtl->save()) {
+
+                $data = [
+                    'data' => [],
+                    'success' => true
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function get_boxes(Request $req)
+    {
+        $data = [];
+        try {
+            $query = $this->boxes($req->pallet_id);
+            return Datatables::of($query)->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+    }
+
+    private function boxes($pallet_id)
+    {
+        $query = DB::table('pallet_box_pallet_dtls as b')
+                    ->select(
+                        'b.id',
+                        'b.pallet_id',
+                        'b.model_id',
+                        'm.model',
+                        'm.box_count_per_pallet',
+                        'b.box_qr',
+                        'b.created_at',
+                        'b.updated_at'
+                    )
+                    ->join('pallet_model_matrices as m','m.id','=','b.model_id')
+                    ->where('b.pallet_id',$pallet_id);
         return $query;
     }
 }
