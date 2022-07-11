@@ -4421,6 +4421,7 @@ B. Synopsis: Real Time Script
         $D.init.call(this);
         $F.init.call(this);
         this.$tbl_transactions = "";
+        this.$tbl_pallets = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.BoxPalletApp_checked = 0;
@@ -4536,12 +4537,33 @@ B. Synopsis: Real Time Script
                     paging: false, 
                     info: false,
                     sorting: false,
-                    select: true,
+                    select: {
+                        style: 'single'
+                    },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-transactions",
                         dataType: "JSON",
                         error: function(response) {
                             console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Model was transacted.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
                         }
                     },
                     deferRender: true,
@@ -4589,6 +4611,133 @@ B. Synopsis: Real Time Script
             }
             return this;
         },
+        drawPalletsDatatables: function() {
+            var self = this;
+            var pallet_count = 0;
+            if (!$.fn.DataTable.isDataTable('#tbl_pallets')) {
+                self.$tbl_pallets = $('#tbl_pallets').DataTable({
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    select: {
+                        style: 'single'
+                    },
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-pallets",
+                        dataType: "JSON",
+                        data: function(d) {
+                            d._token = self.token;
+                            d.with_zero = self._with_zero;
+                            d.trans_id = $('#trans_id').val()
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Pallet was created.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: function(data) {
+                                return '<input type="checkbox" class="check_pallet" value="'+data.id+'"/>';
+                            }, name: 'id', searchable: false, orderable: false, width: '10px'
+                        },
+                        {
+                            data: function(data) {
+                                return '<span>'+data.pallet_qr+'</span><br>' +
+								        '<small>'+data.created_at+'</small>';
+                            }, name: 'pallet_qr', searchable: false, orderable: false 
+                        },
+                        {
+                            data: function(data) {
+                                switch (data.pallet_status) {
+                                    case 1:
+                                        return 'FOR OBA';
+                                        break;
+                                    case 2:
+                                        return 'GOOD';
+                                        break;
+                                    case 3:
+                                        return 'REWORK';
+                                        break;
+                                    case 4:
+                                        return 'HOLD PALLET';
+                                        break;
+                                    case 5:
+                                        return 'HOLD LOT';
+                                        break;
+                                
+                                    default:
+                                        return 'ON PROGRESS'
+                                        break;
+                                }
+                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
+                        },
+                        { data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center' },
+                    ],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                        switch (data.pallet_status) {
+                            case 1:
+                                $(row).css('background-color', '#FFC4DD');
+                                $(row).css('color', '#000000');
+                                break;
+                            case 2:
+                                $(row).css('background-color', '#36AE7C');
+                                $(row).css('color', '#000000');
+                                break;
+                            case 3:
+                                $(row).css('background-color', '#47B5FF');
+                                $(row).css('color', '#000000');
+                                break;
+                            case 4:
+                                $(row).css('background-color', '#FF0063');
+                                $(row).css('color', '#000000');
+                                break;
+                            case 5:
+                                $(row).css('background-color', '#FF0063');
+                                $(row).css('color', '#000000');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFDCAE');
+                                $(row).css('color', '#000000');
+                                break;
+                        }
+
+                        pallet_count++;
+                        $('#pallet_count').html(pallet_count);
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
+                        // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -4598,6 +4747,7 @@ B. Synopsis: Real Time Script
         _BoxPalletApp.viewState('');
         _BoxPalletApp.RunDateTime();
         _BoxPalletApp.drawTransactionsDatatables();
+        _BoxPalletApp.drawPalletsDatatables();
 
         $('#btn_add_new').on('click', function() {
             _BoxPalletApp.viewState('NEW');
@@ -4686,15 +4836,49 @@ B. Synopsis: Real Time Script
             });
         });
 
-        $('#tbl_transactions tbody').on('click', 'tr', function() {
-            var data = _BoxPalletApp.$tbl_transactions.row( this ).data();
-            console.log(data);
-
+        _BoxPalletApp.$tbl_transactions.on('select', function ( e, dt, type, indexes ) {
+            var rowData = _BoxPalletApp.$tbl_transactions.rows( indexes ).data().toArray();
+            var data = rowData[0];
+            $('#trans_id').val(data.id);
             $('#running_model').val(data.model);
             $('#target_pallet').val(data.target_no_of_pallet);
             $('#box_per_pallet').val(data.box_count_per_pallet);
 
             $('#pallet_count_full').html(data.target_no_of_pallet);
+
+            _BoxPalletApp.$tbl_pallets.ajax.reload();
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            $('#trans_id').val('');
+            $('#running_model').val('');
+            $('#target_pallet').val('');
+            $('#box_per_pallet').val('');
+
+            $('#pallet_count_full').html(0);
+
+            _BoxPalletApp.$tbl_pallets.ajax.reload();
+            $('#pallet_count').html(0);
+        });
+
+        _BoxPalletApp.$tbl_pallets.on('select', function ( e, dt, type, indexes ) {
+            var rowData = _BoxPalletApp.$tbl_pallets.rows( indexes ).data().toArray();
+            var data = rowData[0];
+
+            $('#pallet_id').val(data.id);
+            $('#pallet_id_qr').val(data.pallet_qr);
+
+            $('#box_count_full').html(data.box_count_per_pallet);
+
+            // _BoxPalletApp.$tbl_boxes.ajax.reload();
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            $('#pallet_id').val('');
+            $('#pallet_id_qr').val('');
+
+            $('#box_count_full').html(0);
+
+            // _BoxPalletApp.$tbl_boxes.ajax.reload();
+            $('#box_count').html(0);
         });
         
     });

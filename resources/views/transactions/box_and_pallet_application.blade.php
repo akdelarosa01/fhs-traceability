@@ -98,6 +98,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<button class="btn btn-success" type="button" id="btn_start_scan">Start Scan</button>
 							</div>
+							<input type="hidden" class="" id="trans_id" name="trans_id"/>
 							<input type="text" class="form-control form-control-lg" placeholder="Scan Box QR" aria-describedby="btn_start_scan" id="box_qr" name="box_qr" autocomplete="off" readonly>
 						</div>
 					</div>
@@ -129,6 +130,7 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<span class="input-group-text">Pallet QR</span>
 							</div>
+							<input type="hidden" class="" id="pallet_id" name="pallet_id"/>
 							<input type="text" class="form-control form-control-sm clear" id="pallet_id_qr" name="pallet_id_qr" autocomplete="off" readonly>
 						</div>
 					</div>
@@ -157,15 +159,15 @@ Box and Pallet Application
 			</div>
 
 			<div class="col-5">
-				<table class="table table-bordered table-sm table-hover" id="tbl_pallets">
+				<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
 					<thead>
 						<th style="width: 10px;"></th>
-						<th>Pallet Count: <span id="pallet_scanned_count">0</span> / <span id="pallet_count_full">0</span></th>
+						<th>Pallet Count: <span id="pallet_count">0</span> / <span id="pallet_count_full">0</span></th>
 						<th>Status</th>
 						<th>On Track</th>
 					</thead>
 					<tbody>
-						<tr>
+						{{-- <tr>
 							<td><input type="checkbox" class="check_pallet"/></td>
 							<td>
 								<span>HS10557BP220530-120</span><br>
@@ -236,7 +238,7 @@ Box and Pallet Application
 							</td>
 							<td>GOOD</td>
 							<td>Q.A.</td>
-						</tr>
+						</tr> --}}
 					</tbody>
 				</table>
 			</div>
@@ -244,7 +246,7 @@ Box and Pallet Application
 			<div class="col-3">
 				<table class="table table-bordered table-sm table-hover" id="tbl_boxes">
 					<thead>
-						<th>Box Count: <span id="box_scanned_count">11</span> / <span id="box_count_full">30</span></th>
+						<th>Box Count: <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
 					</thead>
 					<tbody>
 						<tr>

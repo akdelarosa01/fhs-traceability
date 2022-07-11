@@ -136,7 +136,7 @@ class BoxAndPalletApplicationController extends Controller
                 $hdr->model_id = $req->model_id;
                 $hdr->pallet_qr = $this->generatePalletID($trans->id,$req);
                 $hdr->pallet_status = 0;
-                $hdr->pallet_location = "ON PROGRESS";
+                $hdr->pallet_location = "PRODUCTION";
                 $hdr->create_user = Auth::user()->id;
                 $hdr->update_user = Auth::user()->id;
 
@@ -184,5 +184,37 @@ class BoxAndPalletApplicationController extends Controller
     private function leadingZeros($count)
     {
         return sprintf("%03d", $count);
+    }
+
+    public function get_pallets(Request $req)
+    {
+        $data = [];
+        try {
+            $query = $this->pallets($req->trans_id);
+            return Datatables::of($query)->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+    }
+
+    private function pallets($trans_id)
+    {
+        $query = DB::table('pallet_box_pallet_hdrs as p')
+                    ->select(
+                        'p.id',
+                        'p.transaction_id',
+                        'p.model_id',
+                        'm.model',
+                        'm.box_count_per_pallet',
+                        'p.pallet_qr',
+                        'p.pallet_status',
+                        'p.pallet_location',
+                        'p.created_at',
+                        'p.updated_at'
+                    )
+                    ->join('pallet_model_matrices as m','m.id','=','p.model_id')
+                    ->where('p.transaction_id',$trans_id);
+        return $query;
     }
 }
