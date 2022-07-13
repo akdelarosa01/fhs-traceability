@@ -4424,6 +4424,7 @@ B. Synopsis: Real Time Script
         $F.init.call(this);
         this.$tbl_transactions = "";
         this.$tbl_pallets = "";
+        this.$tbl_boxes = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.BoxPalletApp_checked = 0;
@@ -4480,6 +4481,9 @@ B. Synopsis: Real Time Script
                         $('#btn_start_scan').addClass("btn-danger");
                         $('#box_qr').prop('readonly', false);
                         $('#box_qr').val('');
+                        $('#tbl_transactions').addClass('disabled');
+                        $('#tbl_pallets').addClass('disabled');
+                        $('#tbl_boxes').addClass('disabled');
                     } else {
                         $('#btn_add_new').prop('disabled', false);
                         $('#btn_cancel').prop('disabled', true);
@@ -4489,6 +4493,9 @@ B. Synopsis: Real Time Script
                         $('#btn_start_scan').addClass("btn-success");
                         $('#box_qr').prop('readonly', true);
                         $('#box_qr').val('');
+                        $('#tbl_transactions').removeClass('disabled');
+                        $('#tbl_pallets').removeClass('disabled');
+                        $('#tbl_boxes').removeClass('disabled');
                     }
                     
                     break;

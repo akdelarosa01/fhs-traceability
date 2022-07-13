@@ -5,6 +5,9 @@
 			width: 20px;
 			height: 20px;
 		}
+		.disabled {
+			pointer-events: none;
+		}
 	</style>
 @endpush
 
