@@ -20,6 +20,7 @@ class CreatePalletBoxPalletHdrsTable extends Migration
             $table->text('pallet_qr');
             $table->integer('pallet_status')->length(1)->default(0); // 0 = ON PROGRESS / 1 = FOR OBA / 2 = GOOD / 3 = REWORK / 4 = HOLD PALLET / 5 = HOLD LOT
             $table->string('pallet_location');
+            $table->integer('is_printed')->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

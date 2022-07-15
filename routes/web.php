@@ -88,6 +88,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-pallets', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_pallets'])->name('transactions.box-and-pallet.get-pallets');
         Route::get('/get-boxes', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_boxes'])->name('transactions.box-and-pallet.get-boxes');
         Route::post('/save-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'save_box'])->name('transactions.box-and-pallet.save-box');
+        Route::post('/print-pallet', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'print_pallet'])->name('transactions.box-and-pallet.print-pallet');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {
