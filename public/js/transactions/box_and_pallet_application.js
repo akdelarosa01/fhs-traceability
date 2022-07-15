@@ -4544,7 +4544,7 @@ B. Synopsis: Real Time Script
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_transactions')) {
                 self.$tbl_transactions = $('#tbl_transactions').DataTable({
-                    scrollY: "43vh",
+                    scrollY: "400px",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -4613,6 +4613,7 @@ B. Synopsis: Real Time Script
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_transactions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -4629,7 +4630,7 @@ B. Synopsis: Real Time Script
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_pallets')) {
                 self.$tbl_pallets = $('#tbl_pallets').DataTable({
-                    scrollY: "43vh",
+                    scrollY: "400px",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -4748,6 +4749,7 @@ B. Synopsis: Real Time Script
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -4764,7 +4766,7 @@ B. Synopsis: Real Time Script
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_boxes')) {
                 self.$tbl_boxes = $('#tbl_boxes').DataTable({
-                    scrollY: "43vh",
+                    scrollY: "400px",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -4814,6 +4816,7 @@ B. Synopsis: Real Time Script
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
