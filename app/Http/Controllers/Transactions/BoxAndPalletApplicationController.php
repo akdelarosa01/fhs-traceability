@@ -312,15 +312,13 @@ class BoxAndPalletApplicationController extends Controller
             $pallet->is_printed = 1;
 
             if ($pallet->save()) {
-                // create qr
                 // save to print table for bartender
-
                 $data = [
                     'msg' => 'Please wait for the Pallet Label to print.',
                     'data' => [],
                     'success' => true,
-                    'msgType' => 'warning',
-                    'msgTitle' => 'Failed!'
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
                 ];
             }
         } catch (\Throwable $th) {
