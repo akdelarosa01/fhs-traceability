@@ -4713,6 +4713,8 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
+                        var dataRow = $(row);
+                        var checkbox = $(dataRow[0].cells[0].firstChild);
                         switch (data.pallet_status) {
                             case 1:
                                 $(row).css('background-color', '#FFC4DD');
@@ -4738,7 +4740,11 @@ B. Synopsis: Real Time Script
                                 $(row).css('background-color', '#FFDCAE');
                                 $(row).css('color', '#000000');
                                 break;
-                        }                        
+                        }
+                        
+                        if (data.pallet_location != "PRODUCTION") {
+                            checkbox.prop('disabled', true);
+                        }
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -4821,11 +4827,15 @@ B. Synopsis: Real Time Script
                             if (is_printed > 0) {
                                 self.statusMsg("Pallet was already printed!","success");
                                 $('#btn_reprint_pallet').prop('disabled',false);
+                                $('#btn_print_pallet').prop('disabled',true);
+                                $('#btn_preview_print').prop('disabled',true);
                                 $('#btn_print_preview').prop('disabled',false);
                             } else {
                                 self.statusMsg("Ready to Print!","success");
                                 $('#btn_print_preview').prop('disabled',false);
+                                $('#btn_reprint_pallet').prop('disabled',true);
                                 $('#btn_print_pallet').prop('disabled',false);
+                                $('#btn_preview_print').prop('disabled',false);
                             }
                         }
                     },
@@ -4891,21 +4901,19 @@ B. Synopsis: Real Time Script
                     break;
             }
         },
-        printPallet: function(pallet_id) {
+        printPallet: function(param) {
             var self = this;
             self.submitType = "POST";
-            self.jsonData = {
-                _token: self.token,
-                pallet_id: pallet_id
-            };
+            self.jsonData = param;
             self.formAction = "/transactions/box-and-pallet/print-pallet";
             self.sendData().then(function() {
                 $('#btn_print_preview').prop('disabled',false);
                 $('#btn_reprint_pallet').prop('disabled',false);
                 $('#btn_print_pallet').prop('disabled',true);
+                $('#btn_preview_print').prop('disabled',true);
                 self.statusMsg("Pallet was already printed!","success");
             });
-        }
+        },
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -4940,11 +4948,16 @@ B. Synopsis: Real Time Script
 
         $('#btn_add_new').on('click', function() {
             _BoxPalletApp.viewState('NEW');
+            var inputs = ['model_id', 'target_no_of_pallet'];
+            _BoxPalletApp.clearForm(inputs);
+            $('#model_id').empty().trigger('change.select2');
         });
 
         $('#btn_cancel').on('click', function() {
             _BoxPalletApp.viewState('');
-            $('.clear').val('');
+
+            var inputs = ['model_id', 'target_no_of_pallet'];
+            _BoxPalletApp.clearForm(inputs);
             $('#model_id').empty().trigger('change.select2');
         });
 
@@ -5045,8 +5058,8 @@ B. Synopsis: Real Time Script
             $('#pallet_id_qr').val('');
             $('#is_printed').val('');
             $('#box_count_full').html(0);
-            $('#pallet_count_full').html(0);
-            $('#pallet_count').html(0);
+            //$('#pallet_count_full').html(0);
+            //$('#pallet_count').html(0);
 
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
@@ -5076,7 +5089,7 @@ B. Synopsis: Real Time Script
 
             $('#pallet_id').val(data.id);
             $('#pallet_id_qr').val(data.pallet_qr);
-            $('#is_printed').val(data.is_deleted);
+            $('#is_printed').val(data.is_printed);
             $('#box_count_full').html(data.box_count_per_pallet);
 
             _BoxPalletApp.statusMsg('','clear');
@@ -5085,7 +5098,7 @@ B. Synopsis: Real Time Script
         .on('deselect', function ( e, dt, type, indexes ) {
             $('#pallet_id').val('');
             $('#pallet_id_qr').val('');
-            $('#is_printed').val('');
+            $('#is_printed').val(0);
             $('#box_count_full').html(0);
 
             _BoxPalletApp.$tbl_boxes.ajax.reload();
@@ -5102,9 +5115,40 @@ B. Synopsis: Real Time Script
             _BoxPalletApp.scanBoxQR(param);
         });
 
-        $('#btn_print_pallet').on('click', function() {
-            var pallet_id = $('#pallet_id').val();
-            _BoxPalletApp.printPallet(pallet_id);
+        $('#btn_print_pallet, #btn_preview_print').on('click', function() {
+            var box_ids = "";
+            _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
+                box_ids += row.box_qr+";";
+            });
+
+            _BoxPalletApp.printPallet({
+                _token: _BoxPalletApp.token,
+                pallet_id: $('#pallet_id').val(),
+                model: $('#running_model').val(),
+                lot_no: '',
+                box_qty: $('#box_count').html(),
+                box_qr: box_ids,
+                pallet_qr: $('#pallet_id_qr').val(),
+                mode: 'print'
+            });
+        });
+
+        $('#btn_reprint_pallet').on('click', function() {
+            var box_ids = "";
+            _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
+                box_ids += row.box_qr+";";
+            });
+
+            _BoxPalletApp.printPallet({
+                _token: _BoxPalletApp.token,
+                pallet_id: $('#pallet_id').val(),
+                model: $('#running_model').val(),
+                lot_no: '',
+                box_qty: $('#box_count').html(),
+                box_qr: box_ids,
+                pallet_qr: $('#pallet_id_qr').val(),
+                mode: 'reprint'
+            });
         });
 
         $('#btn_print_preview').on('click', function() {
