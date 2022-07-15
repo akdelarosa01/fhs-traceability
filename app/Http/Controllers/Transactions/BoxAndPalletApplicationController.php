@@ -8,6 +8,7 @@ use App\Common\Helpers;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
+use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -119,7 +120,7 @@ class BoxAndPalletApplicationController extends Controller
 
         $this->validate($req, [
             'model_id' => 'required',
-            'target_no_of_pallet' => 'required|numeric',
+            'target_no_of_pallet' => 'required|numeric|min:0|not_in:0',
         ]);
 
         try {
@@ -311,15 +312,30 @@ class BoxAndPalletApplicationController extends Controller
             $pallet = PalletBoxPalletHdr::find($req->pallet_id);
             $pallet->is_printed = 1;
 
-            if ($pallet->save()) {
-                // save to print table for bartender
-                $data = [
-                    'msg' => 'Please wait for the Pallet Label to print.',
-                    'data' => [],
-                    'success' => true,
-                    'msgType' => 'success',
-                    'msgTitle' => 'Success!'
-                ];
+            if ($req->mode == 'print') {
+                $pallet->pallet_status = 1; // FOR OBA
+            }
+
+            if ($pallet->update()) {
+                $print = new PalletPrintPalletLabel();
+
+                $print->model = $req->model;
+                $print->lot_no = $req->lot_no;
+                $print->box_qty = $req->box_qty;
+                $print->box_qr = $req->box_qr;
+                $print->pallet_qr = $req->pallet_qr;
+                $print->print_date = date('Y-m-d H:i:s');
+
+                if ($print->save()) {
+                    $data = [
+                        'msg' => 'Please wait for the Pallet Label to print.',
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+                
             }
         } catch (\Throwable $th) {
             $data = [
