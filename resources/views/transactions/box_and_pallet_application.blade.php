@@ -222,17 +222,17 @@ Box and Pallet Application
 
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-lime" id="btn_print_preview">
+						<button type="button" class="btn btn-sm btn-block btn-lime" id="btn_print_preview" disabled>
 							<i class="fa fa-eye"></i> Print Preview
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_print_pallet">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_print_pallet" disabled>
 							<i class="fa fa-print"></i> Print Label
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-aqua">
+						<button type="button" class="btn btn-sm btn-block btn-aqua" id="btn_reprint_pallet" disabled>
 							<i class="fa fa-print"></i> Re-print Label
 						</button>
 					</div>

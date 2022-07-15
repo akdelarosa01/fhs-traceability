@@ -4820,8 +4820,12 @@ B. Synopsis: Real Time Script
                         if (data_count > 0 && box_count_full == data_count) {
                             if (is_printed > 0) {
                                 self.statusMsg("Pallet was already printed!","success");
+                                $('#btn_reprint_pallet').prop('disabled',false);
+                                $('#btn_print_preview').prop('disabled',false);
                             } else {
                                 self.statusMsg("Ready to Print!","success");
+                                $('#btn_print_preview').prop('disabled',false);
+                                $('#btn_print_pallet').prop('disabled',false);
                             }
                         }
                     },
@@ -4896,7 +4900,10 @@ B. Synopsis: Real Time Script
             };
             self.formAction = "/transactions/box-and-pallet/print-pallet";
             self.sendData().then(function() {
-                
+                $('#btn_print_preview').prop('disabled',false);
+                $('#btn_reprint_pallet').prop('disabled',false);
+                $('#btn_print_pallet').prop('disabled',true);
+                self.statusMsg("Pallet was already printed!","success");
             });
         }
     }
@@ -4914,8 +4921,8 @@ B. Synopsis: Real Time Script
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
         _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
             text: "",
-            width: 230,
-            height: 230,
+            width: 290,
+            height: 290,
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
@@ -4924,8 +4931,8 @@ B. Synopsis: Real Time Script
         var prv_pallet_id_qr = document.getElementById('prv_pallet_id_qr')
         _BoxPalletApp.pallet_qr_code = new QRCode(prv_pallet_id_qr, {
             text: "",
-            width: 60,
-            height: 60,
+            width: 80,
+            height: 80,
             colorDark : "#000000",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
