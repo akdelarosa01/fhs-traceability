@@ -211,6 +211,7 @@ class BoxAndPalletApplicationController extends Controller
                         'p.pallet_qr',
                         'p.pallet_status',
                         'p.pallet_location',
+                        'p.is_printed',
                         'p.created_at',
                         'p.updated_at'
                     )
@@ -294,5 +295,44 @@ class BoxAndPalletApplicationController extends Controller
                     ->where('b.pallet_id',$pallet_id)
                     ->orderBy('b.id','desc');
         return $query;
+    }
+
+    public function print_pallet(Request $req)
+    {
+        $data = [
+			'msg' => 'Printing Pallet Label has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->is_printed = 1;
+
+            if ($pallet->save()) {
+                // create qr
+                // save to print table for bartender
+
+                $data = [
+                    'msg' => 'Please wait for the Pallet Label to print.',
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'warning',
+                    'msgTitle' => 'Failed!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }

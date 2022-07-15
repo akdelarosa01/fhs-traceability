@@ -135,7 +135,8 @@ Box and Pallet Application
 							<div class="input-group-prepend">
 								<span class="input-group-text">Pallet QR</span>
 							</div>
-							<input type="hidden" class="" id="pallet_id" name="pallet_id"/>
+							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
+							<input type="hidden" class="clear" id="is_printed" name="is_printed"/>
 							<input type="text" class="form-control form-control-sm clear" id="pallet_id_qr" name="pallet_id_qr" autocomplete="off" readonly>
 						</div>
 					</div>
@@ -150,39 +151,146 @@ Box and Pallet Application
 					</div>
 				</div>
 			</div>
-			
+		</div>
+
+		<div class="row mb-2">
+			<div class="offset-8 col-4" style="font-size: 14px;">
+				<strong>Status message: </strong>
+				<span id="status_msg"></span>
+			</div>
 		</div>
 
 		<div class="row">
-			<div class="col-4">
-				<table class="table table-sm table-hover" id="tbl_transactions" style="width: 100%">
-					<thead>
-						<th>Model Count: <span id="model_count">0</span></th>
-						<th></th>
-					</thead>
-				</table>
+			<div class="col-3">
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						<table class="table table-sm table-hover" id="tbl_transactions" style="width: 100%">
+							<thead>
+								<th>Model Count: <span id="model_count">0</span></th>
+								<th></th>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 
 			<div class="col-5">
-				<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
-					<thead>
-						<th style="width: 10px;"></th>
-						<th>Pallet Count: <span id="pallet_count">0</span> / <span id="pallet_count_full">0</span></th>
-						<th>Status</th>
-						<th>On Track</th>
-					</thead>
-				</table>
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
+							<thead>
+								<th style="width: 10px;"></th>
+								<th>Pallet Count: <span id="pallet_count">0</span> / <span id="pallet_count_full">0</span></th>
+								<th>Status</th>
+								<th>On Track</th>
+							</thead>
+						</table>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue">
+							<i class="fa fa-arrow-right-arrow-left"></i> Transfer To
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-purple">
+							<i class="fa fa-pen"></i> Update
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-red">
+							<i class="fa fa-heart-crack"></i> Mark as Broken Pallet
+						</button>
+					</div>
+				</div>
 			</div>
 
-			<div class="col-3">
-				<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%">
-					<thead>
-						<th>Box Count: <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
-					</thead>
-				</table>
+			<div class="col-4">
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						
+						<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%">
+							<thead>
+								<th>Box Count: <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
+								<th>Remarks</th>
+							</thead>
+						</table>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-lime" id="btn_print_preview">
+							<i class="fa fa-eye"></i> Print Preview
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_print_pallet">
+							<i class="fa fa-print"></i> Print Label
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-aqua">
+							<i class="fa fa-print"></i> Re-print Label
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		
+	</div>
+</div>
+
+<div class="modal fade" id="modal_print_preview" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="modal_form_title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h3 class="text-center" id="prv_label_title"></h3>
+				<div class="row">
+					<div class="col-md-8">
+						<div id="prv_box_id_qr"></div>
+					</div>
+					<div class="col-md-4">
+						<div class="row">
+							<div class="col-md-12">
+								<p>Model: <span id="prv_model"></span></p>
+								<p>Print Date: <span id="prv_date"></span></p>
+								<p>Lot Number: </p>
+								<ul>
+									<li>Lot Number 1</li>
+									<li>Lot Number 2</li>
+									<li>Lot Number 3</li>
+								</ul>
+								<p>Box Qty: <span id="prv_box_count"></span> pcs</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div id="prv_pallet_id_qr"></div>
+								<p id="prv_pallet_id_val"></p>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+				<button type="button" class="btn btn-primary" id="btn_preview_print">
+					<i class="fa fa-print"></i> Print
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 
