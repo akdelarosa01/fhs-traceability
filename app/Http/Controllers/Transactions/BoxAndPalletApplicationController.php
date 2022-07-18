@@ -359,10 +359,10 @@ class BoxAndPalletApplicationController extends Controller
         return response()->json($data);
     }
 
-    public function transfer_pallet()
+    public function transfer_to(Request $req)
     {
         $data = [
-			'msg' => 'Transferring Pallet has failed.',
+			'msg' => 'Transferring Pallet to Q.A. has failed.',
             'data' => [],
 			'success' => true,
             'msgType' => 'warning',
@@ -370,9 +370,38 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            //code...
+            $update = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
+                'pallet_location' => "Q.A.",
+                'update_user' => Auth::user()->id,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($update) {
+
+                $msg = "Pallet was successfully transferred.";
+
+                if (count($req->ids) > 0) {
+                    $msg = "Pallets were successfully transferred.";
+                }
+
+                $data = [
+                    'msg' => $msg,
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
         } catch (\Throwable $th) {
-            //throw $th;
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
         }
+
+        return response()->json($data);
     }
 }
