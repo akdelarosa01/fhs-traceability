@@ -503,6 +503,15 @@
                 self.$tbl_pallets.ajax.reload();
             });
         },
+        transferTo: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/transfer-to";
+            self.sendData().then(function() {
+                self.$tbl_pallets.ajax.reload();
+            });
+        }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -769,6 +778,39 @@
                 _BoxPalletApp.showWarning("Please click the pallet number to select.");
             }
             
+        });
+
+        $('#btn_transfer').on('click', function() {
+            var chkArray = [];
+            var table = _BoxPalletApp.$tbl_pallets;
+            var cnt = 0;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    cnt++;
+                }
+            }
+
+            var msg = "Do you want to transfer this Pallet to Q.A.?";
+
+            if (cnt > 1) {
+                msg = "Do you want to transfer these Pallets to Q.A.?";
+            }
+
+            if (chkArray.length > 0) {
+                _BoxPalletApp.msg = msg;
+                _BoxPalletApp.confirmAction().then(function(approve) {
+                    if (approve)
+                        _BoxPalletApp.transferTo({
+                            _token: _BoxPalletApp.token,
+                            ids: chkArray
+                        });
+                });
+            } else {
+                _BoxPalletApp.showWarning('Please select at least 1 Pallet.');
+            }
         });
         
     });

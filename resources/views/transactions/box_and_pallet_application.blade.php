@@ -190,7 +190,7 @@ Box and Pallet Application
 
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer">
 							<i class="fa fa-arrow-right-arrow-left"></i> Transfer To
 						</button>
 					</div>
