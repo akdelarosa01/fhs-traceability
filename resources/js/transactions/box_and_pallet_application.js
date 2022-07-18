@@ -500,6 +500,7 @@
                 $('#btn_print_pallet').prop('disabled',true);
                 $('#btn_preview_print').prop('disabled',true);
                 self.statusMsg("Pallet was already printed!","success");
+                self.$tbl_pallets.ajax.reload();
             });
         },
     }
@@ -603,19 +604,13 @@
                 data: data
             }).done(function(response, textStatus, xhr) {
                 if (textStatus) {
-                    switch (response.msgType) {
-                        case "failed":
-                            _BoxPalletApp.showWarning(response.msg);
-                            break;
-                        case "error":
-                            _BoxPalletApp.showError(response.msg);
-                            break;
-                        default:
-                            _BoxPalletApp.clearForm(response.inputs);
-                            _BoxPalletApp.viewState('');
-                            _BoxPalletApp.$tbl_transactions.ajax.reload();
-                            _BoxPalletApp.showSuccess(response.msg);
-                            break;
+                    if (response.msgType == "success") {
+                        _BoxPalletApp.clearForm(response.inputs);
+                        _BoxPalletApp.viewState('');
+                        _BoxPalletApp.$tbl_transactions.ajax.reload();
+                        _BoxPalletApp.swMsg(response.msg,response.msgType);
+                    } else {
+                        _BoxPalletApp.swMsg(response.msg,response.msgType);
                     }
                     _BoxPalletApp.id = 0;
                 }
@@ -711,6 +706,8 @@
 
             _BoxPalletApp.printPallet({
                 _token: _BoxPalletApp.token,
+                trans_id: $('#trans_id').val(),
+                model_id: $('#selected_model_id').val(),
                 pallet_id: $('#pallet_id').val(),
                 model: $('#running_model').val(),
                 lot_no: '------',
@@ -729,6 +726,8 @@
 
             _BoxPalletApp.printPallet({
                 _token: _BoxPalletApp.token,
+                trans_id: $('#trans_id').val(),
+                model_id: $('#selected_model_id').val(),
                 pallet_id: $('#pallet_id').val(),
                 model: $('#running_model').val(),
                 lot_no: '------',

@@ -24,12 +24,7 @@ class BoxAndPalletApplicationController extends Controller
         $this->middleware('auth');
         $this->_helpers = new Helpers;
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
         $pages = session('pages');
@@ -317,6 +312,20 @@ class BoxAndPalletApplicationController extends Controller
             }
 
             if ($pallet->update()) {
+
+                if ($req->mode == 'print') {
+                    $hdr = new PalletBoxPalletHdr();
+                    $hdr->transaction_id = $req->trans_id;
+                    $hdr->model_id = $req->model_id;
+                    $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
+                    $hdr->pallet_status = 0;
+                    $hdr->pallet_location = "PRODUCTION";
+                    $hdr->create_user = Auth::user()->id;
+                    $hdr->update_user = Auth::user()->id;
+
+                    $hdr->save();
+                }
+
                 $print = new PalletPrintPalletLabel();
 
                 $print->model = $req->model;
@@ -328,7 +337,7 @@ class BoxAndPalletApplicationController extends Controller
 
                 if ($print->save()) {
                     $data = [
-                        'msg' => 'Please wait for the Pallet Label to print.',
+                        'msg' => $req->pallet_qr.' Pallet Label Print Successfully! Please wait for the Pallet Label to print.',
                         'data' => [],
                         'success' => true,
                         'msgType' => 'success',
@@ -348,5 +357,22 @@ class BoxAndPalletApplicationController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function transfer_pallet()
+    {
+        $data = [
+			'msg' => 'Transferring Pallet has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

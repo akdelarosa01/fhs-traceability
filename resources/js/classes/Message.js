@@ -2,7 +2,7 @@
 A. Name: Message Class
 B. Synopsis: Class Module used for showing messages
 ***********************************************/
-;
+
 (function(global, $) {
     const Message = function(msgType, msgTitle, msg, func, trxId) {
         return new Message.init(msgType, msgTitle, msg, func, trxId);
@@ -186,6 +186,39 @@ B. Synopsis: Class Module used for showing messages
                 pauseOnHover: true
             });
             $('#iziModalError').iziModal('open');
+        },
+        swMsg(msg,status) {
+            switch (status) {
+                case 'error':
+                    this.msgType = "error";
+                    this.msgTitle = "Error!";
+                    this.msg = msg;
+                    break;
+
+                case 'warning':
+                    this.msgType = "warning";
+                    this.msgTitle = "Failed!";
+                    this.msg = msg;
+                    break;
+
+                case 'info':
+                    this.msgType = "info";
+                    this.msgTitle = "Information!";
+                    this.msg = msg;
+                    break;
+            
+                default:
+                    this.msgType = "success";
+                    this.msgTitle = "Success!";
+                    this.msg = msg;
+                    break;
+            }
+
+            Swal.fire({
+                icon: this.msgType,
+                title: this.msgTitle,
+                text: this.msg,
+            })
         }
     }
     Message.init.prototype = Message.prototype;

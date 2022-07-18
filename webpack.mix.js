@@ -38,6 +38,7 @@ const TrxJS = [
     "resources/plugins/iziModal/js/iziModal.js",
     "resources/plugins/Parsleyjs/dist/parsley.min.js",
     "resources/plugins/gritter/js/jquery.gritter.js",
+    "resources/plugins/sweetalert2/dist/sweetalert2.all.min.js",
     "resources/js/classes/Message.js",
     "resources/js/classes/Formatter.js",
     "resources/js/classes/CustomUI.js",
@@ -50,6 +51,7 @@ const TrxCSS = [
     "resources/plugins/iziModal/css/iziModal.css",
     "resources/plugins/Parsleyjs/src/parsley.min.css",
     "resources/plugins/gritter/css/jquery.gritter.css",
+    "resources/plugins/sweetalert2/dist/sweetalert2.min.css"
 ];
 
 

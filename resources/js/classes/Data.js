@@ -134,10 +134,11 @@ B. Synopsis: Class Module used to process data
                         if (response.success) {
                             self.responseData = response.data;
                             if (response.hasOwnProperty('msg')) {
-                                self.msgType = response.msgType;
-                                self.msgTitle = response.msgTitle;
-                                self.msg = response.msg;
-                                self.showToastrMsg();
+                                // self.msgType = response.msgType;
+                                // self.msgTitle = response.msgTitle;
+                                // self.msg = response.msg;
+                                // self.showToastrMsg();
+                                self.swMsg(response.msg,response.msgType);
                             }
                             resolve(true);
                         } else {
@@ -150,7 +151,8 @@ B. Synopsis: Class Module used to process data
                                         self.showSessionError(response);
                                     }
                                 } else {
-                                    self.showToastrMsg();
+                                    // self.showToastrMsg();
+                                    self.swMsg(response.msg, 'error');
                                 }
                             }
                             resolve(false);

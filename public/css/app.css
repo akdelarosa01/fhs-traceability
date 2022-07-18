@@ -82,3 +82,9 @@
     padding: 10px 15px;
 }
 
+body table.dataTable tbody tr.selected td {
+    background: #A8A4CE;
+    color: #2C3639;
+    font-weight: 600;
+}
+
