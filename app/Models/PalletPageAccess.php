@@ -37,4 +37,15 @@ class PalletPageAccess extends Model
                 ->orderBy('order')
                 ->get();
     }
+
+    public function check_permission($user_id, $page_name)
+    {
+        return DB::table('pallet_page_accesses as pa')
+                    ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                    ->where([
+                        ['pa.user_id', '=', $user_id],
+                        ['pa.authorize', '=', 1],
+                        ['p.page_name', '=', $page_name]
+                    ])->count();
+    }
 }

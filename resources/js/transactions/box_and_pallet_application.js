@@ -511,6 +511,43 @@
             self.sendData().then(function() {
                 self.$tbl_pallets.ajax.reload();
             });
+        },
+        checkAuthorization: function(pallet_id) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = {
+                _token: self.token,
+            };
+            self.formAction = "/transactions/box-and-pallet/check-authorization";
+            self.sendData().then(function() {
+                var response = self.responseData;
+
+                if (response.permission) {
+                    $('.auth').hide();
+                    $('#new_box_count').prop('readonly', false);
+                    $('#btn_set_new_box_count').prop('disabled', false);
+                } else {
+                    $('.auth').show();
+                    $('#new_box_count').prop('readonly', true);
+                    $('#btn_set_new_box_count').prop('disabled', true);
+                }
+                $('#broken_pallet_id').val(pallet_id);
+                $('#modal_broken_pallet').modal('show');
+            });
+        },
+        setNewBoxCount: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = {
+                _token: self.token,
+                new_box_count: $('#new_box_count').val(),
+                pallet_id: $('#broken_pallet_id').val()
+            };
+            self.formAction = "/transactions/box-and-pallet/set-new-box-count";
+            self.sendData().then(function() {
+                self.$tbl_pallets.ajax.reload();
+                self.$tbl_boxes.ajax.reload();
+            });
         }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
@@ -811,6 +848,62 @@
             } else {
                 _BoxPalletApp.showWarning('Please select at least 1 Pallet.');
             }
+        });
+
+        $('#btn_broken_pallet').on('click', function() {
+            var chkArray = [];
+            var table = _BoxPalletApp.$tbl_pallets;
+            var cnt = 0;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    cnt++;
+                }
+            }
+
+            var msg = "Do you want to assign this Pallet as Broken Pallet?";
+
+            if (chkArray.length == 1) {
+                _BoxPalletApp.msg = msg;
+
+                _BoxPalletApp.confirmAction().then(function(approve) {
+                    if (approve)
+                        _BoxPalletApp.checkAuthorization(chkArray[0]);
+                });
+            } else {
+                _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
+            }
+        });
+
+        // $('#frm_new_box_count').on('submit', function(e) {
+        //     e.preventDefault();
+        //     $('#loading_modal').modal('show');
+                
+        //     var data = $(this).serializeArray();
+        //     $.ajax({
+        //         url: $(this).attr('action'),
+        //         type: 'POST',
+        //         dataType: 'JSON',
+        //         data: data
+        //     }).done(function(response, textStatus, xhr) {
+        //         self.$tbl_pallets.ajax.reload();
+        //         self.$tbl_boxes.ajax.reload();
+        //     }).fail(function(xhr, textStatus, errorThrown) {
+        //         var errors = xhr.responseJSON.errors;
+        //         _BoxPalletApp.showInputErrors(errors);
+
+        //         if (errorThrown == "Internal Server Error") {
+        //             _BoxPalletApp.ErrorMsg(xhr);
+        //         }
+        //     }).always(function() {
+        //         $('#loading_modal').modal('hide');
+        //     });
+        // });
+
+        $('#btn_set_new_box_count').on('click', function() {
+            _BoxPalletApp.setNewBoxCount();
         });
         
     });

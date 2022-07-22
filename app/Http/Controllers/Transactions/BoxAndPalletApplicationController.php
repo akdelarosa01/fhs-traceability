@@ -8,6 +8,7 @@ use App\Common\Helpers;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
+use App\Models\PalletPageAccess;
 use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
@@ -203,7 +204,7 @@ class BoxAndPalletApplicationController extends Controller
                         'p.transaction_id',
                         'p.model_id',
                         'm.model',
-                        'm.box_count_per_pallet',
+                        DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
                         'p.pallet_qr',
                         'p.pallet_status',
                         'p.pallet_location',
@@ -306,6 +307,7 @@ class BoxAndPalletApplicationController extends Controller
         try {
             $pallet = PalletBoxPalletHdr::find($req->pallet_id);
             $pallet->is_printed = 1;
+            $pallet->update_user = Auth::user()->id;
 
             if ($req->mode == 'print') {
                 $pallet->pallet_status = 1; // FOR OBA
@@ -386,6 +388,88 @@ class BoxAndPalletApplicationController extends Controller
 
                 $data = [
                     'msg' => $msg,
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function check_authorization()
+    {
+        $data = [
+			'msg' => 'Checking Authorization was failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $user_id = Auth::user()->id;
+            $page_access = new PalletPageAccess();
+            $permission = $page_access->check_permission($user_id, 'BoxAndPalletApplication');
+
+            if ($permission > 0) {
+                $data = [
+                    'data' => [
+                        'permission' => true
+                    ],
+                    'success' => true,
+                ];
+            } else {
+                $data = [
+                    'data' => [
+                        'permission' => false
+                    ],
+                    'success' => true,
+                ];
+            }
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => true,
+                'msgType' => 'warning',
+                'msgTitle' => 'Failed!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function set_new_box_count(Request $req)
+    {
+        $data = [
+			'msg' => 'Assigning Broken Pallet was failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->new_box_count = $req->new_box_count;
+            $pallet->update_user = Auth::user()->id;
+
+            if ($pallet->update()) {
+
+                $data = [
+                    'msg' => "Broken Pallet was successfully assigned and has new box count.",
                     'data' => [],
                     'success' => true,
                     'msgType' => 'success',
