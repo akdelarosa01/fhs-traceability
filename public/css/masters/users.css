@@ -213,7 +213,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
 }
 
 body table.dataTable tbody tr.selected td {
-    background: #A8A4CE;
+    background: #DDDDDD;
     color: #2C3639;
     font-weight: 600;
 }

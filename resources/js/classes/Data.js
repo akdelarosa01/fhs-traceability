@@ -546,11 +546,10 @@ B. Synopsis: Class Module used to process data
             }
             return true;
         },
-
         toFixed: function(num, fixed) {
             var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
             return num.toString().match(re)[0];
-        }
+        },
     }
     DataClass.init.prototype = $.extend(DataClass.prototype, $M.init.prototype);
 
