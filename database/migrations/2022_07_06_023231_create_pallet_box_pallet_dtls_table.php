@@ -18,6 +18,8 @@ class CreatePalletBoxPalletDtlsTable extends Migration
             $table->integer('pallet_id');
             $table->integer('model_id');
             $table->text('box_qr');
+            $table->text('remarks');
+            $table->integer('is_deleted')->length(1)->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

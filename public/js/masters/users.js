@@ -3355,33 +3355,52 @@ B. Synopsis: Class Module used for showing messages
             });
             return false;
         },
-        confirmAction: function() {
+        confirmAction: function(msgs) {
             var self = this;
             var promiseObj = new Promise(function(resolve, reject) {
-                iziToast.question({
-                    timeout: 20000,
-                    close: false,
-                    overlay: true,
-                    displayMode: 'once',
-                    id: 'question',
-                    zindex: 99999999,
-                    title: 'Confirm: ',
-                    message: self.msg,
-                    position: 'topCenter',
-                    timeout: 0,
-                    buttons: [
-                        ['<button>Yes</button>', function(instance, toast) {
-
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(true);
-
-                        }],
-                        ['<button><b>NO</b></button>', function(instance, toast) {
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(false);
-                        }, true],
-                    ],
+                var msg = (msgs == "" || msgs == null || msgs == undefined)? this.msg : msgs;
+                Swal.fire({
+                    title: '<strong>Confirmation</strong>',
+                    icon: 'question',
+                    html: '<p>'+msg+'</p>',
+                    showCloseButton: true,
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: '<i class="fa fa-thumbs-up"></i> Yes',
+                    confirmButtonAriaLabel: 'Thumbs up, great!',
+                    cancelButtonText: '<i class="fa fa-thumbs-down"></i> No',
+                    cancelButtonAriaLabel: 'Thumbs down'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
                 });
+                // iziToast.question({
+                //     timeout: 20000,
+                //     close: false,
+                //     overlay: true,
+                //     displayMode: 'once',
+                //     id: 'question',
+                //     zindex: 99999999,
+                //     title: 'Confirm: ',
+                //     message: self.msg,
+                //     position: 'topCenter',
+                //     timeout: 0,
+                //     buttons: [
+                //         ['<button>Yes</button>', function(instance, toast) {
+
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(true);
+
+                //         }],
+                //         ['<button><b>NO</b></button>', function(instance, toast) {
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(false);
+                //         }, true],
+                //     ],
+                // });
             });
             return promiseObj;
         },
