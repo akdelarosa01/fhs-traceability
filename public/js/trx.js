@@ -2066,30 +2066,49 @@ B. Synopsis: Class Module used for showing messages
         confirmAction: function() {
             var self = this;
             var promiseObj = new Promise(function(resolve, reject) {
-                iziToast.question({
-                    timeout: 20000,
-                    close: false,
-                    overlay: true,
-                    displayMode: 'once',
-                    id: 'question',
-                    zindex: 99999999,
-                    title: 'Confirm: ',
-                    message: self.msg,
-                    position: 'topCenter',
-                    timeout: 0,
-                    buttons: [
-                        ['<button>Yes</button>', function(instance, toast) {
-
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(true);
-
-                        }],
-                        ['<button><b>NO</b></button>', function(instance, toast) {
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(false);
-                        }, true],
-                    ],
+                Swal.fire({
+                    title: 'Confirm: '+self.msg,
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    denyButtonText: 'No',
+                    customClass: {
+                        actions: 'my-actions',
+                        cancelButton: 'order-1 right-gap',
+                        confirmButton: 'order-2',
+                        denyButton: 'order-3',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resolve(true);
+                    } else if (result.isDenied) {
+                        resolve(false);
+                    }
                 });
+                // iziToast.question({
+                //     timeout: 20000,
+                //     close: false,
+                //     overlay: true,
+                //     displayMode: 'once',
+                //     id: 'question',
+                //     zindex: 99999999,
+                //     title: 'Confirm: ',
+                //     message: self.msg,
+                //     position: 'topCenter',
+                //     timeout: 0,
+                //     buttons: [
+                //         ['<button>Yes</button>', function(instance, toast) {
+
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(true);
+
+                //         }],
+                //         ['<button><b>NO</b></button>', function(instance, toast) {
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(false);
+                //         }, true],
+                //     ],
+                // });
             });
             return promiseObj;
         },

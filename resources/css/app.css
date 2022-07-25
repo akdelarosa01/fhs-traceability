@@ -46,3 +46,12 @@ body table.dataTable tbody tr.selected td {
     color: #2C3639;
     font-weight: 600;
 }
+
+.my-actions { margin: 0 2em; }
+.order-1 { order: 1; }
+.order-2 { order: 2; }
+.order-3 { order: 3; }
+
+.right-gap {
+  margin-right: auto;
+}

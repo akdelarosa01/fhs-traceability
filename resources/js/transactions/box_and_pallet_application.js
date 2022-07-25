@@ -172,29 +172,18 @@
                                         '<small>Created: '+data.created_at+'</small>';
                         }, name: 'model', searchable: false, orderable: false },
                         { data: function(data) {
-                            switch (data.model_status) {
-                                case 1:
-                                    return 'READY';
-                                    break;
-                            
-                                default:
-                                    return 'NOT READY'
-                                    break;
+                            var model_status = "NOT READY";
+                            var color = "badge-danger";
+                            if (data.model_status == 1) {
+                                model_status = "READY";
+                                color = "badge-success";
                             }
+                            return '<span class="badge '+color+'">'+model_status+'</span>';
                         }, name: 'model_status', searchable: false, orderable: false, className: 'text-right' },
                     ],
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                        if (data.model_status == 0) {
-                            $(row).css('background-color', '#FF8080'); // YELLOW = NOT READY
-                            $(row).css('color', '#000000');
-                        }
-
-                        if (data.model_status == 1) {
-                            $(row).css('background-color', '#66BFBF'); // GREEN = READY
-                            $(row).css('color', '#000000');
-                        }
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -749,6 +738,20 @@
             $('#box_count').html(0);
         });
 
+        $('#tbl_pallets tbody').on('change', '.check_pallet', function() {
+            var checked = $(this).is(':checked');
+
+            if (checked) {
+                $('#btn_transfer').prop('disabled', false);
+                $('#btn_update').prop('disabled', false);
+                $('#btn_broken_pallet').prop('disabled', false);
+            } else {
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_update').prop('disabled', true);
+                $('#btn_broken_pallet').prop('disabled', true);
+            }
+        });
+
         $('#box_qr').on('change', function() {
             var param = {
                 pallet_id: $('#pallet_id').val(),
@@ -840,18 +843,20 @@
             for (var x = 0; x < table.context[0].aoData.length; x++) {
                 var DataRow = table.context[0].aoData[x];
                 if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    var status = $(DataRow.anCells[2]).html();
+                    if (status == "FOR OBA") {
+                        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    }
                     cnt++;
                 }
-            }
-
-            var msg = "Do you want to transfer this Pallet to Q.A.?";
-
-            if (cnt > 1) {
-                msg = "Do you want to transfer these Pallets to Q.A.?";
-            }
+            }            
 
             if (chkArray.length > 0) {
+                var msg = "Do you want to transfer this Pallet to Q.A.?";
+
+                if (cnt > 1) {
+                    msg = "Do you want to transfer these Pallets to Q.A.?";
+                }
                 _BoxPalletApp.msg = msg;
                 _BoxPalletApp.confirmAction().then(function(approve) {
                     if (approve)
@@ -861,7 +866,7 @@
                         });
                 });
             } else {
-                _BoxPalletApp.showWarning('Please select at least 1 Pallet.');
+                _BoxPalletApp.showWarning("Please select at least 1 Pallet with a 'FOR OBA' status.");
             }
         });
 

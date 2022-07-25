@@ -3358,30 +3358,49 @@ B. Synopsis: Class Module used for showing messages
         confirmAction: function() {
             var self = this;
             var promiseObj = new Promise(function(resolve, reject) {
-                iziToast.question({
-                    timeout: 20000,
-                    close: false,
-                    overlay: true,
-                    displayMode: 'once',
-                    id: 'question',
-                    zindex: 99999999,
-                    title: 'Confirm: ',
-                    message: self.msg,
-                    position: 'topCenter',
-                    timeout: 0,
-                    buttons: [
-                        ['<button>Yes</button>', function(instance, toast) {
-
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(true);
-
-                        }],
-                        ['<button><b>NO</b></button>', function(instance, toast) {
-                            instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
-                            resolve(false);
-                        }, true],
-                    ],
+                Swal.fire({
+                    title: 'Confirm: '+self.msg,
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes',
+                    denyButtonText: 'No',
+                    customClass: {
+                        actions: 'my-actions',
+                        cancelButton: 'order-1 right-gap',
+                        confirmButton: 'order-2',
+                        denyButton: 'order-3',
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resolve(true);
+                    } else if (result.isDenied) {
+                        resolve(false);
+                    }
                 });
+                // iziToast.question({
+                //     timeout: 20000,
+                //     close: false,
+                //     overlay: true,
+                //     displayMode: 'once',
+                //     id: 'question',
+                //     zindex: 99999999,
+                //     title: 'Confirm: ',
+                //     message: self.msg,
+                //     position: 'topCenter',
+                //     timeout: 0,
+                //     buttons: [
+                //         ['<button>Yes</button>', function(instance, toast) {
+
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(true);
+
+                //         }],
+                //         ['<button><b>NO</b></button>', function(instance, toast) {
+                //             instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                //             resolve(false);
+                //         }, true],
+                //     ],
+                // });
             });
             return promiseObj;
         },
@@ -4623,29 +4642,18 @@ B. Synopsis: Real Time Script
                                         '<small>Created: '+data.created_at+'</small>';
                         }, name: 'model', searchable: false, orderable: false },
                         { data: function(data) {
-                            switch (data.model_status) {
-                                case 1:
-                                    return 'READY';
-                                    break;
-                            
-                                default:
-                                    return 'NOT READY'
-                                    break;
+                            var model_status = "NOT READY";
+                            var color = "badge-danger";
+                            if (data.model_status == 1) {
+                                model_status = "READY";
+                                color = "badge-success";
                             }
+                            return '<span class="badge '+color+'">'+model_status+'</span>';
                         }, name: 'model_status', searchable: false, orderable: false, className: 'text-right' },
                     ],
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                        if (data.model_status == 0) {
-                            $(row).css('background-color', '#FF8080'); // YELLOW = NOT READY
-                            $(row).css('color', '#000000');
-                        }
-
-                        if (data.model_status == 1) {
-                            $(row).css('background-color', '#66BFBF'); // GREEN = READY
-                            $(row).css('color', '#000000');
-                        }
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -5200,6 +5208,20 @@ B. Synopsis: Real Time Script
             $('#box_count').html(0);
         });
 
+        $('#tbl_pallets tbody').on('change', '.check_pallet', function() {
+            var checked = $(this).is(':checked');
+
+            if (checked) {
+                $('#btn_transfer').prop('disabled', false);
+                $('#btn_update').prop('disabled', false);
+                $('#btn_broken_pallet').prop('disabled', false);
+            } else {
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_update').prop('disabled', true);
+                $('#btn_broken_pallet').prop('disabled', true);
+            }
+        });
+
         $('#box_qr').on('change', function() {
             var param = {
                 pallet_id: $('#pallet_id').val(),
@@ -5291,18 +5313,20 @@ B. Synopsis: Real Time Script
             for (var x = 0; x < table.context[0].aoData.length; x++) {
                 var DataRow = table.context[0].aoData[x];
                 if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    var status = $(DataRow.anCells[2]).html();
+                    if (status == "FOR OBA") {
+                        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    }
                     cnt++;
                 }
-            }
-
-            var msg = "Do you want to transfer this Pallet to Q.A.?";
-
-            if (cnt > 1) {
-                msg = "Do you want to transfer these Pallets to Q.A.?";
-            }
+            }            
 
             if (chkArray.length > 0) {
+                var msg = "Do you want to transfer this Pallet to Q.A.?";
+
+                if (cnt > 1) {
+                    msg = "Do you want to transfer these Pallets to Q.A.?";
+                }
                 _BoxPalletApp.msg = msg;
                 _BoxPalletApp.confirmAction().then(function(approve) {
                     if (approve)
@@ -5312,7 +5336,7 @@ B. Synopsis: Real Time Script
                         });
                 });
             } else {
-                _BoxPalletApp.showWarning('Please select at least 1 Pallet.');
+                _BoxPalletApp.showWarning("Please select at least 1 Pallet with a 'FOR OBA' status.");
             }
         });
 

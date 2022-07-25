@@ -218,6 +218,15 @@ body table.dataTable tbody tr.selected td {
     font-weight: 600;
 }
 
+.my-actions { margin: 0 2em; }
+.order-1 { order: 1; }
+.order-2 { order: 2; }
+.order-3 { order: 3; }
+
+.right-gap {
+  margin-right: auto;
+}
+
 
 /*
 * iziToast | v1.4.0

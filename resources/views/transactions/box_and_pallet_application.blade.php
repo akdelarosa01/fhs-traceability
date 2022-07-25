@@ -194,17 +194,17 @@ Box and Pallet Application
 
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer" disabled>
 							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-purple" id="btn_update">
+						<button type="button" class="btn btn-sm btn-block btn-purple" id="btn_update" disabled>
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_broken_pallet">
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_broken_pallet" disabled>
 							<i class="fa fa-star-of-life"></i> Mark as Broken Pallet
 						</button>
 					</div>
