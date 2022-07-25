@@ -220,7 +220,7 @@ class BoxAndPalletApplicationController extends Controller
     public function save_box(Request $req)
     {
         $data = [
-			'msg' => 'Creating transaction has failed.',
+			'msg' => 'Scanning Box has failed.',
             'data' => [],
 			'success' => true,
             'msgType' => 'warning',
@@ -263,6 +263,64 @@ class BoxAndPalletApplicationController extends Controller
         return response()->json($data);
     }
 
+    public function update_box(Request $req)
+    {
+        $data = [
+			'msg' => 'Saving boxes has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            DB::beginTransaction();
+            // remove all boxes that were removed
+            if (isset($req->remove_box_id) && count($req->remove_box_id) > 0) {
+                $remove_boxes = DB::table('pallet_box_pallet_dtls')->whereIn('id',$req->remove_box_id)
+                                ->update([
+                                    'is_deleted' => 1,
+                                    'update_user' => Auth::user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ]);
+            }
+
+            // update all boxes that has remarks
+            if (isset($req->update_box_id) && count($req->update_box_id) > 0) {
+                foreach ($req->update_box_id as $key => $id) {
+                    $update_box = DB::table('pallet_box_pallet_dtls')->where('id',$id)
+                                ->update([
+                                    'remarks' => $req->remarks_input[$key],
+                                    'update_user' => Auth::user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ]);
+                }
+            }
+
+            if ($update_box) {
+                DB::commit();
+                $data = [
+                    'msg' => 'Updating boxes were successful.',
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
     public function get_boxes(Request $req)
     {
         $data = [];
@@ -290,7 +348,10 @@ class BoxAndPalletApplicationController extends Controller
                         'b.updated_at'
                     )
                     ->join('pallet_model_matrices as m','m.id','=','b.model_id')
-                    ->where('b.pallet_id',$pallet_id)
+                    ->where([
+                        ['b.pallet_id','=',$pallet_id],
+                        ['b.is_deleted','=',0]
+                    ])
                     ->orderBy('b.id','desc');
         return $query;
     }

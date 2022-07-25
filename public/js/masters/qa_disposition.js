@@ -3355,25 +3355,25 @@ B. Synopsis: Class Module used for showing messages
             });
             return false;
         },
-        confirmAction: function() {
+        confirmAction: function(msgs) {
             var self = this;
             var promiseObj = new Promise(function(resolve, reject) {
+                var msg = (msgs == "" || msgs == null || msgs == undefined)? this.msg : msgs;
                 Swal.fire({
-                    title: 'Confirm: '+self.msg,
-                    showDenyButton: true,
+                    title: '<strong>Confirmation</strong>',
+                    icon: 'question',
+                    html: '<p>'+msg+'</p>',
+                    showCloseButton: true,
                     showCancelButton: true,
-                    confirmButtonText: 'Yes',
-                    denyButtonText: 'No',
-                    customClass: {
-                        actions: 'my-actions',
-                        cancelButton: 'order-1 right-gap',
-                        confirmButton: 'order-2',
-                        denyButton: 'order-3',
-                    }
+                    focusConfirm: false,
+                    confirmButtonText: '<i class="fa fa-thumbs-up"></i> Yes',
+                    confirmButtonAriaLabel: 'Thumbs up, great!',
+                    cancelButtonText: '<i class="fa fa-thumbs-down"></i> No',
+                    cancelButtonAriaLabel: 'Thumbs down'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         resolve(true);
-                    } else if (result.isDenied) {
+                    } else {
                         resolve(false);
                     }
                 });

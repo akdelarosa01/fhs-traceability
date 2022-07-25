@@ -226,7 +226,12 @@ Box and Pallet Application
 				</div>
 
 				<div class="row">
-					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="save_div">
+						<button type="button" class="btn btn-sm btn-block btn-green" id="btn_save_box" disabled>
+							<i class="fa fa-save"></i> Save
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="preview_div">
 						<button type="button" class="btn btn-sm btn-block btn-lime" id="btn_print_preview" disabled>
 							<i class="fa fa-eye"></i> Print Preview
 						</button>

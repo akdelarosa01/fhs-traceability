@@ -17,6 +17,7 @@
         this.pallet_qr_code = "";
         this.prv_box_id_qr = "";
         this.prv_pallet_id_qr = "";
+        this.removed_box_arr = [];
     }
     BoxPalletApp.prototype = {
         init: function() {},
@@ -380,20 +381,20 @@
                     columns: [
                         { 
                             data: function(data) {
-                                return '<button class="btn btn-danger btn_remove_box" disabled><i class="fa fa-times"></i></button>';
+                                return '<button type="button" class="btn btn-danger btn_remove_box" disabled><i class="fa fa-times"></i></button>'+
+                                '<input type="hidden" class="update_box_id" name="update_box_id[]" value="'+data.id+'"/>';
                             }, name: 'id', searchable: false, orderable: false, width: '10px'
                         },
                         { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
                         { data: function(data) {
                             var remarks = (data.remarks == null)? "" : data.remarks;
-                            return '<input type="text" class="form-control remarks_input" value="'+remarks+'" placeholder="Write Remarks here..." readonly/>';
+                            return '<textarea class="form-control remarks_input" name="remarks_input[]" placeholder="Write Remarks here..." style="resize:none;" disabled>'+remarks+'</textarea>';
                         }, name: 'remarks', searchable: false, orderable: false, className:'remarks' }
                     ],
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {     
-                        var dataRow = $(row);
-                        $(dataRow[0].cells[0]).addClass('p-0');    
+                        var dataRow = $(row);  
                         $(dataRow[0].cells[2]).addClass('p-0');                
                     },
                     initComplete: function() {
@@ -533,7 +534,12 @@
                     $('#modal_broken_pallet').modal('show');
                 } else {
                     $('.btn_remove_box').prop('disabled', false);
-                    $('.remarks_input').prop('readonly', false);
+                    $('.remarks_input').prop('disabled', false);
+                    $('#btn_save_box').prop('disabled', false);
+                    $('#btn_start_scan').prop('disabled', true);
+
+                    $('#save_div').show();
+                    $('#preview_div').hide();
                 }
                 
             });
@@ -552,6 +558,21 @@
                 self.$tbl_boxes.ajax.reload();
                 $('#box_count_full').html($('#new_box_count').val());
             });
+        },
+        updateBoxes: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/update-box";
+            self.sendData().then(function() {
+                $('#btn_start_scan').prop('disabled', false);
+                $('#btn_save_box').prop('disabled', false);
+
+                $('#save_div').hide();
+                $('#preview_div').show();
+
+                self.$tbl_boxes.ajax.reload();
+            });
         }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
@@ -564,6 +585,9 @@
         _BoxPalletApp.drawTransactionsDatatables();
         _BoxPalletApp.drawPalletsDatatables();
         _BoxPalletApp.drawBoxesDatatables();
+
+        $('#save_div').hide()
+        $('#preview_div').show()
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
         _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
@@ -679,20 +703,16 @@
         _BoxPalletApp.$tbl_transactions.on('select', function ( e, dt, type, indexes ) {
             var rowData = _BoxPalletApp.$tbl_transactions.rows( indexes ).data().toArray();
             var data = rowData[0];
-            console.log(data);
             $('#trans_id').val(data.id);
             $('#selected_model_id').val(data.model_id);
             $('#running_model').val(data.model);
             $('#target_pallet').val(data.target_no_of_pallet);
-            $('#box_per_pallet').val(data.box_count_per_pallet);
             $('#pallet_count_full').html(data.target_no_of_pallet);
 
             $('#pallet_id').val('');
             $('#pallet_id_qr').val('');
             $('#is_printed').val('');
             $('#box_count_full').html(0);
-            //$('#pallet_count_full').html(0);
-            //$('#pallet_count').html(0);
 
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
@@ -723,6 +743,7 @@
             $('#pallet_id').val(data.id);
             $('#pallet_id_qr').val(data.pallet_qr);
             $('#is_printed').val(data.is_printed);
+            $('#box_per_pallet').val(data.box_count_per_pallet);
             $('#box_count_full').html(data.box_count_per_pallet);
 
             _BoxPalletApp.statusMsg('','clear');
@@ -732,6 +753,7 @@
             $('#pallet_id').val('');
             $('#pallet_id_qr').val('');
             $('#is_printed').val(0);
+            $('#box_per_pallet').val(0);
             $('#box_count_full').html(0);
 
             _BoxPalletApp.$tbl_boxes.ajax.reload();
@@ -765,7 +787,7 @@
         $('#btn_print_pallet, #btn_preview_print').on('click', function() {
             var box_ids = "";
             _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                box_ids += row.box_qr+";";
+                box_ids += row.box_qr+";"+"\n";
             });
 
             _BoxPalletApp.printPallet({
@@ -810,15 +832,17 @@
 
             if (pallet_id_qr != "") {
                 $('#modal_form_title').html("Print Preview: " + pallet_id_qr);
-                const month = moment().format('MMM')
+                const month = moment().format('MMM');
+                const print_Date = moment().format('YYYY/MM/DD');
+
                 $('#prv_label_title').html(month.toUpperCase() + " FTL PALLET LABEL");
 
                 _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                    box_ids += row.box_qr+";";
+                    box_ids += row.box_qr+";"+"\n";
                 });
 
                 $('#prv_model').html(model);
-                $('#prv_date').html('2022/07/15');
+                $('#prv_date').html(print_Date);
                 $('#prv_box_count').html(box_count);
                 $('#prv_pallet_id_val').html(pallet_id_qr);
 
@@ -858,7 +882,7 @@
                     msg = "Do you want to transfer these Pallets to Q.A.?";
                 }
                 _BoxPalletApp.msg = msg;
-                _BoxPalletApp.confirmAction().then(function(approve) {
+                _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
                         _BoxPalletApp.transferTo({
                             _token: _BoxPalletApp.token,
@@ -883,12 +907,11 @@
                 }
             }
 
-            var msg = "Do you want to assign this Pallet as Broken Pallet?";
-
             if (chkArray.length == 1) {
+                var msg = "Do you want to assign this Pallet as Broken Pallet?";
                 _BoxPalletApp.msg = msg;
 
-                _BoxPalletApp.confirmAction().then(function(approve) {
+                _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
                         _BoxPalletApp.checkAuthorization(chkArray[0],'broken_pallet');
                 });
@@ -914,12 +937,11 @@
                 }
             }
 
-            var msg = "Do you want to update this Pallet?";
-
             if (chkArray.length == 1) {
+                var msg = "Do you want to update this Pallet?";
                 _BoxPalletApp.msg = msg;
 
-                _BoxPalletApp.confirmAction().then(function(approve) {
+                _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
                         _BoxPalletApp.checkAuthorization(chkArray[0],'update_pallet');
                 });
@@ -927,7 +949,37 @@
                 _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
             }
         });
+
+        $('#tbl_boxes tbody').on('click', '.btn_remove_box', function() {
+            var this_row = $(this).parents('tr');
+            var data = _BoxPalletApp.$tbl_boxes.row(this_row).data();
+            var msg = "Do you want to remove box "+data.box_qr+" ?";
+
+            _BoxPalletApp.msg = msg;
+            _BoxPalletApp.confirmAction(msg).then(function(approve) {
+                if (approve)
+                    _BoxPalletApp.removed_box_arr.push(data.id);
+                    $('#btn_save_box').prop('disabled', false);
+                    _BoxPalletApp.$tbl_boxes.row(this_row).remove().draw();
+            });
+        });
         
+        $('#btn_save_box').on('click', function() {
+            var update_box_id = $('input[name="update_box_id[]"]').map(function() {
+                return $(this).val();
+            }).get();
+
+            var remarks_input = $('textarea[name="remarks_input[]"]').map(function() {
+                return $(this).val();
+            }).get();
+
+            _BoxPalletApp.updateBoxes({
+                _token: _BoxPalletApp.token,
+                remove_box_id: _BoxPalletApp.removed_box_arr,
+                update_box_id: update_box_id,
+                remarks_input: remarks_input,
+            });
+        });
     });
 })();
 
