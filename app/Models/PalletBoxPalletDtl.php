@@ -12,6 +12,7 @@ class PalletBoxPalletDtl extends Model
         'pallet_id',
         'model_id',
         'box_qr',
+        'remarks',
         'create_user',
         'update_user'
     ];

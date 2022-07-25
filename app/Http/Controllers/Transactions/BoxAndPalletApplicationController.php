@@ -285,6 +285,7 @@ class BoxAndPalletApplicationController extends Controller
                         'm.model',
                         'm.box_count_per_pallet',
                         'b.box_qr',
+                        'b.remarks',
                         'b.created_at',
                         'b.updated_at'
                     )

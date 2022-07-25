@@ -303,28 +303,28 @@
                         var checkbox = $(dataRow[0].cells[0].firstChild);
                         switch (data.pallet_status) {
                             case 1:
-                                $(row).css('background-color', '#FFC4DD');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 2:
-                                $(row).css('background-color', '#36AE7C');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#36AE7C');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 3:
-                                $(row).css('background-color', '#47B5FF');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#47B5FF');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 4:
-                                $(row).css('background-color', '#FF0063');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 5:
-                                $(row).css('background-color', '#FF0063');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             default:
-                                $(row).css('background-color', '#FFDCAE');
-                                $(row).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('background-color', '#FFDCAE');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                         }
                         
@@ -357,9 +357,6 @@
                     paging: false, 
                     info: false,
                     sorting: false,
-                    select: {
-                        style: 'multiple',
-                    },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-boxes",
                         dataType: "JSON",
@@ -392,12 +389,23 @@
                     },
                     deferRender: true,
                     columns: [
+                        { 
+                            data: function(data) {
+                                return '<button class="btn btn-danger btn_remove_box" disabled><i class="fa fa-times"></i></button>';
+                            }, name: 'id', searchable: false, orderable: false, width: '10px'
+                        },
                         { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
-                        { data: 'pallet_id', name: 'pallet_id', searchable: false, orderable: false }
+                        { data: function(data) {
+                            var remarks = (data.remarks == null)? "" : data.remarks;
+                            return '<input type="text" class="form-control remarks_input" value="'+remarks+'" placeholder="Write Remarks here..." readonly/>';
+                        }, name: 'remarks', searchable: false, orderable: false, className:'remarks' }
                     ],
                     rowCallback: function(row, data) {
                     },
-                    createdRow: function(row, data, dataIndex) {                     
+                    createdRow: function(row, data, dataIndex) {     
+                        var dataRow = $(row);
+                        $(dataRow[0].cells[0]).addClass('p-0');    
+                        $(dataRow[0].cells[2]).addClass('p-0');                
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -512,7 +520,7 @@
                 self.$tbl_pallets.ajax.reload();
             });
         },
-        checkAuthorization: function(pallet_id) {
+        checkAuthorization: function(pallet_id, mode) {
             var self = this;
             self.submitType = "GET";
             self.jsonData = {
@@ -522,20 +530,26 @@
             self.sendData().then(function() {
                 var response = self.responseData;
 
-                if (response.permission) {
-                    $('.auth').hide();
-                    $('#new_box_count').prop('readonly', false);
-                    $('#btn_set_new_box_count').prop('disabled', false);
+                if (mode == 'broken_pallet') {
+                    if (response.permission) {
+                        $('.auth').hide();
+                        $('#new_box_count').prop('readonly', false);
+                        $('#btn_set_new_box_count').prop('disabled', false);
+                    } else {
+                        $('.auth').show();
+                        $('#new_box_count').prop('readonly', true);
+                        $('#btn_set_new_box_count').prop('disabled', true);
+                    }
+                    $('#broken_pallet_id').val(pallet_id);
+                    $('#modal_broken_pallet').modal('show');
                 } else {
-                    $('.auth').show();
-                    $('#new_box_count').prop('readonly', true);
-                    $('#btn_set_new_box_count').prop('disabled', true);
+                    $('.btn_remove_box').prop('disabled', false);
+                    $('.remarks_input').prop('readonly', false);
                 }
-                $('#broken_pallet_id').val(pallet_id);
-                $('#modal_broken_pallet').modal('show');
+                
             });
         },
-        setNewBoxCount: function(param) {
+        setNewBoxCount: function() {
             var self = this;
             self.submitType = "POST";
             self.jsonData = {
@@ -547,6 +561,7 @@
             self.sendData().then(function() {
                 self.$tbl_pallets.ajax.reload();
                 self.$tbl_boxes.ajax.reload();
+                $('#box_count_full').html($('#new_box_count').val());
             });
         }
     }
@@ -870,40 +885,42 @@
 
                 _BoxPalletApp.confirmAction().then(function(approve) {
                     if (approve)
-                        _BoxPalletApp.checkAuthorization(chkArray[0]);
+                        _BoxPalletApp.checkAuthorization(chkArray[0],'broken_pallet');
                 });
             } else {
                 _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
             }
         });
 
-        // $('#frm_new_box_count').on('submit', function(e) {
-        //     e.preventDefault();
-        //     $('#loading_modal').modal('show');
-                
-        //     var data = $(this).serializeArray();
-        //     $.ajax({
-        //         url: $(this).attr('action'),
-        //         type: 'POST',
-        //         dataType: 'JSON',
-        //         data: data
-        //     }).done(function(response, textStatus, xhr) {
-        //         self.$tbl_pallets.ajax.reload();
-        //         self.$tbl_boxes.ajax.reload();
-        //     }).fail(function(xhr, textStatus, errorThrown) {
-        //         var errors = xhr.responseJSON.errors;
-        //         _BoxPalletApp.showInputErrors(errors);
-
-        //         if (errorThrown == "Internal Server Error") {
-        //             _BoxPalletApp.ErrorMsg(xhr);
-        //         }
-        //     }).always(function() {
-        //         $('#loading_modal').modal('hide');
-        //     });
-        // });
-
         $('#btn_set_new_box_count').on('click', function() {
             _BoxPalletApp.setNewBoxCount();
+        });
+
+        $('#btn_update').on('click', function() {
+            var chkArray = [];
+            var table = _BoxPalletApp.$tbl_pallets;
+            var cnt = 0;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    cnt++;
+                }
+            }
+
+            var msg = "Do you want to update this Pallet?";
+
+            if (chkArray.length == 1) {
+                _BoxPalletApp.msg = msg;
+
+                _BoxPalletApp.confirmAction().then(function(approve) {
+                    if (approve)
+                        _BoxPalletApp.checkAuthorization(chkArray[0],'update_pallet');
+                });
+            } else {
+                _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
+            }
         });
         
     });

@@ -8,6 +8,10 @@
 		.disabled {
 			pointer-events: none;
 		}
+		.remarks_input {
+			border: none;
+			border-radius: 0px;
+		}
 	</style>
 @endpush
 
@@ -191,17 +195,17 @@ Box and Pallet Application
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
 						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer">
-							<i class="fa fa-arrow-right-arrow-left"></i> Transfer To
+							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-purple">
+						<button type="button" class="btn btn-sm btn-block btn-purple" id="btn_update">
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
 						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_broken_pallet">
-							<i class="fa fa-pencil"></i> Mark as Broken Pallet
+							<i class="fa fa-star-of-life"></i> Mark as Broken Pallet
 						</button>
 					</div>
 				</div>
@@ -213,7 +217,8 @@ Box and Pallet Application
 						
 						<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%">
 							<thead>
-								<th>Box Count: <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
+								<th>Box Count: </th>
+								<th><span id="box_count">0</span> / <span id="box_count_full">30</span></th>
 								<th>Remarks</th>
 							</thead>
 						</table>
@@ -356,7 +361,7 @@ Box and Pallet Application
 					<div class="row">
 						<div class="offset-sm-7 col-sm-5 col-xs-12">
 							<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_set_new_box_count">
-								<i class="fa fa-pencil"></i> Set new box count
+								<i class="fa fa-edit"></i> Set new box count
 							</button>
 						</div>
 					</div>
