@@ -97,6 +97,8 @@ Route::group(['prefix' => 'transactions'], function () {
 
     Route::group(['prefix' => 'qa-inspection'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
+        Route::get('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
+        Route::get('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

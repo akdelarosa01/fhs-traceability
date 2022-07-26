@@ -30,7 +30,8 @@ Q.A. Inspection
 							<div class="input-group-prepend">
 								<span class="input-group-text">Inspector</span>
 							</div>
-							<input type="text" class="form-control form-control-sm clear" id="inspector" name="nspector" placeholder="Inspector on duty" autocomplete="off" readonly>
+							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
+							<input type="text" class="form-control form-control-sm clear" id="inspector" name="inspector" placeholder="" value="Inspector" autocomplete="off">
 							<div id="inspector_feedback"></div>
 						</div>
 					</div>
@@ -95,34 +96,70 @@ Q.A. Inspection
 				</div>
 			</div>
 		</div>
-
-		<div class="row mb-3">
+		
+		<div class="row">
 			<div class="col-5">
-				<table class="table table-sm table-hover" id="tbl_obas" style="width: 100%;">
-					<thead>
-						<th style="width: 10px;"></th>
-						<th>Pallet for OBA: <span id="oba_count">0</span></th>
-						<th>Status</th>
-						<th>On Track</th>
-					</thead>
-				</table>
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						<table class="table table-sm table-hover" id="tbl_obas" style="width: 100%;">
+							<thead>
+								<th style="width: 10px;"></th>
+								<th>Pallet for OBA: <span id="oba_count">0</span></th>
+								<th>Status</th>
+								<th>On Track</th>
+							</thead>
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer">
+							<i class="fa fa-arrow-right-arrow-left"></i> Transfer To
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_disposition">
+							<i class="fa fa-pencil"></i> Pallet Disposition
+						</button>
+					</div>
+				</div>
 			</div>
 			<div class="col-5">
-				<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%;">
-					<thead>
-						<th style="width: 10px;"></th>
-						<th>Box ID tested: <span id="box_tested">0</span> / <span id="box_tested_full">0</span></th>
-						<th>Inspection Sheet QR</th>
-						<th>Remarks</th>
-					</thead>
-				</table>
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%;">
+							<thead>
+								<th style="width: 10px;"></th>
+								<th>Box ID tested: <span id="box_tested">0</span> / <span id="box_tested_full">0</span></th>
+								<th>Inspection Sheet QR</th>
+								<th>Remarks</th>
+							</thead>
+						</table>
+					</div>
+				</div>
 			</div>
 			<div class="col-2">
-				<table class="table table-sm table-hover" id="tbl_affected_serials" style="width: 100%">
-					<thead>
-						<th>Affected Serial No.: <span id="affected_serial_count">0</span></th>
-					</thead>
-				</table>
+				<div class="row mb-2">
+					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+						<table class="table table-sm table-hover" id="tbl_affected_serials" style="width: 100%">
+							<thead>
+								<th>Affected Serial No.: <span id="affected_serial_count">0</span></th>
+							</thead>
+						</table>
+					</div>			
+				</div>
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="update_serial">
+							<i class="fa fa-pen"></i> Update
+						</button>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="delete_serial">
+							<i class="fa fa-trash"></i> Delete
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		
