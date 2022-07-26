@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PalletModelMatrix extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mysql';
+    
     protected $fillable = [
         'model',
         'model_name',

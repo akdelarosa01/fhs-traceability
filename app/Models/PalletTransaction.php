@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PalletTransaction extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'model_id',
         'model_status',

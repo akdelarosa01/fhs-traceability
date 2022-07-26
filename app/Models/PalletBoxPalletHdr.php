@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PalletBoxPalletHdr extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'transaction_id',
         'model_id',
