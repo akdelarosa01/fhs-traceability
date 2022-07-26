@@ -22,6 +22,7 @@ class CreatePalletBoxPalletHdrsTable extends Migration
             $table->string('pallet_location');
             $table->integer('new_box_count')->nullable();
             $table->integer('is_printed')->length(1)->default(0);
+            $table->dateTime('print_date')->nullable();
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();
