@@ -284,7 +284,6 @@ Box and Pallet Application
 								<p id="prv_pallet_id_val"></p>
 							</div>
 						</div>
-						
 					</div>
 				</div>
 			</div>

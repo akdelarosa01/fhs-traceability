@@ -4484,6 +4484,7 @@ B. Synopsis: Real Time Script
 	QAInspection.prototype = {
 		init: function() {},
 		
+
 		RunDateTime: function() {
 			const zeroFill = n => {
 				return ('0' + n).slice(-2);
@@ -4543,29 +4544,20 @@ B. Synopsis: Real Time Script
 								        '<small>'+data.updated_at+'</small>';
                             }, name: 'pallet_qr', searchable: false, orderable: false 
                         },
-						{
-							data: function(data) {
-                                switch (data.pallet_status) {
-                                    default:
-                                        return 'FOR OBA'
-                                }
+                        { data: function(data) {
+                                return '<p class="btn-success my-0">'+data.pallet_location+'</p>';
                             }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'
-						},
-						{ data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle' }
+                        },
+						{ data: function(data) {
+                                return '<span></span>';
+                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'  
+                        }
+						
 					],
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                        var dataRow = $(row);
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
-                        switch (data.pallet_status) {
-                            
-                            default:
-                                $(row).css('background-color', 'rgb(255 128 128)');
-                                $(row).css('color', '#000000');
-                                break;
-                        }
-                        
+                       
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -4647,17 +4639,7 @@ B. Synopsis: Real Time Script
                     ],
                     rowCallback: function(row, data) {
                     },
-                    createdRow: function(row, data, dataIndex) {   
-                        var dataRow = $(row);
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
-                        switch (data.pallet_status) {
-                            
-                            default:
-                                $(row).css('background-color', '#66BFBF');
-                                $(row).css('color', '#000000');
-                                break;
-                        }
-                                          
+                    createdRow: function(row, data, dataIndex) {                     
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -4705,7 +4687,7 @@ B. Synopsis: Real Time Script
         _QAInspection.drawOBADatatables();
         _QAInspection.drawBoxesDatatables();
 
-
+        
         
         _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
@@ -4713,7 +4695,7 @@ B. Synopsis: Real Time Script
             $('#pallet_id').val(data.id);
             $('#box_tested_full').html(data.new_box_count);
             $('#box_count_to_inspect').val(data.new_box_count);
-
+            
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
 

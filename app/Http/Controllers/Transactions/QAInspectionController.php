@@ -43,7 +43,7 @@ class QAInspectionController extends Controller
     {
         $data = [];
 
-            $query = DB::table('pallet_box_pallet_hdrs as p')->select([
+            $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
                 DB::raw("p.id as id"),
                 DB::raw("p.model_id as model_id"),
                 DB::raw("p.transaction_id as transaction_id"),
@@ -79,20 +79,45 @@ class QAInspectionController extends Controller
 
     private function boxes($pallet_id)
     {
-        $query = DB::table('pallet_box_pallet_dtls as b')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
                     ->select(
-                        'b.id',
-                        'b.pallet_id',
-                        'b.model_id',
-                        'b.box_qr',
-                        'b.remarks',
-                        'b.created_at',
-                        'b.updated_at'
+                        'pb.id',
+                        'pb.pallet_id',
+                        'pb.model_id',
+                        'pb.box_qr',
+                        'pb.remarks',
+                        'pb.created_at',
+                        'pb.updated_at'
                     )
-                    ->where('b.pallet_id',$pallet_id)
-                    ->orderBy('b.id','desc');
+                    // ->join('tboxqr as bqr','bqr.qrBarcode','=','pb.box_qr')
+                    // ->join('tboxqrdetails as bqrd','bqr.ID','=','bqrd.Box_ID')
+                    ->where('pb.pallet_id',$pallet_id)
+                    ->orderBy('pb.id','desc');
         return $query;
     }
+
+    // public function get_serials(Request $req)
+    // {
+    //     $data = [];
+    //     try {
+    //         $query = $this->serials($req->box_qr);
+    //         return Datatables::of($query)->make(true);
+    //     } catch (\Throwable $th) {
+    //         //throw $th;
+    //     }
+    //     return $data;
+    // }
+
+    // private function serials($box_qr)
+    // {
+    //     $query = DB::connection('mysql')->table('tboxqrdetails as bqrd')
+    //                 ->select(
+    //                     'bqrd.HS_Serial'
+    //                 )
+    //                 ->join('tboxqr as bqr','bqr.ID','=','bqrd.Box_ID')
+    //                 ->where('tboxqr.qrBarcode',$box_qr);
+    //     return $query;
+    // }
     /**
      * Show the form for creating a new resource.
      *

@@ -30,6 +30,7 @@ Q.A. Inspection
 							<div class="input-group-prepend">
 								<span class="input-group-text">Inspector</span>
 							</div>
+							<input type="hidden" class="clear" id="box_qr" name="box_qr"/>
 							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
 							<input type="text" class="form-control form-control-sm clear" id="inspector" name="inspector" placeholder="" value="Inspector" autocomplete="off">
 							<div id="inspector_feedback"></div>
@@ -105,21 +106,21 @@ Q.A. Inspection
 							<thead>
 								<th style="width: 10px;"></th>
 								<th>Pallet for OBA: <span id="oba_count">0</span></th>
-								<th>Status</th>
 								<th>On Track</th>
+								<th>Status</th>
 							</thead>
 						</table>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer">
-							<i class="fa fa-arrow-right-arrow-left"></i> Transfer To
+						<button type="button" class="btn btn-sm btn-block btn-blue align-middle" id="btn_transfer">
+							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_disposition">
-							<i class="fa fa-pencil"></i> Pallet Disposition
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition">
+							<i class="fa fa-plus"></i> Pallet Disposition
 						</button>
 					</div>
 				</div>
@@ -150,7 +151,7 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="update_serial">
+						<button type="button" class="btn btn-sm btn-block btn-purple" id="update_serial">
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
@@ -163,6 +164,55 @@ Q.A. Inspection
 			</div>
 		</div>
 		
+	</div>
+</div>
+
+
+
+<div class="modal fade" id="btn_disposition" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog ">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="modal_form_title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h3 class="text-center" id="prv_label_title"></h3>
+				<div class="row">
+					<div class="col-md-8">
+						<div id="prv_box_id_qr"></div>
+					</div>
+					<div class="col-md-4">
+						<div class="row">
+							<div class="col-md-12">
+								<p>Model: <span id="prv_model"></span></p>
+								<p>Print Date: <span id="prv_date"></span></p>
+								<p>Lot Number: </p>
+								<p id="prv_lot_no"></p>
+								<p>Box Qty: <span id="prv_box_count"></span> pcs</p>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div id="prv_pallet_id_qr"></div>
+								<p id="prv_pallet_id_val"></p>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+				<button type="button" class="btn btn-primary" id="btn_preview_print">
+					<i class="fa fa-print"></i> Print
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 @endsection
