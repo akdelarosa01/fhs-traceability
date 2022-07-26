@@ -9,6 +9,8 @@ class PalletPage extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'page_name',
         'page_label',

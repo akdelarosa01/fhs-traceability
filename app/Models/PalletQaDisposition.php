@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PalletQaDisposition extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mysql';
+    
     protected $fillable = [
         'disposition',
         'color_hex',

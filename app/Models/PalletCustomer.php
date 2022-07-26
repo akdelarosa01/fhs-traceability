@@ -9,6 +9,8 @@ class PalletCustomer extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'customer_name',
         'address',

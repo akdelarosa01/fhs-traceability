@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class PalletDispositionReason extends Model
 {
     use HasFactory;
+
+    protected $connection = 'mysql';
+    
     protected $fillable = [
         'disposition',
         'reason',

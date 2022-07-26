@@ -10,6 +10,8 @@ class PalletPageAccess extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'user_id',
         'page_id',
