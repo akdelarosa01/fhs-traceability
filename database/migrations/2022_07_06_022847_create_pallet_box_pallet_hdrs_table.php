@@ -13,7 +13,7 @@ class CreatePalletBoxPalletHdrsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_box_pallet_hdrs', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_box_pallet_hdrs', function (Blueprint $table) {
             $table->id();
             $table->integer('transaction_id');
             $table->integer('model_id');
@@ -37,6 +37,6 @@ class CreatePalletBoxPalletHdrsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_box_pallet_hdrs');
+        Schema::connection('mysql')->dropIfExists('pallet_box_pallet_hdrs');
     }
 }

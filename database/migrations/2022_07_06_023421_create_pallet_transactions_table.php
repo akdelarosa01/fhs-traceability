@@ -13,7 +13,7 @@ class CreatePalletTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_transactions', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_transactions', function (Blueprint $table) {
             $table->id();
             $table->integer('model_id');
             $table->integer('model_status')->length(1)->default(0); // 0 = NOT READY / 1 = DONE
@@ -32,6 +32,6 @@ class CreatePalletTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_transactions');
+        Schema::connection('mysql')->dropIfExists('pallet_transactions');
     }
 }

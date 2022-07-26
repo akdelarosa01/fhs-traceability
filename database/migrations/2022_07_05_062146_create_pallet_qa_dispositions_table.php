@@ -13,7 +13,7 @@ class CreatePalletQaDispositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_qa_dispositions', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_qa_dispositions', function (Blueprint $table) {
             $table->id();
             $table->string('disposition');
             $table->string('color_hex');
@@ -32,6 +32,6 @@ class CreatePalletQaDispositionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_qa_dispositions');
+        Schema::connection('mysql')->dropIfExists('pallet_qa_dispositions');
     }
 }

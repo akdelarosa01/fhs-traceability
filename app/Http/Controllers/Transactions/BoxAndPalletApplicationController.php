@@ -83,7 +83,7 @@ class BoxAndPalletApplicationController extends Controller
     {
         $data = [];
         try {
-            $query = DB::table('pallet_transactions as t')->select([
+            $query = DB::connection('mysql')->table('pallet_transactions as t')->select([
                         DB::raw("t.id as id"),
                         DB::raw("t.model_id as model_id"),
                         DB::raw("t.model_status as model_status"),
@@ -198,7 +198,7 @@ class BoxAndPalletApplicationController extends Controller
 
     private function pallets($trans_id)
     {
-        $query = DB::table('pallet_box_pallet_hdrs as p')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
                     ->select(
                         'p.id',
                         'p.transaction_id',
@@ -277,7 +277,7 @@ class BoxAndPalletApplicationController extends Controller
             DB::beginTransaction();
             // remove all boxes that were removed
             if (isset($req->remove_box_id) && count($req->remove_box_id) > 0) {
-                $remove_boxes = DB::table('pallet_box_pallet_dtls')->whereIn('id',$req->remove_box_id)
+                $remove_boxes = DB::connection('mysql')->table('pallet_box_pallet_dtls')->whereIn('id',$req->remove_box_id)
                                 ->update([
                                     'is_deleted' => 1,
                                     'update_user' => Auth::user()->id,
@@ -288,7 +288,7 @@ class BoxAndPalletApplicationController extends Controller
             // update all boxes that has remarks
             if (isset($req->update_box_id) && count($req->update_box_id) > 0) {
                 foreach ($req->update_box_id as $key => $id) {
-                    $update_box = DB::table('pallet_box_pallet_dtls')->where('id',$id)
+                    $update_box = DB::connection('mysql')->table('pallet_box_pallet_dtls')->where('id',$id)
                                 ->update([
                                     'remarks' => $req->remarks_input[$key],
                                     'update_user' => Auth::user()->id,
@@ -335,7 +335,7 @@ class BoxAndPalletApplicationController extends Controller
 
     private function boxes($pallet_id)
     {
-        $query = DB::table('pallet_box_pallet_dtls as b')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as b')
                     ->select(
                         'b.id',
                         'b.pallet_id',
@@ -459,7 +459,7 @@ class BoxAndPalletApplicationController extends Controller
             $box_qr = "";
             $box_qty = 0;
 
-            $pallet = DB::table('pallet_box_pallet_hdrs as p')
+            $pallet = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
                         ->select(
                             'm.model',
                             DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
@@ -522,7 +522,7 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            $update = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
+            $update = DB::connection('mysql')->table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
                 'pallet_location' => "Q.A.",
                 'update_user' => Auth::user()->id,
                 'updated_at' => date('Y-m-d H:i:s')

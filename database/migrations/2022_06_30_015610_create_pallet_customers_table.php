@@ -13,7 +13,7 @@ class CreatePalletCustomersTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_customers', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_customers', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name');
             $table->text('address');
@@ -40,6 +40,6 @@ class CreatePalletCustomersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_customers');
+        Schema::connection('mysql')->dropIfExists('pallet_customers');
     }
 }

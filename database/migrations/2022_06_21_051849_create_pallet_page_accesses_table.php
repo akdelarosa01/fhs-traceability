@@ -13,7 +13,7 @@ class CreatePalletPageAccessesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_page_accesses', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_page_accesses', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->default(0);
             $table->integer('page_id')->default(0);
@@ -35,6 +35,6 @@ class CreatePalletPageAccessesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_page_accesses');
+        Schema::connection('mysql')->dropIfExists('pallet_page_accesses');
     }
 }

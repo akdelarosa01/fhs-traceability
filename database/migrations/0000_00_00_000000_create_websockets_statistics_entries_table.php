@@ -13,7 +13,7 @@ class CreateWebSocketsStatisticsEntriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('websockets_statistics_entries', function (Blueprint $table) {
+        Schema::connection('mysql')->create('websockets_statistics_entries', function (Blueprint $table) {
             $table->increments('id');
             $table->string('app_id');
             $table->integer('peak_connection_count');
@@ -30,6 +30,6 @@ class CreateWebSocketsStatisticsEntriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('websockets_statistics_entries');
+        Schema::connection('mysql')->dropIfExists('websockets_statistics_entries');
     }
 }
