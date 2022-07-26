@@ -274,11 +274,7 @@ Box and Pallet Application
 								<p>Model: <span id="prv_model"></span></p>
 								<p>Print Date: <span id="prv_date"></span></p>
 								<p>Lot Number: </p>
-								<ul>
-									<li>Lot Number 1</li>
-									<li>Lot Number 2</li>
-									<li>Lot Number 3</li>
-								</ul>
+								<p id="prv_lot_no"></p>
 								<p>Box Qty: <span id="prv_box_count"></span> pcs</p>
 							</div>
 						</div>
