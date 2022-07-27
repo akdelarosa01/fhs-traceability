@@ -55,6 +55,18 @@ Box Pallet Model Matrix
 						<div class="col-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
+									<span class="input-group-text">HS Qty per Box</span>
+								</div>
+								<input type="number" step="1" class="form-control form-control-sm clear" id="hs_count_per_box" name="hs_count_per_box" placeholder="HS Qty. per Box" autocomplete="off">
+								<div id="hs_count_per_box_feedback"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
 									<span class="input-group-text">Box per Pallet</span>
 								</div>
 								<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_per_pallet" name="box_count_per_pallet" placeholder="Box Count per Pallet" autocomplete="off">
@@ -101,8 +113,9 @@ Box Pallet Model Matrix
 							<th width="30px"></th>
 							<th>Model</th>
 							<th>Model Name</th>
-							<th>Box count per Pallet</th>
-							<th>Box count to Inspect</th>
+							<th>HS Qty. / Box</th>
+							<th>Box Qty. / Pallet</th>
+							<th>Box Qty. to Inspect</th>
 							<th>Added By</th>
 							<th>Update Date</th>
 						</tr>
