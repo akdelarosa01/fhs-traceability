@@ -60,9 +60,9 @@ class Helpers
         $serials = [];
 
         try {
-            $hs_serials = DB::connection('furukawa')->table('furukawa.tboxqr as bqr')
+            $hs_serials = DB::connection('mysql')->table('tboxqr as bqr')
                             ->select('bqrd.HS_Serial')
-                            ->join('furukawa.tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
+                            ->join('tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
                             ->whereIn('bqr.qrBarcode',$box_qr);
 
             $hs_serial_count = $hs_serials->count();
@@ -76,7 +76,7 @@ class Helpers
                 }
 
                 // get data from china DB
-                $data = DB::connection('ftl_china')->table('ftl_china.barcode')
+                $data = DB::connection('ftl_china')->table('barcode')
                             ->select('c8 as lot_no')
                             ->whereIn('c4',$serials)
                             ->distinct()->get();

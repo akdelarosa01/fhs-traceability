@@ -809,12 +809,15 @@
 
         $('#btn_print_pallet, #btn_preview_print').on('click', function() {
             var box_ids = "";
+            const month = moment().format('MMM');
+
             _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
                 box_ids += row.box_qr+";"+"\n";
             });
 
             _BoxPalletApp.printPallet({
                 _token: _BoxPalletApp.token,
+                month: month.toUpperCase(),
                 trans_id: $('#trans_id').val(),
                 model_id: $('#selected_model_id').val(),
                 pallet_id: $('#pallet_id').val(),
@@ -829,12 +832,15 @@
 
         $('#btn_reprint_pallet').on('click', function() {
             var box_ids = "";
+            const month = moment().format('MMM');
+
             _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
                 box_ids += row.box_qr+";"+"\r";
             });
 
             _BoxPalletApp.printPallet({
                 _token: _BoxPalletApp.token,
+                month: month.toUpperCase(),
                 trans_id: $('#trans_id').val(),
                 model_id: $('#selected_model_id').val(),
                 pallet_id: $('#pallet_id').val(),

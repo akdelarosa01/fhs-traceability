@@ -373,63 +373,67 @@ class BoxAndPalletApplicationController extends Controller
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= ($key + 1).". ".$lot->lot_no."\r";
+                $lots .= $lot->lot_no."\r";
             }
 
             $print_date = date('Y-m-d H:i:s');
+            $month = $req->month;
 
-            // insert into the Bartender Table
-            $print = new PalletPrintPalletLabel();
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->is_printed = 1;
+            $pallet->update_user = Auth::user()->id;
 
-            $print->model = $req->model;
-            $print->lot_no = $lots;
-            $print->box_qty = $req->box_qty;
-            $print->box_qr = $req->box_qr;
-            $print->pallet_qr = $req->pallet_qr;
-            $print->print_date = $print_date;
-
-            if ($print->save()) {
-                $pallet = PalletBoxPalletHdr::find($req->pallet_id);
-                $pallet->is_printed = 1;
+            if ($req->mode == 'print') {
+                $pallet->pallet_status = 1; // FOR OBA
                 $pallet->print_date = $print_date;
-                $pallet->update_user = Auth::user()->id;
+            } else { // reprint
+                $print_date = $pallet->print_date;
+                $month = "";
+            }
 
+            if ($pallet->update()) {
                 if ($req->mode == 'print') {
-                    $pallet->pallet_status = 1; // FOR OBA
-                }
-
-                if ($pallet->update()) {
-                    if ($req->mode == 'print') {
-                        $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
-        
-                        $trans = PalletTransaction::find($req->trans_id);
-        
-                        if ($trans->target_no_of_pallet > $pallet_count) {
-                            $hdr = new PalletBoxPalletHdr();
-                            $hdr->transaction_id = $req->trans_id;
-                            $hdr->model_id = $req->model_id;
-                            $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
-                            $hdr->pallet_status = 0;
-                            $hdr->pallet_location = "PRODUCTION";
-                            $hdr->create_user = Auth::user()->id;
-                            $hdr->update_user = Auth::user()->id;
-        
-                            $hdr->save();
-                        }
+                    $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
+    
+                    $trans = PalletTransaction::find($req->trans_id);
+    
+                    if ($trans->target_no_of_pallet > $pallet_count) {
+                        $hdr = new PalletBoxPalletHdr();
+                        $hdr->transaction_id = $req->trans_id;
+                        $hdr->model_id = $req->model_id;
+                        $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
+                        $hdr->pallet_status = 0;
+                        $hdr->pallet_location = "PRODUCTION";
+                        $hdr->create_user = Auth::user()->id;
+                        $hdr->update_user = Auth::user()->id;
+    
+                        $hdr->save();
                     }
                 }
 
-                $data = [
-                    'msg' => $req->pallet_qr.' Pallet Label Print Successfully! Please wait for the Pallet Label to print.',
-                    'data' => [],
-                    'success' => true,
-                    'msgType' => 'success',
-                    'msgTitle' => 'Success!'
-                ];
+                // insert into the Bartender Table
+                $print = new PalletPrintPalletLabel();
+
+                $print->month = $month;
+                $print->model = $req->model;
+                $print->lot_no = $lots;
+                $print->box_qty = $req->box_qty;
+                $print->box_qr = $req->box_qr;
+                $print->pallet_qr = $req->pallet_qr;
+                $print->print_date = $print_date;
+
+                if ($print->save()) {
+                    $data = [
+                        'msg' => $req->pallet_qr.' Pallet Label Print Successfully! Please wait for the Pallet Label to print.',
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
             }
 
             
-
         } catch (\Throwable $th) {
             $data = [
                 'msg' => $th->getMessage(),
@@ -481,7 +485,7 @@ class BoxAndPalletApplicationController extends Controller
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= ($key + 1).". ".$lot->lot_no;
+                $lots .= $lot->lot_no."\r";
             }
 
             $print_date = date('Y/m/d');

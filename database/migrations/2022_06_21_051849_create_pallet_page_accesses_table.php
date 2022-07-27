@@ -18,6 +18,7 @@ class CreatePalletPageAccessesTable extends Migration
             $table->integer('user_id')->default(0);
             $table->integer('page_id')->default(0);
             $table->integer('status')->default(0)->length(1);
+            $table->integer('read_only')->default(0)->length(1);
             $table->integer('read_and_write')->default(0)->length(1);
             $table->integer('delete')->default(0)->length(1);
             $table->integer('authorize')->default(0)->length(1);
