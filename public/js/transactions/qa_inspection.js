@@ -4648,7 +4648,6 @@ B. Synopsis: Real Time Script
                         var dataRow = $(row);
                         var checkbox = $(dataRow[0].cells[0].firstChild);
                         
-                        
                         $(dataRow[0].cells[3]).css('background-color', '#a3a3a3');
                         $(dataRow[0].cells[3]).css('color', '#000000');
 
@@ -4702,7 +4701,9 @@ B. Synopsis: Real Time Script
             self.formAction = "/transactions/qa-inspection/check-hs-serial";
             self.sendData().then(function() {
                
-                
+                if (data.matched == true)  {
+                    console.log("eto na");
+                }
                 $('#scan_serial').prop('readonly', false);
                 $('#btn_good').prop('disabled', false);
                 $('#btn_notgood').prop('disabled', false);
