@@ -15,8 +15,8 @@ return [
     |
     */
 
-    // 'default' => env('DB_CONNECTION', 'mysql'),
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => 'mysql',
+    // 'default' => env('DB_CONNECTION', 'pgsql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -66,15 +66,15 @@ return [
 
         'ftl_china' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'url' => env('CH_DATABASE_URL'),
+            'host' => env('CH_DB_HOST', '127.0.0.1'),
+            'port' => env('CH_DB_PORT', '3306'),
+            'database' => env('CH_DB_DATABASE', 'forge'),
+            'username' => env('CH_DB_USERNAME', 'forge'),
+            'password' => env('CH_DB_PASSWORD', ''),
+            'unix_socket' => env('CH_DB_SOCKET', ''),
+            'charset' => 'gbk',
+            'collation' => 'gbk_bin',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,

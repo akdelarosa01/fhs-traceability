@@ -83,7 +83,7 @@ class BoxAndPalletApplicationController extends Controller
     {
         $data = [];
         try {
-            $query = DB::table('pallet_transactions as t')->select([
+            $query = DB::connection('mysql')->table('pallet_transactions as t')->select([
                         DB::raw("t.id as id"),
                         DB::raw("t.model_id as model_id"),
                         DB::raw("t.model_status as model_status"),
@@ -198,7 +198,7 @@ class BoxAndPalletApplicationController extends Controller
 
     private function pallets($trans_id)
     {
-        $query = DB::table('pallet_box_pallet_hdrs as p')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
                     ->select(
                         'p.id',
                         'p.transaction_id',
@@ -263,6 +263,67 @@ class BoxAndPalletApplicationController extends Controller
         return response()->json($data);
     }
 
+<<<<<<< HEAD
+=======
+    public function update_box(Request $req)
+    {
+        $data = [
+			'msg' => 'Saving boxes has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            DB::beginTransaction();
+            // remove all boxes that were removed
+            if (isset($req->remove_box_id) && count($req->remove_box_id) > 0) {
+                $remove_boxes = DB::connection('mysql')->table('pallet_box_pallet_dtls')->whereIn('id',$req->remove_box_id)
+                                ->update([
+                                    'is_deleted' => 1,
+                                    'update_user' => Auth::user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ]);
+            }
+
+            // update all boxes that has remarks
+            if (isset($req->update_box_id) && count($req->update_box_id) > 0) {
+                foreach ($req->update_box_id as $key => $id) {
+                    $update_box = DB::connection('mysql')->table('pallet_box_pallet_dtls')->where('id',$id)
+                                ->update([
+                                    'remarks' => $req->remarks_input[$key],
+                                    'update_user' => Auth::user()->id,
+                                    'updated_at' => date('Y-m-d H:i:s')
+                                ]);
+                }
+            }
+
+            if ($update_box) {
+                DB::commit();
+                $data = [
+                    'msg' => 'Updating boxes were successful.',
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+>>>>>>> 4e94d8115e76d7914310720409d51a0285fedaa0
     public function get_boxes(Request $req)
     {
         $data = [];
@@ -277,7 +338,7 @@ class BoxAndPalletApplicationController extends Controller
 
     private function boxes($pallet_id)
     {
-        $query = DB::table('pallet_box_pallet_dtls as b')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as b')
                     ->select(
                         'b.id',
                         'b.pallet_id',
@@ -309,13 +370,39 @@ class BoxAndPalletApplicationController extends Controller
             $pallet->is_printed = 1;
             $pallet->update_user = Auth::user()->id;
 
+<<<<<<< HEAD
             if ($req->mode == 'print') {
                 $pallet->pallet_status = 1; // FOR OBA
             }
 
             if ($pallet->update()) {
+=======
+            $lot_nos = $this->_helpers->lot_no($box_qr);
+            $lots = "";
 
+            foreach ($lot_nos as $key => $lot) {
+                $lots .= $lot->lot_no."\r";
+            }
+
+            $print_date = date('Y-m-d H:i:s');
+            $month = $req->month;
+
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->is_printed = 1;
+            $pallet->update_user = Auth::user()->id;
+
+            if ($req->mode == 'print') {
+                $pallet->pallet_status = 1; // FOR OBA
+                $pallet->print_date = $print_date;
+            } else { // reprint
+                $print_date = $pallet->print_date;
+                $month = "";
+            }
+>>>>>>> 4e94d8115e76d7914310720409d51a0285fedaa0
+
+            if ($pallet->update()) {
                 if ($req->mode == 'print') {
+<<<<<<< HEAD
                     $hdr = new PalletBoxPalletHdr();
                     $hdr->transaction_id = $req->trans_id;
                     $hdr->model_id = $req->model_id;
@@ -348,6 +435,117 @@ class BoxAndPalletApplicationController extends Controller
                 }
                 
             }
+=======
+                    $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
+    
+                    $trans = PalletTransaction::find($req->trans_id);
+    
+                    if ($trans->target_no_of_pallet > $pallet_count) {
+                        $hdr = new PalletBoxPalletHdr();
+                        $hdr->transaction_id = $req->trans_id;
+                        $hdr->model_id = $req->model_id;
+                        $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
+                        $hdr->pallet_status = 0;
+                        $hdr->pallet_location = "PRODUCTION";
+                        $hdr->create_user = Auth::user()->id;
+                        $hdr->update_user = Auth::user()->id;
+    
+                        $hdr->save();
+                    }
+                }
+
+                // insert into the Bartender Table
+                $print = new PalletPrintPalletLabel();
+
+                $print->month = $month;
+                $print->model = $req->model;
+                $print->lot_no = $lots;
+                $print->box_qty = $req->box_qty;
+                $print->box_qr = $req->box_qr;
+                $print->pallet_qr = $req->pallet_qr;
+                $print->print_date = $print_date;
+
+                if ($print->save()) {
+                    $data = [
+                        'msg' => $req->pallet_qr.' Pallet Label Print Successfully! Please wait for the Pallet Label to print.',
+                        'data' => [],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            }
+
+            
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function print_preview(Request $req)
+    {
+        $data = [
+			'msg' => 'Retrieving print values has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $arr_box_qr = [];
+            $lot_nos = [];
+            $box_qr = "";
+            $box_qty = 0;
+
+            $pallet = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
+                        ->select(
+                            'm.model',
+                            DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
+                            'p.pallet_qr'
+                        )
+                        ->join('pallet_model_matrices as m','m.id','=','p.model_id')
+                        ->where('p.id',$req->pallet_id)
+                        ->first();
+
+            $boxes = PalletBoxPalletDtl::where('pallet_id',$req->pallet_id)->get();
+
+            foreach ($boxes as $key => $b) {
+                $box_qr .= $b->box_qr.";"."\r\n";
+                $box_qty++;
+                array_push($arr_box_qr, $b->box_qr);
+            }
+
+            $lot_nos = $this->_helpers->lot_no($arr_box_qr);
+            $lots = "";
+
+            foreach ($lot_nos as $key => $lot) {
+                $lots .= $lot->lot_no."\r";
+            }
+
+            $print_date = date('Y/m/d');
+
+            $data = [
+                'data' => [
+                    'pallet_qr' => $pallet->pallet_qr,
+                    'model' => $pallet->model,
+                    'box_qr' => $box_qr,
+                    'box_qty' => $box_qty,
+                    'lot_no' => $lots,
+                    'print_date' => $print_date
+                ],
+                'success' => true
+            ];
+
+>>>>>>> 4e94d8115e76d7914310720409d51a0285fedaa0
         } catch (\Throwable $th) {
             $data = [
                 'msg' => $th->getMessage(),
@@ -372,7 +570,7 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            $update = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
+            $update = DB::connection('mysql')->table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
                 'pallet_location' => "Q.A.",
                 'update_user' => Auth::user()->id,
                 'updated_at' => date('Y-m-d H:i:s')

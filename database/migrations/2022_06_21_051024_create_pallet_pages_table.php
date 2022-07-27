@@ -13,7 +13,7 @@ class CreatePalletPagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_pages', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_pages', function (Blueprint $table) {
             $table->id();
             $table->string('page_name');
             $table->string('page_label');
@@ -39,6 +39,6 @@ class CreatePalletPagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_pages');
+        Schema::connection('mysql')->dropIfExists('pallet_pages');
     }
 }

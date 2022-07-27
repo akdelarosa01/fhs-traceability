@@ -13,11 +13,12 @@ class CreatePalletPageAccessesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_page_accesses', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_page_accesses', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->default(0);
             $table->integer('page_id')->default(0);
             $table->integer('status')->default(0)->length(1);
+            $table->integer('read_only')->default(0)->length(1);
             $table->integer('read_and_write')->default(0)->length(1);
             $table->integer('delete')->default(0)->length(1);
             $table->integer('authorize')->default(0)->length(1);
@@ -35,6 +36,6 @@ class CreatePalletPageAccessesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_page_accesses');
+        Schema::connection('mysql')->dropIfExists('pallet_page_accesses');
     }
 }

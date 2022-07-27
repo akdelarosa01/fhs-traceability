@@ -13,7 +13,7 @@ class CreatePalletModelMatricesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_model_matrices', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_model_matrices', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('model');
@@ -34,6 +34,6 @@ class CreatePalletModelMatricesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_model_matrices');
+        Schema::connection('mysql')->dropIfExists('pallet_model_matrices');
     }
 }

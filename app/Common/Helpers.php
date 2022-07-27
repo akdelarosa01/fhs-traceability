@@ -60,7 +60,7 @@ class Helpers
         $serials = [];
 
         try {
-            $hs_serials = DB::table('tboxqr as bqr')
+            $hs_serials = DB::connection('mysql')->table('tboxqr as bqr')
                             ->select('bqrd.HS_Serial')
                             ->join('tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
                             ->whereIn('bqr.qrBarcode',$box_qr);

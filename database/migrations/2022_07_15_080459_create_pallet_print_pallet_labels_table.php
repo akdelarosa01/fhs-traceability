@@ -13,7 +13,7 @@ class CreatePalletPrintPalletLabelsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_print_pallet_labels', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_print_pallet_labels', function (Blueprint $table) {
             $table->id();
             $table->string('model');
             $table->text('lot_no');
@@ -32,6 +32,6 @@ class CreatePalletPrintPalletLabelsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_print_pallet_labels');
+        Schema::connection('mysql')->dropIfExists('pallet_print_pallet_labels');
     }
 }

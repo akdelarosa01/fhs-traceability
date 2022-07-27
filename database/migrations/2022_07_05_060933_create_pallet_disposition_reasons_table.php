@@ -13,7 +13,7 @@ class CreatePalletDispositionReasonsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_disposition_reasons', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_disposition_reasons', function (Blueprint $table) {
             $table->id();
             $table->integer('disposition')->default(0);
             $table->text('reason');
@@ -32,6 +32,6 @@ class CreatePalletDispositionReasonsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_disposition_reasons');
+        Schema::connection('mysql')->dropIfExists('pallet_disposition_reasons');
     }
 }

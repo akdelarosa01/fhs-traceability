@@ -13,12 +13,12 @@ class CreatePalletBoxPalletDtlsTable extends Migration
      */
     public function up()
     {
-        Schema::create('pallet_box_pallet_dtls', function (Blueprint $table) {
+        Schema::connection('mysql')->create('pallet_box_pallet_dtls', function (Blueprint $table) {
             $table->id();
             $table->integer('pallet_id');
             $table->integer('model_id');
             $table->text('box_qr');
-            $table->text('remarks');
+            $table->text('remarks')->nullable();
             $table->integer('is_deleted')->length(1)->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
@@ -34,6 +34,6 @@ class CreatePalletBoxPalletDtlsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pallet_box_pallet_dtls');
+        Schema::connection('mysql')->dropIfExists('pallet_box_pallet_dtls');
     }
 }
