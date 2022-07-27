@@ -43,6 +43,7 @@ class BoxPalletModelMatrixController extends Controller
                         DB::raw("m.id as id"),
                         DB::raw("m.model as model"),
                         DB::raw("m.model_name as model_name"),
+                        DB::raw("m.hs_count_per_box as hs_count_per_box"),
                         DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
                         DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
                         DB::raw("uu.username as create_user"),
@@ -82,7 +83,8 @@ class BoxPalletModelMatrixController extends Controller
                 'model' => 'required|string|min:1',
                 'model_name' => 'required|string|min:1',
                 'box_count_per_pallet' => 'required|numeric',
-                'box_count_to_inspect' => 'required|numeric'
+                'box_count_to_inspect' => 'required|numeric',
+                'hs_count_per_box' => 'required|numeric',
             ]);
 
             try {
@@ -91,6 +93,7 @@ class BoxPalletModelMatrixController extends Controller
                 $mm->model_name = $req->model_name;
                 $mm->box_count_per_pallet = $req->box_count_per_pallet;
                 $mm->box_count_to_inspect = $req->box_count_to_inspect;
+                $mm->hs_count_per_box = $req->hs_count_per_box;
                 $mm->update_user = Auth::user()->id;
     
                 if ($mm->update()) {
@@ -126,7 +129,8 @@ class BoxPalletModelMatrixController extends Controller
                 ],
                 'model_name' => 'required|string|min:1',
                 'box_count_per_pallet' => 'required|numeric',
-                'box_count_to_inspect' => 'required|numeric'
+                'box_count_to_inspect' => 'required|numeric',
+                'hs_count_per_box' => 'required|numeric',
             ]);
 
             try {
@@ -136,6 +140,7 @@ class BoxPalletModelMatrixController extends Controller
                 $mm->model_name = $req->model_name;
                 $mm->box_count_per_pallet = $req->box_count_per_pallet;
                 $mm->box_count_to_inspect = $req->box_count_to_inspect;
+                $mm->hs_count_per_box = $req->hs_count_per_box;
                 $mm->create_user = Auth::user()->id;
                 $mm->update_user = Auth::user()->id;
 
@@ -159,8 +164,6 @@ class BoxPalletModelMatrixController extends Controller
                     'msgTitle' => 'Error!'
                 ];
             }
-
-            
         }
 
         return response()->json($data);

@@ -20,6 +20,7 @@ class CreatePalletModelMatricesTable extends Migration
             $table->string('model_name');
             $table->double('box_count_per_pallet',10,2)->default(0);
             $table->double('box_count_to_inspect',10,2)->default(0);
+            $table->double('hs_count_per_box',10,2)->default(0);
             $table->integer('is_deleted')->length(1)->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
