@@ -95,7 +95,7 @@ class UsersMasterController extends Controller
                 $user->email = $req->email;
                 $user->active = 1;
                 $user->create_user = Auth::user()->id;
-                $user->update_use = Auth::user()->id;
+                $user->update_user = Auth::user()->id;
 
                 if (isset($req->password)) {
                     $user->password = Hash::make($req->password);
@@ -116,7 +116,7 @@ class UsersMasterController extends Controller
                     'msg' => $th->getMessage(),
                     'data' => [],
                     'inputs' => $inputs,
-                    'success' => true,
+                    'success' => false,
                     'msgType' => 'error',
                     'msgTitle' => 'Error!'
                 ];
@@ -167,7 +167,7 @@ class UsersMasterController extends Controller
                     'msg' => $th->getMessage(),
                     'data' => [],
                     'inputs' => $inputs,
-                    'success' => true,
+                    'success' => false,
                     'msgType' => 'error',
                     'msgTitle' => 'Error!'
                 ];
