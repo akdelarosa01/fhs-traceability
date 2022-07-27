@@ -1,5 +1,18 @@
 @push('styles')
 	<link href="{{ asset('css/transactions/qa_inspection.css') }}" rel="stylesheet">
+	<style>
+		.check_box {
+			width: 20px;
+			height: 20px;
+		}
+		.disabled {
+			pointer-events: none;
+		}
+		.remarks_input {
+			border: none;
+			border-radius: 0px;
+		}
+	</style>
 @endpush
 
 @section('title')
@@ -62,17 +75,7 @@ Q.A. Inspection
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-12">
-						<div class="input-group input-group-sm mb-2">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Scan Serial Here:</span>
-							</div>
-							<input type="text" class="form-control form-control-sm clear" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
-							<div id="scan_serial_feedback"></div>
-						</div>
-					</div>
-				</div>
+				
 
 				{{-- <div class="row">
 					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -96,6 +99,32 @@ Q.A. Inspection
 					</div>
 				</div>
 			</div>
+			<div class="col-4 align-self-end">
+				<div class="row">
+					<div class="col-12">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<span class="input-group-text">Scan Serial Here:</span>
+							</div>
+							<input type="text" class="form-control form-control-sm clear" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
+							<div id="scan_serial_feedback"></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-green align-middle" id="btn_good" disabled>
+							<i class="fa fa-thumbs-up"></i> Good
+						</button>
+					</div>
+					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_notgood"  data-toggle="modal" data-target="#modal_print_preview" >
+							<i class="fa fa-thumbs-down"></i> NG
+						</button>
+					</div>
+
+				</div>
+			</div>
 		</div>
 		
 		<div class="row">
@@ -114,12 +143,12 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue align-middle" id="btn_transfer">
+						<button type="button" class="btn btn-sm btn-block btn-blue align-middle" id="btn_transfer" disabled>
 							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition">
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition" disabled>
 							<i class="fa fa-plus"></i> Pallet Disposition
 						</button>
 					</div>
@@ -151,12 +180,12 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-purple" id="update_serial">
+						<button type="button" class="btn btn-sm btn-block btn-purple" id="update_serial" disabled>
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
 					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="delete_serial">
+						<button type="button" class="btn btn-sm btn-block btn-blue" id="delete_serial" disabled>
 							<i class="fa fa-trash"></i> Delete
 						</button>
 					</div>
@@ -168,8 +197,8 @@ Q.A. Inspection
 </div>
 
 
-
-<div class="modal fade" id="btn_disposition" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  
+<div class="modal fade" id="modal_print_preview" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog ">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -200,21 +229,18 @@ Q.A. Inspection
 								<p id="prv_pallet_id_val"></p>
 							</div>
 						</div>
-						
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer justify-content-between">
-				<button type="button" class="btn btn-default" data-dismiss="modal">
-					<i class="fa fa-times"></i> Close
-				</button>
-				<button type="button" class="btn btn-primary" id="btn_preview_print">
-					<i class="fa fa-print"></i> Print
+			<div class="modal-footer justify-content-center">
+				<button type="button" class="btn btn-primary" id="btn_save">
+					<i class="fa fa-arrow-down-to-arc"></i>Save
 				</button>
 			</div>
 		</div>
 	</div>
 </div>
+
 @endsection
 
 @push('scripts')

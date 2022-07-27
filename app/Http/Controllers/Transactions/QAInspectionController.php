@@ -88,99 +88,102 @@ class QAInspectionController extends Controller
                         'pb.remarks',
                         'pb.created_at',
                         'pb.updated_at'
+                        // ,
+                        // 'bqr.qrBarcode',
+                        // 'bqrd.HS_Serial'
                     )
                     // ->join('tboxqr as bqr','bqr.qrBarcode','=','pb.box_qr')
                     // ->join('tboxqrdetails as bqrd','bqr.ID','=','bqrd.Box_ID')
                     ->where('pb.pallet_id',$pallet_id)
-                    ->orderBy('pb.id','desc');
+                    ->orderBy('pb.box_qr','desc');
+                    //->get();
         return $query;
+
     }
 
-    // public function get_serials(Request $req)
-    // {
-    //     $data = [];
-    //     try {
-    //         $query = $this->serials($req->box_qr);
-    //         return Datatables::of($query)->make(true);
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
-    //     }
-    //     return $data;
-    // }
-
-    // private function serials($box_qr)
-    // {
-    //     $query = DB::connection('mysql')->table('tboxqrdetails as bqrd')
-    //                 ->select(
-    //                     'bqrd.HS_Serial'
-    //                 )
-    //                 ->join('tboxqr as bqr','bqr.ID','=','bqrd.Box_ID')
-    //                 ->where('tboxqr.qrBarcode',$box_qr);
-    //     return $query;
-    // }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function get_serials(Request $req)
     {
-        //
+        $data = [];
+        try {
+            $query = $this->serials($req->box_qr);
+            return Datatables::of($query)->make(true);
+
+            // @for ($i = 0; $i < ; $i++)
+                
+            //     if(){
+
+            //     }
+            
+            // @endfor
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function check_hs_serial(Request $req)
     {
-        //
+        $data = [
+			'msg' => 'Checking of HS Serial has failed.',
+            'data' => [
+                'matched' => false
+            ],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            // HS serials in DB
+            $arr_db_serials = [];
+            $db_serials = $this->serials($req->box_qr);
+
+            foreach ($db_serials as $key => $hs) {
+                array_push($arr_db_serials,str_replace("\r","",$hs->HS_Serial));
+            }
+
+            // HS serials were scanned in QA
+            $hs_qr = explode(';\r',$req->hs_qrs);
+
+            // checking if matched
+            $matched = true;
+            foreach ($hs_qr as $key => $hs) {
+                if (!in_array($hs, $arr_db_serials)) {
+                    $matched = false;
+                    break;
+                }
+            }
+
+            if (!$matched) {
+                $data = [
+                    'data' => [
+                        'matched' => false
+                    ],
+                    'success' => true,
+                ];
+            } else {
+                $data = [
+                    'data' => [
+                        'matched' => true
+                    ],
+                    'success' => true,
+                ];
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return response()->json($data);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    private function serials($box_qr)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $query = DB::connection('mysql')->table('tboxqrdetails as bqrd')
+                    ->select(
+                        'bqrd.HS_Serial'
+                    )
+                    ->join('tboxqr as bqr','bqr.ID','=','bqrd.Box_ID')
+                    ->where('bqr.qrBarcode',$box_qr)->get()->toArray();
+        return $query;
     }
 }

@@ -40,7 +40,7 @@
                     info: false,
                     sorting: false,
                     select: {
-                        style: 'single',
+                        style: 'os',
                         selector: 'td:not(:first-child)'
                     },
 					ajax: {
@@ -67,8 +67,8 @@
 					columns: [
                         { 
                             data: function(data) {
-                                return '<input type="checkbox" class="check_pallet" value="'+data.id+'"/>';
-                            }, name: 'id', searchable: false, orderable: false, width: '10px', className: 'align-middle' 
+                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
                         },
                         {
                             data: function(data) {
@@ -77,8 +77,8 @@
                             }, name: 'pallet_qr', searchable: false, orderable: false 
                         },
                         { data: function(data) {
-                                return '<p class="btn-success my-0">'+data.pallet_location+'</p>';
-                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'
+                                return '<p class="btn-success py-2 my-0">'+data.pallet_location+'</p>';
+                            }, name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
                         },
 						{ data: function(data) {
                                 return '<span></span>';
@@ -110,7 +110,7 @@
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_boxes')) {
                 self.$tbl_boxes = $('#tbl_boxes').DataTable({
-                    scrollY: "400px",
+                    scrollY: "43vh",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -118,7 +118,8 @@
                     sorting: false,
                     select: {
                         style: 'os',
-                        selector: 'td:first-child'
+                        selector: 'td:first-child',
+                        
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-boxes",
@@ -154,7 +155,7 @@
                     columns: [
                         { 
                             data: function(data) {
-                                return '<input type="checkbox" id="checkbox" class="check_pallet" value="'+data.id+'"/>';
+                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
                             }, name: 'id', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
                         },
                         { 
@@ -164,86 +165,24 @@
                         },
                         { 
                             data: function() {
-                                return '<button class="btn-success btn-sm" > Match</button> <button class="btn-danger btn-sm"> Not Match</button>';
+                                return '<p></p>';
                             }, name: 'inspection', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
                         },
-                        { data: 'remarks', name: 'remarks', searchable: false, orderable: false, className: 'text-center align-middle'  }
-                    ],
-                    rowCallback: function(row, data) {
-                    },
-                    createdRow: function(row, data, dataIndex) {                     
-                    },
-                    initComplete: function() {
-                        $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
-                    },
-                    fnDrawCallback: function() {
-                        // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
-                        var data = this.fnGetData();
-                        var data_count = data.length;
-                        $('#box_count').html(data_count);
-                    },
-                }).on('page.dt', function() {
-                });
-            }
-            return this;
-        },
-        drawSerialsDatatables: function() {
-            var self = this;
-            if (!$.fn.DataTable.isDataTable('#tbl_affected_serials')) {
-                self.$tbl_boxes = $('#tbl_affected_serials').DataTable({
-                    scrollY: "400px",
-                    processing: true,
-                    searching: false, 
-                    paging: false, 
-                    info: false,
-                    sorting: false,
-                    select: {
-                        style: 'os',
-                        selector: 'td:first-child'
-                    },
-                    ajax: {
-                        url: "/transactions/qa-inspection/get-serials",
-                        dataType: "JSON",
-                        data: function(d) {
-                            d._token = self.token;
-                            d.box_qr = $('#box_qr').val()
-                        },
-                        error: function(response) {
-                            console.log(response);
-                        }
-                    },
-                    language: {
-                        aria: {
-                            sortAscending: ": activate to sort column ascending",
-                            sortDescending: ": activate to sort column descending"
-                        },
-                        emptyTable: "No Box ID was scanned.",
-                        info: "Showing _START_ to _END_ of _TOTAL_ records",
-                        infoEmpty: "No records found",
-                        infoFiltered: "(filtered1 from _MAX_ total records)",
-                        lengthMenu: "Show _MENU_",
-                        search: "Search:",
-                        zeroRecords: "No matching records found",
-                        paginate: {
-                            "previous": "Prev",
-                            "next": "Next",
-                            "last": "Last",
-                            "first": "First"
-                        }
-                    },
-                    deferRender: true,
-                    columns: [
                         { 
-                            data: function(data) {
-                                return '<span> </span>';
-                            }, name: 'id', searchable: false, orderable: false, className: 'text-center align-middle' 
-                        },
-                        
+                            data: function() {
+                                return '<p class="bg-red"></p>';
+                            }, name: 'remarks', searchable: false, orderable: false, className: 'text-center align-middle'   
+                        }
                     ],
                     rowCallback: function(row, data) {
                     },
-                    createdRow: function(row, data, dataIndex) {                     
+                    createdRow: function(row, data, dataIndex) {     
+                        var dataRow = $(row);
+                        var checkbox = $(dataRow[0].cells[0].firstChild);
+                        
+                        $(dataRow[0].cells[3]).css('background-color', '#a3a3a3');
+                        $(dataRow[0].cells[3]).css('color', '#000000');
+
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -260,7 +199,6 @@
             }
             return this;
         },
-
         statusMsg: function(msg,status) {
             switch (status) {
                 case 'success':
@@ -280,19 +218,43 @@
                     break;
             }
         },
-		
+        // getUser: function(data) {
+        //     var self = this;
+        //     self.submitType = "Get";
+        //     self.jsonData = {
+        //         new_box_count: $('#inspector').val(data.Last_name)
+        //     };
+        //     self.formAction = "/transactions/qa-inspection/get-user";
+        // },
+		scanInspection: function(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/check-hs-serial";
+            self.sendData().then(function() {
+               
+                if (data.matched == true)  {
+                    console.log("eto na");
+                }
+                $('#scan_serial').prop('readonly', false);
+                $('#btn_good').prop('disabled', false);
+                $('#btn_notgood').prop('disabled', false);
+
+                // $('#save_div').hide();
+                // $('#preview_div').show();
+
+                // self.$tbl_boxes.ajax.reload();
+            });
+        }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype);
    
 	$(document).ready(function() {
-
 		
 		var _QAInspection = QAInspection();
         _QAInspection.RunDateTime();
         _QAInspection.drawOBADatatables();
         _QAInspection.drawBoxesDatatables();
-
-        
         
         _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
@@ -309,32 +271,105 @@
             $('#pallet_id').val('');
             $('#box_tested_full').html(0);
             $('#box_count_to_inspect').val('');
-
+            $('#inspqection_sheet_qr').val('');
+            $('#inspqection_sheet_qr').prop('readonly', true);
             _QAInspection.$tbl_boxes.ajax.reload();
             $('#box_tested').html(0);
         });
+        $('#tbl_obas tbody').on('change', '.check_box', function() {
+            var checked = $(this).is(':checked');
+            $('.check_box').not(this).prop('checked', false);
+            $('#btn_transfer').prop('disabled', true);
+            $('#btn_disposition').prop('disabled', true);
+            if (checked) {
+                $('#btn_transfer').prop('disabled', false);
+                $('#btn_disposition').prop('disabled', false);
+                $('#inspqection_sheet_qr').prop('readonly', true);
+            } else {
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_disposition').prop('disabled', true);
+            }
+        });
 
-        // _QAInspection.$tbl_boxes.on('select', function ( e, dt, type, indexes ) {
-        //     var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
-        //     var data = rowData[0];
 
-        //     $('#inspqection_sheet_qr').val(data.id);
-            
-        //     _QAInspection.statusMsg('','clear');
-        // })
-        // .on('deselect', function ( e, dt, type, indexes ) {
-        //     $('#inspqection_sheet_qr').val('');
-       
+        _QAInspection.$tbl_boxes.on('select', function ( e, dt, type, indexes ) {
+            var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
+            var data = rowData[0];            
+            $('#box_qr').val(data.box_qr);
 
-        //     $('#box_count').html(0);
-        // });
+            _QAInspection.statusMsg('','clear');
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            $('#inspqection_sheet_qr').val('');
+            $('#box_qr').val('');
+
+            $('#box_count').html(0);
+        });
         
+        $('#tbl_boxes tbody').on('change', '.check_box', function() {
+            var checked = $(this).is(':checked');
+            $('.check_box').not(this).prop('checked', false);
 
+            if (checked) {
+                $('#inspqection_sheet_qr').prop('readonly', false);
+                $('#inspqection_sheet_qr').focus();
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_disposition').prop('disabled', true);
+            } else {
+                $('#inspqection_sheet_qr').prop('readonly', true);
+            }
+        });
 
-        // $('#tbl_boxes #checkbox').on('click', 'input[type="checkbox"]', function() {      
-        //     $('#checkbox').not(this).prop('checked', false); 
-        //     console.log("check");     
-        // });
+        $('#btn_transfer').on('click', function() {
+            var chkArray = [];
+            var table = _QAInspection.$tbl_obas;
+            var cnt = 0;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    var status = $(DataRow.anCells[2]).html();
+                    if (status == "Good") {
+                        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                    }
+                    cnt++;
+                }
+            }            
+
+            if (chkArray.length > 0) {
+                var msg = "Do you want to transfer this Pallet to Warehouse?";
+
+                if (cnt > 1) {
+                    msg = "Do you want to transfer these Pallets to Warehouse?";
+                }
+                _QAInspection.msg = msg;
+                _QAInspection.confirmAction(msg).then(function(approve) {
+                    if (approve)
+                    _QAInspection.transferTo({
+                            _token: _QAInspection.token,
+                            ids: chkArray
+                        });
+                });
+            } else {
+                _QAInspection.showWarning("Please select at least 1 Pallet with a 'Good' status.");
+            }
+        });
+
+        $('#inspqection_sheet_qr').on('change', function() {
+            var inspection_qr = $(this).val();
+
+            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+            var data = rowData[0];
+
+            //console.log(data);
+
+            _QAInspection.scanInspection({
+                _token: _QAInspection.token,
+                hs_qrs: inspection_qr,
+                box_id: data.id,
+                box_qr: data.box_qr
+            });
+        });
         
 	});
 
