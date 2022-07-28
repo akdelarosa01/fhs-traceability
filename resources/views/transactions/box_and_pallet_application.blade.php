@@ -39,6 +39,8 @@ Box and Pallet Application
 					@csrf
 					<input type="hidden" class="clear" id="id" name="id" value="">
 					<input type="hidden" class="clear" id="model" name="model" value="">
+					<input type="hidden" class="clear" id="hs_qty" name="hs_qty" value="">
+					<input type="hidden" class="clear" id="box_count_per_pallet" name="box_count_per_pallet" value="">
 
 					<div class="row">
 						<div class="col-12">
@@ -56,9 +58,21 @@ Box and Pallet Application
 						<div class="col-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
+									<span class="input-group-text">Target HS Qty.</span>
+								</div>
+								<input type="number" class="form-control form-control-sm clear" id="target_hs_qty" name="target_hs_qty" placeholder="Target HS Qty." autocomplete="off">
+								<div id="target_hs_qty_feedback"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
 									<span class="input-group-text">Target No. of Pallets</span>
 								</div>
-								<input type="number" class="form-control form-control-sm clear" id="target_no_of_pallet" name="target_no_of_pallet" placeholder="Target No. of Pallets" autocomplete="off">
+								<input type="number" class="form-control form-control-sm clear" id="target_no_of_pallet" name="target_no_of_pallet" placeholder="Target No. of Pallets" autocomplete="off" readonly>
 								<div id="target_no_of_pallet_feedback"></div>
 							</div>
 						</div>

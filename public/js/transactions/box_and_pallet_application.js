@@ -4523,11 +4523,15 @@ B. Synopsis: Real Time Script
                             },
                         }
                     }).val(null).trigger('change.select2');
-                    $('#target_no_of_pallet').prop('readonly', false);
+                    $('#target_hs_qty').prop('readonly', false);
                     $('#btn_add_new').prop('disabled', true);
                     $('#btn_cancel').prop('disabled', false);
                     $('#btn_proceed').prop('disabled', false);
                     $('#btn_start_scan').prop('disabled', true);
+
+                    $('#tbl_transactions').addClass('disabled');
+                    $('#tbl_pallets').addClass('disabled');
+                    $('#tbl_boxes').addClass('disabled');
                     break;
 
                 case 'SCAN':
@@ -4568,11 +4572,15 @@ B. Synopsis: Real Time Script
                         theme: 'bootstrap4',
                         width: 'auto',
                     });
-                    $('#target_no_of_pallet').prop('readonly', true);
+                    $('#target_hs_qty').prop('readonly', true);
                     $('#btn_add_new').prop('disabled', false);
                     $('#btn_cancel').prop('disabled', true);
                     $('#btn_proceed').prop('disabled', true);
                     $('#btn_start_scan').prop('disabled', false);
+
+                    $('#tbl_transactions').removeClass('disabled');
+                    $('#tbl_pallets').removeClass('disabled');
+                    $('#tbl_boxes').removeClass('disabled');
                     break;
             }
         },
@@ -5066,6 +5074,15 @@ B. Synopsis: Real Time Script
 
                 self.$tbl_boxes.ajax.reload();
             });
+        },
+        caculateTargetPallet(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/calculate-target-pallet";
+            self.sendData().then(function() {
+                var response = self.responseData;
+            });
         }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
@@ -5157,6 +5174,8 @@ B. Synopsis: Real Time Script
         $('#model_id').on('select2:select', function (e) {
             var data = e.params.data;
             $('#model').val(data.model);
+            $('#hs_qty').val(data.hs_count_per_box);
+            $('#box_count_per_pallet').val(data.box_count_per_pallet);
         });
 
         $('#frm_transactions').on('submit', function(e) {
@@ -5196,6 +5215,11 @@ B. Synopsis: Real Time Script
         _BoxPalletApp.$tbl_transactions.on('select', function ( e, dt, type, indexes ) {
             var rowData = _BoxPalletApp.$tbl_transactions.rows( indexes ).data().toArray();
             var data = rowData[0];
+            $('#id').val(data.id);
+            $('#model').val();
+            $('#hs_qty').val();
+            $('#box_count_per_pallet').val();
+
             $('#trans_id').val(data.id);
             $('#selected_model_id').val(data.model_id);
             $('#running_model').val(data.model);
@@ -5464,6 +5488,17 @@ B. Synopsis: Real Time Script
                 update_box_id: update_box_id,
                 remarks_input: remarks_input,
             });
+        });
+
+        $('#target_hs_qty').on('focusout', function () {
+            var hs_qty = parseFloat($('#hs_qty').val());
+            var target_hs_qty = parseFloat($('#target_hs_qty').val());
+            var box_count_per_pallet = parseFloat($('#box_count_per_pallet').val());
+            var target_no_of_pallet = 0;
+
+            target_no_of_pallet = (target_hs_qty/hs_qty) / box_count_per_pallet;
+
+            $('#target_no_of_pallet').val(target_no_of_pallet);
         });
     });
 })();

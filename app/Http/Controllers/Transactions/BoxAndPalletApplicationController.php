@@ -58,6 +58,7 @@ class BoxAndPalletApplicationController extends Controller
                                 'id as id',
                                 DB::raw("CONCAT(model,' | ', model_name) as text"),
                                 'box_count_per_pallet',
+                                'hs_count_per_box',
                                 'model',
                                 'model_name'
                             )->where('is_deleted',0);
@@ -123,6 +124,7 @@ class BoxAndPalletApplicationController extends Controller
             $trans = new PalletTransaction();
             
             $trans->model_id = $req->model_id;
+            $trans->target_hs_qty = $req->target_hs_qty;
             $trans->target_no_of_pallet = $req->target_no_of_pallet;
             $trans->model_status = 0;
             $trans->create_user = Auth::user()->id;
@@ -633,6 +635,50 @@ class BoxAndPalletApplicationController extends Controller
                 'success' => false,
                 'msgType' => 'error',
                 'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function calculate_target_pallet(Request $req)
+    {
+        $data = [
+			'msg' => 'calculating the ',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $user_id = Auth::user()->id;
+            $page_access = new PalletPageAccess();
+            $permission = $page_access->check_permission($user_id, 'BoxAndPalletApplication');
+
+            if ($permission > 0) {
+                $data = [
+                    'data' => [
+                        'permission' => true
+                    ],
+                    'success' => true,
+                ];
+            } else {
+                $data = [
+                    'data' => [
+                        'permission' => false
+                    ],
+                    'success' => true,
+                ];
+            }
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => true,
+                'msgType' => 'warning',
+                'msgTitle' => 'Failed!'
             ];
         }
 
