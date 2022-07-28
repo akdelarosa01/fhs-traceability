@@ -14,6 +14,7 @@ class PalletModelMatrix extends Model
     protected $fillable = [
         'model',
         'model_name',
+        'hs_count_per_box',
         'box_count_per_pallet',
         'box_count_to_inspect',
         'is_deleted',

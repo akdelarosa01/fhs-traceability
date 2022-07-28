@@ -14,6 +14,7 @@ class PalletTransaction extends Model
     protected $fillable = [
         'model_id',
         'model_status',
+        'target_hs_qty',
         'target_no_of_pallet',
         'create_user',
         'update_user'
