@@ -19,6 +19,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'FDM',
             'box_count_per_pallet' => 20,
             'box_count_to_inspect' => 5,
+            'hs_count_per_box' => 12,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -29,6 +30,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'FDS',
             'box_count_per_pallet' => 32,
             'box_count_to_inspect' => 5,
+            'hs_count_per_box' => 12,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -39,6 +41,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'KINGFISHER',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 6,
+            'hs_count_per_box' => 6,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -49,6 +52,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'S8A',
             'box_count_per_pallet' => 48,
             'box_count_to_inspect' => 7,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -59,6 +63,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'S8C',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 6,
+            'hs_count_per_box' => 6,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -69,6 +74,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'HAYSTACK',
             'box_count_per_pallet' => 32,
             'box_count_to_inspect' => 4,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -79,6 +85,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'MOON',
             'box_count_per_pallet' => 48,
             'box_count_to_inspect' => 7,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -89,6 +96,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'S8I',
             'box_count_per_pallet' => 24,
             'box_count_to_inspect' => 5,
+            'hs_count_per_box' => 12,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -99,6 +107,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'SERON',
             'box_count_per_pallet' => 32,
             'box_count_to_inspect' => 4,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -109,6 +118,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'NOA19',
             'box_count_per_pallet' => 48,
             'box_count_to_inspect' => 7,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -119,6 +129,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'CONAN',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 5,
+            'hs_count_per_box' => 8,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -129,6 +140,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'S8Z',
             'box_count_per_pallet' => 24,
             'box_count_to_inspect' => 4,
+            'hs_count_per_box' => 16,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -139,6 +151,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'S8A',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 6,
+            'hs_count_per_box' => 6,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -149,6 +162,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'DIORITE FRO',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 3,
+            'hs_count_per_box' => 48,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -159,6 +173,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'DIORITE FRG',
             'box_count_per_pallet' => 36,
             'box_count_to_inspect' => 3,
+            'hs_count_per_box' => 60,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1
@@ -169,6 +184,7 @@ class ModelSeeder extends Seeder
             'model_name' => 'ASTORIA',
             'box_count_per_pallet' => 24,
             'box_count_to_inspect' => 4,
+            'hs_count_per_box' => 16,
             'is_deleted' => 0,
             'create_user' => 1,
             'update_user' => 1

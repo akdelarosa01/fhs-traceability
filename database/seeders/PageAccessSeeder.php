@@ -22,6 +22,7 @@ class PageAccessSeeder extends Seeder
                 'user_id' => 1,
                 'page_id' => $page->id,
                 'status' => 1,
+                'read_only' => 0,
                 'read_and_write' => 1,
                 'delete' => 1,
                 'authorize' => 1,

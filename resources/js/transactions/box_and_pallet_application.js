@@ -242,7 +242,7 @@
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_transactions").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -378,7 +378,7 @@
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -453,7 +453,7 @@
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");

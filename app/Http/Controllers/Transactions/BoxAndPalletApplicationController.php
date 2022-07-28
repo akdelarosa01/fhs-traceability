@@ -416,7 +416,7 @@ class BoxAndPalletApplicationController extends Controller
                 $lots .= $lot->lot_no."\r";
             }
 
-            $print_date = date('Y-m-d H:i:s');
+            $print_date = date('Y-m-d');
             $month = $req->month;
 
             $pallet = PalletBoxPalletHdr::find($req->pallet_id);
@@ -428,7 +428,7 @@ class BoxAndPalletApplicationController extends Controller
                 $pallet->print_date = $print_date;
             } else { // reprint
                 $print_date = $pallet->print_date;
-                $month = "";
+                $month = strtoupper(date('M',strtotime($pallet->print_date)));
             }
 
             if ($pallet->update()) {

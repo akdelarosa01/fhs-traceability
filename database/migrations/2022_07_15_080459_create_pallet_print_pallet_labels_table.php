@@ -15,6 +15,7 @@ class CreatePalletPrintPalletLabelsTable extends Migration
     {
         Schema::connection('mysql')->create('pallet_print_pallet_labels', function (Blueprint $table) {
             $table->id();
+            $table->string('month');
             $table->string('model');
             $table->text('lot_no');
             $table->double('box_qty',10,2)->default(0);
