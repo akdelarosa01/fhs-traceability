@@ -52,9 +52,11 @@ class QAInspectionController extends Controller
                 DB::raw("p.new_box_count as new_box_count"),
                 DB::raw("p.pallet_location as pallet_location"),
                 DB::raw("p.is_printed as is_printed"),
+                DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
                 DB::raw("p.created_at as created_at"),
                 DB::raw("p.updated_at as updated_at")
             ])
+            ->join('pallet_model_matrices as m','p.model_id','=','m.id')
             ->where([
                 ['p.pallet_status','=','1'],
                 ['p.pallet_location','=','Q.A.']
@@ -76,7 +78,6 @@ class QAInspectionController extends Controller
         }
         return $data;
     }
-
     private function boxes($pallet_id)
     {
         $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
@@ -108,20 +109,11 @@ class QAInspectionController extends Controller
             $query = $this->serials($req->box_qr);
             return Datatables::of($query)->make(true);
 
-            // @for ($i = 0; $i < ; $i++)
-                
-            //     if(){
-
-            //     }
-            
-            // @endfor
-
         } catch (\Throwable $th) {
             //throw $th;
         }
         return $data;
     }
-
     public function check_hs_serial(Request $req)
     {
         $data = [
