@@ -88,12 +88,31 @@ class BoxAndPalletApplicationController extends Controller
                         DB::raw("t.id as id"),
                         DB::raw("t.model_id as model_id"),
                         DB::raw("t.model_status as model_status"),
+                        DB::raw("t.target_hs_qty as target_hs_qty"),
+                        DB::raw("t.total_box_qty as total_box_qty"),
                         DB::raw("t.target_no_of_pallet as target_no_of_pallet"),
                         DB::raw("m.model as model"),
+                        DB::raw("CONCAT(m.model,' | ', m.model_name) as model_name"),
                         DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
+                        DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                        DB::raw("COUNT(dt.box_qr) as total_scanned_box_qty"),
                         DB::raw("t.created_at as created_at")
                     ])
-                    ->join('pallet_model_matrices as m','t.model_id','=','m.id');
+                    ->join('pallet_model_matrices as m','t.model_id','=','m.id')
+                    ->leftJoin('pallet_box_pallet_dtls as dt','dt.model_id','=','t.model_id')
+                    ->groupBy(
+                        't.id',
+                        't.model_id',
+                        't.model_status',
+                        't.target_hs_qty',
+                        't.total_box_qty',
+                        't.target_no_of_pallet',
+                        'm.model',
+                        'm.model_name',
+                        'm.box_count_per_pallet',
+                        'm.hs_count_per_box',
+                        't.created_at'
+                    );
 
             return Datatables::of($query)->make(true);
         } catch (\Throwable $th) {
@@ -117,40 +136,63 @@ class BoxAndPalletApplicationController extends Controller
 
         $this->validate($req, [
             'model_id' => 'required',
-            'target_no_of_pallet' => 'required|numeric|min:0|not_in:0',
+            'target_hs_qty' => 'required|numeric|min:0|not_in:0',
         ]);
 
         try {
-            $trans = new PalletTransaction();
+            if (isset($req->id)) {
+                $trans = PalletTransaction::find($req->id);
             
-            $trans->model_id = $req->model_id;
-            $trans->target_hs_qty = $req->target_hs_qty;
-            $trans->target_no_of_pallet = $req->target_no_of_pallet;
-            $trans->model_status = 0;
-            $trans->create_user = Auth::user()->id;
-            $trans->update_user = Auth::user()->id;
+                $trans->target_hs_qty = $req->target_hs_qty;
+                $trans->total_box_qty = $req->total_box_qty;
+                $trans->target_no_of_pallet = $req->target_no_of_pallet;
+                $trans->model_status = 0;
+                $trans->update_user = Auth::user()->id;
 
-            if ($trans->save()) {
-                $hdr = new PalletBoxPalletHdr();
-                $hdr->transaction_id = $trans->id;
-                $hdr->model_id = $req->model_id;
-                $hdr->pallet_qr = $this->generatePalletID($trans->id,$req);
-                $hdr->pallet_status = 0;
-                $hdr->pallet_location = "PRODUCTION";
-                $hdr->create_user = Auth::user()->id;
-                $hdr->update_user = Auth::user()->id;
+                if ($trans->update()) {
+                    $data = [
+                        'msg' => 'Transaction has successfully updated.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } else {
+                $trans = new PalletTransaction();
+            
+                $trans->model_id = $req->model_id;
+                $trans->target_hs_qty = $req->target_hs_qty;
+                $trans->total_box_qty = $req->total_box_qty;
+                $trans->target_no_of_pallet = $req->target_no_of_pallet;
+                $trans->model_status = 0;
+                $trans->create_user = Auth::user()->id;
+                $trans->update_user = Auth::user()->id;
 
-                $hdr->save();
+                if ($trans->save()) {
+                    $hdr = new PalletBoxPalletHdr();
+                    $hdr->transaction_id = $trans->id;
+                    $hdr->model_id = $req->model_id;
+                    $hdr->pallet_qr = $this->generatePalletID($trans->id,$req);
+                    $hdr->pallet_status = 0;
+                    $hdr->pallet_location = "PRODUCTION";
+                    $hdr->create_user = Auth::user()->id;
+                    $hdr->update_user = Auth::user()->id;
 
-                $data = [
-                    'msg' => 'Transaction has successfully proceeded.',
-                    'data' => [],
-                    'inputs' => $inputs,
-                    'success' => true,
-                    'msgType' => 'success',
-                    'msgTitle' => 'Success!'
-                ];
+                    $hdr->save();
+
+                    $data = [
+                        'msg' => 'Transaction has successfully proceeded.',
+                        'data' => [],
+                        'inputs' => $inputs,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
             }
+            
         } catch (\Throwable $th) {
             $data = [
                 'msg' => $th->getMessage(),
@@ -635,50 +677,6 @@ class BoxAndPalletApplicationController extends Controller
                 'success' => false,
                 'msgType' => 'error',
                 'msgTitle' => 'Error!'
-            ];
-        }
-
-        return response()->json($data);
-    }
-
-    public function calculate_target_pallet(Request $req)
-    {
-        $data = [
-			'msg' => 'calculating the ',
-            'data' => [],
-			'success' => true,
-            'msgType' => 'warning',
-            'msgTitle' => 'Failed!'
-        ];
-
-        try {
-            $user_id = Auth::user()->id;
-            $page_access = new PalletPageAccess();
-            $permission = $page_access->check_permission($user_id, 'BoxAndPalletApplication');
-
-            if ($permission > 0) {
-                $data = [
-                    'data' => [
-                        'permission' => true
-                    ],
-                    'success' => true,
-                ];
-            } else {
-                $data = [
-                    'data' => [
-                        'permission' => false
-                    ],
-                    'success' => true,
-                ];
-            }
-
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'success' => true,
-                'msgType' => 'warning',
-                'msgTitle' => 'Failed!'
             ];
         }
 

@@ -19,6 +19,7 @@ class CreatePalletTransactionsTable extends Migration
             $table->integer('model_status')->length(1)->default(0); // 0 = NOT READY / 1 = DONE
             $table->double('target_no_of_pallet',10,2)->default(0);
             $table->double('target_hs_qty',10,2)->default(0);
+            $table->double('total_box_qty',10,2)->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();
