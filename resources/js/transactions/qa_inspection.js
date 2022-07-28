@@ -160,12 +160,12 @@
                         },
                         { 
                             data: function(data) {
-                                return '<h5 class="font-weight-normal">'+data.box_qr+'</h5>';
+                                return '<h5 class="font-weight-normal m-0">'+data.box_qr+'</h5>';
                             }, name: 'box_qr', searchable: false, orderable: false,  className: 'text-center align-middle' 
                         },
                         { 
                             data: function() {
-                                return '<p></p>';
+                                return '<button id="not-match" class="btn-red btn_notmatch"> Not Match </button> <button id="match" class="btn-green btn_match"> Match </button>';
                             }, name: 'inspection', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
                         },
                         { 
@@ -228,22 +228,51 @@
         // },
 		scanInspection: function(param) {
             var self = this;
-            self.submitType = "GET";
+            self.submitType = "POST";
             self.jsonData = param;
             self.formAction = "/transactions/qa-inspection/check-hs-serial";
             self.sendData().then(function() {
+
+                self.$tbl_boxes.jax.reload();
+                
+                // var sample = $('#tbl_obas').DataTable().row(this).data();
+                // console.log(sample);
+
+                // var chkArray = [];
+                // var table = $('#tbl_obas').DataTable();
+                // var cnt = 0;
+
+                // for (var x = 0; x < table.context[0].aoData.length; x++) {
+                //     var DataRow = table.context[0].aoData[x];
+                //     if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                //         chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                //         cnt++;
+                //     }
+                // }
+                // console.log(cnt);
+
+
                
-                if (data.matched == true)  {
-                    console.log("eto na");
-                }
-                $('#scan_serial').prop('readonly', false);
+                var response = self.responseData;
                 $('#btn_good').prop('disabled', false);
                 $('#btn_notgood').prop('disabled', false);
 
-                // $('#save_div').hide();
-                // $('#preview_div').show();
-
-                // self.$tbl_boxes.ajax.reload();
+                if (response.matched == true)  {
+                    console.log("trrrrrrrrruuuuuuu");
+                    $('.check_box').prop('checked', false);
+                    $('#inspqection_sheet_qr').val('');
+                    $('#inspqection_sheet_qr').prop('readonly', true);
+                    $('#scan_serial').prop('readonly', true);
+                    $('#match').css('display', 'block');
+                }
+                else {
+                    $('.check_box').prop('checked', false);
+                    $('#inspqection_sheet_qr').val('');
+                    $('#inspqection_sheet_qr').prop('readonly', true);
+                    $('#scan_serial').prop('readonly', false);
+                    $('#not-match').css('display', 'block');
+                    console.log("false");
+                }
             });
         }
 	}
@@ -259,9 +288,10 @@
         _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
             var data = rowData[0];
+            console.log(data);
             $('#pallet_id').val(data.id);
             $('#box_tested_full').html(data.new_box_count);
-            $('#box_count_to_inspect').val(data.new_box_count);
+            $('#box_count_to_inspect').val(data.box_count_to_inspect);
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
@@ -320,6 +350,16 @@
             }
         });
 
+        $('#btn_good').on('click', function() {
+            $('.check_box').prop('checked', false);
+            $('#inspqection_sheet_qr').val('');
+            $('#inspqection_sheet_qr').prop('readonly', true);
+            $('#scan_serial').prop('readonly', true);
+            $('#btn_good').prop('disabled', true);
+            $('#btn_notgood').prop('disabled', true);
+            
+        });
+
         $('#btn_transfer').on('click', function() {
             var chkArray = [];
             var table = _QAInspection.$tbl_obas;
@@ -355,26 +395,28 @@
             }
         });
 
-        $('#inspqection_sheet_qr').on('change', function() {
+        $('#inspqection_sheet_qr').on('keypress', function(e) {
             var inspection_qr = $(this).val();
 
-            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-            var data = rowData[0];
+            if (e.keyCode == 13) {
+                var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+                var data = rowData[0];
 
-            //console.log(data);
+                _QAInspection.scanInspection({
+                    _token: _QAInspection.token,
+                    hs_qrs: inspection_qr,
+                    box_id: data.id,
+                    box_qr: data.box_qr,
+                    pallet_id: $('#pallet_id').val()
+                });
+            }
 
-            _QAInspection.scanInspection({
-                _token: _QAInspection.token,
-                hs_qrs: inspection_qr,
-                box_id: data.id,
-                box_qr: data.box_qr
-            });
+            
         });
         
 	});
 
 })();
-
 
 window.history.forward();
 

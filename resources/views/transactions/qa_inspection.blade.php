@@ -5,6 +5,16 @@
 			width: 20px;
 			height: 20px;
 		}
+		.btn_notmatch {
+			display: none;
+			border: none;
+			width: 7vw;
+		}
+		.btn_match {
+			display: none;
+			border: none;
+			width: 7vw;
+		}
 		.disabled {
 			pointer-events: none;
 		}
@@ -113,12 +123,12 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-green align-middle" id="btn_good" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-green align-middle" id="btn_good" >
 							<i class="fa fa-thumbs-up"></i> Good
 						</button>
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_notgood"  data-toggle="modal" data-target="#modal_print_preview" >
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
 							<i class="fa fa-thumbs-down"></i> NG
 						</button>
 					</div>
@@ -148,7 +158,7 @@ Q.A. Inspection
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition" data-toggle="modal" data-target="#modal_disposition" disabled>
 							<i class="fa fa-plus"></i> Pallet Disposition
 						</button>
 					</div>
@@ -198,41 +208,39 @@ Q.A. Inspection
 
 
   
-<div class="modal fade" id="modal_print_preview" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog ">
+<div class="modal fade" id="modal_not_good" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered ">
 		<div class="modal-content">
-			<div class="modal-header">
+			<div class="modal-header border-0">
 				<h4 class="modal-title" id="modal_form_title"></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<h3 class="text-center" id="prv_label_title"></h3>
+				<h3 class="text-center" id="prv_label_title">Box No Good Reason</h3>
 				<div class="row">
-					<div class="col-md-8">
-						<div id="prv_box_id_qr"></div>
-					</div>
-					<div class="col-md-4">
+					
+					<div class="col-md-12">
 						<div class="row">
 							<div class="col-md-12">
-								<p>Model: <span id="prv_model"></span></p>
-								<p>Print Date: <span id="prv_date"></span></p>
-								<p>Lot Number: </p>
-								<p id="prv_lot_no"></p>
-								<p>Box Qty: <span id="prv_box_count"></span> pcs</p>
+								<div class="form-group row justify-content-center pt-2">
+									<select class="form-control col-sm-8" id="gender" >
+										<option class="fw-normal fs-3" selected hidden>Please Select Reason Here</option>
+										<option class="fw-light fs-3">Reason 1</option>
+										<option class="fw-light fs-3">Reason 2</option>
+										<option class="fw-light fs-3">Reason 3</option>
+										<option class="fw-light fs-3">Reason 4</option>
+										<option >Reason 5</option>
+									</select>
+								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div id="prv_pallet_id_qr"></div>
-								<p id="prv_pallet_id_val"></p>
-							</div>
-						</div>
+						
 					</div>
 				</div>
 			</div>
-			<div class="modal-footer justify-content-center">
+			<div class="modal-footer justify-content-center border-0">
 				<button type="button" class="btn btn-primary" id="btn_save">
 					<i class="fa fa-arrow-down-to-arc"></i>Save
 				</button>
@@ -241,6 +249,45 @@ Q.A. Inspection
 	</div>
 </div>
 
+<div class="modal fade" id="modal_disposition" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered ">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title" id="modal_form_title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h3 class="text-center" id="prv_label_title">Pallet Disposition</h3>
+				<div class="row">
+					
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group row justify-content-center pt-2">
+									<select class="form-control col-sm-8" id="ng_reason" >
+										<option class="fw-normal fs-3" selected hidden><h4>Please Select Disposition Here </h4></option>
+										<option class="fw-light fs-3"> <h4>Good</h4> </option>
+										<option class="fw-light fs-3"><h4>For Rework</h4></option>
+										<option class="fw-light fs-3"><h4>Hold Pallet</h4></option>
+										<option class="fw-light fs-3"><h4>Hold Lot</h4></option>
+									</select>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-center border-0">
+				<button type="button" class="btn btn-primary" id="btn_save">
+					<i class="fa fa-arrow-down-to-arc"></i>Save
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection
 
 @push('scripts')
