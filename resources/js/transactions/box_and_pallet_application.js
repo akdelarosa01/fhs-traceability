@@ -64,6 +64,48 @@
                     $('#tbl_boxes').addClass('disabled');
                     break;
 
+                case 'UPDATE':
+                    $('#model_id').select2({
+                        disabled: false,
+                        allowClear: true,
+                        placeholder: 'Select Model',
+                        theme: 'bootstrap4',
+                        width: 'auto',
+                        ajax: {
+                            url: '/transactions/box-and-pallet/get-models',
+                            data: function(params) {
+                                var query = "";
+                                return {
+                                    q: params.term,
+                                    id: '',
+                                    text: '',
+                                    table: '',
+                                    condition: '',
+                                    display: 'id&text',
+                                    orderBy: '',
+                                    sql_query: query,
+            
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: data
+                                };
+                            },
+                        }
+                    }).trigger('change.select2');
+
+                    $('#target_hs_qty').prop('readonly', false);
+                    $('#btn_add_new').prop('disabled', true);
+                    $('#btn_cancel').prop('disabled', false);
+                    $('#btn_proceed').prop('disabled', false);
+                    $('#btn_start_scan').prop('disabled', true);
+
+                    $('#tbl_transactions').addClass('disabled');
+                    $('#tbl_pallets').addClass('disabled');
+                    $('#tbl_boxes').addClass('disabled');
+                    break;
+
                 case 'SCAN':
                     var title = $('#btn_start_scan').html();
                     if (title == "Start Scan") {
@@ -111,6 +153,10 @@
                     $('#tbl_transactions').removeClass('disabled');
                     $('#tbl_pallets').removeClass('disabled');
                     $('#tbl_boxes').removeClass('disabled');
+
+                    $('#btn_add_new').html('<i class="fa fa-plus"></i> Add New');
+                    $('#btn_add_new').removeClass('btn-info');
+                    $('#btn_add_new').addClass('btn-primary');
                     break;
             }
         },
@@ -471,6 +517,8 @@
                 self.sendData().then(function() {
                     $('#box_qr').val('');
                     self.$tbl_boxes.ajax.reload();
+                    var total_scanned_box_qty = parseInt($('#total_scanned_box_qty').val());
+                    $('#total_scanned_box_qty').val(total_scanned_box_qty+1);
                 });
             }
             
@@ -605,15 +653,6 @@
                 self.$tbl_boxes.ajax.reload();
             });
         },
-        caculateTargetPallet(param) {
-            var self = this;
-            self.submitType = "GET";
-            self.jsonData = param;
-            self.formAction = "/transactions/box-and-pallet/calculate-target-pallet";
-            self.sendData().then(function() {
-                var response = self.responseData;
-            });
-        }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -648,19 +687,60 @@
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
-
+        
         $('#btn_add_new').on('click', function() {
-            _BoxPalletApp.viewState('NEW');
-            var inputs = ['model_id', 'target_no_of_pallet'];
-            _BoxPalletApp.clearForm(inputs);
-            $('#model_id').empty().trigger('change.select2');
+            if ($(this).hasClass('btn-primary')) {
+                _BoxPalletApp.viewState('NEW');
+                var inputs = [
+                    'id',
+                    'model',
+                    'hs_qty',
+                    'box_count_per_pallet',
+                    'model_id',
+                    'target_hs_qty',
+                    'target_no_of_pallet',
+                    'total_box_qty',
+                    'trans_id',
+                    'selected_model_id',
+                    'running_model',
+                    'total_scanned_box_qty',
+                    'pallet_count_full',
+                    'pallet_id',
+                    'pallet_id_qr',
+                    'is_printed'
+                ];
+                _BoxPalletApp.clearForm(inputs);
+                $('#model_id').empty().trigger('change.select2');
+            } else {
+                _BoxPalletApp.viewState('UPDATE');
+            }
+            
         });
 
         $('#btn_cancel').on('click', function() {
             _BoxPalletApp.viewState('');
 
-            var inputs = ['model_id', 'target_no_of_pallet'];
+            var inputs = [
+                'id',
+                'model',
+                'hs_qty',
+                'box_count_per_pallet',
+                'model_id',
+                'target_hs_qty',
+                'target_no_of_pallet',
+                'total_box_qty',
+                'trans_id',
+                'selected_model_id',
+                'running_model',
+                'total_scanned_box_qty',
+                'pallet_count_full',
+                'pallet_id',
+                'pallet_id_qr',
+                'is_printed'
+            ];
             _BoxPalletApp.clearForm(inputs);
+            _BoxPalletApp.$tbl_transactions.ajax.reload();
+            _BoxPalletApp.$tbl_pallets.ajax.reload();
             $('#model_id').empty().trigger('change.select2');
         });
 
@@ -710,50 +790,70 @@
 
         $('#frm_transactions').on('submit', function(e) {
             e.preventDefault();
-            $('#loading_modal').modal('show');
-                
-            var data = $(this).serializeArray();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                dataType: 'JSON',
-                data: data
-            }).done(function(response, textStatus, xhr) {
-                if (textStatus) {
-                    if (response.msgType == "success") {
-                        _BoxPalletApp.clearForm(response.inputs);
-                        _BoxPalletApp.viewState('');
-                        _BoxPalletApp.$tbl_transactions.ajax.reload();
-                        _BoxPalletApp.swMsg(response.msg,response.msgType);
-                    } else {
-                        _BoxPalletApp.swMsg(response.msg,response.msgType);
-                    }
-                    _BoxPalletApp.id = 0;
-                }
-            }).fail(function(xhr, textStatus, errorThrown) {
-                var errors = xhr.responseJSON.errors;
-                _BoxPalletApp.showInputErrors(errors);
 
-                if (errorThrown == "Internal Server Error") {
-                    _BoxPalletApp.ErrorMsg(xhr);
-                }
-            }).always(function() {
-                $('#loading_modal').modal('hide');
-            });
+            var pallets_count = _BoxPalletApp.$tbl_pallets.data().count();
+            var target_no_of_pallet = parseFloat($('#target_no_of_pallet').val());
+
+            if (pallets_count > target_no_of_pallet) {
+                _BoxPalletApp.swMsg("Created Pallets("+pallets_count+") are more than the new target number of pallets. Please assign more than the created pallets("+pallets_count+").","warning");
+            } else {
+                $('#loading_modal').modal('show');
+                var data = $(this).serializeArray();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data
+                }).done(function(response, textStatus, xhr) {
+                    if (textStatus) {
+                        if (response.msgType == "success") {
+                            $('#pallet_count_full').html($('#target_no_of_pallet').val());
+                            _BoxPalletApp.clearForm(response.inputs);
+                            _BoxPalletApp.viewState('');
+                            _BoxPalletApp.$tbl_transactions.ajax.reload();
+                            _BoxPalletApp.$tbl_pallets.ajax.reload();
+                            _BoxPalletApp.swMsg(response.msg,response.msgType);
+                        } else {
+                            _BoxPalletApp.swMsg(response.msg,response.msgType);
+                        }
+                        _BoxPalletApp.id = 0;
+                    }
+                }).fail(function(xhr, textStatus, errorThrown) {
+                    var errors = xhr.responseJSON.errors;
+                    _BoxPalletApp.showInputErrors(errors);
+
+                    if (errorThrown == "Internal Server Error") {
+                        _BoxPalletApp.ErrorMsg(xhr);
+                    }
+                }).always(function() {
+                    $('#loading_modal').modal('hide');
+                });
+            }
         });
 
         _BoxPalletApp.$tbl_transactions.on('select', function ( e, dt, type, indexes ) {
             var rowData = _BoxPalletApp.$tbl_transactions.rows( indexes ).data().toArray();
             var data = rowData[0];
             $('#id').val(data.id);
-            $('#model').val();
-            $('#hs_qty').val();
-            $('#box_count_per_pallet').val();
+            $('#model').val(data.model);
+            $('#hs_qty').val(data.hs_count_per_box);
+            $('#box_count_per_pallet').val(data.box_count_per_pallet);
+
+            var $model_id = $("<option selected='selected'></option>").val(data.model_id).text(data.model_name);
+            $('#model_id').append($model_id).trigger('change.select2');
+
+            $('#target_hs_qty').val(data.target_hs_qty);
+            $('#target_no_of_pallet').val(data.target_no_of_pallet);
+            $('#total_box_qty').val(data.total_box_qty);
+
+            $('#btn_add_new').html('<i class="fa fa-pen"></i> Update');
+            $('#btn_add_new').removeClass('btn-primary');
+            $('#btn_add_new').addClass('btn-info');
 
             $('#trans_id').val(data.id);
             $('#selected_model_id').val(data.model_id);
             $('#running_model').val(data.model);
-            $('#target_pallet').val(data.target_no_of_pallet);
+            $('#total_scanned_box_qty').val(data.total_scanned_box_qty);
             $('#pallet_count_full').html(data.target_no_of_pallet);
 
             $('#pallet_id').val('');
@@ -764,11 +864,30 @@
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
             _BoxPalletApp.$tbl_boxes.ajax.reload();
+
+            if (condition) {
+                
+            }
         })
         .on('deselect', function ( e, dt, type, indexes ) {
+            $('#id').val('');
+            $('#model').val('');
+            $('#hs_qty').val('');
+            $('#box_count_per_pallet').val('');
+
+            $('#model_id').val(null).trigger('change.select2');
+
+            $('#target_hs_qty').val('');
+            $('#target_no_of_pallet').val('');
+            $('#total_box_qty').val('');
+
+            $('#btn_add_new').html('<i class="fa fa-plus"></i> Add New');
+            $('#btn_add_new').removeClass('btn-info');
+            $('#btn_add_new').addClass('btn-primary');
+
             $('#trans_id').val('');
             $('#running_model').val('');
-            $('#target_pallet').val('');
+            $('#total_scanned_box_qty').val('');
             $('#box_per_pallet').val('');
 
             $('#pallet_id').val('');
@@ -792,6 +911,13 @@
             $('#is_printed').val(data.is_printed);
             $('#box_per_pallet').val(data.box_count_per_pallet);
             $('#box_count_full').html(data.box_count_per_pallet);
+
+            var total_box_qty = parseInt($('#total_box_qty').val());
+            if (total_box_qty > data.box_count_per_pallet) {
+                _BoxPalletApp.swMsg("Please update Box Count per Pallet. Please use the function of 'Mark as Broken Pallet'.","info");
+            } else if (total_box_qty < data.box_count_per_pallet) {
+                _BoxPalletApp.swMsg("Please update Box Count per Pallet. Please use the function of 'Mark as Broken Pallet'.","info");
+            }
 
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_boxes.ajax.reload();
@@ -1026,9 +1152,15 @@
             var box_count_per_pallet = parseFloat($('#box_count_per_pallet').val());
             var target_no_of_pallet = 0;
 
-            target_no_of_pallet = (target_hs_qty/hs_qty) / box_count_per_pallet;
+            total_box_qty = (target_hs_qty/hs_qty);
+            target_no_of_pallet = total_box_qty / box_count_per_pallet;
+
+            if (target_no_of_pallet % 1 != 0) {
+                target_no_of_pallet = parseInt(target_no_of_pallet)+1;
+            }
 
             $('#target_no_of_pallet').val(target_no_of_pallet);
+            $('#total_box_qty').val(total_box_qty);
         });
     });
 })();

@@ -70,6 +70,18 @@ Box and Pallet Application
 						<div class="col-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
+									<span class="input-group-text">Total Box Qty.</span>
+								</div>
+								<input type="number" class="form-control form-control-sm clear" id="total_box_qty" name="total_box_qty" placeholder="Total Box Qty." autocomplete="off" readonly>
+								<div id="total_box_qty_feedback"></div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
 									<span class="input-group-text">Target No. of Pallets</span>
 								</div>
 								<input type="number" class="form-control form-control-sm clear" id="target_no_of_pallet" name="target_no_of_pallet" placeholder="Target No. of Pallets" autocomplete="off" readonly>
@@ -140,9 +152,9 @@ Box and Pallet Application
 					<div class="col-6">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Target Pallet Count</span>
+								<span class="input-group-text">Total Box Scanned</span>
 							</div>
-							<input type="number" class="form-control form-control-sm clear" id="target_pallet" name="target_pallet" autocomplete="off" readonly>
+							<input type="number" class="form-control form-control-sm clear" id="total_scanned_box_qty" name="total_scanned_box_qty" autocomplete="off" readonly>
 						</div>
 					</div>
 				</div>
