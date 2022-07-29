@@ -18,9 +18,9 @@ class CreateQaInspectedBoxesTable extends Migration
             $table->integer('pallet_id')->default(0);
             $table->integer('box_id')->default(0);
             $table->text('box_qr');
-            $table->integer('box_qr_judgement')->length(1)->default(0);
+            $table->integer('box_qr_judgement')->length(1)->default(-1);
             $table->integer('box_judgement')->length(1)->default(0);
-            $table->text('remarks');
+            $table->text('remarks')->nullable();
             $table->string('inspector')->nullable()->length(100);
             $table->integer('create_user')->default(0);
             $table->integer('updated_user')->default(0);
