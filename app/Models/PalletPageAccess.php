@@ -16,6 +16,7 @@ class PalletPageAccess extends Model
         'user_id',
         'page_id',
         'status',
+        'read_only',
         'read_and_write',
         'delete',
         'authorize',
@@ -25,19 +26,22 @@ class PalletPageAccess extends Model
 
     public function menu_list($user_id)
     {
-        return DB::connection('mysql')->table('pallet_page_accesses as pa')
-                ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
-                ->where('pa.user_id', $user_id)
-                ->where('pa.authorize',1)
-                ->select(
-                    'p.*',
-                    'pa.status',
-                    'pa.read_and_write',
-                    'pa.delete',
-                    'pa.authorize'
-                )
-                ->orderBy('order')
-                ->get();
+        $pages = DB::connection('mysql')->table('pallet_page_accesses as pa')
+                    ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                    ->where('pa.user_id', $user_id)
+                    ->where('pa.read_and_write',1)
+                    ->orWhere('pa.read_only',1)
+                    ->select(
+                        'p.*',
+                        'pa.status',
+                        'pa.read_only',
+                        'pa.read_and_write',
+                        'pa.delete',
+                        'pa.authorize'
+                    )
+                    ->orderBy('order')
+                    ->get();
+        return $pages;
     }
 
     public function check_permission($user_id, $page_name)

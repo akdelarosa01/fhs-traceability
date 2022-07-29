@@ -23,16 +23,16 @@ class UsersMasterController extends Controller
         $this->middleware('auth');
         $this->_helpers = new Helpers;
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
         $pages = session('pages');
+        $permission = $this->_helpers->get_permission(Auth::user()->id, 'UsersMaster');
+
         return view('masters.users', [
             'pages' => $pages,
+            'read_only' => $permission->read_only,
+            'authorize' => $permission->authorize,
             'current_url' => route('masters.users')
         ]);
     }
@@ -238,6 +238,7 @@ class UsersMasterController extends Controller
                                         p.page_label,
                                         p.parent_name,
                                         p.has_sub,
+                                        pp.`read_only` as `read_only`,
                                         pp.read_and_write as read_and_write,
                                         pp.`delete` as `delete`,
                                         pp.authorize as authorize
@@ -249,6 +250,7 @@ class UsersMasterController extends Controller
             } else {
                 $query = PalletPage::select([
                     'id', 'page_label', 'parent_name','has_sub',
+                    DB::raw("0 as read_only"),
                     DB::raw("0 as read_and_write"),
                     DB::raw("0 as `delete`"),
                     DB::raw("0 as authorize")
@@ -296,6 +298,7 @@ class UsersMasterController extends Controller
             PalletPageAccess::where('user_id',$req->user_id)->delete();
             foreach ($req->access as $key => $access) {
                 $page_id = $access['page_id'];
+                $read_only = $access['read_only'];
                 $read_and_write = $access['read_and_write'];
                 $delete = $access['delete'];
                 $authorize = $access['authorize'];
@@ -304,6 +307,7 @@ class UsersMasterController extends Controller
                     'user_id' => $req->user_id,
                     'page_id' => $page_id,
                     'status' => 1,
+                    'read_only' => $read_only,
                     'read_and_write' => $read_and_write,
                     'delete' => $delete,
                     'authorize' => $authorize,

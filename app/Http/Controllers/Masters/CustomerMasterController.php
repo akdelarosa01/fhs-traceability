@@ -19,17 +19,16 @@ class CustomerMasterController extends Controller
         $this->middleware('auth');
         $this->_helpers = new Helpers;
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
         $pages = session('pages');
+        $permission = $this->_helpers->get_permission(Auth::user()->id, 'CustomersMaster');
+
         return view('masters.customer', [
             'pages' => $pages,
+            'read_only' => $permission->read_only,
+            'authorize' => $permission->authorize,
             'current_url' => route('masters.customers')
         ]);
     }

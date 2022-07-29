@@ -13,7 +13,6 @@ use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class BoxAndPalletApplicationController extends Controller
@@ -29,8 +28,12 @@ class BoxAndPalletApplicationController extends Controller
     public function index()
     {
         $pages = session('pages');
+        $permission = $this->_helpers->get_permission(Auth::user()->id, 'BoxAndPalletApplication');
+
         return view('transactions.box_and_pallet_application', [
             'pages' => $pages,
+            'read_only' => $permission->read_only,
+            'authorize' => $permission->authorize,
             'current_url' => route('transactions.box-and-pallet')
         ]);
     }

@@ -12,13 +12,13 @@ Users Master
 
 <div class="row mb-3 justify-content-center">
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-success btn-block" id="btn_add_users">
+		<button class="btn btn-sm btn-success btn-block read-only" id="btn_add_users">
 			<i class="fa fa-user-plus"></i> Add User
 		</button>
 	</div>
 
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-danger btn-block" id="btn_delete_users">
+		<button class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_users">
 			<i class="fa fa-user-times"></i> Delete User
 		</button>
 	</div>
@@ -82,7 +82,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Username</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="username" name="username" placeholder="Username" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="username" name="username" placeholder="Username" autocomplete="off">
 						<div id="username_feedback"></div>
 					</div>
 
@@ -90,7 +90,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">First Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="firstname" name="firstname" placeholder="First Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="firstname" name="firstname" placeholder="First Name" autocomplete="off">
 						<div id="firstname_feedback"></div>
 					</div>
 
@@ -98,7 +98,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Last Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="lastname" name="lastname" placeholder="Last Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="lastname" name="lastname" placeholder="Last Name" autocomplete="off">
 						<div id="lastname_feedback"></div>
 					</div>
 
@@ -106,7 +106,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Email Address</span>
 						</div>
-						<input type="email" class="form-control form-control-sm clear" id="email" name="email" placeholder="Email Address" autocomplete="off">
+						<input type="email" class="form-control form-control-sm clear read-only" id="email" name="email" placeholder="Email Address" autocomplete="off">
 						<div id="email_feedback"></div>
 					</div>
 
@@ -114,7 +114,7 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Password</span>
 						</div>
-						<input type="password" class="form-control form-control-sm clear" id="password" name="password" placeholder="Password" autocomplete="off">
+						<input type="password" class="form-control form-control-sm clear read-only" id="password" name="password" placeholder="Password" autocomplete="off">
 						<div id="password_feedback"></div>
 					</div>
 
@@ -122,14 +122,14 @@ Users Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Confirm Password</span>
 						</div>
-						<input type="password" class="form-control form-control-sm clear" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password" autocomplete="off">
+						<input type="password" class="form-control form-control-sm clear read-only" id="password_confirmation" name="password_confirmation" placeholder="Confirm Password" autocomplete="off">
 					</div>
 				</div>
 				<div class="modal-footer justify-content-between">
 					<button type="button" class="btn btn-default" data-dismiss="modal">
 						<i class="fa fa-times"></i> Close
 					</button>
-					<button type="submit" class="btn btn-primary" id="btn_save_user">
+					<button type="submit" class="btn btn-primary read-only" id="btn_save_user">
 						<i class="fa fa-save"></i> Save
 					</button>
 				</div>
@@ -156,6 +156,7 @@ Users Master
 						<thead>
 							<th colspan="2">Module Name</th>
 							<th class="text-center">Authorize</th>
+							<th class="text-center">Read Only</th>
 							<th class="text-center">Read & Write</th>
 							<th class="text-center">Delete</th>
 						</thead>
@@ -166,7 +167,7 @@ Users Master
 					<button type="button" class="btn btn-default" data-dismiss="modal">
 						<i class="fa fa-times"></i> Close
 					</button>
-					<button type="button" class="btn btn-primary" id="btn_save_user_access">
+					<button type="button" class="btn btn-primary read-only" id="btn_save_user_access">
 						<i class="fa fa-save"></i> Save
 					</button>
 				</div>

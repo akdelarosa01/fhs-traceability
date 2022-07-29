@@ -9,10 +9,18 @@
         this.$tbl_customers = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
         this.cust_checked = 0;
     }
     Customers.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         drawDatatables: function() {
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_customers')) {
@@ -129,6 +137,7 @@
 
     $(document).ready(function() {
         var _Customers = Customers();
+        _Customers.permission();
         _Customers.drawDatatables();
 
         $('#btn_add_customers').on('click', function() {

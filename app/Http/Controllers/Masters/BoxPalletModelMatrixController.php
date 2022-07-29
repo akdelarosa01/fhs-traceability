@@ -29,8 +29,12 @@ class BoxPalletModelMatrixController extends Controller
     public function index()
     {
         $pages = session('pages');
+        $permission = $this->_helpers->get_permission(Auth::user()->id, 'BoxPalletModelMatrixMaster');
+
         return view('masters.box_pallet_model_matrix', [
             'pages' => $pages,
+            'read_only' => $permission->read_only,
+            'authorize' => $permission->authorize,
             'current_url' => route('masters.model-matrix')
         ]);
     }

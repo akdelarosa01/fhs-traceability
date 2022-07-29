@@ -4478,9 +4478,17 @@ B. Synopsis: Real Time Script
         this.$tbl_pages = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
     }
     Users.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         drawDatatables: function() {
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_users')) {
@@ -4585,19 +4593,22 @@ B. Synopsis: Real Time Script
                     self.$tbl_pages += "<tr>";
 
                     var authorize = (x.authorize > 0)? "checked":""; 
+                    var read_only = (x.read_only > 0)? "checked":""; 
                     var read_and_write = (x.read_and_write > 0)? "checked":"";
                     var deletes = (x.delete > 0)? "checked":"";
 
                     if (x.has_sub > 0 && x.parent_name == 0) {
-                        self.$tbl_pages += '<td colspan="5">'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-page_label="'+x.page_label +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>';
+                        self.$tbl_pages += '<td colspan="6">'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-page_label="'+x.page_label +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>';
                     } else if (x.parent_name == 0 && x.has_sub == 0) {
                         self.$tbl_pages += '<td colspan="2">'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="authorize_'+x.id+'" class="authorize" name="authorize[]" value="1" '+authorize+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="read_only_'+x.id+'" class="read_only" name="read_only[]" value="1" '+read_only+'/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="read_and_write_'+x.id+'" class="read_and_write" name="read_and_write[]" value="1" '+read_and_write+'/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="delete_'+x.id+'" class="delete" name="delete[]" value="1" '+deletes+'/></td>';
                     } else {
                         self.$tbl_pages += '<td></td><td>'+x.page_label+'<input type="hidden" class="page_id" name="page_id[]" data-has_sub="'+x.has_sub +'" data-parent_name="'+x.parent_name +'" value="'+x.id+'"/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="authorize_'+x.id+'" class="authorize" name="authorize[]" value="1" '+authorize+'/></td>'+
+                                            '<td class="text-center"><input type="checkbox" id="read_only_'+x.id+'" class="read_only" name="read_only[]" value="1" '+read_only+'/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="read_and_write_'+x.id+'" class="read_and_write" name="read_and_write[]" value="1" '+read_and_write+'/></td>'+
                                             '<td class="text-center"><input type="checkbox" id="delete_'+x.id+'" class="delete" name="delete[]" value="1" '+deletes+'/></td>';
                     }
@@ -4627,6 +4638,7 @@ B. Synopsis: Real Time Script
             });
         },
         saveUserAccess: function() {
+            var read_only = 0;
             var read_and_write = 0;
             var deletes = 0;
             var authorize = 0;
@@ -4637,6 +4649,7 @@ B. Synopsis: Real Time Script
                     var page_label = $(this).attr('data-page_label');
                     page_label = page_label.replace(' ','');
 
+                    read_only = 0;
                     read_and_write = 0;
                     deletes = 0;
                     authorize = 0;
@@ -4647,6 +4660,7 @@ B. Synopsis: Real Time Script
 
                         if (page_label == parent_name) {
                             if ($('#authorize_'+this.value).is(':checked')) {
+                                read_only = 0;
                                 read_and_write = 1;
                                 deletes = 1;
                                 authorize = 1;
@@ -4657,17 +4671,20 @@ B. Synopsis: Real Time Script
 
                     return {
                         'page_id': this.value,
+                        'read_only': read_only,
                         'read_and_write': read_and_write,
                         'delete': deletes,
                         'authorize': authorize
                     };
                 } else {
+                    read_only = ($('#read_only_'+this.value).is(':checked'))? 1 : 0;
                     read_and_write = ($('#read_and_write_'+this.value).is(':checked'))? 1 : 0;
                     deletes = ($('#delete_'+this.value).is(':checked'))? 1 : 0;
                     authorize = ($('#authorize_'+this.value).is(':checked'))? 1 : 0;
 
                     return {
                         'page_id': this.value,
+                        'read_only': read_only,
                         'read_and_write': read_and_write,
                         'delete': deletes,
                         'authorize': authorize
@@ -4695,6 +4712,7 @@ B. Synopsis: Real Time Script
 
     $(document).ready(function() {
         var _Users = Users();
+        _Users.permission();
         _Users.drawDatatables();
 
         $('#btn_add_users').on('click', function() {
@@ -4822,6 +4840,28 @@ B. Synopsis: Real Time Script
             } else {
                 $('#read_and_write_'+page_id).prop('checked',false);
                 $('#delete_'+page_id).prop('checked',false);
+            }
+        });
+
+        $('#tbl_pages tbody').on('change', '.read_only', function() {
+            var id = $(this).attr('id');
+            var page_id = id.replace('read_only_','');
+
+            if ($(this).is(':checked')) {
+                console.log(page_id);
+                $('#authorize_'+page_id).prop('checked',false);
+                $('#read_and_write_'+page_id).prop('checked',false);
+                $('#delete_'+page_id).prop('checked',false);
+
+                $('#authorize_'+page_id).prop('disabled', true);
+                $('#read_and_write_'+page_id).prop('disabled', true);
+                $('#delete_'+page_id).prop('disabled', true);
+            } else {
+                $('#read_and_write_'+page_id).prop('checked',true);
+
+                $('#authorize_'+page_id).prop('disabled', false);
+                $('#read_and_write_'+page_id).prop('disabled', false);
+                $('#delete_'+page_id).prop('disabled', false);
             }
         });
     });

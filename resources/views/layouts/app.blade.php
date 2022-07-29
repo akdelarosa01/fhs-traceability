@@ -8,6 +8,8 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="read-only" content="{{ $read_only }}">
+    <meta name="authorize" content="{{ $authorize }}">
 
     <title>@yield('title') | {{ config('app.name', 'FHS Traceability System') }}</title>
 

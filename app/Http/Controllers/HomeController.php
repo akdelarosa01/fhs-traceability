@@ -14,17 +14,14 @@ class HomeController extends Controller
         $this->middleware('auth');
         $this->_helpers = new Helpers;
     }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+    
     public function index()
     {
         $pages = session('pages');
         return view('home', [
             'pages' => $pages,
+            'read_only' => 0,
+            'authorize' => 1,
             'current_url' => route('home')
         ]);
     }

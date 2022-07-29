@@ -9,10 +9,18 @@
         this.$tbl_pages = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
         this.page_checked = 0;
     }
     Pages.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         drawDatatables: function() {
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_pages')) {
@@ -128,6 +136,7 @@
 
     $(document).ready(function() {
         var _Pages = Pages();
+        _Pages.permission();
         _Pages.drawDatatables();
 
         $('#btn_add_pages').on('click', function() {

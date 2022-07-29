@@ -4477,9 +4477,17 @@ B. Synopsis: Real Time Script
         this.$tbl_dashboard = "";
         this.ID = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
     }
     Home.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         showMenu: function(menuObj) {
             menuObj = JSON.parse(menuObj)
 
@@ -4514,7 +4522,7 @@ B. Synopsis: Real Time Script
 
     $(document).ready(function() {
         var _Home = Home();
-
+        _Home.permission();
         _Home.showMenu($("#hdnMenu").val());
     });
 })();

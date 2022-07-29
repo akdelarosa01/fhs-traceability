@@ -4477,10 +4477,18 @@ B. Synopsis: Real Time Script
         this.$tbl_models = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
         this.model_checked = 0;
     }
     Model.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         drawDatatables: function() {
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_models')) {
@@ -4592,6 +4600,7 @@ B. Synopsis: Real Time Script
 
     $(document).ready(function() {
         var _Model = Model();
+        _Model.permission();
         _Model.drawDatatables();
 
         $('#frm_models').on('submit', function(e) {

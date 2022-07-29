@@ -89,4 +89,17 @@ class Helpers
 
         return $data;
     }
+
+    public function get_permission($user_id, $page_name)
+    {
+        $permission = DB::connection('mysql')->table('pallet_page_accesses as pa')
+                        ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                        ->select('pa.read_only','authorize')
+                        ->where([
+                            ['pa.user_id', '=', $user_id],
+                            ['p.page_name', '=', $page_name]
+                        ])->first();
+
+        return $permission;
+    }
 }

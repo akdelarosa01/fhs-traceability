@@ -12,13 +12,13 @@ Page Master
 
 <div class="row mb-3 justify-content-center">
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-success btn-block" id="btn_add_pages">
+		<button class="btn btn-sm btn-success btn-block read-only" id="btn_add_pages">
 			<i class="fa fa-user-plus"></i> Add Page
 		</button>
 	</div>
 
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-danger btn-block" id="btn_delete_pages">
+		<button class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_pages">
 			<i class="fa fa-user-times"></i> Delete Page
 		</button>
 	</div>
@@ -78,7 +78,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Page Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="page_name" name="page_name" placeholder="Page Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="page_name" name="page_name" placeholder="Page Name" autocomplete="off">
 						<div id="page_name_feedback"></div>
 					</div>
 
@@ -86,7 +86,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Page Labels</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="page_label" name="page_label" placeholder="Page Labels" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="page_label" name="page_label" placeholder="Page Labels" autocomplete="off">
 						<div id="page_label_feedback"></div>
 					</div>
 
@@ -94,7 +94,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">URL</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="url" name="url" placeholder="URL" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="url" name="url" placeholder="URL" autocomplete="off">
 						<div id="url_feedback"></div>
 					</div>
 
@@ -102,7 +102,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Parent Menu</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="parent_menu" name="parent_menu" placeholder="Parent Menu" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="parent_menu" name="parent_menu" placeholder="Parent Menu" autocomplete="off">
 						<div id="parent_menu_feedback"></div>
 					</div>
 
@@ -110,7 +110,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Parent Name</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="parent_name" name="parent_name" placeholder="Parent Name" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="parent_name" name="parent_name" placeholder="Parent Name" autocomplete="off">
 						<div id="parent_name_feedback"></div>
 					</div>
 
@@ -118,7 +118,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Parent Order</span>
 						</div>
-						<input type="number" class="form-control form-control-sm clear" id="parent_order" name="parent_order" placeholder="Parent Order" autocomplete="off">
+						<input type="number" class="form-control form-control-sm clear read-only" id="parent_order" name="parent_order" placeholder="Parent Order" autocomplete="off">
 						<div id="parent_order_feedback"></div>
 					</div>
 
@@ -126,7 +126,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Order</span>
 						</div>
-						<input type="number" class="form-control form-control-sm clear" id="order" name="order" placeholder="Order" autocomplete="off">
+						<input type="number" class="form-control form-control-sm clear read-only" id="order" name="order" placeholder="Order" autocomplete="off">
 						<div id="order_feedback"></div>
 					</div>
 					
@@ -134,7 +134,7 @@ Page Master
 						<div class="input-group-prepend">
 							<span class="input-group-text" style="min-width: 125px;">Icon</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="icon" name="icon" placeholder="Icon" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="icon" name="icon" placeholder="Icon" autocomplete="off">
 						<div id="icon_feedback"></div>
 					</div>
 
@@ -151,7 +151,7 @@ Page Master
 					<button type="button" class="btn btn-default" data-dismiss="modal">
 						<i class="fa fa-times"></i> Close
 					</button>
-					<button type="submit" class="btn btn-primary" id="btn_save_user">
+					<button type="submit" class="btn btn-primary read-only" id="btn_save_user">
 						<i class="fa fa-save"></i> Save
 					</button>
 				</div>
