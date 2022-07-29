@@ -4586,7 +4586,7 @@ B. Synopsis: Real Time Script
                     sorting: false,
                     select: {
                         style: 'os',
-                        selector: 'td:first-child',
+                        selector: '#checker',
                         
                     },
                     ajax: {
@@ -4623,7 +4623,7 @@ B. Synopsis: Real Time Script
                     columns: [
                         { 
                             data: function(data) {
-                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
+                                return '<input type="checkbox" id="checker" class="check_box" value="'+data.id+'"/>';
                             }, name: 'id', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
                         },
                         { 
@@ -4632,8 +4632,17 @@ B. Synopsis: Real Time Script
                             }, name: 'box_qr', searchable: false, orderable: false,  className: 'text-center align-middle' 
                         },
                         { 
-                            data: function() {
-                                return '<button id="not-match" class="btn-red btn_notmatch"> Not Match </button> <button id="match" class="btn-green btn_match"> Match </button>';
+                            data: function(data) {
+
+                                switch (data.box_qr_judgement) {
+                                    case 0:
+                                        return '<span class="badge badge-danger p-8">NOT MATCH</span>';
+                                    case 1:
+                                        return '<span class="badge badge-success p-8">MATCH</span>';
+                                    default:
+                                        return '<span class=""></span>';
+                                }
+                                
                             }, name: 'inspection', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
                         },
                         { 
@@ -4650,7 +4659,8 @@ B. Synopsis: Real Time Script
                         
                         $(dataRow[0].cells[3]).css('background-color', '#a3a3a3');
                         $(dataRow[0].cells[3]).css('color', '#000000');
-
+    
+                       
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -4686,14 +4696,6 @@ B. Synopsis: Real Time Script
                     break;
             }
         },
-        // getUser: function(data) {
-        //     var self = this;
-        //     self.submitType = "Get";
-        //     self.jsonData = {
-        //         new_box_count: $('#inspector').val(data.Last_name)
-        //     };
-        //     self.formAction = "/transactions/qa-inspection/get-user";
-        // },
 		scanInspection: function(param) {
             var self = this;
             self.submitType = "POST";
@@ -4701,7 +4703,7 @@ B. Synopsis: Real Time Script
             self.formAction = "/transactions/qa-inspection/check-hs-serial";
             self.sendData().then(function() {
 
-                self.$tbl_boxes.jax.reload();
+                 self.$tbl_boxes.ajax.reload();
                 
                 // var sample = $('#tbl_obas').DataTable().row(this).data();
                 // console.log(sample);
@@ -4719,13 +4721,11 @@ B. Synopsis: Real Time Script
                 // }
                 // console.log(cnt);
 
-
-               
-                var response = self.responseData;
-                $('#btn_good').prop('disabled', false);
-                $('#btn_notgood').prop('disabled', false);
-
-                if (response.matched == true)  {
+                 var response = self.responseData;
+                // $('#btn_good').prop('disabled', false);
+                // $('#btn_notgood').prop('disabled', false);
+                // console.log(response.matched);
+                if (response.matched == 1)  {
                     console.log("trrrrrrrrruuuuuuu");
                     $('.check_box').prop('checked', false);
                     $('#inspqection_sheet_qr').val('');
@@ -4756,7 +4756,7 @@ B. Synopsis: Real Time Script
         _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
             var data = rowData[0];
-            console.log(data);
+            // console.log(data);
             $('#pallet_id').val(data.id);
             $('#box_tested_full').html(data.new_box_count);
             $('#box_count_to_inspect').val(data.box_count_to_inspect);
@@ -4875,7 +4875,8 @@ B. Synopsis: Real Time Script
                     hs_qrs: inspection_qr,
                     box_id: data.id,
                     box_qr: data.box_qr,
-                    pallet_id: $('#pallet_id').val()
+                    pallet_id: $('#pallet_id').val(),
+                    created_date: $('#date_and_time').val()
                 });
             }
 
