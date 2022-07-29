@@ -4487,10 +4487,18 @@ B. Synopsis: Real Time Script
         this.$tbl_dispositions = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
         this.cust_checked = 0;
     }
     Disposition.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only == 1)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         drawDatatables: function() {
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_dispositions')) {
@@ -4606,13 +4614,14 @@ B. Synopsis: Real Time Script
 
     $(document).ready(function() {
         var _Disposition = Disposition();
+        _Disposition.permission();
         _Disposition.drawDatatables();
 
         $('#color_hex').colorpicker();
 
         $('#color_hex').on('colorpickerChange', function(event) {
             $('.colorpicker-input-addon i').css('background-color', event.color.toString());
-          });
+        });
 
         $('#frm_dispositions').on('submit', function(e) {
             e.preventDefault();

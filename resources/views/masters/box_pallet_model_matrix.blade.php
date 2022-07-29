@@ -33,7 +33,7 @@ Box Pallet Model Matrix
 								<div class="input-group-prepend">
 									<span class="input-group-text">Model</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="model" name="model" placeholder="Model" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="model" name="model" placeholder="Model" autocomplete="off">
 								<div id="model_feedback"></div>
 							</div>
 						</div>
@@ -45,7 +45,7 @@ Box Pallet Model Matrix
 								<div class="input-group-prepend">
 									<span class="input-group-text">Model Name</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="model_name" name="model_name" placeholder="Model Name" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="model_name" name="model_name" placeholder="Model Name" autocomplete="off">
 								<div id="model_name_feedback"></div>
 							</div>
 						</div>
@@ -57,7 +57,7 @@ Box Pallet Model Matrix
 								<div class="input-group-prepend">
 									<span class="input-group-text">HS Qty per Box</span>
 								</div>
-								<input type="number" step="1" class="form-control form-control-sm clear" id="hs_count_per_box" name="hs_count_per_box" placeholder="HS Qty. per Box" autocomplete="off">
+								<input type="number" step="1" class="form-control form-control-sm clear read-only" id="hs_count_per_box" name="hs_count_per_box" placeholder="HS Qty. per Box" autocomplete="off">
 								<div id="hs_count_per_box_feedback"></div>
 							</div>
 						</div>
@@ -69,7 +69,7 @@ Box Pallet Model Matrix
 								<div class="input-group-prepend">
 									<span class="input-group-text">Box per Pallet</span>
 								</div>
-								<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_per_pallet" name="box_count_per_pallet" placeholder="Box Count per Pallet" autocomplete="off">
+								<input type="number" step="1" class="form-control form-control-sm clear read-only" id="box_count_per_pallet" name="box_count_per_pallet" placeholder="Box Count per Pallet" autocomplete="off">
 								<div id="box_count_per_pallet_feedback"></div>
 							</div>
 						</div>
@@ -81,7 +81,7 @@ Box Pallet Model Matrix
 								<div class="input-group-prepend">
 									<span class="input-group-text">Box to Inspect</span>
 								</div>
-								<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_to_inspect" name="box_count_to_inspect" placeholder="Box Count to Inspect" autocomplete="off">
+								<input type="number" step="1" class="form-control form-control-sm clear read-only" id="box_count_to_inspect" name="box_count_to_inspect" placeholder="Box Count to Inspect" autocomplete="off">
 								<div id="box_count_to_inspect_feedback"></div>
 							</div>
 						</div>
@@ -89,13 +89,13 @@ Box Pallet Model Matrix
 
 					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_models">
+							<button type="submit" class="btn btn-sm btn-success btn-block read-only" id="btn_save_models">
 								<i class="fa fa-save"></i> Save Model
 							</button>
 						</div>
 					
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_models">
+							<button type="button" class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_models">
 								<i class="fa fa-user-times"></i> Delete Model
 							</button>
 						</div>

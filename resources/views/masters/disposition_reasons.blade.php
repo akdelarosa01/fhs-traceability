@@ -33,7 +33,7 @@ Disposition Reasons Master
 								<div class="input-group-prepend">
 									<span class="input-group-text">Disposition</span>
 								</div>
-								<select name="disposition" id="disposition" class="form-control form-control-sm clear"></select>
+								<select name="disposition" id="disposition" class="form-control form-control-sm clear read-only"></select>
 								<div id="disposition_feedback"></div>
 							</div>
 						</div>
@@ -41,20 +41,20 @@ Disposition Reasons Master
 
 					<div class="row mb-2">
 						<div class="col-12">
-							<textarea name="reason" id="reason" rows="5" class="form-control form-control-sm clear" placeholder="Reason..." style="resize:none;"></textarea>
+							<textarea name="reason" id="reason" rows="5" class="form-control form-control-sm clear read-only" placeholder="Reason..." style="resize:none;"></textarea>
 							<div id="reason_feedback"></div>
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_reasons">
+							<button type="submit" class="btn btn-sm btn-success btn-block read-only" id="btn_save_reasons">
 								<i class="fa fa-save"></i> Save Reason
 							</button>
 						</div>
 					
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-							<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_reasons">
+							<button type="button" class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_reasons">
 								<i class="fa fa-user-times"></i> Delete Reason
 							</button>
 						</div>

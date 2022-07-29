@@ -17,7 +17,7 @@
         permission: function() {
             var self = this;
             $('.read-only').each(function(i,x) {
-                $state = (self.read_only)? true : false;
+                $state = (self.read_only == 1)? true : false;
                 $(x).prop('disabled',$state);
             });
         },

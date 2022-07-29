@@ -12,13 +12,13 @@ Customer Master
 
 <div class="row mb-3 justify-content-center">
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-success btn-block" id="btn_add_customers">
+		<button class="btn btn-sm btn-success btn-block read-only" id="btn_add_customers">
 			<i class="fa fa-user-plus"></i> Add Customer
 		</button>
 	</div>
 
 	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
-		<button class="btn btn-sm btn-danger btn-block" id="btn_delete_customers">
+		<button class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_customers">
 			<i class="fa fa-user-times"></i> Delete Customer
 		</button>
 	</div>
@@ -90,13 +90,13 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Customer Name</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="customer_name" name="customer_name" placeholder="Customer Name" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="customer_name" name="customer_name" placeholder="Customer Name" autocomplete="off">
 								<div id="customer_name_feedback"></div>
 							</div>
 		
 							<div class="form-group row m-b-10">
 								<div class="col-md-12">
-									<textarea name="address" id="address" class="form-control form-control-sm clear" style="resize: none;" rows="5" placeholder="Addresss"></textarea>
+									<textarea name="address" id="address" class="form-control form-control-sm clear read-only" style="resize: none;" rows="5" placeholder="Addresss"></textarea>
 								</div>
 							</div>
 						</div>
@@ -109,7 +109,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Name</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="contact_person1" name="contact_person1" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="contact_person1" name="contact_person1" autocomplete="off">
 								<div id="contact_person1_feedback"></div>
 							</div>
 		
@@ -117,7 +117,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Number</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="contact_number1" name="contact_number1" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="contact_number1" name="contact_number1" autocomplete="off">
 								<div id="contact_number1_feedback"></div>
 							</div>
 
@@ -125,7 +125,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Extension</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="extension1" name="extension1" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="extension1" name="extension1" autocomplete="off">
 								<div id="extension1_feedback"></div>
 							</div>
 		
@@ -133,7 +133,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Email Address</span>
 								</div>
-								<input type="email" class="form-control form-control-sm clear" id="email1" name="email1" autocomplete="off">
+								<input type="email" class="form-control form-control-sm clear read-only" id="email1" name="email1" autocomplete="off">
 								<div id="email1_feedback"></div>
 							</div>
 						</div>
@@ -144,7 +144,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Name</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="contact_person2" name="contact_person2" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="contact_person2" name="contact_person2" autocomplete="off">
 								<div id="contact_person2_feedback"></div>
 							</div>
 		
@@ -152,7 +152,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Number</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="contact_number2" name="contact_number2" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="contact_number2" name="contact_number2" autocomplete="off">
 								<div id="contact_number2_feedback"></div>
 							</div>
 
@@ -160,7 +160,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Extension</span>
 								</div>
-								<input type="text" class="form-control form-control-sm clear" id="extension2" name="extension2" autocomplete="off">
+								<input type="text" class="form-control form-control-sm clear read-only" id="extension2" name="extension2" autocomplete="off">
 								<div id="extension2_feedback"></div>
 							</div>
 		
@@ -168,7 +168,7 @@ Customer Master
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="min-width: 125px;">Email Address</span>
 								</div>
-								<input type="email" class="form-control form-control-sm clear" id="email2" name="email2" autocomplete="off">
+								<input type="email" class="form-control form-control-sm clear read-only" id="email2" name="email2" autocomplete="off">
 								<div id="email2_feedback"></div>
 							</div>
 						</div>
@@ -178,7 +178,7 @@ Customer Master
 					<button type="button" class="btn btn-default" data-dismiss="modal">
 						<i class="fa fa-times"></i> Close
 					</button>
-					<button type="submit" class="btn btn-primary" id="btn_save_user">
+					<button type="submit" class="btn btn-primary read-only" id="btn_save_user">
 						<i class="fa fa-save"></i> Save
 					</button>
 				</div>

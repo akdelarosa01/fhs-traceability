@@ -19,7 +19,7 @@
 		permission: function() {
             var self = this;
             $('.read-only').each(function(i,x) {
-                $state = (self.read_only)? true : false;
+                $state = (self.read_only == 1)? true : false;
                 $(x).prop('disabled',$state);
             });
         },
@@ -99,7 +99,7 @@
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -202,7 +202,7 @@
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody, .slimScrollDiv').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','400px');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");

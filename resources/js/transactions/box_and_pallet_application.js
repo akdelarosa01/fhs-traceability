@@ -12,6 +12,8 @@
         this.$tbl_boxes = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
         this.BoxPalletApp_checked = 0;
         this.box_qr_code = "";
         this.pallet_qr_code = "";
@@ -20,7 +22,13 @@
         this.removed_box_arr = [];
     }
     BoxPalletApp.prototype = {
-        init: function() {},
+        permission: function() {
+            var self = this;
+            $('.read-only').each(function(i,x) {
+                $state = (self.read_only == 1)? true : false;
+                $(x).prop('disabled',$state);
+            });
+        },
         viewState: function(state) {
             switch (state) {
                 case 'NEW':
@@ -197,7 +205,11 @@
                         url: "/transactions/box-and-pallet/get-transactions",
                         dataType: "JSON",
                         error: function(response) {
-                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                if (response.status == 401) {
+                                    window.location.href = "/login";
+                                }
+                            }
                         }
                     },
                     language: {
@@ -664,6 +676,7 @@
         _BoxPalletApp.drawTransactionsDatatables();
         _BoxPalletApp.drawPalletsDatatables();
         _BoxPalletApp.drawBoxesDatatables();
+        _BoxPalletApp.permission();
 
         $('#save_div').hide()
         $('#preview_div').show()

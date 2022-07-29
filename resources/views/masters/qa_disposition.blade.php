@@ -29,7 +29,7 @@ Q.A. Disposition Master
 						<div class="input-group-prepend">
 							<span class="input-group-text">Disposition</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="disposition" name="disposition" placeholder="Disposition" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="disposition" name="disposition" placeholder="Disposition" autocomplete="off">
 						<div id="disposition_feedback"></div>
 					</div>
 				</div>
@@ -38,7 +38,7 @@ Q.A. Disposition Master
 						<div class="input-group-prepend">
 							<span class="input-group-text">Color</span>
 						</div>
-						<input type="text" class="form-control form-control-sm clear" id="color_hex" name="color_hex" placeholder="Color" autocomplete="off">
+						<input type="text" class="form-control form-control-sm clear read-only" id="color_hex" name="color_hex" placeholder="Color" autocomplete="off">
 						<span class="input-group-append">
 							<span class="input-group-text colorpicker-input-addon"><i></i></span>
 						  </span>
@@ -46,13 +46,13 @@ Q.A. Disposition Master
 					</div>
 				</div>
 				<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
-					<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_dispositions">
+					<button type="submit" class="btn btn-sm btn-success btn-block read-only" id="btn_save_dispositions">
 						<i class="fa fa-save"></i> Save Disposition
 					</button>
 				</div>
 			
 				<div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-xs-1">
-					<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_dispositions">
+					<button type="button" class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_dispositions">
 						<i class="fa fa-user-times"></i> Delete Disposition
 					</button>
 				</div>

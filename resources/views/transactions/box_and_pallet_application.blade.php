@@ -104,19 +104,19 @@ Box and Pallet Application
 
 					<div class="row">
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-							<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_add_new">
+							<button type="button" class="btn btn-sm btn-primary btn-block read-only" id="btn_add_new">
 								<i class="fa fa-plus"></i> Add New
 							</button>
 						</div>
 
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-							<button type="submit" class="btn btn-sm btn-danger btn-block" id="btn_cancel">
+							<button type="submit" class="btn btn-sm btn-danger btn-block read-only" id="btn_cancel">
 								<i class="fa fa-times"></i> Cancel
 							</button>
 						</div>
 					
 						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
-							<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_proceed">
+							<button type="submit" class="btn btn-sm btn-success btn-block read-only" id="btn_proceed">
 								<i class="fa fa-check"></i> Proceed
 							</button>
 						</div>
@@ -129,7 +129,7 @@ Box and Pallet Application
 					<div class="col-12">
 						<div class="input-group input-group-lg mb-2">
 							<div class="input-group-prepend">
-								<button class="btn btn-success" type="button" id="btn_start_scan">Start Scan</button>
+								<button class="btn btn-success read-only" type="button" id="btn_start_scan">Start Scan</button>
 							</div>
 							<input type="hidden" class="" id="trans_id" name="trans_id"/>
 							<input type="text" class="form-control form-control-lg" placeholder="Scan Box QR" aria-describedby="btn_start_scan" id="box_qr" name="box_qr" autocomplete="off" readonly>
@@ -220,17 +220,17 @@ Box and Pallet Application
 
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="btn_transfer" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-blue read-only" id="btn_transfer" disabled>
 							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-purple" id="btn_update" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-purple read-only" id="btn_update" disabled>
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_broken_pallet" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_broken_pallet" disabled>
 							<i class="fa fa-star-of-life"></i> Mark as Broken Pallet
 						</button>
 					</div>

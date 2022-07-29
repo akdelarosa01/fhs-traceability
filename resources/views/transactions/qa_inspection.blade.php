@@ -84,22 +84,6 @@ Q.A. Inspection
 						</div>
 					</div>
 				</div>
-
-				
-
-				{{-- <div class="row">
-					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<button type="submit" class="btn btn-sm btn-success btn-block" id="btn_save_obas">
-							<i class="fa fa-save"></i> Save Model
-						</button>
-					</div>
-				
-					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-12">
-						<button type="button" class="btn btn-sm btn-danger btn-block" id="btn_delete_obas">
-							<i class="fa fa-user-times"></i> Delete Model
-						</button>
-					</div>
-				</div> --}}
 			</div>
 			
 			<div class="col-4">
@@ -116,19 +100,19 @@ Q.A. Inspection
 							<div class="input-group-prepend">
 								<span class="input-group-text">Scan Serial Here:</span>
 							</div>
-							<input type="text" class="form-control form-control-sm clear" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
+							<input type="text" class="form-control form-control-sm clear read-only" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
 							<div id="scan_serial_feedback"></div>
 						</div>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-green align-middle" id="btn_good" >
+						<button type="button" class="btn btn-sm btn-block btn-green align-middle read-only" id="btn_good" >
 							<i class="fa fa-thumbs-up"></i> Good
 						</button>
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
+						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
 							<i class="fa fa-thumbs-down"></i> NG
 						</button>
 					</div>
@@ -153,12 +137,12 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue align-middle" id="btn_transfer" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-blue align-middle read-only" id="btn_transfer" disabled>
 							<i class="fa fa-arrow-right"></i> Transfer To
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red" id="btn_disposition" data-toggle="modal" data-target="#modal_disposition" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_disposition" data-toggle="modal" data-target="#modal_disposition" disabled>
 							<i class="fa fa-plus"></i> Pallet Disposition
 						</button>
 					</div>
@@ -190,12 +174,12 @@ Q.A. Inspection
 				</div>
 				<div class="row">
 					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-purple" id="update_serial" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-purple read-only" id="update_serial" disabled>
 							<i class="fa fa-pen"></i> Update
 						</button>
 					</div>
 					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-blue" id="delete_serial" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-blue read-only" id="delete_serial" disabled>
 							<i class="fa fa-trash"></i> Delete
 						</button>
 					</div>
@@ -222,19 +206,15 @@ Q.A. Inspection
 				<div class="row">
 					
 					<div class="col-md-12">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group row justify-content-center pt-2">
-									<select class="form-control col-sm-8" id="gender" >
-										<option class="fw-normal fs-3" selected hidden>Please Select Reason Here</option>
-										<option class="fw-light fs-3">Reason 1</option>
-										<option class="fw-light fs-3">Reason 2</option>
-										<option class="fw-light fs-3">Reason 3</option>
-										<option class="fw-light fs-3">Reason 4</option>
-										<option >Reason 5</option>
-									</select>
-								</div>
-							</div>
+						<div class="form-group row justify-content-center pt-2">
+							<select class="form-control col-sm-8" id="gender" >
+								<option class="fw-normal fs-3" selected hidden>Please Select Reason Here</option>
+								<option class="fw-light fs-3">Reason 1</option>
+								<option class="fw-light fs-3">Reason 2</option>
+								<option class="fw-light fs-3">Reason 3</option>
+								<option class="fw-light fs-3">Reason 4</option>
+								<option >Reason 5</option>
+							</select>
 						</div>
 						
 					</div>
@@ -263,20 +243,15 @@ Q.A. Inspection
 				<div class="row">
 					
 					<div class="col-md-12">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group row justify-content-center pt-2">
-									<select class="form-control col-sm-8" id="ng_reason" >
-										<option class="fw-normal fs-3" selected hidden><h4>Please Select Disposition Here </h4></option>
-										<option class="fw-light fs-3"> <h4>Good</h4> </option>
-										<option class="fw-light fs-3"><h4>For Rework</h4></option>
-										<option class="fw-light fs-3"><h4>Hold Pallet</h4></option>
-										<option class="fw-light fs-3"><h4>Hold Lot</h4></option>
-									</select>
-								</div>
-							</div>
+						<div class="form-group row justify-content-center pt-2">
+							<select class="form-control col-sm-8" id="ng_reason" >
+								<option class="fw-normal fs-3" selected hidden><h4>Please Select Disposition Here </h4></option>
+								<option class="fw-light fs-3"> <h4>Good</h4> </option>
+								<option class="fw-light fs-3"><h4>For Rework</h4></option>
+								<option class="fw-light fs-3"><h4>Hold Pallet</h4></option>
+								<option class="fw-light fs-3"><h4>Hold Lot</h4></option>
+							</select>
 						</div>
-						
 					</div>
 				</div>
 			</div>

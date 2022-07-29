@@ -17,7 +17,7 @@
         permission: function() {
             var self = this;
             $('.read-only').each(function(i,x) {
-                $state = (self.read_only)? true : false;
+                $state = (self.read_only == 1)? true : false;
                 $(x).prop('disabled',$state);
             });
         },
@@ -30,7 +30,11 @@
                         url: "/masters/users/list",
                         dataType: "JSON",
                         error: function(response) {
-                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                if (response.status == 401) {
+                                    window.location.href = "/login";
+                                }
+                            }
                         }
                     },
                     deferRender: true,
@@ -394,6 +398,27 @@
                 $('#authorize_'+page_id).prop('disabled', false);
                 $('#read_and_write_'+page_id).prop('disabled', false);
                 $('#delete_'+page_id).prop('disabled', false);
+            }
+        });
+
+        $('#tbl_pages tbody').on('change', '.read_and_write', function() {
+            var id = $(this).attr('id');
+            var page_id = id.replace('read_and_write_','');
+
+            if ($(this).is(':checked')) {
+                console.log(page_id);
+                $('#read_only_'+page_id).prop('checked',false);
+                $('#read_only_'+page_id).prop('disabled', true);
+            } else {
+                $('#read_only_'+page_id).prop('checked',true);
+                $('#authorize_'+page_id).prop('checked',false);
+                $('#read_and_write_'+page_id).prop('checked',false);
+                $('#delete_'+page_id).prop('checked',false);
+
+                $('#authorize_'+page_id).prop('disabled', true);
+                $('#read_and_write_'+page_id).prop('disabled', true);
+                $('#delete_'+page_id).prop('disabled', true);
+                
             }
         });
     });
