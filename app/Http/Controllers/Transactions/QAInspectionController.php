@@ -11,6 +11,8 @@ use App\Models\PalletModelMatrix;
 use App\Models\PalletPageAccess;
 use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
+use App\Models\QaAffectedSerial;
+use App\Models\QaInspectedBoxes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -78,6 +80,7 @@ class QAInspectionController extends Controller
         }
         return $data;
     }
+
     private function boxes($pallet_id)
     {
         $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
@@ -87,17 +90,17 @@ class QAInspectionController extends Controller
                         'pb.model_id',
                         'pb.box_qr',
                         'pb.remarks',
-                        'pb.created_at',
-                        'pb.updated_at'
-                        // ,
-                        // 'bqr.qrBarcode',
-                        // 'bqrd.HS_Serial'
+                        DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement")
                     )
-                    // ->join('tboxqr as bqr','bqr.qrBarcode','=','pb.box_qr')
-                    // ->join('tboxqrdetails as bqrd','bqr.ID','=','bqrd.Box_ID')
+                    ->leftJoin('qa_inspected_boxes as qa', function($join) {
+                            $join->on('qa.pallet_id','=','pb.pallet_id');
+                            $join->on('pb.id','=','qa.box_id');
+                        }
+                    )
                     ->where('pb.pallet_id',$pallet_id)
-                    ->orderBy('pb.box_qr','desc');
-                    //->get();
+                    ->orderBy('pb.box_qr','desc')
+                    ->distinct();
+                    
         return $query;
 
     }
@@ -116,6 +119,7 @@ class QAInspectionController extends Controller
     }
     public function check_hs_serial(Request $req)
     {
+
         $data = [
 			'msg' => 'Checking of HS Serial has failed.',
             'data' => [
@@ -127,6 +131,9 @@ class QAInspectionController extends Controller
         ];
 
         try {
+            $insp = new QaInspectedBoxes();
+
+            
             // HS serials in DB
             $arr_db_serials = [];
             $db_serials = $this->serials($req->box_qr);
@@ -136,34 +143,55 @@ class QAInspectionController extends Controller
             }
 
             // HS serials were scanned in QA
-            $hs_qr = explode(';\r',$req->hs_qrs);
+            $hs_qr = explode(';',$req->hs_qrs);
 
             // checking if matched
-            $matched = true;
+            $matched = 1;
             foreach ($hs_qr as $key => $hs) {
+                $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
+
                 if (!in_array($hs, $arr_db_serials)) {
-                    $matched = false;
-                    break;
+                    if ($hs != "" && !is_null($hs)) {
+                        $matched = 0;
+                        break;
+                    }                    
                 }
             }
 
             if (!$matched) {
                 $data = [
                     'data' => [
-                        'matched' => false
+                        'matched' => 0
                     ],
                     'success' => true,
                 ];
             } else {
                 $data = [
                     'data' => [
-                        'matched' => true
+                        'matched' => 1
                     ],
                     'success' => true,
                 ];
             }
+
+            $insp->pallet_id = (!isset($req->pallet_id))? "" : $req->pallet_id;
+            $insp->box_id = (!isset($req->box_id))? "" : $req->box_id;
+            $insp->box_qr = (!isset($req->box_qr))? "" : $req->box_qr;
+            $insp->created_at = (!isset($req->created_date))? "" : $req->created_date;
+            $insp->box_qr_judgement = $matched;
+            // $insp->where($insp->box_qr , $req->box_qr);
+            $insp->save();
+
         } catch (\Throwable $th) {
-            //throw $th;
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [
+                    'matched' => false
+                ],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
         }
         return response()->json($data);
     }

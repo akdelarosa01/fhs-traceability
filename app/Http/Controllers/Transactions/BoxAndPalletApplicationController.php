@@ -343,7 +343,6 @@ class BoxAndPalletApplicationController extends Controller
                                 ]);
                 }
             }
-
             if ($update_box) {
                 DB::commit();
                 $data = [
@@ -364,7 +363,6 @@ class BoxAndPalletApplicationController extends Controller
                 'msgTitle' => 'Error!'
             ];
         }
-
         return response()->json($data);
     }
 
