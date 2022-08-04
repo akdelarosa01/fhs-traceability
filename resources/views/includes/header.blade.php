@@ -11,7 +11,7 @@
     </div>
 
     <ul class="navbar-nav navbar-right">
-        <li class="dropdown">
+        <li class="dropdown" id="notification_icon">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle f-s-14">
                 <i class="fa fa-bell"></i>
                 <span class="label" id="notification_count">5</span>

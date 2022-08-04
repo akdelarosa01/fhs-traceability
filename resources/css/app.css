@@ -46,3 +46,7 @@ body table.dataTable tbody tr.selected td {
     color: #2C3639;
     font-weight: 600;
 }
+
+.dropdown-menu.media-list {
+    max-width: 400px;
+}

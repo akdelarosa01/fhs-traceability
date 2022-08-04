@@ -218,6 +218,10 @@ body table.dataTable tbody tr.selected td {
     font-weight: 600;
 }
 
+.dropdown-menu.media-list {
+    max-width: 400px;
+}
+
 
 /*
 * iziToast | v1.4.0

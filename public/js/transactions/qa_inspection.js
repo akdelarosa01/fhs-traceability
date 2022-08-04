@@ -4453,7 +4453,14 @@ B. Synopsis: Real Time Script
                     },
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                        },
                         error: function(response) {
                             console.log(response);
                         }
@@ -4514,6 +4521,7 @@ B. Synopsis: Real Time Script
 			}
         },
         timeSince: function(date) {
+            date = new Date(date);
 
             var seconds = Math.floor((new Date() - date) / 1000);
           
@@ -4561,6 +4569,11 @@ B. Synopsis: Notification Script
         this.$tbl_obas = "";
         this.token = $("meta[name=csrf-token]").attr("content");
     }
+    String.prototype.trunc = 
+      function(n){
+          return this.substr(0,n-1)+(this.length>n?'&hellip;':'');
+      };
+
     Notification.prototype = {
         init: function() {},
         showNotificationList: function() {
@@ -4570,18 +4583,22 @@ B. Synopsis: Notification Script
                 _token: self.token,
             };
             self.formAction = "/notifications/show";
-            self.sendData().then(function() {
+            self.sendDataNoLoading().then(function() {
                 var response = self.responseData;
                 var list = "";
                 var cnt = 0;
                 $.each(response, function(i,x) {
-                    list += '<a href="'+x.url+'" class="dropdown-item media notification-item" data-noti_type="'+x.noti_type+'">'+
+                    var timeAgo = self.timeSince(x.created_at);
+                    var message = x.message;
+
+                    list += '<a href="'+x.url+'" class="dropdown-item media notification-item" data-noti_type="'+x.noti_type+'" title="'+message+'">'+
                                 '<div class="media-left">'+
                                     '<i class="fa fa-search media-object bg-silver-darker"></i>'+
                                 '</div>'+
                                 '<div class="media-body">'+
                                     '<h6 class="media-heading u-wrap">'+x.title+'</h6>'+
-                                    '<div class="text-muted f-s-10">1 hour ago</div>'+
+                                    '<div class="f-s-11">'+message.trunc(55)+'</div>'+
+                                    '<div class="text-muted f-s-10" id="time_ago">'+timeAgo+'</div>'+
                                 '</div>'
                             '</a>';
                     cnt++;
@@ -4638,6 +4655,15 @@ B. Synopsis: Notification Script
         $('#notification_list').on('click', '.notification-item', function(e) {
             e.preventDefault();
             _Notification.readNotification($(this).attr('data-noti_type'), $(this).attr('href'));
+        });
+
+        $('#notification_icon a').on('click', function(e) {
+            _Notification.showNotificationList();
+            // $('#notification_list .notification-item').each(function(i,x) {
+            //     var created_at = $(x).attr('created_at');
+            //     var timeAgo = _Notification.timeSince(created_at);
+            //     $('#time_ago').html(timeAgo);
+            // });
         });
 
 
@@ -4697,7 +4723,14 @@ B. Synopsis: Notification Script
                     },
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                        },
                         error: function(response) {
                             console.log(response);
                         }
@@ -4775,7 +4808,11 @@ B. Synopsis: Notification Script
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-boxes",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
                         data: function(d) {
                             d._token = self.token;
                             d.pallet_id = $('#pallet_id').val()

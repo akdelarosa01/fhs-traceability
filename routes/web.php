@@ -84,10 +84,10 @@ Route::group(['prefix' => 'transactions'], function () {
     Route::group(['prefix' => 'box-and-pallet'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'index'])->name('transactions.box-and-pallet');
         Route::get('/get-models', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_models'])->name('transactions.box-and-pallet.get-models');
-        Route::get('/get-transactions', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'model_transaction_list'])->name('transactions.box-and-pallet.get-transactions');
+        Route::post('/get-transactions', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'model_transaction_list'])->name('transactions.box-and-pallet.get-transactions');
         Route::post('/proceed', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'proceed'])->name('transactions.box-and-pallet.proceed');
-        Route::get('/get-pallets', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_pallets'])->name('transactions.box-and-pallet.get-pallets');
-        Route::get('/get-boxes', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_boxes'])->name('transactions.box-and-pallet.get-boxes');
+        Route::post('/get-pallets', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_pallets'])->name('transactions.box-and-pallet.get-pallets');
+        Route::post('/get-boxes', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_boxes'])->name('transactions.box-and-pallet.get-boxes');
         Route::post('/save-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'save_box'])->name('transactions.box-and-pallet.save-box');
         Route::post('/update-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'update_box'])->name('transactions.box-and-pallet.update-box');
         Route::post('/print-pallet', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'print_pallet'])->name('transactions.box-and-pallet.print-pallet');
@@ -99,8 +99,8 @@ Route::group(['prefix' => 'transactions'], function () {
 
     Route::group(['prefix' => 'qa-inspection'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
-        Route::get('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
-        Route::get('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
+        Route::post('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
+        Route::post('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
         Route::post('/check-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_hs_serial'])->name('transactions.qa-inspection.check-hs-serial');
     });
 

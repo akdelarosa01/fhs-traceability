@@ -104,6 +104,7 @@ class BoxAndPalletApplicationController extends Controller
                     ])
                     ->join('pallet_model_matrices as m','t.model_id','=','m.id')
                     ->leftJoin('pallet_box_pallet_dtls as dt','dt.model_id','=','t.model_id')
+                    ->where('dt.is_deleted',0)
                     ->groupBy(
                         't.id',
                         't.model_id',
@@ -292,9 +293,12 @@ class BoxAndPalletApplicationController extends Controller
             $dtl->update_user = Auth::user()->id;
 
             if ($dtl->save()) {
+                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
 
                 $data = [
-                    'data' => [],
+                    'data' => [
+                        'count' => $count
+                    ],
                     'success' => true
                 ];
             }
@@ -346,9 +350,13 @@ class BoxAndPalletApplicationController extends Controller
             }
             if ($update_box) {
                 DB::commit();
+                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+
                 $data = [
                     'msg' => 'Updating boxes were successful.',
-                    'data' => [],
+                    'data' => [
+                        'count' => $count
+                    ],
                     'success' => true,
                     'msgType' => 'success',
                     'msgTitle' => 'Success!'
@@ -389,11 +397,13 @@ class BoxAndPalletApplicationController extends Controller
                         'm.model',
                         'm.box_count_per_pallet',
                         'b.box_qr',
+                        'b.remarks',
                         'b.created_at',
                         'b.updated_at'
                     )
                     ->join('pallet_model_matrices as m','m.id','=','b.model_id')
                     ->where('b.pallet_id',$pallet_id)
+                    ->where('b.is_deleted',0)
                     ->orderBy('b.id','desc');
         return $query;
     }

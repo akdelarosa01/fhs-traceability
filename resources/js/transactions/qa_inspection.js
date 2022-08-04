@@ -52,7 +52,14 @@
                     },
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                        },
                         error: function(response) {
                             console.log(response);
                         }
@@ -130,7 +137,11 @@
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-boxes",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
                         data: function(d) {
                             d._token = self.token;
                             d.pallet_id = $('#pallet_id').val()

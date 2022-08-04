@@ -32,7 +32,14 @@ B. Synopsis: Real Time Script
                     },
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
+                        type: "POST",
                         dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                        },
                         error: function(response) {
                             console.log(response);
                         }
@@ -93,6 +100,7 @@ B. Synopsis: Real Time Script
 			}
         },
         timeSince: function(date) {
+            date = new Date(date);
 
             var seconds = Math.floor((new Date() - date) / 1000);
           
