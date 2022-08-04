@@ -11,44 +11,14 @@
     </div>
 
     <ul class="navbar-nav navbar-right">
-        <li class="dropdown">
+        <li class="dropdown" id="notification_icon">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle f-s-14">
                 <i class="fa fa-bell"></i>
-                <span class="label">5</span>
+                <span class="label" id="notification_count">5</span>
             </a>
             <div class="dropdown-menu media-list dropdown-menu-right">
-                <div class="dropdown-header">NOTIFICATIONS (5)</div>
-                <a href="javascript:;" class="dropdown-item media">
-                    <div class="media-left">
-                        <i class="fa fa-bug media-object bg-silver-darker"></i>
-                    </div>
-                    <div class="media-body">
-                        <h6 class="media-heading">Server Error Reports <i class="fa fa-exclamation-circle text-danger"></i></h6>
-                        <div class="text-muted f-s-10">3 minutes ago</div>
-                    </div>
-                </a>
-
-                <a href="javascript:;" class="dropdown-item media">
-                    <div class="media-left">
-                        <i class="fa fa-plus media-object bg-silver-darker"></i>
-                    </div>
-                    <div class="media-body">
-                        <h6 class="media-heading"> New User Registered</h6>
-                        <div class="text-muted f-s-10">1 hour ago</div>
-                    </div>
-                </a>
-
-                <a href="javascript:;" class="dropdown-item media">
-                    <div class="media-left">
-                        <i class="fa fa-envelope media-object bg-silver-darker"></i>
-                        <i class="fab fa-google text-warning media-object-icon f-s-14"></i>
-                    </div>
-                    <div class="media-body">
-                        <h6 class="media-heading"> New Email From John</h6>
-                        <div class="text-muted f-s-10">2 hour ago</div>
-                    </div>
-                </a>
-
+                <div class="dropdown-header">NOTIFICATIONS</div>
+                <div id="notification_list"></div>
                 <div class="dropdown-footer text-center">
                     <a href="javascript:;">View more</a>
                 </div>

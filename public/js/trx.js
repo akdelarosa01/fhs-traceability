@@ -2056,8 +2056,7 @@ B. Synopsis: Class Module used for showing messages
         showNotification: function(data) {
             $.gritter.add({
                 title: data.title,
-                text: data.content,
-                image: data.photo,
+                text: data.message,
                 sticky: false,
                 time: ''
             });
@@ -2700,10 +2699,6 @@ B. Synopsis: Class Module used to process data
                         if (response.success) {
                             self.responseData = response.data;
                             if (response.hasOwnProperty('msg')) {
-                                // self.msgType = response.msgType;
-                                // self.msgTitle = response.msgTitle;
-                                // self.msg = response.msg;
-                                // self.showToastrMsg();
                                 self.swMsg(response.msg,response.msgType);
                             }
                             resolve(true);
@@ -2769,13 +2764,9 @@ B. Synopsis: Class Module used to process data
                     success: function(response) {
                         if (response.success) {
                             self.responseData = response.data;
-                            self.msgType = "success";
-                            self.msgTitle = "Success!";
                             if (response.hasOwnProperty('msg')) {
-                                self.msg = response.msg;
-                                self.showToastrMsg();
+                                self.swMsg(response.msg,response.msgType);
                             }
-
                             resolve(true);
                         } else {
                             self.msgType = "error";
@@ -2796,12 +2787,26 @@ B. Synopsis: Class Module used to process data
 
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        //$('#loading_modal').modal('hide');
-                        self.showError("An error occured while processing your request. Please refresh the page and try again.")
                         console.table(jqXHR.status);
                         console.table(textStatus);
                         console.table(errorThrown);
+                        self.responseStatus = jqXHR.status;
+                        self.responseError = jqXHR.responseJSON;
+                        console.log(self.responseError)
+                        if (self.responseError.hasOwnProperty('errors')) {
+                            var errors = self.responseError.errors;
+                            self.showInputErrors(errors);
+                        }
+
+                        if (errorThrown == "Internal Server Error") {
+                            self.ErrorMsg(jqXHR);
+                        }
+                        
                         resolve(false);
+
+                        if (jqXHR.status == 419) {
+                            window.location.href = '/login';
+                        }
                     }
                 });
             });
@@ -3134,41 +3139,240 @@ B. Synopsis: Real Time Script
     }
     RealTime.init = function() {
         $D.init.call(this);
-        this.$tbl_audit_realtime = "";
+        this.$tbl_obas = "";
         this.token = $("meta[name=csrf-token]").attr("content");
     }
     RealTime.prototype = {
         init: function() {},
+        initOBAdataTable: function() {
+            var self = this;
+			if (!$.fn.DataTable.isDataTable('#tbl_obas')) {
+				self.$tbl_obas = $('#tbl_obas').DataTable({
+					scrollY: "400px",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    StateSave: true,
+                    select: {
+                        style: 'os',
+                        selector: 'td:not(:first-child)'
+                    },
+					ajax: {
+                        url: "/transactions/qa-inspection/get-pallets",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+					language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Pallet was created.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found"
+                    },
+                    deferRender: true,
+					columns: [
+                        { 
+                            data: function(data) {
+                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
+                        },
+                        {
+                            data: function(data) {
+                                return '<span>'+data.pallet_qr+'</span><br>' +
+								        '<small>'+data.updated_at+'</small>';
+                            }, name: 'pallet_qr', searchable: false, orderable: false 
+                        },
+                        { data: function(data) {
+                                return '<p class="btn-success py-2 my-0">'+data.pallet_location+'</p>';
+                            }, name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
+                        },
+						{ data: function(data) {
+                                return '<span></span>';
+                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'  
+                        }
+						
+					],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                       
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','400px');
+                    },
+                    fnDrawCallback: function() {
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#oba_count').html(data_count);
+                    },
+                }).on('page.dt', function() {
+                
+				});
+			}
+        },
+        timeSince: function(date) {
+            date = new Date(date);
+
+            var seconds = Math.floor((new Date() - date) / 1000);
+          
+            var interval = seconds / 31536000;
+          
+            if (interval > 1) {
+              return Math.floor(interval) + " years";
+            }
+            interval = seconds / 2592000;
+            if (interval > 1) {
+              return Math.floor(interval) + " months";
+            }
+            interval = seconds / 86400;
+            if (interval > 1) {
+              return Math.floor(interval) + " days";
+            }
+            interval = seconds / 3600;
+            if (interval > 1) {
+              return Math.floor(interval) + " hours";
+            }
+            interval = seconds / 60;
+            if (interval > 1) {
+              return Math.floor(interval) + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
     }
     RealTime.init.prototype = $.extend(RealTime.prototype, $D.init.prototype);
     RealTime.init.prototype = RealTime.prototype;
+    return window.RealTime = window.$R = RealTime;
+})();
+
+/*****************************************
+A. Name: Notification Script
+B. Synopsis: Notification Script
+***********************************************/
+"use strict";
+
+(function() {
+    const Notification = function() {
+        return new Notification.init();
+    }
+    Notification.init = function() {
+        $D.init.call(this);
+        this.$tbl_obas = "";
+        this.token = $("meta[name=csrf-token]").attr("content");
+    }
+    String.prototype.trunc = 
+      function(n){
+          return this.substr(0,n-1)+(this.length>n?'&hellip;':'');
+      };
+
+    Notification.prototype = {
+        init: function() {},
+        showNotificationList: function() {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = {
+                _token: self.token,
+            };
+            self.formAction = "/notifications/show";
+            self.sendDataNoLoading().then(function() {
+                var response = self.responseData;
+                var list = "";
+                var cnt = 0;
+                $.each(response, function(i,x) {
+                    var timeAgo = self.timeSince(x.created_at);
+                    var message = x.message;
+
+                    list += '<a href="'+x.url+'" class="dropdown-item media notification-item" data-noti_type="'+x.noti_type+'" title="'+message+'">'+
+                                '<div class="media-left">'+
+                                    '<i class="fa fa-search media-object bg-silver-darker"></i>'+
+                                '</div>'+
+                                '<div class="media-body">'+
+                                    '<h6 class="media-heading u-wrap">'+x.title+'</h6>'+
+                                    '<div class="f-s-11">'+message.trunc(55)+'</div>'+
+                                    '<div class="text-muted f-s-10" id="time_ago">'+timeAgo+'</div>'+
+                                '</div>'
+                            '</a>';
+                    cnt++;
+                });
+
+                if (cnt < 1) {
+                    $('#notification_count').hide();
+                } else {
+                    $('#notification_count').show();
+                    $('#notification_count').html(cnt)
+                }
+                
+                $('#notification_list').html(list);
+            });
+        },
+        readNotification: function(noti_type, link) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = {
+                _token: self.token,
+                noti_type: noti_type
+            };
+            self.formAction = "/notifications/read";
+            self.sendDataNoLoading().then(function() {
+                window.location.href = link;
+            });
+        }
+    }
+    Notification.init.prototype = $.extend(Notification.prototype, $D.init.prototype,$R.init.prototype);
+    Notification.init.prototype = Notification.prototype;
 
     $(document).ready(function() {
-        var _RealTime = RealTime();
-        // _RealTime.getUnreadNotification();
-        // _RealTime.drawRealTimeAuditDatatables();
+        var _Notification = Notification();
+        _Notification.initOBAdataTable();
+        _Notification.showNotificationList();
 
-        // Echo.channel('audit-trail')
-        //     .listen('AuditTrail', function(e) {
-        //         _RealTime.$tbl_audit_realtime.ajax.reload(null, false);
-        //     });
+        Echo.channel('pallet-transferred')
+            .listen('PalletTransferred', function(e) {
+                var content = e._content;
+                var pallet = e._pallet;
+                var recepients = e._recepients;
+                var noti_count = e._noti_count;
 
-        // Echo.channel('notification')
-        //     .listen('Notify', function(e) {
-        //         var noti = e._notification;
+                $.each(recepients, function(i,x) {
+                    if (x.user_id == e._current_user) {
+                        $('#notification_count').show();
+                        $('#notification_count').html(noti_count)
+                        _Notification.showNotification(content);
+                        _Notification.$tbl_obas.row.add(pallet).draw();
+                    }
+                });
+            });
 
-        //         var receiver_id = parseInt($('meta[name=user_id]').attr('content'));
-        //         if (noti.to == receiver_id) {
-        //             // redraw notification menu
-        //             _RealTime.getUnreadNotification();
-        //             // notification message
-        //             _RealTime.showNotification(noti);
-        //         }
-        //     });
+        $('#notification_list').on('click', '.notification-item', function(e) {
+            e.preventDefault();
+            _Notification.readNotification($(this).attr('data-noti_type'), $(this).attr('href'));
+        });
 
-        // $('#notification_list_header').on('click', '.view_notification', function() {
-        //     _RealTime.readNotification($(this).attr('data-id'), $(this).attr('data-link'));
-        // });
+        $('#notification_icon a').on('click', function(e) {
+            _Notification.showNotificationList();
+            // $('#notification_list .notification-item').each(function(i,x) {
+            //     var created_at = $(x).attr('created_at');
+            //     var timeAgo = _Notification.timeSince(created_at);
+            //     $('#time_ago').html(timeAgo);
+            // });
+        });
 
 
     });

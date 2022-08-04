@@ -105,8 +105,7 @@ B. Synopsis: Class Module used for showing messages
         showNotification: function(data) {
             $.gritter.add({
                 title: data.title,
-                text: data.content,
-                image: data.photo,
+                text: data.message,
                 sticky: false,
                 time: ''
             });

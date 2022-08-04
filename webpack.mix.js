@@ -43,7 +43,8 @@ const TrxJS = [
     "resources/js/classes/Formatter.js",
     "resources/js/classes/CustomUI.js",
     "resources/js/classes/Data.js",
-    "resources/js/classes/RealTime.js"
+    "resources/js/classes/RealTime.js",
+    "resources/js/classes/Notification.js"
 ];
 
 const TrxCSS = [
@@ -65,11 +66,11 @@ mix.js('resources/js/app.js', 'public/js')
 
     .scripts([
         "public/js/theme.js",
-        "public/js/trx.js",
+        // "public/js/trx.js",
     ], "public/js/auth.js")
     .styles([
         "public/css/theme.css",
-        "public/css/trx.css",
+        // "public/css/trx.css",
     ], "public/css/auth.css")
 
     .scripts([
