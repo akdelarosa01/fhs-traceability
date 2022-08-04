@@ -112,6 +112,10 @@
                     $('#tbl_transactions').addClass('disabled');
                     $('#tbl_pallets').addClass('disabled');
                     $('#tbl_boxes').addClass('disabled');
+
+                    $('#btn_transfer').prop('disabled', true);
+                    $('#btn_update').prop('disabled', true);
+                    $('#btn_broken_pallet').prop('disabled', true);
                     break;
 
                 case 'SCAN':
@@ -165,6 +169,7 @@
                     $('#btn_add_new').html('<i class="fa fa-plus"></i> Add New');
                     $('#btn_add_new').removeClass('btn-info');
                     $('#btn_add_new').addClass('btn-primary');
+                    
                     break;
             }
         },
@@ -277,9 +282,14 @@
                     paging: false, 
                     info: false,
                     sorting: false,
+                    columnDefs: [ {
+                        orderable: false,
+                        searchable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    } ],
                     select: {
-                        style: 'single',
-                        selector: 'td:not(:first-child)'
+                        style:    'single',
                     },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-pallets",
@@ -316,7 +326,7 @@
                     columns: [
                         { 
                             data: function(data) {
-                                return '<input type="checkbox" class="check_pallet" value="'+data.id+'"/>';
+                                return '';
                             }, name: 'id', searchable: false, orderable: false, width: '10px'
                         },
                         {
@@ -681,6 +691,10 @@
         $('#save_div').hide()
         $('#preview_div').show()
 
+        $('#btn_transfer').prop('disabled', true);
+        $('#btn_update').prop('disabled', true);
+        $('#btn_broken_pallet').prop('disabled', true);
+
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
         _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
             text: "",
@@ -878,9 +892,9 @@
             _BoxPalletApp.$tbl_pallets.ajax.reload();
             _BoxPalletApp.$tbl_boxes.ajax.reload();
 
-            if (condition) {
+            // if (condition) {
                 
-            }
+            // }
         })
         .on('deselect', function ( e, dt, type, indexes ) {
             $('#id').val('');
@@ -932,6 +946,16 @@
                 _BoxPalletApp.swMsg("Please update Box Count per Pallet. Please use the function of 'Mark as Broken Pallet'.","info");
             }
 
+            if (data.pallet_location == 'Q.A.') {
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_update').prop('disabled', true);
+                $('#btn_broken_pallet').prop('disabled', true);
+            } else {
+                $('#btn_transfer').prop('disabled', false);
+                $('#btn_update').prop('disabled', false);
+                $('#btn_broken_pallet').prop('disabled', false);
+            }
+
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_boxes.ajax.reload();
         })
@@ -941,6 +965,10 @@
             $('#is_printed').val(0);
             $('#box_per_pallet').val(0);
             $('#box_count_full').html(0);
+
+            $('#btn_transfer').prop('disabled', true);
+            $('#btn_update').prop('disabled', true);
+            $('#btn_broken_pallet').prop('disabled', true);
 
             _BoxPalletApp.$tbl_boxes.ajax.reload();
             $('#box_count').html(0);
@@ -1038,33 +1066,17 @@
         });
 
         $('#btn_transfer').on('click', function() {
-            var chkArray = [];
-            var table = _BoxPalletApp.$tbl_pallets;
-            var cnt = 0;
+            var rowData = _BoxPalletApp.$tbl_pallets.rows( {selected: true} ).data().toArray();
+            var data = rowData[0];         
 
-            for (var x = 0; x < table.context[0].aoData.length; x++) {
-                var DataRow = table.context[0].aoData[x];
-                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    var status = $(DataRow.anCells[2]).html();
-                    if (status == "FOR OBA") {
-                        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-                    }
-                    cnt++;
-                }
-            }            
-
-            if (chkArray.length > 0) {
+            if (rowData.length > 0) {
                 var msg = "Do you want to transfer this Pallet to Q.A.?";
-
-                if (cnt > 1) {
-                    msg = "Do you want to transfer these Pallets to Q.A.?";
-                }
                 _BoxPalletApp.msg = msg;
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
                         _BoxPalletApp.transferTo({
                             _token: _BoxPalletApp.token,
-                            ids: chkArray
+                            id: data.id
                         });
                 });
             } else {
@@ -1073,25 +1085,40 @@
         });
 
         $('#btn_broken_pallet').on('click', function() {
-            var chkArray = [];
-            var table = _BoxPalletApp.$tbl_pallets;
-            var cnt = 0;
+            // var chkArray = [];
+            // var table = _BoxPalletApp.$tbl_pallets;
+            // var cnt = 0;
 
-            for (var x = 0; x < table.context[0].aoData.length; x++) {
-                var DataRow = table.context[0].aoData[x];
-                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-                    cnt++;
-                }
-            }
+            // for (var x = 0; x < table.context[0].aoData.length; x++) {
+            //     var DataRow = table.context[0].aoData[x];
+            //     if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+            //         chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+            //         cnt++;
+            //     }
+            // }
 
-            if (chkArray.length == 1) {
+            var rowData = _BoxPalletApp.$tbl_pallets.rows({selected: true}).data().toArray();
+            var data = rowData[0];
+
+            if (rowData.length == 1) {
                 var msg = "Do you want to assign this Pallet as Broken Pallet?";
                 _BoxPalletApp.msg = msg;
 
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
-                        _BoxPalletApp.checkAuthorization(chkArray[0],'broken_pallet');
+                        //_BoxPalletApp.checkAuthorization(chkArray[0],'broken_pallet');
+
+                        if (_BoxPalletApp.authorize == 1) {
+                            $('.auth').hide();
+                            $('#new_box_count').prop('readonly', false);
+                            $('#btn_set_new_box_count').prop('disabled', false);
+                        } else {
+                            $('.auth').show();
+                            $('#new_box_count').prop('readonly', true);
+                            $('#btn_set_new_box_count').prop('disabled', true);
+                        }
+                        $('#broken_pallet_id').val(data.id);
+                        $('#modal_broken_pallet').modal('show');
                 });
             } else {
                 _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');

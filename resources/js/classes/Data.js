@@ -134,10 +134,6 @@ B. Synopsis: Class Module used to process data
                         if (response.success) {
                             self.responseData = response.data;
                             if (response.hasOwnProperty('msg')) {
-                                // self.msgType = response.msgType;
-                                // self.msgTitle = response.msgTitle;
-                                // self.msg = response.msg;
-                                // self.showToastrMsg();
                                 self.swMsg(response.msg,response.msgType);
                             }
                             resolve(true);
@@ -203,13 +199,9 @@ B. Synopsis: Class Module used to process data
                     success: function(response) {
                         if (response.success) {
                             self.responseData = response.data;
-                            self.msgType = "success";
-                            self.msgTitle = "Success!";
                             if (response.hasOwnProperty('msg')) {
-                                self.msg = response.msg;
-                                self.showToastrMsg();
+                                self.swMsg(response.msg,response.msgType);
                             }
-
                             resolve(true);
                         } else {
                             self.msgType = "error";
@@ -230,12 +222,26 @@ B. Synopsis: Class Module used to process data
 
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        //$('#loading_modal').modal('hide');
-                        self.showError("An error occured while processing your request. Please refresh the page and try again.")
                         console.table(jqXHR.status);
                         console.table(textStatus);
                         console.table(errorThrown);
+                        self.responseStatus = jqXHR.status;
+                        self.responseError = jqXHR.responseJSON;
+                        console.log(self.responseError)
+                        if (self.responseError.hasOwnProperty('errors')) {
+                            var errors = self.responseError.errors;
+                            self.showInputErrors(errors);
+                        }
+
+                        if (errorThrown == "Internal Server Error") {
+                            self.ErrorMsg(jqXHR);
+                        }
+                        
                         resolve(false);
+
+                        if (jqXHR.status == 419) {
+                            window.location.href = '/login';
+                        }
                     }
                 });
             });

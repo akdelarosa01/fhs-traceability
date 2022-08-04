@@ -95,6 +95,7 @@ class LoginController extends Controller
     {
         $page_access = new PalletPageAccess();
         $pages = $page_access->menu_list($user->id)->toJson();
+        $req->session()->put('user_id', $user->id);
         $req->session()->put('pages', $pages);
     }
 }

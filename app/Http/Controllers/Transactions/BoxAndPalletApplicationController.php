@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Transactions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Events\PalletTransferred;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
@@ -428,7 +429,7 @@ class BoxAndPalletApplicationController extends Controller
                 $pallet->pallet_status = 1; // FOR OBA
                 $pallet->print_date = $print_date;
             } else { // reprint
-                $print_date = $pallet->print_date;
+                $print_date = date('Y/m/d',strtotime($pallet->print_date));
                 $month = strtoupper(date('M',strtotime($pallet->print_date)));
             }
 
@@ -567,19 +568,42 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            $update = DB::connection('mysql')->table('pallet_box_pallet_hdrs')->whereIn('id',$req->ids)->update([
-                'pallet_location' => "Q.A.",
-                'update_user' => Auth::user()->id,
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
+            $pallet = PalletBoxPalletHdr::find($req->id);
+            $pallet->pallet_location = "Q.A.";
+            $pallet->update_user = Auth::user()->id;
 
-            if ($update) {
+            if ($pallet->update()) {
 
-                $msg = "Pallet was successfully transferred.";
+                $msg = "Pallet ".$pallet->pallet_qr." was successfully transferred.";
 
-                if (count($req->ids) > 0) {
-                    $msg = "Pallets were successfully transferred.";
-                }
+                $content = [
+                    'title' => "Pallet Transferred",
+                    'message' => "Pallet ".$pallet->pallet_qr." was transferred for Q.A. Inspection."
+                ];
+
+                $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
+                                ->select([
+                                    DB::raw("p.id as id"),
+                                    DB::raw("p.model_id as model_id"),
+                                    DB::raw("p.transaction_id as transaction_id"),
+                                    DB::raw("p.pallet_status as pallet_status"),
+                                    DB::raw("p.pallet_qr as pallet_qr"),
+                                    DB::raw("p.new_box_count as new_box_count"),
+                                    DB::raw("p.pallet_location as pallet_location"),
+                                    DB::raw("p.is_printed as is_printed"),
+                                    DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
+                                    DB::raw("p.created_at as created_at"),
+                                    DB::raw("p.updated_at as updated_at")
+                                ])
+                                ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+                                ->where([
+                                    ['p.pallet_status','=','1'],
+                                    ['p.pallet_location','=','Q.A.'],
+                                    ['p.id','=',$req->id]
+                                ])->first();
+
+                
+                broadcast(new PalletTransferred($content,$pallet_data));
 
                 $data = [
                     'msg' => $msg,
@@ -657,6 +681,7 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
+            $pallet_id = $req->pallet_id;
             $pallet = PalletBoxPalletHdr::find($req->pallet_id);
             $pallet->new_box_count = $req->new_box_count;
             $pallet->update_user = Auth::user()->id;

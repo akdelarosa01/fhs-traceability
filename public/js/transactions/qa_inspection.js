@@ -311,7 +311,7 @@ eval("__webpack_require__(/*! ./bootstrap */ \"./resources/js/bootstrap.js\");//
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var laravel_echo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! laravel-echo */ \"./node_modules/laravel-echo/dist/echo.js\");\nwindow._ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodash.js\");\n\ntry {// window.Popper = require('popper.js').default;\n  // window.$ = window.jQuery = require('jquery');\n  // require('jquery-ui');\n  // require('../plugins/bootstrap/js/bootstrap.bundle');\n  // // require('./menu');\n  // require('moment');\n  // require('select2');\n  // require('datatables.net-bs4');\n  // require('datatables.net-select');\n  // require('tempusdominus-bootstrap-4');\n  // require('admin-lte');\n} catch (e) {}\n/**\r\n * We'll load the axios HTTP library which allows us to easily issue requests\r\n * to our Laravel back-end. This library automatically handles sending the\r\n * CSRF token as a header based on the value of the \"XSRF\" token cookie.\r\n */\n\n\nwindow.axios = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\nwindow.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';\n/**\r\n * Echo exposes an expressive API for subscribing to channels and listening\r\n * for events that are broadcast by Laravel. Echo and event broadcasting\r\n * allows your team to easily build robust real-time web applications.\r\n */\n\n\nwindow.Pusher = __webpack_require__(/*! pusher-js */ \"./node_modules/pusher-js/dist/web/pusher.js\");\nwindow.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__[\"default\"]({\n  broadcaster: 'pusher',\n  key: \"local\",\n  cluster: \"ap1\",\n  wsPort: 6001,\n  forceTLS: false,\n  disableStats: true\n});//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9yZXNvdXJjZXMvanMvYm9vdHN0cmFwLmpzLmpzIiwibWFwcGluZ3MiOiI7O0FBQUFBLE1BQU0sQ0FBQ0MsQ0FBUCxHQUFXQyxtQkFBTyxDQUFDLCtDQUFELENBQWxCOztBQUVBLElBQUksQ0FDQTtFQUNBO0VBRUE7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUVBO0FBR0gsQ0FoQkQsQ0FnQkUsT0FBT0MsQ0FBUCxFQUFVLENBQUU7QUFFZDtBQUNBO0FBQ0E7QUFDQTtBQUNBOzs7QUFFQUgsTUFBTSxDQUFDSSxLQUFQLEdBQWVGLG1CQUFPLENBQUMsNENBQUQsQ0FBdEI7QUFFQUYsTUFBTSxDQUFDSSxLQUFQLENBQWFDLFFBQWIsQ0FBc0JDLE9BQXRCLENBQThCQyxNQUE5QixDQUFxQyxrQkFBckMsSUFBMkQsZ0JBQTNEO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUVBUCxNQUFNLENBQUNTLE1BQVAsR0FBZ0JQLG1CQUFPLENBQUMsOERBQUQsQ0FBdkI7QUFFQUYsTUFBTSxDQUFDUSxJQUFQLEdBQWMsSUFBSUEsb0RBQUosQ0FBUztFQUNuQkUsV0FBVyxFQUFFLFFBRE07RUFFbkJDLEdBQUcsRUFBRUMsT0FGYztFQUduQkcsT0FBTyxFQUFFSCxLQUhVO0VBSW5CSyxNQUFNLEVBQUUsSUFKVztFQUtuQkMsUUFBUSxFQUFFLEtBTFM7RUFNbkJDLFlBQVksRUFBRTtBQU5LLENBQVQsQ0FBZCIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3Jlc291cmNlcy9qcy9ib290c3RyYXAuanM/NmRlNyJdLCJzb3VyY2VzQ29udGVudCI6WyJ3aW5kb3cuXyA9IHJlcXVpcmUoJ2xvZGFzaCcpO1xyXG5cclxudHJ5IHtcclxuICAgIC8vIHdpbmRvdy5Qb3BwZXIgPSByZXF1aXJlKCdwb3BwZXIuanMnKS5kZWZhdWx0O1xyXG4gICAgLy8gd2luZG93LiQgPSB3aW5kb3cualF1ZXJ5ID0gcmVxdWlyZSgnanF1ZXJ5Jyk7XHJcblxyXG4gICAgLy8gcmVxdWlyZSgnanF1ZXJ5LXVpJyk7XHJcbiAgICAvLyByZXF1aXJlKCcuLi9wbHVnaW5zL2Jvb3RzdHJhcC9qcy9ib290c3RyYXAuYnVuZGxlJyk7XHJcbiAgICAvLyAvLyByZXF1aXJlKCcuL21lbnUnKTtcclxuICAgIC8vIHJlcXVpcmUoJ21vbWVudCcpO1xyXG4gICAgLy8gcmVxdWlyZSgnc2VsZWN0MicpO1xyXG4gICAgLy8gcmVxdWlyZSgnZGF0YXRhYmxlcy5uZXQtYnM0Jyk7XHJcbiAgICAvLyByZXF1aXJlKCdkYXRhdGFibGVzLm5ldC1zZWxlY3QnKTtcclxuICAgIC8vIHJlcXVpcmUoJ3RlbXB1c2RvbWludXMtYm9vdHN0cmFwLTQnKTtcclxuICAgIFxyXG4gICAgLy8gcmVxdWlyZSgnYWRtaW4tbHRlJyk7XHJcbiAgICBcclxuXHJcbn0gY2F0Y2ggKGUpIHt9XHJcblxyXG4vKipcclxuICogV2UnbGwgbG9hZCB0aGUgYXhpb3MgSFRUUCBsaWJyYXJ5IHdoaWNoIGFsbG93cyB1cyB0byBlYXNpbHkgaXNzdWUgcmVxdWVzdHNcclxuICogdG8gb3VyIExhcmF2ZWwgYmFjay1lbmQuIFRoaXMgbGlicmFyeSBhdXRvbWF0aWNhbGx5IGhhbmRsZXMgc2VuZGluZyB0aGVcclxuICogQ1NSRiB0b2tlbiBhcyBhIGhlYWRlciBiYXNlZCBvbiB0aGUgdmFsdWUgb2YgdGhlIFwiWFNSRlwiIHRva2VuIGNvb2tpZS5cclxuICovXHJcblxyXG53aW5kb3cuYXhpb3MgPSByZXF1aXJlKCdheGlvcycpO1xyXG5cclxud2luZG93LmF4aW9zLmRlZmF1bHRzLmhlYWRlcnMuY29tbW9uWydYLVJlcXVlc3RlZC1XaXRoJ10gPSAnWE1MSHR0cFJlcXVlc3QnO1xyXG5cclxuLyoqXHJcbiAqIEVjaG8gZXhwb3NlcyBhbiBleHByZXNzaXZlIEFQSSBmb3Igc3Vic2NyaWJpbmcgdG8gY2hhbm5lbHMgYW5kIGxpc3RlbmluZ1xyXG4gKiBmb3IgZXZlbnRzIHRoYXQgYXJlIGJyb2FkY2FzdCBieSBMYXJhdmVsLiBFY2hvIGFuZCBldmVudCBicm9hZGNhc3RpbmdcclxuICogYWxsb3dzIHlvdXIgdGVhbSB0byBlYXNpbHkgYnVpbGQgcm9idXN0IHJlYWwtdGltZSB3ZWIgYXBwbGljYXRpb25zLlxyXG4gKi9cclxuXHJcbmltcG9ydCBFY2hvIGZyb20gJ2xhcmF2ZWwtZWNobyc7XHJcblxyXG53aW5kb3cuUHVzaGVyID0gcmVxdWlyZSgncHVzaGVyLWpzJyk7XHJcblxyXG53aW5kb3cuRWNobyA9IG5ldyBFY2hvKHtcclxuICAgIGJyb2FkY2FzdGVyOiAncHVzaGVyJyxcclxuICAgIGtleTogcHJvY2Vzcy5lbnYuTUlYX1BVU0hFUl9BUFBfS0VZLFxyXG4gICAgY2x1c3RlcjogcHJvY2Vzcy5lbnYuTUlYX1BVU0hFUl9BUFBfQ0xVU1RFUixcclxuICAgIHdzUG9ydDogNjAwMSxcclxuICAgIGZvcmNlVExTOiBmYWxzZSxcclxuICAgIGRpc2FibGVTdGF0czogdHJ1ZVxyXG59KTtcclxuIl0sIm5hbWVzIjpbIndpbmRvdyIsIl8iLCJyZXF1aXJlIiwiZSIsImF4aW9zIiwiZGVmYXVsdHMiLCJoZWFkZXJzIiwiY29tbW9uIiwiRWNobyIsIlB1c2hlciIsImJyb2FkY2FzdGVyIiwia2V5IiwicHJvY2VzcyIsImVudiIsIk1JWF9QVVNIRVJfQVBQX0tFWSIsImNsdXN0ZXIiLCJNSVhfUFVTSEVSX0FQUF9DTFVTVEVSIiwid3NQb3J0IiwiZm9yY2VUTFMiLCJkaXNhYmxlU3RhdHMiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./resources/js/bootstrap.js\n");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var laravel_echo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! laravel-echo */ \"./node_modules/laravel-echo/dist/echo.js\");\nwindow._ = __webpack_require__(/*! lodash */ \"./node_modules/lodash/lodash.js\");\n\ntry {// window.Popper = require('popper.js').default;\n  // window.$ = window.jQuery = require('jquery');\n  // require('jquery-ui');\n  // require('../plugins/bootstrap/js/bootstrap.bundle');\n  // // require('./menu');\n  // require('moment');\n  // require('select2');\n  // require('datatables.net-bs4');\n  // require('datatables.net-select');\n  // require('tempusdominus-bootstrap-4');\n  // require('admin-lte');\n} catch (e) {}\n/**\r\n * We'll load the axios HTTP library which allows us to easily issue requests\r\n * to our Laravel back-end. This library automatically handles sending the\r\n * CSRF token as a header based on the value of the \"XSRF\" token cookie.\r\n */\n\n\nwindow.axios = __webpack_require__(/*! axios */ \"./node_modules/axios/index.js\");\nwindow.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';\n/**\r\n * Echo exposes an expressive API for subscribing to channels and listening\r\n * for events that are broadcast by Laravel. Echo and event broadcasting\r\n * allows your team to easily build robust real-time web applications.\r\n */\n\n\nwindow.Pusher = __webpack_require__(/*! pusher-js */ \"./node_modules/pusher-js/dist/web/pusher.js\");\nwindow.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__[\"default\"]({\n  broadcaster: 'pusher',\n  key: \"local\",\n  wsHost: \"127.0.0.1\",\n  wsPort: 6001,\n  forceTLS: false,\n  disableStats: true\n});//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9yZXNvdXJjZXMvanMvYm9vdHN0cmFwLmpzLmpzIiwibWFwcGluZ3MiOiI7O0FBQUFBLE1BQU0sQ0FBQ0MsQ0FBUCxHQUFXQyxtQkFBTyxDQUFDLCtDQUFELENBQWxCOztBQUVBLElBQUksQ0FDQTtFQUNBO0VBRUE7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUNBO0VBQ0E7RUFDQTtFQUVBO0FBR0gsQ0FoQkQsQ0FnQkUsT0FBT0MsQ0FBUCxFQUFVLENBQUU7QUFFZDtBQUNBO0FBQ0E7QUFDQTtBQUNBOzs7QUFFQUgsTUFBTSxDQUFDSSxLQUFQLEdBQWVGLG1CQUFPLENBQUMsNENBQUQsQ0FBdEI7QUFFQUYsTUFBTSxDQUFDSSxLQUFQLENBQWFDLFFBQWIsQ0FBc0JDLE9BQXRCLENBQThCQyxNQUE5QixDQUFxQyxrQkFBckMsSUFBMkQsZ0JBQTNEO0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQTtBQUVBUCxNQUFNLENBQUNTLE1BQVAsR0FBZ0JQLG1CQUFPLENBQUMsOERBQUQsQ0FBdkI7QUFFQUYsTUFBTSxDQUFDUSxJQUFQLEdBQWMsSUFBSUEsb0RBQUosQ0FBUztFQUNuQkUsV0FBVyxFQUFFLFFBRE07RUFFbkJDLEdBQUcsRUFBRUMsT0FGYztFQUduQkcsTUFBTSxFQUFFSCxXQUhXO0VBSW5CSyxNQUFNLEVBQUUsSUFKVztFQUtuQkMsUUFBUSxFQUFFLEtBTFM7RUFNbkJDLFlBQVksRUFBRTtBQU5LLENBQVQsQ0FBZCIsInNvdXJjZXMiOlsid2VicGFjazovLy8uL3Jlc291cmNlcy9qcy9ib290c3RyYXAuanM/NmRlNyJdLCJzb3VyY2VzQ29udGVudCI6WyJ3aW5kb3cuXyA9IHJlcXVpcmUoJ2xvZGFzaCcpO1xyXG5cclxudHJ5IHtcclxuICAgIC8vIHdpbmRvdy5Qb3BwZXIgPSByZXF1aXJlKCdwb3BwZXIuanMnKS5kZWZhdWx0O1xyXG4gICAgLy8gd2luZG93LiQgPSB3aW5kb3cualF1ZXJ5ID0gcmVxdWlyZSgnanF1ZXJ5Jyk7XHJcblxyXG4gICAgLy8gcmVxdWlyZSgnanF1ZXJ5LXVpJyk7XHJcbiAgICAvLyByZXF1aXJlKCcuLi9wbHVnaW5zL2Jvb3RzdHJhcC9qcy9ib290c3RyYXAuYnVuZGxlJyk7XHJcbiAgICAvLyAvLyByZXF1aXJlKCcuL21lbnUnKTtcclxuICAgIC8vIHJlcXVpcmUoJ21vbWVudCcpO1xyXG4gICAgLy8gcmVxdWlyZSgnc2VsZWN0MicpO1xyXG4gICAgLy8gcmVxdWlyZSgnZGF0YXRhYmxlcy5uZXQtYnM0Jyk7XHJcbiAgICAvLyByZXF1aXJlKCdkYXRhdGFibGVzLm5ldC1zZWxlY3QnKTtcclxuICAgIC8vIHJlcXVpcmUoJ3RlbXB1c2RvbWludXMtYm9vdHN0cmFwLTQnKTtcclxuICAgIFxyXG4gICAgLy8gcmVxdWlyZSgnYWRtaW4tbHRlJyk7XHJcbiAgICBcclxuXHJcbn0gY2F0Y2ggKGUpIHt9XHJcblxyXG4vKipcclxuICogV2UnbGwgbG9hZCB0aGUgYXhpb3MgSFRUUCBsaWJyYXJ5IHdoaWNoIGFsbG93cyB1cyB0byBlYXNpbHkgaXNzdWUgcmVxdWVzdHNcclxuICogdG8gb3VyIExhcmF2ZWwgYmFjay1lbmQuIFRoaXMgbGlicmFyeSBhdXRvbWF0aWNhbGx5IGhhbmRsZXMgc2VuZGluZyB0aGVcclxuICogQ1NSRiB0b2tlbiBhcyBhIGhlYWRlciBiYXNlZCBvbiB0aGUgdmFsdWUgb2YgdGhlIFwiWFNSRlwiIHRva2VuIGNvb2tpZS5cclxuICovXHJcblxyXG53aW5kb3cuYXhpb3MgPSByZXF1aXJlKCdheGlvcycpO1xyXG5cclxud2luZG93LmF4aW9zLmRlZmF1bHRzLmhlYWRlcnMuY29tbW9uWydYLVJlcXVlc3RlZC1XaXRoJ10gPSAnWE1MSHR0cFJlcXVlc3QnO1xyXG5cclxuLyoqXHJcbiAqIEVjaG8gZXhwb3NlcyBhbiBleHByZXNzaXZlIEFQSSBmb3Igc3Vic2NyaWJpbmcgdG8gY2hhbm5lbHMgYW5kIGxpc3RlbmluZ1xyXG4gKiBmb3IgZXZlbnRzIHRoYXQgYXJlIGJyb2FkY2FzdCBieSBMYXJhdmVsLiBFY2hvIGFuZCBldmVudCBicm9hZGNhc3RpbmdcclxuICogYWxsb3dzIHlvdXIgdGVhbSB0byBlYXNpbHkgYnVpbGQgcm9idXN0IHJlYWwtdGltZSB3ZWIgYXBwbGljYXRpb25zLlxyXG4gKi9cclxuXHJcbmltcG9ydCBFY2hvIGZyb20gJ2xhcmF2ZWwtZWNobyc7XHJcblxyXG53aW5kb3cuUHVzaGVyID0gcmVxdWlyZSgncHVzaGVyLWpzJyk7XHJcblxyXG53aW5kb3cuRWNobyA9IG5ldyBFY2hvKHtcclxuICAgIGJyb2FkY2FzdGVyOiAncHVzaGVyJyxcclxuICAgIGtleTogcHJvY2Vzcy5lbnYuTUlYX1BVU0hFUl9BUFBfS0VZLFxyXG4gICAgd3NIb3N0OiBwcm9jZXNzLmVudi5NSVhfUFVTSEVSX0FQUF9XRUJTT0NLRVRTX1NFUlZFUixcclxuICAgIHdzUG9ydDogNjAwMSxcclxuICAgIGZvcmNlVExTOiBmYWxzZSxcclxuICAgIGRpc2FibGVTdGF0czogdHJ1ZVxyXG59KTtcclxuIl0sIm5hbWVzIjpbIndpbmRvdyIsIl8iLCJyZXF1aXJlIiwiZSIsImF4aW9zIiwiZGVmYXVsdHMiLCJoZWFkZXJzIiwiY29tbW9uIiwiRWNobyIsIlB1c2hlciIsImJyb2FkY2FzdGVyIiwia2V5IiwicHJvY2VzcyIsImVudiIsIk1JWF9QVVNIRVJfQVBQX0tFWSIsIndzSG9zdCIsIk1JWF9QVVNIRVJfQVBQX1dFQlNPQ0tFVFNfU0VSVkVSIiwid3NQb3J0IiwiZm9yY2VUTFMiLCJkaXNhYmxlU3RhdHMiXSwic291cmNlUm9vdCI6IiJ9\n//# sourceURL=webpack-internal:///./resources/js/bootstrap.js\n");
 
 /***/ }),
 
@@ -3348,8 +3348,7 @@ B. Synopsis: Class Module used for showing messages
         showNotification: function(data) {
             $.gritter.add({
                 title: data.title,
-                text: data.content,
-                image: data.photo,
+                text: data.message,
                 sticky: false,
                 time: ''
             });
@@ -3992,10 +3991,6 @@ B. Synopsis: Class Module used to process data
                         if (response.success) {
                             self.responseData = response.data;
                             if (response.hasOwnProperty('msg')) {
-                                // self.msgType = response.msgType;
-                                // self.msgTitle = response.msgTitle;
-                                // self.msg = response.msg;
-                                // self.showToastrMsg();
                                 self.swMsg(response.msg,response.msgType);
                             }
                             resolve(true);
@@ -4061,13 +4056,9 @@ B. Synopsis: Class Module used to process data
                     success: function(response) {
                         if (response.success) {
                             self.responseData = response.data;
-                            self.msgType = "success";
-                            self.msgTitle = "Success!";
                             if (response.hasOwnProperty('msg')) {
-                                self.msg = response.msg;
-                                self.showToastrMsg();
+                                self.swMsg(response.msg,response.msgType);
                             }
-
                             resolve(true);
                         } else {
                             self.msgType = "error";
@@ -4088,12 +4079,26 @@ B. Synopsis: Class Module used to process data
 
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
-                        //$('#loading_modal').modal('hide');
-                        self.showError("An error occured while processing your request. Please refresh the page and try again.")
                         console.table(jqXHR.status);
                         console.table(textStatus);
                         console.table(errorThrown);
+                        self.responseStatus = jqXHR.status;
+                        self.responseError = jqXHR.responseJSON;
+                        console.log(self.responseError)
+                        if (self.responseError.hasOwnProperty('errors')) {
+                            var errors = self.responseError.errors;
+                            self.showInputErrors(errors);
+                        }
+
+                        if (errorThrown == "Internal Server Error") {
+                            self.ErrorMsg(jqXHR);
+                        }
+                        
                         resolve(false);
+
+                        if (jqXHR.status == 419) {
+                            window.location.href = '/login';
+                        }
                     }
                 });
             });
@@ -4426,46 +4431,218 @@ B. Synopsis: Real Time Script
     }
     RealTime.init = function() {
         $D.init.call(this);
-        this.$tbl_audit_realtime = "";
+        this.$tbl_obas = "";
         this.token = $("meta[name=csrf-token]").attr("content");
     }
     RealTime.prototype = {
         init: function() {},
+        initOBAdataTable: function() {
+            var self = this;
+			if (!$.fn.DataTable.isDataTable('#tbl_obas')) {
+				self.$tbl_obas = $('#tbl_obas').DataTable({
+					scrollY: "400px",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    StateSave: true,
+                    select: {
+                        style: 'os',
+                        selector: 'td:not(:first-child)'
+                    },
+					ajax: {
+                        url: "/transactions/qa-inspection/get-pallets",
+                        dataType: "JSON",
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+					language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Pallet was created.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found"
+                    },
+                    deferRender: true,
+					columns: [
+                        { 
+                            data: function(data) {
+                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
+                        },
+                        {
+                            data: function(data) {
+                                return '<span>'+data.pallet_qr+'</span><br>' +
+								        '<small>'+data.updated_at+'</small>';
+                            }, name: 'pallet_qr', searchable: false, orderable: false 
+                        },
+                        { data: function(data) {
+                                return '<p class="btn-success py-2 my-0">'+data.pallet_location+'</p>';
+                            }, name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
+                        },
+						{ data: function(data) {
+                                return '<span></span>';
+                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'  
+                        }
+						
+					],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                       
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','400px');
+                    },
+                    fnDrawCallback: function() {
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#oba_count').html(data_count);
+                    },
+                }).on('page.dt', function() {
+                
+				});
+			}
+        },
+        timeSince: function(date) {
+
+            var seconds = Math.floor((new Date() - date) / 1000);
+          
+            var interval = seconds / 31536000;
+          
+            if (interval > 1) {
+              return Math.floor(interval) + " years";
+            }
+            interval = seconds / 2592000;
+            if (interval > 1) {
+              return Math.floor(interval) + " months";
+            }
+            interval = seconds / 86400;
+            if (interval > 1) {
+              return Math.floor(interval) + " days";
+            }
+            interval = seconds / 3600;
+            if (interval > 1) {
+              return Math.floor(interval) + " hours";
+            }
+            interval = seconds / 60;
+            if (interval > 1) {
+              return Math.floor(interval) + " minutes";
+            }
+            return Math.floor(seconds) + " seconds";
+        }
     }
     RealTime.init.prototype = $.extend(RealTime.prototype, $D.init.prototype);
     RealTime.init.prototype = RealTime.prototype;
+    return window.RealTime = window.$R = RealTime;
+})();
+
+/*****************************************
+A. Name: Notification Script
+B. Synopsis: Notification Script
+***********************************************/
+"use strict";
+
+(function() {
+    const Notification = function() {
+        return new Notification.init();
+    }
+    Notification.init = function() {
+        $D.init.call(this);
+        this.$tbl_obas = "";
+        this.token = $("meta[name=csrf-token]").attr("content");
+    }
+    Notification.prototype = {
+        init: function() {},
+        showNotificationList: function() {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = {
+                _token: self.token,
+            };
+            self.formAction = "/notifications/show";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                var list = "";
+                var cnt = 0;
+                $.each(response, function(i,x) {
+                    list += '<a href="'+x.url+'" class="dropdown-item media notification-item" data-noti_type="'+x.noti_type+'">'+
+                                '<div class="media-left">'+
+                                    '<i class="fa fa-search media-object bg-silver-darker"></i>'+
+                                '</div>'+
+                                '<div class="media-body">'+
+                                    '<h6 class="media-heading u-wrap">'+x.title+'</h6>'+
+                                    '<div class="text-muted f-s-10">1 hour ago</div>'+
+                                '</div>'
+                            '</a>';
+                    cnt++;
+                });
+
+                if (cnt < 1) {
+                    $('#notification_count').hide();
+                } else {
+                    $('#notification_count').show();
+                    $('#notification_count').html(cnt)
+                }
+                
+                $('#notification_list').html(list);
+            });
+        },
+        readNotification: function(noti_type, link) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = {
+                _token: self.token,
+                noti_type: noti_type
+            };
+            self.formAction = "/notifications/read";
+            self.sendDataNoLoading().then(function() {
+                window.location.href = link;
+            });
+        }
+    }
+    Notification.init.prototype = $.extend(Notification.prototype, $D.init.prototype,$R.init.prototype);
+    Notification.init.prototype = Notification.prototype;
 
     $(document).ready(function() {
-        var _RealTime = RealTime();
-        // _RealTime.getUnreadNotification();
-        // _RealTime.drawRealTimeAuditDatatables();
+        var _Notification = Notification();
+        _Notification.initOBAdataTable();
+        _Notification.showNotificationList();
 
-        // Echo.channel('audit-trail')
-        //     .listen('AuditTrail', function(e) {
-        //         _RealTime.$tbl_audit_realtime.ajax.reload(null, false);
-        //     });
+        Echo.channel('pallet-transferred')
+            .listen('PalletTransferred', function(e) {
+                var content = e._content;
+                var pallet = e._pallet;
+                var recepients = e._recepients;
+                var noti_count = e._noti_count;
 
-        // Echo.channel('notification')
-        //     .listen('Notify', function(e) {
-        //         var noti = e._notification;
+                $.each(recepients, function(i,x) {
+                    if (x.user_id == e._current_user) {
+                        $('#notification_count').show();
+                        $('#notification_count').html(noti_count)
+                        _Notification.showNotification(content);
+                        _Notification.$tbl_obas.row.add(pallet).draw();
+                    }
+                });
+            });
 
-        //         var receiver_id = parseInt($('meta[name=user_id]').attr('content'));
-        //         if (noti.to == receiver_id) {
-        //             // redraw notification menu
-        //             _RealTime.getUnreadNotification();
-        //             // notification message
-        //             _RealTime.showNotification(noti);
-        //         }
-        //     });
-
-        // $('#notification_list_header').on('click', '.view_notification', function() {
-        //     _RealTime.readNotification($(this).attr('data-id'), $(this).attr('data-link'));
-        // });
+        $('#notification_list').on('click', '.notification-item', function(e) {
+            e.preventDefault();
+            _Notification.readNotification($(this).attr('data-noti_type'), $(this).attr('href'));
+        });
 
 
     });
 })();
-
 "use strict";
 
 (function() {
@@ -4475,7 +4652,8 @@ B. Synopsis: Real Time Script
 	QAInspection.init = function() {
 		$D.init.call(this);
         $F.init.call(this);
-        this.$tbl_obas = "";
+        $R.init.call(this);
+        //this.$tbl_obas = "";
         this.$tbl_boxes = "";
         this.$tbl_affected_serials = "";
         this.id = 0;
@@ -4750,7 +4928,7 @@ B. Synopsis: Real Time Script
             });
         }
 	}
-	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype);
+	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
 	$(document).ready(function() {
 		var _QAInspection = QAInspection();
@@ -4759,8 +4937,8 @@ B. Synopsis: Real Time Script
         _QAInspection.drawOBADatatables();
         _QAInspection.drawBoxesDatatables();
         
-        _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
-            var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
+        $('#tbl_obas').DataTable().on('select', function ( e, dt, type, indexes ) {
+            var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
             var data = rowData[0];
             // console.log(data);
             $('#pallet_id').val(data.id);
@@ -4836,7 +5014,7 @@ B. Synopsis: Real Time Script
 
         $('#btn_transfer').on('click', function() {
             var chkArray = [];
-            var table = _QAInspection.$tbl_obas;
+            var table = $('#tbl_obas').DataTable();
             var cnt = 0;
 
             for (var x = 0; x < table.context[0].aoData.length; x++) {

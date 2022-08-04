@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\PalletTransferred;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -106,4 +107,11 @@ Route::group(['prefix' => 'transactions'], function () {
     Route::group(['prefix' => 'warehouse'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\WarehouseController::class, 'index'])->name('transactions.warehouse');
     });
+
+    
+});
+
+Route::group(['prefix' => 'notifications'], function () {
+    Route::get('/show', [App\Common\Helpers::class, 'show_notification'])->name('notifications.show');
+    Route::post('/read', [App\Common\Helpers::class, 'read_notification'])->name('notifications.read');
 });

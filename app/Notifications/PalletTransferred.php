@@ -11,14 +11,16 @@ class PalletTransferred extends Notification
 {
     use Queueable;
 
+    private $details;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($details)
     {
-        //
+        $this->details = $details;
     }
 
     /**
@@ -29,21 +31,7 @@ class PalletTransferred extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return ['database'];
     }
 
     /**
@@ -52,10 +40,20 @@ class PalletTransferred extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toDatabase($notifiable)
     {
         return [
-            //
+            'id' => $this->details->id,
+            'model_id' => $this->details->model_id,
+            'transaction_id' => $this->details->transaction_id,
+            'pallet_status' => $this->details->pallet_status,
+            'pallet_qr' => $this->details->pallet_qr,
+            'new_box_count' => $this->details->new_box_count,
+            'pallet_location' => $this->details->pallet_location,
+            'is_printed' => $this->details->is_printed,
+            'box_count_to_inspect' => $this->details->box_count_to_inspect,
+            'created_at' => $this->details->created_at,
+            'updated_at' => $this->details->updated_at,
         ];
     }
 }

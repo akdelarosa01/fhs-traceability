@@ -2,6 +2,7 @@
 
 namespace App\Common;
 
+use App\Models\Notification;
 use App\Models\PalletPageAccess;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -101,5 +102,63 @@ class Helpers
                         ])->first();
 
         return $permission;
+    }
+
+    public function qa_users()
+    {
+        $data = DB::connection('mysql')->table('pallet_page_accesses as pa')
+                    ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                    ->select('pa.user_id')
+                    ->where('p.page_name', '=', 'QAInspection')
+                    ->get();
+
+        return $data;
+    }
+
+    public function show_notification(Request $req)
+    {
+        $data = [
+            'data' => [],
+            'success' => true,
+        ];
+
+        $user_id = $req->session()->get('user_id');
+
+        $noti = DB::connection('mysql')->table('notifications')
+                    ->whereNull('read_at')
+                    ->where('to',$user_id);
+
+        if ($noti->count() > 0) {
+            $data = [
+                'data' => $noti->get(),
+                'success' => true,
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function read_notification(Request $req)
+    {
+        $data = [
+            'data' => [],
+            'success' => true,
+        ];
+
+        $noti = DB::connection('mysql')->table('notifications')
+                    ->whereNull('read_at')
+                    ->where('noti_type',$req->noti_type)
+                    ->update([
+                        'read_at' => date('Y-m-d H:i:s')
+                    ]);
+
+        if ($noti) {
+            $data = [
+                'data' => [],
+                'success' => true,
+            ];
+        }
+
+        return response()->json($data);
     }
 }

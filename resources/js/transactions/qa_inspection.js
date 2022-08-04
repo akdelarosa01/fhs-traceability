@@ -7,7 +7,8 @@
 	QAInspection.init = function() {
 		$D.init.call(this);
         $F.init.call(this);
-        this.$tbl_obas = "";
+        $R.init.call(this);
+        //this.$tbl_obas = "";
         this.$tbl_boxes = "";
         this.$tbl_affected_serials = "";
         this.id = 0;
@@ -282,7 +283,7 @@
             });
         }
 	}
-	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype);
+	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
 	$(document).ready(function() {
 		var _QAInspection = QAInspection();
@@ -291,8 +292,8 @@
         _QAInspection.drawOBADatatables();
         _QAInspection.drawBoxesDatatables();
         
-        _QAInspection.$tbl_obas.on('select', function ( e, dt, type, indexes ) {
-            var rowData = _QAInspection.$tbl_obas.rows( indexes ).data().toArray();
+        $('#tbl_obas').DataTable().on('select', function ( e, dt, type, indexes ) {
+            var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
             var data = rowData[0];
             // console.log(data);
             $('#pallet_id').val(data.id);
@@ -368,7 +369,7 @@
 
         $('#btn_transfer').on('click', function() {
             var chkArray = [];
-            var table = _QAInspection.$tbl_obas;
+            var table = $('#tbl_obas').DataTable();
             var cnt = 0;
 
             for (var x = 0; x < table.context[0].aoData.length; x++) {
