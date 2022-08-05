@@ -97,6 +97,7 @@ class QAInspectionController extends Controller
                         }
                     )
                     ->where('pb.pallet_id',$pallet_id)
+                    ->where('pb.is_deleted',0)
                     ->orderBy('pb.box_qr','desc')
                     ->distinct();
                     
@@ -116,6 +117,7 @@ class QAInspectionController extends Controller
         }
         return $data;
     }
+
     public function check_hs_serial(Request $req)
     {
 
@@ -204,5 +206,29 @@ class QAInspectionController extends Controller
                     ->join('tboxqr as bqr','bqr.ID','=','bqrd.Box_ID')
                     ->where('bqr.qrBarcode',$box_qr)->get()->toArray();
         return $query;
+    }
+
+    public function get_lot_no(Request $req)
+    {
+        $data = [
+            'data' => [],
+            'success' => true
+        ];
+
+        $arr_boxes = [];
+        $boxes = $this->boxes($req->pallet_id)->get();
+
+        foreach ($boxes as $key => $box) {
+            array_push($arr_boxes,$box->box_qr);
+        }
+
+        $lot_nos = $this->_helpers->lot_no($arr_boxes);
+
+        $data = [
+            'data' => $lot_nos,
+            'success' => true
+        ];
+
+        return response()->json($data);
     }
 }

@@ -83,11 +83,18 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                       
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.id);
+                        console.log( dataRow.attr('id'));
+                        // var btn = $(dataRow[0].cells[0]);
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
                         var data = this.fnGetData();

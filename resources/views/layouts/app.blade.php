@@ -13,13 +13,11 @@
 
     <title>@yield('title') | {{ config('app.name', 'FHS Traceability System') }}</title>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     @stack('styles')
     
 </head>
 <body>
-    <div id="page-loader" class="fade show"><span class="spinner"></span></div>
+    {{-- <div id="page-loader" class="fade show"><span class="spinner"></span></div> --}}
 
     <div id="page-container" class="page-container fade page-sidebar-fixed page-header-fixed">
         @include('includes.header')
