@@ -19,6 +19,7 @@
             <div class="dropdown-menu media-list dropdown-menu-right">
                 <div class="dropdown-header">NOTIFICATIONS</div>
                 <div id="notification_list"></div>
+                <a href="/notification" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
         </li>
         <li class="dropdown navbar-user">

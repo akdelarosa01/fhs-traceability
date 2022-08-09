@@ -103,8 +103,10 @@ class BoxAndPalletApplicationController extends Controller
                         DB::raw("t.created_at as created_at")
                     ])
                     ->join('pallet_model_matrices as m','t.model_id','=','m.id')
-                    ->leftJoin('pallet_box_pallet_dtls as dt','dt.model_id','=','t.model_id')
-                    ->where('dt.is_deleted',0)
+                    ->leftJoin(DB::raw("(SELECT box_qr, model_id 
+                                        FROM pallet_box_pallet_dtls
+                                        WHERE is_deleted = 0) as dt"),'dt.model_id','=','t.model_id')
+                    // ->where('dt.is_deleted',0)
                     ->groupBy(
                         't.id',
                         't.model_id',
@@ -276,9 +278,11 @@ class BoxAndPalletApplicationController extends Controller
             'msgTitle' => 'Failed!'
         ];
 
-        $rules = ['box_qr' => 'unique:pallet_box_pallet_dtls,box_qr'];
+        $rules = [
+                    'box_qr' => 'unique:pallet_box_pallet_dtls,box_qr|exists:tboxqr,qrBarcode'
+                ];
         $customMessages = [
-            'unique' => 'This Box ID was already scanned.'
+            'unique' => 'This Box ID was already scanned.',
         ];
 
         $this->validate($req, $rules, $customMessages);
@@ -293,11 +297,17 @@ class BoxAndPalletApplicationController extends Controller
             $dtl->update_user = Auth::user()->id;
 
             if ($dtl->save()) {
-                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+                $count = DB::table('pallet_box_pallet_hdrs as h')
+                            ->join('pallet_box_pallet_dtls as d','d.pallet_id','=','h.id')
+                            ->select('d.id')
+                            ->where('h.transaction_id', $req->trans_id)
+                            ->where('is_deleted',0)
+                            ->count();
 
                 $data = [
                     'data' => [
-                        'count' => $count
+                        'count' => $count,
+                        'box_data' => $dtl
                     ],
                     'success' => true
                 ];
