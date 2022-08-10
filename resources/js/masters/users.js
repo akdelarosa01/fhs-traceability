@@ -415,6 +415,7 @@
                 $('#read_and_write_'+page_id).prop('checked',false);
                 $('#delete_'+page_id).prop('checked',false);
 
+                $('#read_only_'+page_id).prop('disabled', false);
                 $('#authorize_'+page_id).prop('disabled', true);
                 $('#read_and_write_'+page_id).prop('disabled', true);
                 $('#delete_'+page_id).prop('disabled', true);

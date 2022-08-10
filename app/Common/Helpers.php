@@ -4,9 +4,11 @@ namespace App\Common;
 
 use App\Models\Notification;
 use App\Models\PalletPageAccess;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
   
 class Helpers 
 {
@@ -156,6 +158,70 @@ class Helpers
             $data = [
                 'data' => [],
                 'success' => true,
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function authenticate(Request $req)
+    {
+        $data = [
+			'msg' => 'Checking Authorization was failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $auth_type = $req->authentication_type;
+            $page_access = new PalletPageAccess();
+            $permission = 0;
+
+            $user = User::where('username',$req->username)->first();
+
+            if ($user->count()) {
+                if (Hash::check($req->password, $user->password)) {
+                    switch ($auth_type) {
+                        case 'broken_pallet':
+                            $permission = $page_access->check_permission($user->id, 'BoxAndPalletApplication');
+                            break;
+
+                        case 'update_pallet':
+                            $permission = $page_access->check_permission($user->id, 'BoxAndPalletApplication');
+                            break;
+                        
+                        default:
+                            # code...
+                            break;
+                    }
+                }                
+            }
+
+            if ($permission > 0) {
+                $data = [
+                    'data' => [
+                        'permission' => true
+                    ],
+                    'success' => true,
+                ];
+            } else {
+                $data = [
+                    'data' => [
+                        'permission' => false
+                    ],
+                    'success' => true,
+                ];
+            }
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => true,
+                'msgType' => 'warning',
+                'msgTitle' => 'Failed!'
             ];
         }
 

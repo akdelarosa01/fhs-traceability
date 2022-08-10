@@ -116,3 +116,5 @@ Route::group(['prefix' => 'notifications'], function () {
     Route::get('/show', [App\Common\Helpers::class, 'show_notification'])->name('notifications.show');
     Route::post('/read', [App\Common\Helpers::class, 'read_notification'])->name('notifications.read');
 });
+
+Route::post('/authenticate', [App\Common\Helpers::class, 'authenticate'])->name('authenticate');

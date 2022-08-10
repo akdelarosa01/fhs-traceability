@@ -3121,6 +3121,16 @@ B. Synopsis: Class Module used to process data
             var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
             return num.toString().match(re)[0];
         },
+        authenticate: function(handle) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = $('#frm_authenticate').serialize();
+            self.formAction = $('#frm_authenticate').attr('action');
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
+        }
     }
     DataClass.init.prototype = $.extend(DataClass.prototype, $M.init.prototype);
 

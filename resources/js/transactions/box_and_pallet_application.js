@@ -662,53 +662,18 @@
                 self.$tbl_pallets.ajax.reload();
             });
         },
-        checkAuthorization: function(pallet_id, mode) {
-            var self = this;
-            self.submitType = "GET";
-            self.jsonData = {
-                _token: self.token,
-            };
-            self.formAction = "/transactions/box-and-pallet/check-authorization";
-            self.sendData().then(function() {
-                var response = self.responseData;
-
-                if (mode == 'broken_pallet') {
-                    if (response.permission) {
-                        $('.auth').hide();
-                        $('#new_box_count').prop('readonly', false);
-                        $('#btn_set_new_box_count').prop('disabled', false);
-                    } else {
-                        $('.auth').show();
-                        $('#new_box_count').prop('readonly', true);
-                        $('#btn_set_new_box_count').prop('disabled', true);
-                    }
-                    $('#broken_pallet_id').val(pallet_id);
-                    $('#modal_broken_pallet').modal('show');
-                } else {
-                    $('.btn_remove_box').prop('disabled', false);
-                    $('.remarks_input').prop('disabled', false);
-                    $('#btn_save_box').prop('disabled', false);
-                    $('#btn_start_scan').prop('disabled', true);
-
-                    $('#save_div').show();
-                    $('#preview_div').hide();
-                }
-                
-            });
-        },
         setNewBoxCount: function() {
             var self = this;
             self.submitType = "POST";
-            self.jsonData = {
-                _token: self.token,
-                new_box_count: $('#new_box_count').val(),
-                pallet_id: $('#broken_pallet_id').val()
-            };
+            self.jsonData = $('#frm_new_box_count').serialize();
             self.formAction = "/transactions/box-and-pallet/set-new-box-count";
             self.sendData().then(function() {
                 self.$tbl_pallets.ajax.reload();
                 self.$tbl_boxes.ajax.reload();
                 $('#box_count_full').html($('#new_box_count').val());
+
+                $('.clear').val('');
+                $('#modal_broken_pallet').modal('hide');
             });
         },
         updateBoxes: function(param) {
@@ -1041,6 +1006,9 @@
             }
         });
 
+        /**
+         * Scanning of Box ID
+         */
         $('#box_qr').on('change', function() {
             var param = {
                 pallet_id: $('#pallet_id').val(),
@@ -1168,30 +1136,69 @@
                 _BoxPalletApp.msg = msg;
 
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
-                    if (approve)
-                        //_BoxPalletApp.checkAuthorization(chkArray[0],'broken_pallet');
-
+                    if (approve) {
                         if (_BoxPalletApp.authorize == 1) {
-                            $('.auth').hide();
                             $('#new_box_count').prop('readonly', false);
                             $('#btn_set_new_box_count').prop('disabled', false);
+
+                            $('#broken_pallet_id').val(data.id);
+                            $('#modal_broken_pallet').modal('show');
                         } else {
-                            $('.auth').show();
-                            $('#new_box_count').prop('readonly', true);
-                            $('#btn_set_new_box_count').prop('disabled', true);
+                            // check dialog.blade.php
+                            $('#auth_id').val(data.id);
+                            $('#authentication_type').val('broken_pallet');
+                            $('#modal_authentication').modal('show');
                         }
-                        $('#broken_pallet_id').val(data.id);
-                        $('#modal_broken_pallet').modal('show');
+                    }
                 });
             } else {
                 _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
             }
         });
 
-        $('#btn_set_new_box_count').on('click', function() {
+        $('#frm_authenticate').on('submit', function(e) {
+            e.preventDefault();
+            _BoxPalletApp.authenticate(function(response) {
+                var authentication_type = $('#authentication_type').val();
+
+                if (response.permission) {
+                    switch (authentication_type) {
+                        case 'broken_pallet':
+                            $('#modal_authentication').modal('hide');
+
+                            var auth_id = $('#auth_id').val();
+                            $('#new_box_count').prop('readonly', false);
+                            $('#btn_set_new_box_count').prop('disabled', false);
+    
+                            $('#broken_pallet_id').val(auth_id);
+                            $('#modal_broken_pallet').modal('show');
+                            break;
+                        case 'update_pallet':
+                            $('#modal_authentication').modal('hide');
+
+                            $('.btn_remove_box').prop('disabled', false);
+                            $('.remarks_input').prop('disabled', false);
+                            $('#btn_save_box').prop('disabled', false);
+                            $('#btn_start_scan').prop('disabled', true);
+
+                            $('#save_div').show();
+                            $('#preview_div').hide();
+                            break;
+                    }
+                } else {
+                    _BoxPalletApp.swMsg("Pleae provide an authorized user credential.","warning");
+                }
+            });
+        });
+
+        $('#frm_new_box_count').on('submit', function(e) {
+            e.preventDefault();
             _BoxPalletApp.setNewBoxCount();
         });
 
+        /**
+         * Update Pallet Data
+         */
         $('#btn_update').on('click', function() {
             var rowData = _BoxPalletApp.$tbl_pallets.rows( {selected: true} ).data().toArray();
             var data = rowData[0];         
@@ -1202,11 +1209,7 @@
 
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve)
-                        if (_BoxPalletApp.authorize != 1) {
-                            // $('.auth').show();
-                            // $('#new_box_count').prop('readonly', true);
-                            // $('#btn_set_new_box_count').prop('disabled', true);
-                        } else {
+                        if (_BoxPalletApp.authorize == 1) {
                             $('.btn_remove_box').prop('disabled', false);
                             $('.remarks_input').prop('disabled', false);
                             $('#btn_save_box').prop('disabled', false);
@@ -1214,16 +1217,12 @@
 
                             $('#save_div').show();
                             $('#preview_div').hide();
+                        } else {
+                            // check dialog.blade.php
+                            $('#auth_id').val(data.id);
+                            $('#authentication_type').val('update_pallet');
+                            $('#modal_authentication').modal('show');
                         }
-                        // _BoxPalletApp.checkAuthorization(chkArray[0],'update_pallet');
-
-                        // $('.btn_remove_box').prop('disabled', false);
-                        // $('.remarks_input').prop('disabled', false);
-                        // $('#btn_save_box').prop('disabled', false);
-                        // $('#btn_start_scan').prop('disabled', true);
-
-                        // $('#save_div').show();
-                        // $('#preview_div').hide();
                 });
             } else {
                 _BoxPalletApp.showWarning('Please check / select only 1 Pallet.');
@@ -1278,6 +1277,8 @@
             $('#target_no_of_pallet').val(target_no_of_pallet);
             $('#total_box_qty').val(total_box_qty);
         });
+
+        
     });
 })();
 
