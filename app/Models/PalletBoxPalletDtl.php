@@ -12,6 +12,7 @@ class PalletBoxPalletDtl extends Model
     protected $connection = 'mysql';
     
     protected $fillable = [
+        'transaction_id',
         'pallet_id',
         'model_id',
         'box_qr',

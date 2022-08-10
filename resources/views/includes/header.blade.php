@@ -14,14 +14,12 @@
         <li class="dropdown" id="notification_icon">
             <a href="#" data-toggle="dropdown" class="dropdown-toggle f-s-14">
                 <i class="fa fa-bell"></i>
-                <span class="label" id="notification_count">5</span>
+                <span class="label" id="notification_count"></span>
             </a>
             <div class="dropdown-menu media-list dropdown-menu-right">
                 <div class="dropdown-header">NOTIFICATIONS</div>
                 <div id="notification_list"></div>
-                <div class="dropdown-footer text-center">
-                    <a href="javascript:;">View more</a>
-                </div>
+                <a href="/notification" class="dropdown-item dropdown-footer">See All Notifications</a>
             </div>
         </li>
         <li class="dropdown navbar-user">

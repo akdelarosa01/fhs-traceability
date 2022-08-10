@@ -99,12 +99,15 @@ class BoxAndPalletApplicationController extends Controller
                         DB::raw("CONCAT(m.model,' | ', m.model_name) as model_name"),
                         DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
                         DB::raw("m.hs_count_per_box as hs_count_per_box"),
-                        DB::raw("COUNT(dt.box_qr) as total_scanned_box_qty"),
+                        DB::raw("dt.total_scanned_box_qty as total_scanned_box_qty"),
                         DB::raw("t.created_at as created_at")
                     ])
                     ->join('pallet_model_matrices as m','t.model_id','=','m.id')
-                    ->leftJoin('pallet_box_pallet_dtls as dt','dt.model_id','=','t.model_id')
-                    ->where('dt.is_deleted',0)
+                    ->leftJoin(DB::raw("(SELECT count(box_qr) as total_scanned_box_qty, transaction_id 
+                                        FROM pallet_box_pallet_dtls
+                                        WHERE is_deleted = 0
+                                        group by transaction_id) as dt"),'dt.transaction_id','=','t.id')
+                    // ->where('dt.is_deleted',0)
                     ->groupBy(
                         't.id',
                         't.model_id',
@@ -116,6 +119,7 @@ class BoxAndPalletApplicationController extends Controller
                         'm.model_name',
                         'm.box_count_per_pallet',
                         'm.hs_count_per_box',
+                        'dt.total_scanned_box_qty',
                         't.created_at'
                     );
 
@@ -276,9 +280,11 @@ class BoxAndPalletApplicationController extends Controller
             'msgTitle' => 'Failed!'
         ];
 
-        $rules = ['box_qr' => 'unique:pallet_box_pallet_dtls,box_qr'];
+        $rules = [
+                    'box_qr' => 'unique:pallet_box_pallet_dtls,box_qr|exists:tboxqr,qrBarcode'
+                ];
         $customMessages = [
-            'unique' => 'This Box ID was already scanned.'
+            'unique' => 'This Box ID was already scanned.',
         ];
 
         $this->validate($req, $rules, $customMessages);
@@ -286,6 +292,7 @@ class BoxAndPalletApplicationController extends Controller
         try {
             $dtl = new PalletBoxPalletDtl();
 
+            $dtl->transaction_id = $req->trans_id;
             $dtl->pallet_id = $req->pallet_id;
             $dtl->model_id = $req->selected_model_id;
             $dtl->box_qr = $req->box_qr;
@@ -293,11 +300,17 @@ class BoxAndPalletApplicationController extends Controller
             $dtl->update_user = Auth::user()->id;
 
             if ($dtl->save()) {
-                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+                $count = DB::table('pallet_box_pallet_hdrs as h')
+                            ->join('pallet_box_pallet_dtls as d','d.pallet_id','=','h.id')
+                            ->select('d.id')
+                            ->where('h.transaction_id', $req->trans_id)
+                            ->where('is_deleted',0)
+                            ->count();
 
                 $data = [
                     'data' => [
-                        'count' => $count
+                        'count' => $count,
+                        'box_data' => $dtl
                     ],
                     'success' => true
                 ];
@@ -636,50 +649,6 @@ class BoxAndPalletApplicationController extends Controller
         return response()->json($data);
     }
 
-    public function check_authorization()
-    {
-        $data = [
-			'msg' => 'Checking Authorization was failed.',
-            'data' => [],
-			'success' => true,
-            'msgType' => 'warning',
-            'msgTitle' => 'Failed!'
-        ];
-
-        try {
-            $user_id = Auth::user()->id;
-            $page_access = new PalletPageAccess();
-            $permission = $page_access->check_permission($user_id, 'BoxAndPalletApplication');
-
-            if ($permission > 0) {
-                $data = [
-                    'data' => [
-                        'permission' => true
-                    ],
-                    'success' => true,
-                ];
-            } else {
-                $data = [
-                    'data' => [
-                        'permission' => false
-                    ],
-                    'success' => true,
-                ];
-            }
-
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'success' => true,
-                'msgType' => 'warning',
-                'msgTitle' => 'Failed!'
-            ];
-        }
-
-        return response()->json($data);
-    }
-
     public function set_new_box_count(Request $req)
     {
         $data = [
@@ -691,8 +660,8 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            $pallet_id = $req->pallet_id;
-            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet_id = $req->broken_pallet_id;
+            $pallet = PalletBoxPalletHdr::find($pallet_id);
             $pallet->new_box_count = $req->new_box_count;
             $pallet->update_user = Auth::user()->id;
 

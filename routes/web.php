@@ -102,6 +102,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
         Route::post('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
         Route::post('/check-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_hs_serial'])->name('transactions.qa-inspection.check-hs-serial');
+        Route::get('/get-lot-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_lot_no'])->name('transactions.qa-inspection.get-lot-no');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {
@@ -115,3 +116,5 @@ Route::group(['prefix' => 'notifications'], function () {
     Route::get('/show', [App\Common\Helpers::class, 'show_notification'])->name('notifications.show');
     Route::post('/read', [App\Common\Helpers::class, 'read_notification'])->name('notifications.read');
 });
+
+Route::post('/authenticate', [App\Common\Helpers::class, 'authenticate'])->name('authenticate');

@@ -4413,6 +4413,16 @@ B. Synopsis: Class Module used to process data
             var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
             return num.toString().match(re)[0];
         },
+        authenticate: function(handle) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = $('#frm_authenticate').serialize();
+            self.formAction = $('#frm_authenticate').attr('action');
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
+        }
     }
     DataClass.init.prototype = $.extend(DataClass.prototype, $M.init.prototype);
 
@@ -4504,11 +4514,18 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                       
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.id);
+                        console.log( dataRow.attr('id'));
+                        // var btn = $(dataRow[0].cells[0]);
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
                         var data = this.fnGetData();
@@ -5086,6 +5103,7 @@ B. Synopsis: Notification Script
                 $('#read_and_write_'+page_id).prop('checked',false);
                 $('#delete_'+page_id).prop('checked',false);
 
+                $('#read_only_'+page_id).prop('disabled', false);
                 $('#authorize_'+page_id).prop('disabled', true);
                 $('#read_and_write_'+page_id).prop('disabled', true);
                 $('#delete_'+page_id).prop('disabled', true);

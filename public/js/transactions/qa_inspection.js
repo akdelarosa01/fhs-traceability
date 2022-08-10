@@ -4413,6 +4413,16 @@ B. Synopsis: Class Module used to process data
             var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
             return num.toString().match(re)[0];
         },
+        authenticate: function(handle) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = $('#frm_authenticate').serialize();
+            self.formAction = $('#frm_authenticate').attr('action');
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
+        }
     }
     DataClass.init.prototype = $.extend(DataClass.prototype, $M.init.prototype);
 
@@ -4504,11 +4514,18 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                       
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.id);
+                        console.log( dataRow.attr('id'));
+                        // var btn = $(dataRow[0].cells[0]);
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
                         var data = this.fnGetData();
@@ -4774,11 +4791,15 @@ B. Synopsis: Notification Script
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
-                       
+                       console.log(row);
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_pallets").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -4885,7 +4906,11 @@ B. Synopsis: Notification Script
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
-                        $('.dataTables_scrollBody').css('height','400px');
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
                         // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
@@ -4963,6 +4988,16 @@ B. Synopsis: Notification Script
                     console.log("false");
                 }
             });
+        },
+        getLotNo: function(param, handle) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/get-lot-no";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
         }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
@@ -4971,22 +5006,48 @@ B. Synopsis: Notification Script
 		var _QAInspection = QAInspection();
         _QAInspection.permission();
         _QAInspection.RunDateTime();
-        _QAInspection.drawOBADatatables();
+        // _QAInspection.drawOBADatatables();
         _QAInspection.drawBoxesDatatables();
         
         $('#tbl_obas').DataTable().on('select', function ( e, dt, type, indexes ) {
             var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
             var data = rowData[0];
-            // console.log(data);
+            
             $('#pallet_id').val(data.id);
             $('#box_tested_full').html(data.new_box_count);
             $('#box_count_to_inspect').val(data.box_count_to_inspect);
+
+            var row = "";
+
+            _QAInspection.getLotNo({
+                _token: _QAInspection.token,
+                pallet_id: data.id
+            }, function(response) {
+                row += '<tr id="r'+data.id+'_child_tr">'+
+                            '<td></td>'+
+                            '<td colspan="3" id="r'+data.id+'_child_td"></td>'+
+                        '</tr>';
+
+                $("#r"+data.id).after(row);
+                var table = '<table class="table table-sm" style="width:100%;">';
+                $.each(response, function(i,x) {
+                    table += '<tr><td>'+x.lot_no+'</td></tr>';
+                });
+                table += '</table>';
+                
+                $('#r'+data.id+'_child_td').html(table);
+            });
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
 
         })
         .on('deselect', function ( e, dt, type, indexes ) {
+            var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
+            var data = rowData[0];
+
+            $('#r'+data.id+'_child_tr').remove();
+
             $('#pallet_id').val('');
             $('#box_tested_full').html(0);
             $('#box_count_to_inspect').val('');

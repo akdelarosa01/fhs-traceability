@@ -329,48 +329,15 @@ Box and Pallet Application
 	<div class="modal-dialog ">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="modal_form_title"></h4>
+				<h4 class="modal-title">Broken Pallet new Quantity</h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="row auth">
-					<div class="col-12">
-						<div class="input-group input-group-sm mb-2">
-							<div class="input-group-prepend">
-								<span class="input-group-text">User Name</span>
-							</div>
-							<input type="text" class="form-control form-control-sm clear" id="username" name="username" placeholder="User Name" autocomplete="off">
-							<div id="username_feedback"></div>
-						</div>
-					</div>
-				</div>
 
-				<div class="row auth">
-					<div class="col-12">
-						<div class="input-group input-group-sm mb-2">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Password</span>
-							</div>
-							<input type="password" class="form-control form-control-sm clear" id="password" name="password" placeholder="Password" autocomplete="off">
-							<div id="password_feedback"></div>
-						</div>
-					</div>
-				</div>
-
-				<div class="row auth">
-					<div class="offset-sm-8 col-sm-4 col-xs-12">
-						<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_auth">
-							<i class="fa fa-unlock"></i> Authenticate
-						</button>
-					</div>
-				</div>
-
-				<hr class="auth"/>
-
-				{{-- <form action="/transactions/box-and-pallet/set-new-box-count" id="frm_new_box_count">
-					@csrf --}}
+				<form action="/transactions/box-and-pallet/set-new-box-count" id="frm_new_box_count">
+					@csrf
 					<div class="row">
 						<div class="col-12">
 							<div class="input-group input-group-sm mb-2">
@@ -378,7 +345,7 @@ Box and Pallet Application
 									<span class="input-group-text">New Box Count</span>
 								</div>
 								<input type="hidden" class="form-control form-control-sm clear" id="broken_pallet_id" name="broken_pallet_id">
-								<input type="number" class="form-control form-control-sm clear" id="new_box_count" name="new_box_count" placeholder="New Box Count" autocomplete="off">
+								<input type="number" class="form-control form-control-sm clear" id="new_box_count" name="new_box_count" placeholder="New Box Count" autocomplete="off" required>
 								<div id="new_box_count_feedback"></div>
 							</div>
 						</div>
@@ -386,12 +353,12 @@ Box and Pallet Application
 	
 					<div class="row">
 						<div class="offset-sm-7 col-sm-5 col-xs-12">
-							<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_set_new_box_count">
+							<button type="submit" class="btn btn-sm btn-primary btn-block" id="btn_set_new_box_count">
 								<i class="fa fa-edit"></i> Set new box count
 							</button>
 						</div>
 					</div>
-				{{-- </form> --}}
+				</form>
 
 			</div>
 		</div>
