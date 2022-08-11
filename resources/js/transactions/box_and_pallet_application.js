@@ -355,7 +355,7 @@
                         { 
                             data: function(data) {
                                 return '';
-                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '15px'
                         },
                         {
                             data: function(data) {
