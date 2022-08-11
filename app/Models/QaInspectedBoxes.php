@@ -19,6 +19,6 @@ class QaInspectedBoxes extends Model
         'remarks',
         'inspector',
         'create_user',
-        'updated_user'
+        'update_user'
     ];
 }

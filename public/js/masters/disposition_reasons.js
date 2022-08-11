@@ -4450,13 +4450,12 @@ B. Synopsis: Real Time Script
             var self = this;
 			if (!$.fn.DataTable.isDataTable('#tbl_obas')) {
 				self.$tbl_obas = $('#tbl_obas').DataTable({
-					scrollY: "400px",
+					scrollY: "43vh",
                     processing: true,
                     searching: false, 
                     paging: false, 
                     info: false,
                     sorting: false,
-                    StateSave: true,
                     select: {
                         style: 'os',
                         selector: 'td:not(:first-child)'
@@ -4501,15 +4500,34 @@ B. Synopsis: Real Time Script
 								        '<small>'+data.updated_at+'</small>';
                             }, name: 'pallet_qr', searchable: false, orderable: false 
                         },
-                        { data: function(data) {
-                                return '<p class="btn-success py-2 my-0">'+data.pallet_location+'</p>';
-                            }, name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
+                        {
+                            data: function(data) {
+                                switch (data.pallet_status) {
+                                    case 1:
+                                        return 'FOR OBA';
+                                        break;
+                                    case 2:
+                                        return 'GOOD';
+                                        break;
+                                    case 3:
+                                        return 'REWORK';
+                                        break;
+                                    case 4:
+                                        return 'HOLD PALLET';
+                                        break;
+                                    case 5:
+                                        return 'HOLD LOT';
+                                        break;
+                                
+                                    default:
+                                        return 'ON PROGRESS'
+                                        break;
+                                }
+                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
                         },
-						{ data: function(data) {
-                                return '<span></span>';
-                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center align-middle'  
+                        { 
+                            data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
                         }
-						
 					],
                     rowCallback: function(row, data) {
                     },
@@ -4517,7 +4535,35 @@ B. Synopsis: Real Time Script
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
                         console.log( dataRow.attr('id'));
-                        // var btn = $(dataRow[0].cells[0]);
+
+                        var checkbox = $(dataRow[0].cells[0].firstChild);
+
+                        switch (data.pallet_status) {
+                            case 1:
+                                $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 2:
+                                $(dataRow[0].cells[2]).css('background-color', '#36AE7C');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 3:
+                                $(dataRow[0].cells[2]).css('background-color', '#47B5FF');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 4:
+                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 5:
+                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            default:
+                                $(dataRow[0].cells[2]).css('background-color', '#FFDCAE');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                        }
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
