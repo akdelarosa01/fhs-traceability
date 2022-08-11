@@ -23,7 +23,7 @@ class CreateQaInspectedBoxesTable extends Migration
             $table->text('remarks')->nullable();
             $table->string('inspector')->nullable()->length(100);
             $table->integer('create_user')->default(0);
-            $table->integer('updated_user')->default(0);
+            $table->integer('update_user')->default(0);
             $table->timestamps();
         });
     }

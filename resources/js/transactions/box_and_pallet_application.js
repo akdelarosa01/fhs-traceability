@@ -314,7 +314,7 @@
                         targets:   0
                     } ],
                     select: {
-                        style:    'single',
+                        style: 'single',
                     },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-pallets",
@@ -355,7 +355,7 @@
                         { 
                             data: function(data) {
                                 return '';
-                            }, name: 'id', searchable: false, orderable: false, width: '10px'
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
                         },
                         {
                             data: function(data) {

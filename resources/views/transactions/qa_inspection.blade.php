@@ -1,7 +1,7 @@
 @push('styles')
 	<link href="{{ asset('css/transactions/qa_inspection.css') }}" rel="stylesheet">
 	<style>
-		.check_box {
+		.check_box, .check_pallet {
 			width: 20px;
 			height: 20px;
 		}
@@ -55,7 +55,9 @@ Q.A. Inspection
 							</div>
 							<input type="hidden" class="clear" id="box_qr" name="box_qr"/>
 							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
-							<input type="text" class="form-control form-control-sm clear" id="inspector" name="inspector" placeholder="" value="Inspector" autocomplete="off">
+							<input type="hidden" class="clear" id="box_id" name="box_id"/>
+							<input type="text" class="form-control form-control-sm clear" id="inspector" name="inspector" placeholder="" value="{{Auth::user()->firstname
+							.' '.Auth::user()->lastname}}" autocomplete="off">
 							<div id="inspector_feedback"></div>
 						</div>
 					</div>
@@ -89,30 +91,26 @@ Q.A. Inspection
 			<div class="col-4">
 				<div class="row">
 					<div class="col-12">
-						<textarea name="inspqection_sheet_qr" class="form-control form-control-sm clear" id="inspqection_sheet_qr" rows="8" placeholder="Scan Inspection Sheet QR here..." style="resize:none;" readonly></textarea>
+						<textarea name="inspqection_sheet_qr" class="form-control form-control-lg clear" id="inspqection_sheet_qr" rows="5" placeholder="Scan Inspection Sheet QR here..." style="resize:none;" readonly></textarea>
 					</div>
 				</div>
 			</div>
-			<div class="col-4 align-self-end">
-				<div class="row">
+			
+			<div class="col-4">
+				<div class="row mb-3">
 					<div class="col-12">
-						<div class="input-group input-group-sm mb-2">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Scan Serial Here:</span>
-							</div>
-							<input type="text" class="form-control form-control-sm clear read-only" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
-							<div id="scan_serial_feedback"></div>
-						</div>
+						<input type="text" class="form-control form-control-lg clear read-only" id="scan_serial" name="scan_serial" placeholder="Scan Serial number here..." autocomplete="off" readonly>
+						<div id="scan_serial_feedback"></div>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-green align-middle read-only" id="btn_good" >
+						<button type="button" class="btn btn-lg btn-block btn-green align-middle read-only" id="btn_good" >
 							<i class="fa fa-thumbs-up"></i> Good
 						</button>
 					</div>
 					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
+						<button type="button" class="btn btn-lg btn-block btn-red read-only" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
 							<i class="fa fa-thumbs-down"></i> NG
 						</button>
 					</div>
@@ -122,15 +120,15 @@ Q.A. Inspection
 		</div>
 		
 		<div class="row">
-			<div class="col-5">
+			<div class="col-4">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_obas" style="width: 100%;">
 							<thead>
 								<th style="width: 10px;"></th>
 								<th>Pallet for OBA: <span id="oba_count">0</span></th>
-								<th>On Track</th>
 								<th>Status</th>
+								<th>On Track</th>
 							</thead>
 						</table>
 					</div>
@@ -162,7 +160,7 @@ Q.A. Inspection
 					</div>
 				</div>
 			</div>
-			<div class="col-2">
+			<div class="col-3">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_affected_serials" style="width: 100%">
