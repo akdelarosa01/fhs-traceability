@@ -3164,9 +3164,14 @@ B. Synopsis: Real Time Script
                     paging: false, 
                     info: false,
                     sorting: false,
+                    columnDefs: [ {
+                        orderable: false,
+                        searchable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    } ],
                     select: {
-                        style: 'os',
-                        selector: 'td:not(:first-child)'
+                        style: 'single',
                     },
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
@@ -3198,9 +3203,9 @@ B. Synopsis: Real Time Script
                     deferRender: true,
 					columns: [
                         { 
-                            data: function(data) {
-                                return '<input type="checkbox" id="checkbox" class="check_box" value="'+data.id+'"/>';
-                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '10px', className: 'text-center align-middle' 
+                            data: 'data', render: function(data) {
+                                return '';
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '15px'
                         },
                         {
                             data: function(data) {

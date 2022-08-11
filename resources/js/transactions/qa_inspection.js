@@ -91,20 +91,15 @@
                     },
                     deferRender: true,
                     columns: [
-                        // { 
-                        //     data: function(data) {
-                        //         return '<input type="checkbox" id="checker" class="check_box" value="'+data.id+'"/>';
-                        //     }, name: 'id', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
-                        // },
                         { 
-                            data: function(data) {
+                            data: 'id', render: function() {
                                 return '';
-                            }, name: 'id', searchable: false, orderable: false, width: '10px', className: 'text-center align-middle' 
+                            }, name: 'id', searchable: false, orderable: false, width: '15px'
                         },
                         { 
                             data: function(data) {
                                 return '<h5 class="font-weight-normal m-0">'+data.box_qr+'</h5>';
-                            }, name: 'box_qr', searchable: false, orderable: false, width: '250px',  className: 'text-center align-middle' 
+                            }, name: 'box_qr', searchable: false, orderable: false, width: '250px'
                         },
                         { 
                             data: function(data) {
@@ -153,9 +148,6 @@
                         } else {
 
                         }
-                        
-    
-                       
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -350,6 +342,10 @@
             $('#box_id').val('');
             $('#box_qr').val('');
             $('#box_count').html(0);
+
+            $('#btn_transfer').prop('disabled', false);
+            $('#btn_disposition').prop('disabled', false);
+            $('#inspqection_sheet_qr').prop('readonly', true);
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
@@ -372,22 +368,25 @@
             $('#box_count').html(0);
             _QAInspection.$tbl_boxes.ajax.reload();
             $('#box_tested').html(0);
-        });
 
-        $('#tbl_obas tbody').on('change', '.check_box', function() {
-            var checked = $(this).is(':checked');
-            $('.check_box').not(this).prop('checked', false);
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
-            if (checked) {
-                $('#btn_transfer').prop('disabled', false);
-                $('#btn_disposition').prop('disabled', false);
-                $('#inspqection_sheet_qr').prop('readonly', true);
-            } else {
-                $('#btn_transfer').prop('disabled', true);
-                $('#btn_disposition').prop('disabled', true);
-            }
         });
+
+        // $('#tbl_obas tbody').on('change', '.check_box', function() {
+        //     var checked = $(this).is(':checked');
+        //     $('.check_box').not(this).prop('checked', false);
+        //     $('#btn_transfer').prop('disabled', true);
+        //     $('#btn_disposition').prop('disabled', true);
+        //     if (checked) {
+        //         $('#btn_transfer').prop('disabled', false);
+        //         $('#btn_disposition').prop('disabled', false);
+        //         $('#inspqection_sheet_qr').prop('readonly', true);
+        //     } else {
+        //         $('#btn_transfer').prop('disabled', true);
+        //         $('#btn_disposition').prop('disabled', true);
+        //     }
+        // });
 
         _QAInspection.$tbl_boxes.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
@@ -397,9 +396,18 @@
             $('#box_qr').val(data.box_qr);
             $('#box_id').val(data.id);
 
+            $('#inspqection_sheet_qr').prop('readonly', false);
+            $('#btn_transfer').prop('disabled', true);
+            $('#btn_disposition').prop('disabled', true);
+
+            if (data.box_qr_judgement < 0) {
+                $('#inspqection_sheet_qr').focus();
+            } else {
+                $('#scan_serial').focus();
+            }
+
             $('#btn_good').prop('disabled', false);
             $('#btn_notgood').prop('disabled', false);
-
             $('#scan_serial').prop('readonly', false);
 
             _QAInspection.statusMsg('','clear');
@@ -411,9 +419,13 @@
 
             $('#box_count').html(0);
 
+            $('#inspqection_sheet_qr').prop('readonly', true);
+            $('#inspqection_sheet_qr').focus();
+            $('#btn_transfer').prop('disabled', false);
+            $('#btn_disposition').prop('disabled', false);
+
             $('#btn_good').prop('disabled', true);
             $('#btn_notgood').prop('disabled', true);
-
             $('#scan_serial').prop('readonly', true);
         });
         
