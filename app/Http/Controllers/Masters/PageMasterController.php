@@ -99,6 +99,7 @@ class PageMasterController extends Controller
                 $page->url = $req->url;
                 $page->has_sub = (isset($req->has_sub))? 1: 0;
                 $page->parent_menu = $req->parent_menu;
+                $page->parent_name = $req->parent_name;
                 $page->parent_order = $req->parent_order;
                 $page->order = $req->order;
                 $page->icon = $req->icon;
@@ -120,7 +121,7 @@ class PageMasterController extends Controller
                     'msg' => $th->getMessage(),
                     'data' => [],
                     'inputs' => $inputs,
-                    'success' => true,
+                    'success' => false,
                     'msgType' => 'error',
                     'msgTitle' => 'Error!'
                 ];
@@ -145,6 +146,7 @@ class PageMasterController extends Controller
                 $page->url = $req->url;
                 $page->has_sub = (isset($req->has_sub))? 1: 0;
                 $page->parent_menu = $req->parent_menu;
+                $page->parent_name = $req->parent_name;
                 $page->parent_order = $req->parent_order;
                 $page->order = $req->order;
                 $page->icon = $req->icon;
@@ -167,7 +169,7 @@ class PageMasterController extends Controller
                     'msg' => $th->getMessage(),
                     'data' => [],
                     'inputs' => $inputs,
-                    'success' => true,
+                    'success' => false,
                     'msgType' => 'error',
                     'msgTitle' => 'Error!'
                 ];

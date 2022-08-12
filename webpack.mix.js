@@ -143,6 +143,15 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/masters/box_pallet_model_matrix.css")
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/masters/box_ng_reasons.js"
+    ], "public/js/masters/box_ng_reasons.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/masters/box_ng_reasons.css")
 
     .scripts([
         "public/js/theme.js",
