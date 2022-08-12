@@ -68,6 +68,13 @@ Route::group(['prefix' => 'masters'], function () {
         Route::post('/save-model', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'save_model'])->name('masters.model-matrix.save');
         Route::post('/delete-model', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'delete_model'])->name('masters.model-matrix.delete');
     });
+
+    Route::group(['prefix' => 'box-ng-reasons'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'index'])->name('masters.box-ng-reasons');
+        Route::get('/list', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'reason_list'])->name('masters.box-ng-reasons.list');
+        Route::post('/save-reason', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'save_reason'])->name('masters.box-ng-reasons.save');
+        Route::post('/delete-reason', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'delete_reason'])->name('masters.box-ng-reasons.delete');
+    });
 });
 
 Route::group(['prefix' => 'reports'], function () {

@@ -159,7 +159,7 @@
                 data: data
             }).done(function(response, textStatus, xhr) {
                 if (textStatus) {
-                    switch (response.status) {
+                    switch (response.msgType) {
                         case "failed":
                             _Pages.showWarning(response.msg);
                             break;

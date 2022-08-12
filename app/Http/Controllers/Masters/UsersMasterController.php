@@ -238,15 +238,16 @@ class UsersMasterController extends Controller
                                         p.page_label,
                                         p.parent_name,
                                         p.has_sub,
-                                        pp.`read_only` as `read_only`,
-                                        pp.read_and_write as read_and_write,
-                                        pp.`delete` as `delete`,
-                                        pp.authorize as authorize
+                                        IFNULL(pp.`read_only`,0) as `read_only`,
+                                        IFNULL(pp.read_and_write,0) as read_and_write,
+                                        IFNULL(pp.`delete`,0) as `delete`,
+                                        IFNULL(pp.authorize,0) as authorize
                                     FROM pallet_pages as p
                                     left join pallet_page_accesses as pp
                                     on p.id = pp.page_id
                                     where p.is_deleted = 0
-                                    and pp.user_id = ".$req->user_id);
+                                    and pp.user_id = ".$req->user_id."
+                                    or pp.read_and_write is null");
             } else {
                 $query = PalletPage::select([
                     'id', 'page_label', 'parent_name','has_sub',

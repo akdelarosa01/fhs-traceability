@@ -122,6 +122,21 @@ class PageSeeder extends Seeder
         	'update_user' => 1
         ]);
 
+        PalletPage::create([
+        	'page_name' => 'BoxNGReasonMaster',
+        	'page_label' => 'Box NG Reasons',
+        	'url' => '/masters/box-ng-reasons',
+        	'has_sub' => 0,
+            'parent_menu' => 'MasterMaintenance',
+            'parent_name' => 'MasterMaintenance',
+            'parent_order' => 0,
+            'order' => 7,
+            'icon' => 'fa fa-comments',
+            'is_deleted' => 0,
+        	'create_user' => 1,
+        	'update_user' => 1
+        ]);
+
         /**
          * Transaction Pages
          */
