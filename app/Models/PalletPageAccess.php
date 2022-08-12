@@ -29,8 +29,7 @@ class PalletPageAccess extends Model
         $pages = DB::connection('mysql')->table('pallet_page_accesses as pa')
                     ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
                     ->where('pa.user_id', $user_id)
-                    ->where('pa.read_and_write',1)
-                    ->orWhere('pa.read_only',1)
+                    ->whereRaw("(pa.read_and_write = 1 or pa.read_only = 1)")
                     ->select(
                         'p.*',
                         'pa.status',
