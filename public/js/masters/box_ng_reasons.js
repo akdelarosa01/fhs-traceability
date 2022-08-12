@@ -4851,7 +4851,16 @@ B. Synopsis: Notification Script
                 $('#'+x).val('');
                 self.hideInputErrors(x);
             });
-        }
+        },
+        delete_reasons: function(IDs) {
+            var self = this;
+            self.formAction = '/masters/box-ng-reasons/delete-reason';
+            self.jsonData = { _token: self.token, ids: IDs };
+            self.sendData().then(function() {
+                self.$tbl_reasons.ajax.reload(null, false);
+            });
+            return this;
+        },
     }
     BoxNGReason.init.prototype = $.extend(BoxNGReason.prototype, $D.init.prototype);
     BoxNGReason.init.prototype = BoxNGReason.prototype;
@@ -4910,6 +4919,30 @@ B. Synopsis: Notification Script
 
             $('#id').val(data.id);
             $('#reason').val(data.reason);
+        });
+
+        $('#btn_delete_reasons').on('click', function() {
+            var chkArray = [];
+            var table = _BoxNGReason.$tbl_reasons;
+
+            for (var x = 0; x < table.context[0].aoData.length; x++) {
+                var DataRow = table.context[0].aoData[x];
+                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
+                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
+                }
+            }
+
+            if (chkArray.length > 0) {
+                _BoxNGReason.msg = "Are you sure you want to delete this reason/s?";
+                _BoxNGReason.confirmAction(_BoxNGReason.msg).then(function(approve) {
+                    if (approve)
+                        _BoxNGReason.delete_reasons(chkArray);
+
+                    $('.check_all_reasons').prop('checked', false);
+                });
+            } else {
+                _BoxNGReason.showWarning('Please select at least 1 reason.');
+            }
         });
     });
 })();
