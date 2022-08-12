@@ -4845,6 +4845,13 @@ B. Synopsis: Notification Script
             }
             return this;
         },
+        clearForm: function(inputs) {
+            var self = this;
+            $.each(inputs, function(i,x) {
+                $('#'+x).val('');
+                self.hideInputErrors(x);
+            });
+        }
     }
     BoxNGReason.init.prototype = $.extend(BoxNGReason.prototype, $D.init.prototype);
     BoxNGReason.init.prototype = BoxNGReason.prototype;
@@ -4853,6 +4860,57 @@ B. Synopsis: Notification Script
         var _BoxNGReason = BoxNGReason();
         _BoxNGReason.permission();
         _BoxNGReason.drawDatatables();
+
+        $('#frm_reasons').on('submit', function(e) {
+            e.preventDefault();
+            $('#loading_modal').modal('show');
+                
+            var data = $(this).serializeArray();
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                dataType: 'JSON',
+                data: data
+            }).done(function(response, textStatus, xhr) {
+                if (textStatus) {
+                    switch (response.msgType) {
+                        case "failed":
+                            _BoxNGReason.showWarning(response.msg);
+                            break;
+                        case "error":
+                            _BoxNGReason.ErrorMsg(response.msg);
+                            break;
+                        default:
+                            _BoxNGReason.clearForm(response.inputs);
+                            _BoxNGReason.$tbl_reasons.ajax.reload();
+                            _BoxNGReason.showSuccess(response.msg);
+                            break;
+                    }
+                    _BoxNGReason.id = 0;
+                }
+            }).fail(function(xhr, textStatus, errorThrown) {
+                var errors = xhr.responseJSON.errors;
+                _BoxNGReason.showInputErrors(errors);
+
+                if (errorThrown == "Internal Server Error") {
+                    _BoxNGReason.ErrorMsg(xhr);
+                }
+            }).always(function() {
+                $('#loading_modal').modal('hide');
+            });
+        });
+
+        $('#tbl_reasons').on('click', '.btn_edit_reason', function() {
+            var inputs = $('.clear').map(function() {
+                return this.name;
+            });
+            _Reason.clearForm(inputs);
+
+            var data = $('#tbl_reasons').DataTable().row($(this).parents('tr')).data();
+
+            $('#id').val(data.id);
+            $('#reason').val(data.reason);
+        });
     });
 })();
 
