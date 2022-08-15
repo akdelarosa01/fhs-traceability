@@ -22,6 +22,11 @@
 			border: none;
 			border-radius: 0px;
 		}
+		.tooltip-inner {
+			width: 200px;
+			height: 50px; 
+			padding:4px;
+		}
 	</style>
 @endpush
 
@@ -56,6 +61,8 @@ Q.A. Inspection
 							<input type="hidden" class="clear" id="box_qr" name="box_qr"/>
 							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
 							<input type="hidden" class="clear" id="box_id" name="box_id"/>
+							<input type="hidden" class="clear" id="inspection_sheet_count" name="inspection_sheet_count" value="0">
+							<input type="hidden" class="clear" id="hs_count_per_box" name="hs_count_per_box" value="0">
 							<input type="text" class="form-control form-control-sm clear" id="inspector" name="inspector" placeholder="" value="{{Auth::user()->firstname
 							.' '.Auth::user()->lastname}}" autocomplete="off">
 							<div id="inspector_feedback"></div>
@@ -187,40 +194,32 @@ Q.A. Inspection
 		
 	</div>
 </div>
-
-
   
-<div class="modal fade" id="modal_not_good" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered ">
+<div class="modal fade" id="modal_box_ng_reason" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header border-0">
-				<h4 class="modal-title" id="modal_form_title"></h4>
+				<h4 class="modal-title"></h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
-				<h3 class="text-center" id="prv_label_title">Box No Good Reason</h3>
+				<h3 class="text-center">Box No Good Reason</h3>
 				<div class="row">
-					
 					<div class="col-md-12">
-						<div class="form-group row justify-content-center pt-2">
-							<select class="form-control col-sm-8" id="gender" >
-								<option class="fw-normal fs-3" selected hidden>Please Select Reason Here</option>
-								<option class="fw-light fs-3">Reason 1</option>
-								<option class="fw-light fs-3">Reason 2</option>
-								<option class="fw-light fs-3">Reason 3</option>
-								<option class="fw-light fs-3">Reason 4</option>
-								<option >Reason 5</option>
-							</select>
+						<div class="form-group">
+							<input type="hidden" name="box_ng_id" id="box_ng_id" />
+							<input type="hidden" name="box_ng_qa_id" id="box_ng_qa_id" />
+							<input type="hidden" name="box_row_index" id="box_row_index" />
+							<select class="form-control form-control-sm" id="box_ng_reason" name="box_ng_reason"></select>
 						</div>
-						
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer justify-content-center border-0">
-				<button type="button" class="btn btn-primary" id="btn_save">
-					<i class="fa fa-arrow-down-to-arc"></i>Save
+				<button type="button" class="btn btn-primary" id="btn_save_box_ng_reason">
+					<i class="fa fa-save"></i> Save
 				</button>
 			</div>
 		</div>
@@ -237,7 +236,7 @@ Q.A. Inspection
 				</button>
 			</div>
 			<div class="modal-body">
-				<h3 class="text-center" id="prv_label_title">Pallet Disposition</h3>
+				<h3 class="text-center">Pallet Disposition</h3>
 				<div class="row">
 					
 					<div class="col-md-12">

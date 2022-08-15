@@ -5,17 +5,11 @@ namespace App\Http\Controllers\Transactions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
-use App\Models\PalletBoxPalletDtl;
-use App\Models\PalletBoxPalletHdr;
-use App\Models\PalletModelMatrix;
-use App\Models\PalletPageAccess;
-use App\Models\PalletPrintPalletLabel;
-use App\Models\PalletTransaction;
+use App\Models\PalletBoxNgReason;
 use App\Models\QaAffectedSerial;
 use App\Models\QaInspectedBoxes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class QAInspectionController extends Controller
@@ -56,7 +50,8 @@ class QAInspectionController extends Controller
                 DB::raw("p.is_printed as is_printed"),
                 DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
                 DB::raw("p.created_at as created_at"),
-                DB::raw("p.updated_at as updated_at")
+                DB::raw("p.updated_at as updated_at"),
+                DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
             ])
             ->join('pallet_model_matrices as m','p.model_id','=','m.id')
             ->where([
@@ -89,19 +84,23 @@ class QAInspectionController extends Controller
                         'pb.id',
                         'pb.pallet_id',
                         'pb.model_id',
+                        'qa.id as qa_id',
                         'pb.box_qr',
-                        'pb.remarks',
-                        DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement")
+                        DB::raw("ng.reason as remarks"),
+                        DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
+                        DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
+                        'm.hs_count_per_box'
                     )
                     ->leftJoin('qa_inspected_boxes as qa', function($join) {
                             $join->on('qa.pallet_id','=','pb.pallet_id');
                             $join->on('pb.id','=','qa.box_id');
                         }
                     )
+                    ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                    ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
                     ->where('pb.pallet_id', $pallet_id)
                     ->where('pb.is_deleted', 0)
-                    ->orderBy('pb.box_qr', 'desc')
-                    ->distinct();
+                    ->orderBy('pb.box_qr', 'desc');
                     
         return $query;
 
@@ -151,7 +150,7 @@ class QAInspectionController extends Controller
                 $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
 
                 if (!in_array($hs, $arr_db_serials)) {
-                    if ($hs != "" && !is_null($hs)) {
+                    if ($hs != "" && !is_null($hs) && $hs == 'Enter') {
                         $matched = 0;
                         break;
                     }                    
@@ -289,5 +288,208 @@ class QAInspectionController extends Controller
                 ]);
                     
         return $query;
+    }
+
+    public function get_box_ng_remarks(Request $req)
+	{
+        $results = [];
+        $val = (!isset($req->q))? "" : $req->q;
+        $display = (!isset($req->display))? "" : $req->display;
+        $addOptionVal = (!isset($req->addOptionVal))? "" : $req->addOptionVal;
+        $addOptionText = (!isset($req->addOptionText))? "" : $req->addOptionText;
+        $sql_query = (!isset($req->sql_query))? "" : $req->sql_query;
+        $where = "";
+
+        try {
+            if ($addOptionVal != "" && $display == "id&text") {
+                array_push($results, [
+                    'id' => $addOptionVal,
+                    'text' => $addOptionText
+                ]);
+            }
+
+            if ($sql_query == null || $sql_query == "") {
+                $results = PalletBoxNgReason::select('id as id','reason as text')->where('is_deleted',0);
+
+                if ($val !== "") {
+                    $results->where('reason','like',"%" . $val . "%");
+                }
+            }
+            
+            $results = $results->get();
+
+        } catch(\Throwable $th) {
+            return [
+                'success' => false,
+                'msessage' => $th->getMessage()
+            ];
+        }
+        
+        return $results;
+	}
+
+    public function box_judgment(Request $req)
+    {
+        $data = [
+			'msg' => 'Judging box has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $insp = QaInspectedBoxes::find($req->qa_id);
+            $insp->box_judgement = (int)$req->judgment;
+            $insp->update_user = Auth::user()->id;
+            if ($insp->update()) {
+                $box_data = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
+                                ->select(
+                                    'pb.id',
+                                    'pb.pallet_id',
+                                    'pb.model_id',
+                                    'qa.id as qa_id',
+                                    'pb.box_qr',
+                                    DB::raw("ng.reason as remarks"),
+                                    DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
+                                    DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
+                                    'm.hs_count_per_box'
+                                )
+                                ->leftJoin('qa_inspected_boxes as qa', function($join) {
+                                        $join->on('qa.pallet_id','=','pb.pallet_id');
+                                        $join->on('pb.id','=','qa.box_id');
+                                    }
+                                )
+                                ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                                ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
+                                ->where('qa.id', $req->qa_id)
+                                ->where('pb.is_deleted', 0)
+                                ->orderBy('pb.box_qr', 'desc')->first();
+                $data = [
+                    'msg' => 'Box was successfully judged.',
+                    'data' => $box_data,
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function set_box_ng_remarks(Request $req)
+    {
+        $data = [
+			'msg' => 'Setting Box NG reason has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $insp = QaInspectedBoxes::find($req->box_ng_qa_id);
+            $insp->remarks = (int)$req->box_ng_reason;
+            $insp->update_user = Auth::user()->id;
+
+            if ($insp->update()) {
+                $box_data = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
+                                ->select(
+                                    'pb.id',
+                                    'pb.pallet_id',
+                                    'pb.model_id',
+                                    'qa.id as qa_id',
+                                    'pb.box_qr',
+                                    DB::raw("ng.reason as remarks"),
+                                    DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
+                                    DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
+                                    'm.hs_count_per_box'
+                                )
+                                ->leftJoin('qa_inspected_boxes as qa', function($join) {
+                                        $join->on('qa.pallet_id','=','pb.pallet_id');
+                                        $join->on('pb.id','=','qa.box_id');
+                                    }
+                                )
+                                ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                                ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
+                                ->where('qa.id', $req->box_ng_qa_id)
+                                ->where('pb.is_deleted', 0)
+                                ->orderBy('pb.box_qr', 'desc')->first();
+                $data = [
+                    'msg' => 'Box NG reason was successfully set.',
+                    'data' => $box_data,
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function scan_hs_serial(Request $req)
+    {
+        $data = [
+			'msg' => 'Scanning HS serial number has failed',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        $rules = [
+            'hs_serial' => 'unique:qa_affected_serials,hs_serial'
+        ];
+        $customMessages = [
+            'unique' => 'This HS serial was already scanned.',
+        ];
+
+        $this->validate($req, $rules, $customMessages);
+        
+        try {
+            $affected = new QaAffectedSerial();
+
+            $affected->pallet_id = $req->pallet_id;
+            $affected->box_id = $req->box_id;
+            $affected->hs_serial = $req->hs_serial;
+            $affected->is_deleted = 0;
+            $affected->create_user = Auth::user()->id;
+            $affected->update_user = Auth::user()->id;
+
+            if ($affected->save()) {
+                $data = [
+                    'data' => $affected,
+                    'success' => true
+                ];
+            }
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }

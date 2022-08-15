@@ -150,7 +150,7 @@ B. Synopsis: Real Time Script
                     fnDrawCallback: function() {
                         var data = this.fnGetData();
                         var data_count = data.length;
-                        $('#oba_count').html(data_count);
+                        $('#oba_count').html(data_count);                        
                     },
                 }).on('page.dt', function() {
                 

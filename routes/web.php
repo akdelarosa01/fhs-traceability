@@ -111,6 +111,11 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/check-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_hs_serial'])->name('transactions.qa-inspection.check-hs-serial');
         Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_affected_serial_no'])->name('transactions.qa-inspection.get-affected-serial-no');
         Route::get('/get-lot-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_lot_no'])->name('transactions.qa-inspection.get-lot-no');
+        Route::get('/get-box-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_ng_remarks'])->name('transactions.qa-inspection.get-box-ng-remarks');
+        Route::post('/box-judgment', [App\Http\Controllers\Transactions\QAInspectionController::class, 'box_judgment'])->name('transactions.qa-inspection.box-judgment');
+        Route::post('/set-box-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_box_ng_remarks'])->name('transactions.qa-inspection.set-box-ng-remarks');
+        Route::post('/scan-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'scan_hs_serial'])->name('transactions.qa-inspection.scan-hs-serial');
+        
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

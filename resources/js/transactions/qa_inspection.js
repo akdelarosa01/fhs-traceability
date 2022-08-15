@@ -38,6 +38,7 @@
 		},
         drawBoxesDatatables: function() {
             var self = this;
+            var pageScrollPos = "";
             if (!$.fn.DataTable.isDataTable('#tbl_boxes')) {
                 self.$tbl_boxes = $('#tbl_boxes').DataTable({
                     scrollY: "43vh",
@@ -54,6 +55,7 @@
                     } ],
                     select: {
                         style: 'single',
+                        selector: 'td:not(:last-child)'
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-boxes",
@@ -116,18 +118,26 @@
                             }, name: 'inspection', searchable: false, orderable: false, width: '150px', className: 'text-center align-middle' 
                         },
                         { 
-                            data: function() {
-                                return '<p class="bg-red"></p>';
-                            }, name: 'remarks', searchable: false, orderable: false, className: 'text-center align-middle'   
+                            data: function(data) {
+                                var box_judgement = parseInt(data.box_judgement);
+                                var remarks = (data.remarks == null)? "" : data.remarks;
+                                switch (box_judgement) {
+                                    case 0:
+                                        return '<button type="button" class="btn btn-sm btn-block btn-flat btn-danger box_ng" data-toggle="tooltip" data-placement="top" title="'+remarks+'">NG</button>';
+                                    case 1:
+                                        return '<button type="button" class="btn btn-sm btn-block btn-flat btn-success" title="'+remarks+'">GOOD</button>';
+                                    default:
+                                        return '';
+                                }
+                                
+                            }, name: 'box_judgement', searchable: false, orderable: false, className: 'text-center align-middle'   
                         }
                     ],
                     rowCallback: function(row, data) {
-                    },
-                    createdRow: function(row, data, dataIndex) {     
                         var dataRow = $(row);
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
 
-                        switch (data.box_qr_judgement) {
+                        var box_qr_judgement = parseInt(data.box_qr_judgement);
+                        switch (box_qr_judgement) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#00acac');
                                 $(dataRow[0].cells[2]).css('color', '#FFFFFF');
@@ -138,16 +148,29 @@
                                 break;
                             default:
                                 $(dataRow[0].cells[2]).css('background-color', '#FFFFFF');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[2]).css('color', '#333333');
                                 break;
                         }
-                        
-                        if (data.remarks == null) {
-                            $(dataRow[0].cells[3]).css('background-color', '#ced4da');
-                            $(dataRow[0].cells[3]).css('color', '#000000');
-                        } else {
 
+                        $(dataRow[0].cells[3]).addClass('py-0');
+                        
+                        var box_judgement = parseInt(data.box_judgement);
+                        switch (box_judgement) {
+                            case 1:
+                                $(dataRow[0].cells[3]).css('background-color', '#00acac');
+                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(dataRow[0].cells[3]).css('background-color', '#ff5b57');
+                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(dataRow[0].cells[3]).css('background-color', '#ced4da');
+                                $(dataRow[0].cells[3]).css('color', '#333333');
+                                break;
                         }
+                    },
+                    createdRow: function(row, data, dataIndex) {
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -157,11 +180,39 @@
                         $('.dataTables_scrollBody').css('min-height','10vh');
                         $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
+                    preDrawCallback: function (settings) {
+                        pageScrollPos = $('div.dataTables_scrollBody').scrollTop();
+                    },
                     fnDrawCallback: function() {
-                        // $("#tbl_boxes").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                        $('div.dataTables_scrollBody').scrollTop(pageScrollPos);
                         var data = this.fnGetData();
                         var data_count = data.length;
                         $('#box_count').html(data_count);
+
+                        console.log(data);
+
+                        var inspected = 0;
+                        $.each(data, function(i, x) {
+                            if (x.box_qr_judgement > -1) {
+                                inspected = inspected+1;
+                            }
+                        });
+
+                        var box_judge = 0;
+                        $.each(data, function(i, x) {
+                            if (x.box_judgement > -1) {
+                                box_judge = box_judge+1;
+                            }
+                        });
+
+                        $('#box_tested').html(box_judge);
+
+                        $('[data-toggle="tooltip"]').tooltip();
+
+                        // if (inspected == data_count) {
+                        //     $('.remarks_td').css('background-color', '#ffffff');
+                        //     $('.remarks_td').css('color', '#333333');
+                        // }
                     },
                 }).on('page.dt', function() {
                 });
@@ -265,9 +316,7 @@
             self.sendData().then(function() {
                 var response = self.responseData;
 
-                console.log(response.box_data);
                 self.$tbl_boxes.row(param.row_index).data(response.box_data).draw();
-                //self.$tbl_boxes.ajax.reload();
                  
                 if (response.matched == 1)  {
                     $('.check_box').prop('checked', false);
@@ -282,6 +331,28 @@
                     $('#scan_serial').prop('readonly', false);
                     $('#not-match').css('display', 'block');
                 }
+
+                var next_row = param.row_index+1;
+                self.$tbl_boxes.row(next_row).select();
+
+                var box_count = self.$tbl_boxes.rows().count();
+                var all_data = self.$tbl_boxes.rows().data();
+                var inspection_sheet_count = 0;
+
+                $.each(all_data, function(i,x) {
+                    if (x.box_qr_judgement > -1) {
+                        inspection_sheet_count++;
+                    }
+                });
+
+                console.log(inspection_sheet_count);
+                console.log(box_count);
+
+                if (inspection_sheet_count == box_count) {
+                    $('#btn_good').prop('disabled', false);
+                    $('#btn_notgood').prop('disabled', false);
+                    $('#scan_serial').prop('readonly', false);
+                }
             });
         },
         getLotNo: function(param, handle) {
@@ -293,7 +364,42 @@
                 var response = self.responseData;
                 handle(response);
             });
-        }
+        },
+        boxJudgment: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/box-judgment";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                console.log(response);
+
+                self.$tbl_boxes.row(param.row_index).data(response).draw();
+            });
+        },
+        setBoxNGRemarks: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/set-box-ng-remarks";
+            self.sendData().then(function() {
+                var response = self.responseData;
+
+                self.$tbl_boxes.row(param.box_row_index).data(response).draw();
+                $('#modal_box_ng_reason').modal('hide');
+            });
+        },
+        scanHSSerial: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/scan-hs-serial";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#scan_serial').val('');
+                self.$tbl_affected_serials.row.add(response).order([0,'desc']).draw();
+            });
+        },
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
@@ -309,14 +415,44 @@
 
         $('#btn_good').prop('disabled', true);
         $('#btn_notgood').prop('disabled', true);
+
+        $('#box_ng_reason').select2({
+            allowClear: true,
+            placeholder: 'Select Box NG Reason',
+            theme: 'bootstrap4',
+            width: 'auto',
+            ajax: {
+                url: "/transactions/qa-inspection/get-box-ng-remarks",
+                data: function(params) {
+                    var query = "";
+                    return {
+                        q: params.term,
+                        id: '',
+                        text: '',
+                        table: '',
+                        condition: '',
+                        display: 'id&text',
+                        orderBy: '',
+                        sql_query: query,
+
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                },
+            }
+        }).val(null).trigger('change.select2');
         
         $('#tbl_obas').DataTable().on('select', function ( e, dt, type, indexes ) {
             var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
             var data = rowData[0];
             
             $('#pallet_id').val(data.id);
-            $('#box_tested_full').html(data.new_box_count);
+            $('#box_tested_full').html(data.box_count_to_inspect);
             $('#box_count_to_inspect').val(data.box_count_to_inspect);
+            $('#inspection_sheet_count').val(data.inspection_sheet_count);
 
             var row = "";
 
@@ -349,6 +485,7 @@
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
+            _QAInspection.$tbl_affected_serials.ajax.reload();
 
         })
         .on('deselect', function ( e, dt, type, indexes ) {
@@ -361,54 +498,77 @@
             $('#box_tested_full').html(0);
             $('#box_count_to_inspect').val('');
             $('#inspqection_sheet_qr').val('');
+            $('#inspection_sheet_count').val(0);
             $('#inspqection_sheet_qr').prop('readonly', true);
 
             $('#box_id').val('');
             $('#box_qr').val('');
             $('#box_count').html(0);
             _QAInspection.$tbl_boxes.ajax.reload();
+            _QAInspection.$tbl_affected_serials.ajax.reload();
             $('#box_tested').html(0);
 
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
         });
 
-        // $('#tbl_obas tbody').on('change', '.check_box', function() {
-        //     var checked = $(this).is(':checked');
-        //     $('.check_box').not(this).prop('checked', false);
-        //     $('#btn_transfer').prop('disabled', true);
-        //     $('#btn_disposition').prop('disabled', true);
-        //     if (checked) {
-        //         $('#btn_transfer').prop('disabled', false);
-        //         $('#btn_disposition').prop('disabled', false);
-        //         $('#inspqection_sheet_qr').prop('readonly', true);
-        //     } else {
-        //         $('#btn_transfer').prop('disabled', true);
-        //         $('#btn_disposition').prop('disabled', true);
-        //     }
-        // });
-
         _QAInspection.$tbl_boxes.on('select', function ( e, dt, type, indexes ) {
             var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
             var data = rowData[0];
+            var box_count = _QAInspection.$tbl_boxes.data().count();
+            var all_data = _QAInspection.$tbl_boxes.rows().data();
 
             $('#box_id').val('');
             $('#box_qr').val(data.box_qr);
             $('#box_id').val(data.id);
+            $('#box_count').html(box_count);
+            $('#hs_count_per_box').val(data.hs_count_per_box);
 
             $('#inspqection_sheet_qr').prop('readonly', false);
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
 
-            if (data.box_qr_judgement < 0) {
+            var box_qr_judgement = parseInt(data.box_qr_judgement);
+            if (box_qr_judgement < 0) {
                 $('#inspqection_sheet_qr').focus();
             } else {
                 $('#scan_serial').focus();
             }
 
-            $('#btn_good').prop('disabled', false);
-            $('#btn_notgood').prop('disabled', false);
-            $('#scan_serial').prop('readonly', false);
+            var inspection_sheet_count = 0;
+
+            $.each(all_data, function(i,x) {
+                if (x.box_qr_judgement > -1) {
+                    inspection_sheet_count++;
+                }
+            });
+
+            if (inspection_sheet_count == box_count) {
+                $('#btn_good').prop('disabled', false);
+                $('#btn_notgood').prop('disabled', false);
+                $('#scan_serial').prop('readonly', false);
+            }
+
+            var box_judgement = parseInt(data.box_judgement);
+            if (box_judgement > -1) {
+                $('#btn_good').prop('disabled', true);
+                $('#btn_notgood').prop('disabled', true);
+                // $('#scan_serial').prop('readonly', true);
+            }
+
+            var box_tested = parseFloat($('#box_tested').html());
+            var box_tested_full = parseFloat($('#box_tested_full').html());
+
+            if (box_tested == box_tested_full) {
+                $('#btn_good').prop('disabled', true);
+                $('#btn_notgood').prop('disabled', true);
+                // $('#scan_serial').prop('readonly', true);
+                // $('#inspqection_sheet_qr').prop('readonly', true);
+
+                _QAInspection.swMsg("Random Box inspection is done. Please judge the Pallet now.","warning");
+            }
+
+            _QAInspection.$tbl_affected_serials.ajax.reload();
 
             _QAInspection.statusMsg('','clear');
         })
@@ -418,6 +578,7 @@
             $('#box_id').val('');
 
             $('#box_count').html(0);
+            $('#hs_count_per_box').val(0);
 
             $('#inspqection_sheet_qr').prop('readonly', true);
             $('#inspqection_sheet_qr').focus();
@@ -427,29 +588,43 @@
             $('#btn_good').prop('disabled', true);
             $('#btn_notgood').prop('disabled', true);
             $('#scan_serial').prop('readonly', true);
-        });
-        
-        // $('#tbl_boxes tbody').on('change', '.check_box', function() {
-        //     var checked = $(this).is(':checked');
-        //     $('.check_box').not(this).prop('checked', false);
 
-        //     if (checked) {
-        //         $('#inspqection_sheet_qr').prop('readonly', false);
-        //         $('#inspqection_sheet_qr').focus();
-        //         $('#btn_transfer').prop('disabled', true);
-        //         $('#btn_disposition').prop('disabled', true);
-        //     } else {
-        //         $('#inspqection_sheet_qr').prop('readonly', true);
-        //     }
-        // });
+            _QAInspection.$tbl_affected_serials.ajax.reload();
+        });
 
         $('#btn_good').on('click', function() {
-            $('.check_box').prop('checked', false);
-            $('#inspqection_sheet_qr').val('');
-            $('#inspqection_sheet_qr').prop('readonly', true);
-            $('#scan_serial').prop('readonly', true);
-            $('#btn_good').prop('disabled', true);
-            $('#btn_notgood').prop('disabled', true);
+            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+            var data = rowData[0];
+            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+
+            var box_tested = parseFloat($('#box_tested').html());
+            var box_tested_full = parseFloat($('#box_tested_full').html());
+
+            if (box_tested == box_tested_full) {
+                _QAInspection.swMsg("Maximum box inspection per pallet has already met.","warning");
+            } else {
+                _QAInspection.boxJudgment({
+                    _token: _QAInspection.token,
+                    box_id: data.id,
+                    qa_id: data.qa_id,
+                    judgment: 1,
+                    row_index: row_index[0]
+                });
+            }
+        });
+
+        $('#btn_notgood').on('click', function() {
+            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+            var data = rowData[0];
+            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+
+            _QAInspection.boxJudgment({
+                _token: _QAInspection.token,
+                box_id: data.id,
+                qa_id: data.qa_id,
+                judgment: 0,
+                row_index: row_index[0]
+            });
         });
 
         $('#btn_transfer').on('click', function() {
@@ -487,10 +662,46 @@
             }
         });
 
+        $('#tbl_boxes tbody').on('click', '.box_ng', function() {
+            var data = _QAInspection.$tbl_boxes.row($(this).parents('tr')).data();
+            var index = _QAInspection.$tbl_boxes.row($(this).parents('tr')).index();
+
+            $('#box_ng_id').val(data.id);
+            $('#box_ng_qa_id').val(data.qa_id);
+            $('#box_row_index').val(index);
+            $('#modal_box_ng_reason').modal('show');
+        });
+
+        $('#btn_save_box_ng_reason').on('click', function() {
+            var box_id = $('#box_ng_id').val();
+            var box_ng_qa_id = $('#box_ng_qa_id').val();
+            var box_row_index = $('#box_row_index').val();
+            var box_ng_reason = $('#box_ng_reason').val();
+
+            _QAInspection.setBoxNGRemarks({
+                _token: _QAInspection.token,
+                box_id: box_id,
+                box_ng_qa_id: box_ng_qa_id,
+                box_row_index: box_row_index,
+                box_ng_reason: box_ng_reason
+            });
+        });
+
+        var hs_count = 0;
         $('#inspqection_sheet_qr').on('keypress', function(e) {
+            var delayInMilliseconds = 1000; //1 second
             var inspection_qr = $(this).val();
 
             if (e.keyCode == 13) {
+                inspection_qr += (e.key == 'Enter')? '': e.key;
+                hs_count += 1;
+                e.preventDefault();
+            }
+
+            var hs_count_per_box = $('#hs_count_per_box').val();
+
+            if (hs_count_per_box == hs_count) {
+                console.log(inspection_qr);
                 var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
                 var data = rowData[0];
                 var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
@@ -504,6 +715,26 @@
                     inspector: $('#inspector').val(),
                     row_index: row_index[0]
                 });
+
+                hs_count = 0;
+            }
+        });
+
+        $('#scan_serial').on('keypress', function(e) {
+            var hs_serial = $(this).val();
+
+            if (e.keyCode == 13) {
+                var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+                var data = rowData[0];
+                var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+
+                _QAInspection.scanHSSerial({
+                    _token: _QAInspection.token,
+                    hs_serial: hs_serial,
+                    box_id: data.id,
+                    pallet_id: $('#pallet_id').val()
+                });
+                e.preventDefault();
             }
         });
         
