@@ -4535,14 +4535,8 @@ B. Synopsis: Real Time Script
                         }
 					],
                     rowCallback: function(row, data) {
-                    },
-                    createdRow: function(row, data, dataIndex) {
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
-                        console.log( dataRow.attr('id'));
-
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
-
                         switch (data.pallet_status) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
@@ -4569,6 +4563,8 @@ B. Synopsis: Real Time Script
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                         }
+                    },
+                    createdRow: function(row, data, dataIndex) {
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -5268,21 +5264,24 @@ B. Synopsis: Notification Script
                         var total_box_qty = parseFloat($('#total_box_qty').val());
                         $('#box_count').html(data_count);
 
-                        if ((data_count > 0 && box_count_full == data_count) || total_scanned_box_qty == total_box_qty) {
-                            if (is_printed > 0) {
-                                self.statusMsg("Pallet was already printed!","success");
-                                $('#btn_reprint_pallet').prop('disabled',false);
-                                $('#btn_print_pallet').prop('disabled',true);
-                                $('#btn_preview_print').prop('disabled',true);
-                                $('#btn_print_preview').prop('disabled',false);
-                            } else {
-                                self.statusMsg("Ready to Print!","success");
-                                $('#btn_print_preview').prop('disabled',false);
-                                $('#btn_reprint_pallet').prop('disabled',true);
-                                $('#btn_print_pallet').prop('disabled',false);
-                                $('#btn_preview_print').prop('disabled',false);
+                        if (self.$tbl_pallets.rows({ selected: true }).any()) {
+                            if ((data_count > 0 && box_count_full == data_count) || total_scanned_box_qty == total_box_qty) {
+                                if (is_printed > 0) {
+                                    self.statusMsg("Pallet was already printed!","success");
+                                    $('#btn_reprint_pallet').prop('disabled',false);
+                                    $('#btn_print_pallet').prop('disabled',true);
+                                    $('#btn_preview_print').prop('disabled',true);
+                                    $('#btn_print_preview').prop('disabled',false);
+                                } else {
+                                    self.statusMsg("Ready to Print!","success");
+                                    $('#btn_print_preview').prop('disabled',false);
+                                    $('#btn_reprint_pallet').prop('disabled',true);
+                                    $('#btn_print_pallet').prop('disabled',false);
+                                    $('#btn_preview_print').prop('disabled',false);
+                                }
                             }
                         }
+                        
                     },
                 }).on('page.dt', function() {
                 });
@@ -5363,12 +5362,16 @@ B. Synopsis: Notification Script
             self.jsonData = param;
             self.formAction = "/transactions/box-and-pallet/print-pallet";
             self.sendData().then(function() {
+                var response = self.responseData;
                 $('#btn_print_preview').prop('disabled',false);
                 $('#btn_reprint_pallet').prop('disabled',false);
                 $('#btn_print_pallet').prop('disabled',true);
                 $('#btn_preview_print').prop('disabled',true);
                 self.statusMsg("Pallet was already printed!","success");
-                self.$tbl_pallets.ajax.reload();
+
+                console.log(response);
+
+                self.$tbl_transactions.row(param.row_index).data(response).draw();
             });
         },
         printPreview: function(param) {
@@ -5645,6 +5648,9 @@ B. Synopsis: Notification Script
             $('#is_printed').val('');
             $('#box_count_full').html(0);
 
+            $('#btn_print_preview').prop('disabled', true);
+            $('#btn_print_pallet').prop('disabled', true);
+
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
             _BoxPalletApp.$tbl_boxes.ajax.reload();
@@ -5680,6 +5686,9 @@ B. Synopsis: Notification Script
             $('#box_count_full').html(0);
             $('#pallet_count_full').html(0);
             $('#pallet_count').html(0);
+
+            $('#btn_print_preview').prop('disabled', true);
+            $('#btn_print_pallet').prop('disabled', true);
 
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
@@ -5728,9 +5737,9 @@ B. Synopsis: Notification Script
             $('#btn_transfer').prop('disabled', true);
             $('#btn_update').prop('disabled', true);
             $('#btn_broken_pallet').prop('disabled', true);
+            $('#box_count').html(0);
 
             _BoxPalletApp.$tbl_boxes.ajax.reload();
-            $('#box_count').html(0);
         });
 
         $('#tbl_pallets tbody').on('change', '.check_pallet', function() {
@@ -5773,14 +5782,49 @@ B. Synopsis: Notification Script
             const month = moment().format('MMM');
             var box_count = parseFloat($('#box_count').html());
             var box_count_full = parseFloat($('#box_count_full').html());
+            var row_index = _BoxPalletApp.$tbl_transactions.rows({selected:  true}).indexes();
 
-            if (box_count_full > box_count) {
-                _BoxPalletApp.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
+            if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
+                if (box_count_full > box_count) {
+                    _BoxPalletApp.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
+                } else {
+                    _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
+                        box_ids += row.box_qr+";"+"\n";
+                    });
+        
+                    _BoxPalletApp.printPallet({
+                        _token: _BoxPalletApp.token,
+                        month: month.toUpperCase(),
+                        trans_id: $('#trans_id').val(),
+                        model_id: $('#selected_model_id').val(),
+                        pallet_id: $('#pallet_id').val(),
+                        model: $('#running_model').val(),
+                        lot_no: '------',
+                        box_qty: $('#box_count').html(),
+                        box_qr: box_ids,
+                        pallet_qr: $('#pallet_id_qr').val(),
+                        mode: 'print',
+                        row_index: row_index[0]
+                    });
+                }
             } else {
+                _BoxPalletApp.swMsg("Please select a pallet first.","warning");
+            }
+
+           
+            
+        });
+
+        $('#btn_reprint_pallet').on('click', function() {
+            var box_ids = "";
+            const month = moment().format('MMM');
+            var row_index = _BoxPalletApp.$tbl_transactions.rows({selected:  true}).indexes();
+
+            if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
                 _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                    box_ids += row.box_qr+";"+"\n";
+                    box_ids += row.box_qr+";"+"\r";
                 });
-    
+
                 _BoxPalletApp.printPallet({
                     _token: _BoxPalletApp.token,
                     month: month.toUpperCase(),
@@ -5792,33 +5836,12 @@ B. Synopsis: Notification Script
                     box_qty: $('#box_count').html(),
                     box_qr: box_ids,
                     pallet_qr: $('#pallet_id_qr').val(),
-                    mode: 'print'
+                    mode: 'reprint',
+                    row_index: row_index[0]
                 });
+            } else {
+                _BoxPalletApp.swMsg("Please select a pallet first.","warning");
             }
-            
-        });
-
-        $('#btn_reprint_pallet').on('click', function() {
-            var box_ids = "";
-            const month = moment().format('MMM');
-
-            _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                box_ids += row.box_qr+";"+"\r";
-            });
-
-            _BoxPalletApp.printPallet({
-                _token: _BoxPalletApp.token,
-                month: month.toUpperCase(),
-                trans_id: $('#trans_id').val(),
-                model_id: $('#selected_model_id').val(),
-                pallet_id: $('#pallet_id').val(),
-                model: $('#running_model').val(),
-                lot_no: '------',
-                box_qty: $('#box_count').html(),
-                box_qr: box_ids,
-                pallet_qr: $('#pallet_id_qr').val(),
-                mode: 'reprint'
-            });
         });
 
         $('#btn_print_preview').on('click', function() {
@@ -5853,13 +5876,17 @@ B. Synopsis: Notification Script
                 _BoxPalletApp.msg = msg;
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve) {
-                        if (total_scanned_box_qty == total_box_qty && data.pallet_status == 1) {
+                        // if (total_scanned_box_qty != total_box_qty) {
+                        //     _BoxPalletApp.swMsg("Scanned Boxes must be equal to Total box quantity.","warning");
+                        // } else 
+                        
+                        if (data.is_printed != 1) {
+                            _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
+                        } else {
                             _BoxPalletApp.transferTo({
                                 _token: _BoxPalletApp.token,
                                 id: data.id
                             });
-                        } else {
-                            _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
                         }
                     }                        
                 });

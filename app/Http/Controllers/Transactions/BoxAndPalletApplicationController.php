@@ -473,6 +473,9 @@ class BoxAndPalletApplicationController extends Controller
                         $hdr->update_user = Auth::user()->id;
     
                         $hdr->save();
+                    } else {
+                        $trans->model_status = 1;
+                        $trans->update();
                     }
                 }
 
@@ -488,9 +491,44 @@ class BoxAndPalletApplicationController extends Controller
                 $print->print_date = $print_date;
 
                 if ($print->save()) {
+
+                    $query = DB::connection('mysql')->table('pallet_transactions as t')->select([
+                                    DB::raw("t.id as id"),
+                                    DB::raw("t.model_id as model_id"),
+                                    DB::raw("t.model_status as model_status"),
+                                    DB::raw("t.target_hs_qty as target_hs_qty"),
+                                    DB::raw("t.total_box_qty as total_box_qty"),
+                                    DB::raw("t.target_no_of_pallet as target_no_of_pallet"),
+                                    DB::raw("m.model as model"),
+                                    DB::raw("CONCAT(m.model,' | ', m.model_name) as model_name"),
+                                    DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
+                                    DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                                    DB::raw("dt.total_scanned_box_qty as total_scanned_box_qty"),
+                                    DB::raw("t.created_at as created_at")
+                                ])
+                                ->join('pallet_model_matrices as m','t.model_id','=','m.id')
+                                ->leftJoin(DB::raw("(SELECT count(box_qr) as total_scanned_box_qty, transaction_id 
+                                                    FROM pallet_box_pallet_dtls
+                                                    WHERE is_deleted = 0
+                                                    group by transaction_id) as dt"),'dt.transaction_id','=','t.id')
+                                ->where('t.id', $req->trans_id)
+                                ->groupBy(
+                                    't.id',
+                                    't.model_id',
+                                    't.model_status',
+                                    't.target_hs_qty',
+                                    't.total_box_qty',
+                                    't.target_no_of_pallet',
+                                    'm.model',
+                                    'm.model_name',
+                                    'm.box_count_per_pallet',
+                                    'm.hs_count_per_box',
+                                    'dt.total_scanned_box_qty',
+                                    't.created_at'
+                                )->first();
                     $data = [
                         'msg' => $req->pallet_qr.' Pallet Label Print Successfully! Please wait for the Pallet Label to print.',
-                        'data' => [],
+                        'data' => $query,
                         'success' => true,
                         'msgType' => 'success',
                         'msgTitle' => 'Success!'
@@ -600,7 +638,7 @@ class BoxAndPalletApplicationController extends Controller
                 $msg = "Pallet ".$pallet->pallet_qr." was successfully transferred.";
 
                 $content = [
-                    'title' => "Pallet Transferred",
+                    'title' => "Pallet Transferred to Q.A.",
                     'message' => "Pallet ".$pallet->pallet_qr." was transferred for Q.A. Inspection."
                 ];
 
@@ -626,7 +664,8 @@ class BoxAndPalletApplicationController extends Controller
                                 ])->first();
 
                 
-                broadcast(new PalletTransferred($content,$pallet_data));
+                $recepients = $this->_helpers->qa_users();
+                broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/qa-inspection/'));
 
                 $data = [
                     'msg' => $msg,

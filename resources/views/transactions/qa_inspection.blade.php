@@ -147,7 +147,7 @@ Q.A. Inspection
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2">
-						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_disposition" data-toggle="modal" data-target="#modal_disposition" disabled>
+						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_disposition" disabled>
 							<i class="fa fa-plus"></i> Pallet Disposition
 						</button>
 					</div>
@@ -227,7 +227,7 @@ Q.A. Inspection
 </div>
 
 <div class="modal fade" id="modal_disposition" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog modal-dialog-centered ">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header border-0">
 				<h4 class="modal-title" id="modal_form_title"></h4>
@@ -238,28 +238,71 @@ Q.A. Inspection
 			<div class="modal-body">
 				<h3 class="text-center">Pallet Disposition</h3>
 				<div class="row">
-					
 					<div class="col-md-12">
-						<div class="form-group row justify-content-center pt-2">
-							<select class="form-control col-sm-8" id="ng_reason" >
-								<option class="fw-normal fs-3" selected hidden><h4>Please Select Disposition Here </h4></option>
-								<option class="fw-light fs-3"> <h4>Good</h4> </option>
-								<option class="fw-light fs-3"><h4>For Rework</h4></option>
-								<option class="fw-light fs-3"><h4>Hold Pallet</h4></option>
-								<option class="fw-light fs-3"><h4>Hold Lot</h4></option>
-							</select>
+						<div class="form-group justify-content-center pt-2">
+							<select class="form-control" id="pallet_disposition"></select>
+						</div>
+					</div>
+				</div>
+
+
+				<div id="div_disposition_reason">
+					<h3 class="text-center">Reason</h3>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group justify-content-center">
+								<select class="form-control" id="disposition_reason"></select>
+							</div>
+						</div>
+					</div>
+				</div>
+				.
+				<div id="div_hold_lot">
+					<h3 class="text-center">Lot Number to hold</h3>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group justify-content-center">
+								<select class="form-control" id="lot_no" multiple="multiple"></select>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer justify-content-center border-0">
-				<button type="button" class="btn btn-primary" id="btn_save">
+				<button type="button" class="btn btn-primary" id="btn_save_disposition">
 					<i class="fa fa-arrow-down-to-arc"></i>Save
 				</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="modal_transfer_to" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title" id="modal_form_title">Pallet Transfer</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="transfer_pallet_id" class="clear">
+				<h3 class="text-center mb-3">Transfer pallet to?</h3>
+				<div class="row">
+					<div class="col-md-6">
+						<button type="button" id="btn_transfer_production" class="btn btn-sm btn-block btn-flat btn-primary">PRODUCTION</button>
+					</div>
+
+					<div class="col-md-6">
+						<button type="button" id="btn_transfer_warehouse" class="btn btn-sm btn-block btn-flat btn-info">WAREHOUSE</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 @endsection
 
 @push('scripts')

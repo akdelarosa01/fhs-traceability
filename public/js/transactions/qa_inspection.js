@@ -4535,14 +4535,8 @@ B. Synopsis: Real Time Script
                         }
 					],
                     rowCallback: function(row, data) {
-                    },
-                    createdRow: function(row, data, dataIndex) {
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
-                        console.log( dataRow.attr('id'));
-
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
-
                         switch (data.pallet_status) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
@@ -4569,6 +4563,8 @@ B. Synopsis: Real Time Script
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                         }
+                    },
+                    createdRow: function(row, data, dataIndex) {
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -4930,8 +4926,6 @@ B. Synopsis: Notification Script
                         var data_count = data.length;
                         $('#box_count').html(data_count);
 
-                        console.log(data);
-
                         var inspected = 0;
                         $.each(data, function(i, x) {
                             if (x.box_qr_judgement > -1) {
@@ -5141,6 +5135,27 @@ B. Synopsis: Notification Script
                 self.$tbl_affected_serials.row.add(response).order([0,'desc']).draw();
             });
         },
+        palletDisposition: function (param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/set-disposition";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#tbl_obas').DataTable().row(param.row_index).data(response).draw();
+                $('#modal_disposition').modal('hide');
+            });
+        },
+        TransferTo: function (param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/transfer-to";
+            self.sendData().then(function() {
+                $('#tbl_obas').DataTable().row(param.row_index).remove().draw();
+                $('#modal_transfer_to').modal('hide');
+            });
+        },
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
@@ -5176,6 +5191,63 @@ B. Synopsis: Notification Script
                         orderBy: '',
                         sql_query: query,
 
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                },
+            }
+        }).val(null).trigger('change.select2');
+
+        $('#pallet_disposition').select2({
+            allowClear: true,
+            placeholder: 'Select Pallet Disposition',
+            theme: 'bootstrap4',
+            width: 'auto',
+            ajax: {
+                url: "/transactions/qa-inspection/get-dispositions",
+                data: function(params) {
+                    var query = "";
+                    return {
+                        q: params.term,
+                        id: '',
+                        text: '',
+                        table: '',
+                        condition: '',
+                        display: 'id&text',
+                        orderBy: '',
+                        sql_query: query,
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data
+                    };
+                },
+            }
+        }).val(null).trigger('change.select2');
+
+        $('#disposition_reason').select2({
+            allowClear: true,
+            placeholder: 'Select Reason',
+            theme: 'bootstrap4',
+            width: 'auto',
+            ajax: {
+                url: "/transactions/qa-inspection/get-disposition-reasons",
+                data: function(params) {
+                    var query = "";
+                    return {
+                        q: params.term,
+                        id: '',
+                        text: '',
+                        table: '',
+                        condition: '',
+                        display: 'id&text',
+                        orderBy: '',
+                        sql_query: query,
+                        disposition_id: $('#pallet_disposition').val()
                     };
                 },
                 processResults: function(data) {
@@ -5368,41 +5440,6 @@ B. Synopsis: Notification Script
             });
         });
 
-        $('#btn_transfer').on('click', function() {
-            var chkArray = [];
-            var table = $('#tbl_obas').DataTable();
-            var cnt = 0;
-
-            for (var x = 0; x < table.context[0].aoData.length; x++) {
-                var DataRow = table.context[0].aoData[x];
-                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    var status = $(DataRow.anCells[2]).html();
-                    if (status == "Good") {
-                        chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-                    }
-                    cnt++;
-                }
-            }            
-
-            if (chkArray.length > 0) {
-                var msg = "Do you want to transfer this Pallet to Warehouse?";
-
-                if (cnt > 1) {
-                    msg = "Do you want to transfer these Pallets to Warehouse?";
-                }
-                _QAInspection.msg = msg;
-                _QAInspection.confirmAction(msg).then(function(approve) {
-                    if (approve)
-                    _QAInspection.transferTo({
-                            _token: _QAInspection.token,
-                            ids: chkArray
-                        });
-                });
-            } else {
-                _QAInspection.showWarning("Please select at least 1 Pallet with a 'Good' status.");
-            }
-        });
-
         $('#tbl_boxes tbody').on('click', '.box_ng', function() {
             var data = _QAInspection.$tbl_boxes.row($(this).parents('tr')).data();
             var index = _QAInspection.$tbl_boxes.row($(this).parents('tr')).index();
@@ -5419,13 +5456,18 @@ B. Synopsis: Notification Script
             var box_row_index = $('#box_row_index').val();
             var box_ng_reason = $('#box_ng_reason').val();
 
-            _QAInspection.setBoxNGRemarks({
-                _token: _QAInspection.token,
-                box_id: box_id,
-                box_ng_qa_id: box_ng_qa_id,
-                box_row_index: box_row_index,
-                box_ng_reason: box_ng_reason
-            });
+            if (box_ng_reason == null || box_ng_reason == "") {
+                _QAInspection.swMsg("Please provide a Reason.","warning");
+            } else {
+                _QAInspection.setBoxNGRemarks({
+                    _token: _QAInspection.token,
+                    box_id: box_id,
+                    box_ng_qa_id: box_ng_qa_id,
+                    box_row_index: box_row_index,
+                    box_ng_reason: box_ng_reason
+                });
+            }
+            
         });
 
         var hs_count = 0;
@@ -5467,7 +5509,6 @@ B. Synopsis: Notification Script
             if (e.keyCode == 13) {
                 var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
                 var data = rowData[0];
-                var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
 
                 _QAInspection.scanHSSerial({
                     _token: _QAInspection.token,
@@ -5477,6 +5518,120 @@ B. Synopsis: Notification Script
                 });
                 e.preventDefault();
             }
+        });
+
+        $('#pallet_disposition').on('select2:select', function(e) {
+            var data = e.params.data;
+            switch (data.text) {
+                case "FOR REWORK":
+                    $('#div_disposition_reason').show();
+                    $('#div_hold_lot').hide();
+                    break;
+                case "HOLD PALLET":
+                    $('#div_disposition_reason').show();
+                    $('#div_hold_lot').hide();
+                    break;
+                case "HOLD LOT":
+                    $('#div_disposition_reason').show();
+                    $('#div_hold_lot').show();
+                    break;
+                default:
+                    $('#div_disposition_reason').hide();
+                    $('#div_hold_lot').hide();
+                    break;
+            }
+        });
+
+        $('#btn_disposition').on('click', function() {
+            $('#lot_no').select2({
+                allowClear: true,
+                placeholder: 'Select Lot',
+                theme: 'bootstrap4',
+                width: 'auto',
+                ajax: {
+                    url: "/transactions/qa-inspection/get-pallet-lot",
+                    data: function(params) {
+                        var query = "";
+                        return {
+                            q: params.term,
+                            id: '',
+                            text: '',
+                            table: '',
+                            condition: '',
+                            display: 'id&text',
+                            orderBy: '',
+                            sql_query: query,
+                            pallet_id: $('#pallet_id').val()
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                }
+            }).val(null).trigger('change.select2');
+            
+            $('#div_disposition_reason').hide();
+            $('#div_hold_lot').hide();
+            $('#modal_disposition').modal('show');
+        });
+
+        $('#btn_save_disposition').on('click', function() {
+            var row_index = $('#tbl_obas').DataTable().rows({selected:  true}).indexes();
+            var pallet_disposition = $('#pallet_disposition').val();
+            var lot_no = $('#lot_no').val();
+            var disposition_reason = $('#disposition_reason').val();
+
+            if (pallet_disposition == null || pallet_disposition == "") {
+                _QAInspection.swMsg("Please provide a Disposition.","warning");
+            } else {
+                _QAInspection.palletDisposition({
+                    _token: _QAInspection.token,
+                    pallet_id: $('#pallet_id').val(),
+                    pallet_disposition: parseInt(pallet_disposition),
+                    row_index: row_index[0],
+                    disposition_reason: disposition_reason,
+                    lot_no: (lot_no.length > 0)? lot_no : []
+                });
+            }
+        });
+
+        $('#btn_transfer').on('click', function() {
+            var row_data = $('#tbl_obas').DataTable().rows({selected:  true}).data();
+            var data = row_data[0];
+
+            $('#transfer_pallet_id').val(data.id);
+            $('#modal_transfer_to').modal('show');
+        });
+
+        $('#btn_transfer_production').on('click', function() {
+            var row_data = $('#tbl_obas').DataTable().rows({selected:  true}).data();
+            var row_indexes = $('#tbl_obas').DataTable().rows({selected:  true}).indexes();
+            var data = row_data[0];
+            var index = row_indexes[0];
+
+            _QAInspection.TransferTo({
+                _token: _QAInspection.token,
+                pallet_id: data.id,
+                pallet_location: 'PRODUCTION',
+                row_index: index
+            });
+            $('#modal_transfer_to').modal('show');
+        });
+
+        $('#btn_transfer_warehouse').on('click', function() {
+            var row_data = $('#tbl_obas').DataTable().rows({selected:  true}).data();
+            var row_indexes = $('#tbl_obas').DataTable().rows({selected:  true}).indexes();
+            var data = row_data[0];
+            var index = row_indexes[0];
+
+            _QAInspection.TransferTo({
+                _token: _QAInspection.token,
+                pallet_id: data.id,
+                pallet_location: 'WAREHOUSE',
+                row_index: index
+            });
         });
         
 	});

@@ -117,6 +117,28 @@ class Helpers
         return $data;
     }
 
+    public function prod_users()
+    {
+        $data = DB::connection('mysql')->table('pallet_page_accesses as pa')
+                    ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                    ->select('pa.user_id')
+                    ->where('p.page_name', '=', 'BoxAndPalletApplication')
+                    ->get();
+
+        return $data;
+    }
+
+    public function whs_users()
+    {
+        $data = DB::connection('mysql')->table('pallet_page_accesses as pa')
+                    ->join('pallet_pages as p', 'p.id', '=', 'pa.page_id')
+                    ->select('pa.user_id')
+                    ->where('p.page_name', '=', 'Warehouse')
+                    ->get();
+
+        return $data;
+    }
+
     public function show_notification(Request $req)
     {
         $data = [
