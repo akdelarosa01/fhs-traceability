@@ -1143,7 +1143,7 @@
                         //     _BoxPalletApp.swMsg("Scanned Boxes must be equal to Total box quantity.","warning");
                         // } else 
                         
-                        if (data.pallet_status != 1) {
+                        if (data.is_printed != 1) {
                             _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
                         } else {
                             _BoxPalletApp.transferTo({

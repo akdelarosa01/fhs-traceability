@@ -638,7 +638,7 @@ class BoxAndPalletApplicationController extends Controller
                 $msg = "Pallet ".$pallet->pallet_qr." was successfully transferred.";
 
                 $content = [
-                    'title' => "Pallet Transferred",
+                    'title' => "Pallet Transferred to Q.A.",
                     'message' => "Pallet ".$pallet->pallet_qr." was transferred for Q.A. Inspection."
                 ];
 
@@ -664,7 +664,8 @@ class BoxAndPalletApplicationController extends Controller
                                 ])->first();
 
                 
-                broadcast(new PalletTransferred($content,$pallet_data));
+                $recepients = $this->_helpers->qa_users();
+                broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/qa-inspection/'));
 
                 $data = [
                     'msg' => $msg,

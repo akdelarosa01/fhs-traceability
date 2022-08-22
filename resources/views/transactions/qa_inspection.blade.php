@@ -277,6 +277,32 @@ Q.A. Inspection
 	</div>
 </div>
 
+<div class="modal fade" id="modal_transfer_to" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title" id="modal_form_title">Pallet Transfer</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" id="transfer_pallet_id" class="clear">
+				<h3 class="text-center mb-3">Transfer pallet to?</h3>
+				<div class="row">
+					<div class="col-md-6">
+						<button type="button" id="btn_transfer_production" class="btn btn-sm btn-block btn-flat btn-primary">PRODUCTION</button>
+					</div>
+
+					<div class="col-md-6">
+						<button type="button" id="btn_transfer_warehouse" class="btn btn-sm btn-block btn-flat btn-info">WAREHOUSE</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 @endsection
 
 @push('scripts')

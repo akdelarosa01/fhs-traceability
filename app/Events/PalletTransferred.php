@@ -30,13 +30,13 @@ class PalletTransferred implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($content,$pallet)
+    public function __construct($content,$pallet,$recepients,$url)
     {
         $this->_helpers = new Helpers;
 
         $this->_content = $content;
         $this->_pallet = $pallet;
-        $this->_recepients = $this->_helpers->qa_users();
+        $this->_recepients = $recepients;
         $this->_current_user = Auth::user()->id;
 
         foreach ($this->_recepients as $key => $recepient) {
@@ -46,7 +46,7 @@ class PalletTransferred implements ShouldBroadcast
                 'to' => $recepient->user_id,
                 'title' => $content['title'],
                 'message' => $content['message'],
-                'url' => '/transactions/qa-inspection/',
+                'url' => $url,
             ]);
         }
         
