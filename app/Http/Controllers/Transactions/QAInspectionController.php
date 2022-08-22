@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use App\Models\PalletBoxNgReason;
+use App\Models\PalletBoxPalletHdr;
+use App\Models\PalletDispositionReason;
+use App\Models\PalletQaDisposition;
 use App\Models\QaAffectedSerial;
+use App\Models\QaHoldLot;
 use App\Models\QaInspectedBoxes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -51,13 +55,12 @@ class QAInspectionController extends Controller
                 DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
                 DB::raw("p.created_at as created_at"),
                 DB::raw("p.updated_at as updated_at"),
+                DB::raw("r.disposition as reason"),
                 DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
             ])
             ->join('pallet_model_matrices as m','p.model_id','=','m.id')
-            ->where([
-                ['p.pallet_status','=','1'],
-                ['p.pallet_location','=','Q.A.']
-            ]);
+            ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+            ->where('p.pallet_location','=','Q.A.');
 
             return Datatables::of($query)->make(true);
         
@@ -491,5 +494,220 @@ class QAInspectionController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function get_dispositions(Request $req)
+    {
+        $results = [];
+        $val = (!isset($req->q))? "" : $req->q;
+        $display = (!isset($req->display))? "" : $req->display;
+        $addOptionVal = (!isset($req->addOptionVal))? "" : $req->addOptionVal;
+        $addOptionText = (!isset($req->addOptionText))? "" : $req->addOptionText;
+        $sql_query = (!isset($req->sql_query))? "" : $req->sql_query;
+        $where = "";
+
+        try {
+            if ($addOptionVal != "" && $display == "id&text") {
+                array_push($results, [
+                    'id' => $addOptionVal,
+                    'text' => $addOptionText
+                ]);
+            }
+
+            if ($sql_query == null || $sql_query == "") {
+                $results = PalletQaDisposition::select('id as id','disposition as text')
+                            ->where('is_deleted',0)->where('disposition','<>','FOR OBA');
+
+                if ($val !== "") {
+                    $results->where('disposition','like',"%" . $val . "%");
+                }
+            }
+            
+            $results = $results->get();
+
+        } catch(\Throwable $th) {
+            return [
+                'success' => false,
+                'msessage' => $th->getMessage()
+            ];
+        }
+        
+        return $results;
+    }
+
+    public function set_disposition(Request $req)
+    {
+        $data = [
+			'msg' => "Setting Pallet's Dispoition was failed",
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->pallet_status = $req->pallet_disposition;
+            $pallet->disposition_reason = $req->disposition_reason;
+            $pallet->update_user = Auth::user()->id;
+
+            if ($pallet->update()) {
+                QaHoldLot::where('pallet_id', $req->pallet_id)->delete();
+
+                foreach ($req->lot_no as $key => $lot_no) {
+                    QaHoldLot::create([
+                        'pallet_id' => $req->pallet_id,
+                        'lot_no' => $lot_no,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                    ]);
+                }
+                $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+                    DB::raw("p.id as id"),
+                    DB::raw("p.model_id as model_id"),
+                    DB::raw("p.transaction_id as transaction_id"),
+                    DB::raw("p.pallet_status as pallet_status"),
+                    DB::raw("p.pallet_qr as pallet_qr"),
+                    DB::raw("p.new_box_count as new_box_count"),
+                    DB::raw("p.pallet_location as pallet_location"),
+                    DB::raw("p.is_printed as is_printed"),
+                    DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
+                    DB::raw("p.created_at as created_at"),
+                    DB::raw("p.updated_at as updated_at"),
+                    DB::raw("r.disposition as reason"),
+                    DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
+                ])
+                ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+                ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+                ->where('p.pallet_location','=','Q.A.')->first();
+
+                $data = [
+                    'msg' => "Pallet was successfully judged.",
+                    'data' => $pallet_data,
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+        return response()->json($data);
+    }
+
+    public function get_disposition_reasons(Request $req)
+    {
+        $results = [];
+        $val = (!isset($req->q))? "" : $req->q;
+        $display = (!isset($req->display))? "" : $req->display;
+        $addOptionVal = (!isset($req->addOptionVal))? "" : $req->addOptionVal;
+        $addOptionText = (!isset($req->addOptionText))? "" : $req->addOptionText;
+        $sql_query = (!isset($req->sql_query))? "" : $req->sql_query;
+        $disposition_id = (!isset($req->disposition_id))? "" : $req->disposition_id;
+        $where = "";
+
+        try {
+            if ($addOptionVal != "" && $display == "id&text") {
+                array_push($results, [
+                    'id' => $addOptionVal,
+                    'text' => $addOptionText
+                ]);
+            }
+            
+            if ($sql_query == null || $sql_query == "") {
+                $results = PalletDispositionReason::select('id as id','reason as text')
+                            ->where('is_deleted',0)->where('disposition',$disposition_id);
+
+                if ($val !== "") {
+                    $results->where('reason','like',"%" . $val . "%");
+                }
+            }
+            
+            $results = $results->get();
+
+        } catch(\Throwable $th) {
+            return [
+                'success' => false,
+                'msessage' => $th->getMessage()
+            ];
+        }
+        
+        return $results;
+    }
+
+    public function get_pallet_lot(Request $req)
+    {
+        $results = [];
+        $val = (!isset($req->q))? "" : $req->q;
+        $display = (!isset($req->display))? "" : $req->display;
+        $addOptionVal = (!isset($req->addOptionVal))? "" : $req->addOptionVal;
+        $addOptionText = (!isset($req->addOptionText))? "" : $req->addOptionText;
+        $sql_query = (!isset($req->sql_query))? "" : $req->sql_query;
+        $pallet_id = (!isset($req->pallet_id))? "" : $req->pallet_id;
+        $where = "";
+
+        try {
+            if ($addOptionVal != "" && $display == "id&text") {
+                array_push($results, [
+                    'id' => $addOptionVal,
+                    'text' => $addOptionText
+                ]);
+            }
+            
+            if ($sql_query == null || $sql_query == "") {
+
+                $arr_boxes = [];
+                $boxes = $this->boxes($pallet_id)->get();
+
+                foreach ($boxes as $key => $box) {
+                    array_push($arr_boxes,$box->box_qr);
+                }
+
+                $hs_serials = DB::connection('mysql')->table('tboxqr as bqr')
+                                ->select('bqrd.HS_Serial')
+                                ->join('tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
+                                ->whereIn('bqr.qrBarcode',$arr_boxes);
+
+                $hs_serial_count = $hs_serials->count();
+
+                if ( $hs_serial_count > 0) {
+                    $hs_serials = $hs_serials->get();
+                    $serials = [];
+    
+                    foreach ($hs_serials as $key => $hs) {
+                        array_push($serials,$hs->HS_Serial);
+                    }
+    
+                    // get data from china DB
+                    $results = DB::connection('ftl_china')->table('barcode')
+                                ->select('c8 as id','c8 as text')
+                                ->whereIn('c4',$serials)
+                                ->distinct();
+    
+                    
+                }
+
+                if ($val !== "") {
+                    $results->where('c8','like',"%" . $val . "%");
+                }
+            }
+            
+            $results = $results->get();
+
+        } catch(\Throwable $th) {
+            return [
+                'success' => false,
+                'msessage' => $th->getMessage()
+            ];
+        }
+        
+        return $results;
     }
 }

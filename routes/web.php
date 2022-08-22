@@ -115,7 +115,10 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/box-judgment', [App\Http\Controllers\Transactions\QAInspectionController::class, 'box_judgment'])->name('transactions.qa-inspection.box-judgment');
         Route::post('/set-box-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_box_ng_remarks'])->name('transactions.qa-inspection.set-box-ng-remarks');
         Route::post('/scan-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'scan_hs_serial'])->name('transactions.qa-inspection.scan-hs-serial');
-        
+        Route::get('/get-dispositions', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_dispositions'])->name('transactions.qa-inspection.get-dispositions');
+        Route::post('/set-disposition', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_disposition'])->name('transactions.qa-inspection.set-disposition');
+        Route::get('/get-disposition-reasons', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_disposition_reasons'])->name('transactions.qa-inspection.get-disposition-reasons');
+        Route::get('/get-pallet-lot', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_pallet_lot'])->name('transactions.qa-inspection.get-pallet-lot');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

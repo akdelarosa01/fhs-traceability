@@ -3243,14 +3243,8 @@ B. Synopsis: Real Time Script
                         }
 					],
                     rowCallback: function(row, data) {
-                    },
-                    createdRow: function(row, data, dataIndex) {
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
-                        console.log( dataRow.attr('id'));
-
-                        var checkbox = $(dataRow[0].cells[0].firstChild);
-
                         switch (data.pallet_status) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
@@ -3277,6 +3271,8 @@ B. Synopsis: Real Time Script
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                         }
+                    },
+                    createdRow: function(row, data, dataIndex) {
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();

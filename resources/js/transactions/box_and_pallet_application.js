@@ -1112,13 +1112,17 @@
                 _BoxPalletApp.msg = msg;
                 _BoxPalletApp.confirmAction(msg).then(function(approve) {
                     if (approve) {
-                        if (total_scanned_box_qty == total_box_qty && data.pallet_status == 1) {
+                        // if (total_scanned_box_qty != total_box_qty) {
+                        //     _BoxPalletApp.swMsg("Scanned Boxes must be equal to Total box quantity.","warning");
+                        // } else 
+                        
+                        if (data.pallet_status != 1) {
+                            _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
+                        } else {
                             _BoxPalletApp.transferTo({
                                 _token: _BoxPalletApp.token,
                                 id: data.id
                             });
-                        } else {
-                            _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
                         }
                     }                        
                 });
