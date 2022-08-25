@@ -17,6 +17,7 @@ class PalletBoxPalletHdr extends Model
         'pallet_qr',
         'pallet_status',
         'pallet_location',
+        'is_shipped',
         'create_user',
         'update_user'
     ];
