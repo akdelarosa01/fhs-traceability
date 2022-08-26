@@ -201,9 +201,9 @@ class PageSeeder extends Seeder
         ]);
 
         PalletPage::create([
-        	'page_name' => 'ShippingRecords',
-        	'page_label' => 'Shipping Records',
-        	'url' => '/reports/shipping-records',
+        	'page_name' => 'BoxAndPalletDataSearch',
+        	'page_label' => 'Box And Pallet Data Search',
+        	'url' => '/reports/box-pallet-data-search',
         	'has_sub' => 0,
             'parent_menu' => 'Reports',
             'parent_name' => 'Reports',
