@@ -1032,10 +1032,11 @@
             };
             var total_scanned_box_qty = parseFloat($('#total_scanned_box_qty').val());
             var total_box_qty = parseFloat($('#total_box_qty').val());
-            if (total_scanned_box_qty < total_box_qty) {
-                _BoxPalletApp.scanBoxQR(param);
-            } else {
+
+            if (total_scanned_box_qty == total_box_qty) {
                 _BoxPalletApp.swMsg("Target Heat Sink Quantity has already met.","info");
+            } else {
+                _BoxPalletApp.scanBoxQR(param);
             }
             
         });
