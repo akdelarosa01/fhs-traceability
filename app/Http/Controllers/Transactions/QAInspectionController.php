@@ -688,7 +688,7 @@ class QAInspectionController extends Controller
     
                     // get data from china DB
                     $results = DB::connection('ftl_china')->table('barcode')
-                                ->select('c8 as id','c8 as text')
+                                ->select('c9 as id','c9 as text')
                                 ->whereIn('c4',$serials)
                                 ->distinct();
     
@@ -696,7 +696,7 @@ class QAInspectionController extends Controller
                 }
 
                 if ($val !== "") {
-                    $results->where('c8','like',"%" . $val . "%");
+                    $results->where('c9','like',"%" . $val . "%");
                 }
             }
             

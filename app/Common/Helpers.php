@@ -80,7 +80,7 @@ class Helpers
 
                 // get data from china DB
                 $data = DB::connection('ftl_china')->table('barcode')
-                            ->select('c8 as lot_no')
+                            ->select('c9 as lot_no')
                             ->whereIn('c4',$serials)
                             ->distinct()->get();
 
