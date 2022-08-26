@@ -111,12 +111,12 @@ Q.A. Inspection
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
+					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-2">
 						<button type="button" class="btn btn-lg btn-block btn-green align-middle read-only" id="btn_good" >
 							<i class="fa fa-thumbs-up"></i> Good
 						</button>
 					</div>
-					<div class="col-md-3 col-sm-3 col-xs-6 mb-2">
+					<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-2">
 						<button type="button" class="btn btn-lg btn-block btn-red read-only" id="btn_notgood"  data-toggle="modal" data-target="#modal_not_good" >
 							<i class="fa fa-thumbs-down"></i> NG
 						</button>
