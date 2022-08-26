@@ -165,12 +165,12 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
-        "resources/js/reports/shipping_records.js"
-    ], "public/js/reports/shipping_records.js")
+        "resources/js/reports/box_pallet_data_search.js"
+    ], "public/js/reports/box_pallet_data_search.js")
     .styles([
         "public/css/theme.css",
         "public/css/trx.css",
-    ], "public/css/reports/shipping_records.css")
+    ], "public/css/reports/box_pallet_data_search.css")
 
     .scripts([
         "public/js/theme.js",
@@ -200,9 +200,12 @@ mix.js('resources/js/app.js', 'public/js')
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
+        "resources/plugins/select2/dist/js/select2.full.min.js",
         "resources/js/transactions/warehouse.js"
     ], "public/js/transactions/warehouse.js")
     .styles([
         "public/css/theme.css",
         "public/css/trx.css",
+        "resources/plugins/select2/dist/css/select2.min.css",
+        "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/warehouse.css");
