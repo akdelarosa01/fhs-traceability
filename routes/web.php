@@ -82,8 +82,8 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [App\Http\Controllers\Reports\PalletTrackingHistoryController::class, 'index'])->name('reports.pallet-tracking-history');
     });
 
-    Route::group(['prefix' => 'shipping-records'], function () {
-        Route::get('/', [App\Http\Controllers\Reports\ShippingRecordsController::class, 'index'])->name('reports.shipping-records');
+    Route::group(['prefix' => 'box-pallet-data-search'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'index'])->name('reports.box-pallet-data-search');
     });
 });
 
