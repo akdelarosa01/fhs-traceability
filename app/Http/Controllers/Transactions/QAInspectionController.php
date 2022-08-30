@@ -154,7 +154,7 @@ class QAInspectionController extends Controller
                 $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
 
                 if (!in_array($hs, $arr_db_serials)) {
-                    if ($hs != "" && !is_null($hs) && $hs == 'Enter') {
+                    if ($hs != "" && !is_null($hs) && $hs !== 'Enter') {
                         $matched = 0;
                         break;
                     }                    
