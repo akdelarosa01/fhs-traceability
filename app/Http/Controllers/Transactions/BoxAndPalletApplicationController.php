@@ -479,11 +479,13 @@ class BoxAndPalletApplicationController extends Controller
                     }
                 }
 
+                $mx = PalletModelMatrix::select('model')->where('id',$req->model_id)->first();
+
                 // insert into the Bartender Table
                 $print = new PalletPrintPalletLabel();
 
                 $print->month = $month;
-                $print->model = $req->model;
+                $print->model = $mx->model;
                 $print->lot_no = $lots;
                 $print->box_qty = $req->box_qty;
                 $print->box_qr = $req->box_qr;
