@@ -86,6 +86,8 @@ B. Synopsis: Notification Script
                 var recepients = e._recepients;
                 var noti_count = e._noti_count;
 
+                console.log(e);
+
                 $.each(recepients, function(i,x) {
                     if (x.user_id == e._current_user) {
                         $('#notification_count').show();
