@@ -80,7 +80,7 @@ B. Synopsis: Notification Script
         _Notification.showNotificationList();
 
         Echo.channel('pallet-transferred')
-            .listen('PalletTransferred', function(e) {
+            .listen('.PalletTransferred', function(e) {
                 var content = e._content;
                 var pallet = e._pallet;
                 var recepients = e._recepients;
@@ -93,7 +93,7 @@ B. Synopsis: Notification Script
                         $('#notification_count').show();
                         $('#notification_count').html(noti_count)
                         _Notification.showNotification(content);
-                        _Notification.$tbl_obas.row.add(pallet).draw();
+                        //_Notification.$tbl_obas.row.add(pallet).draw();
                     }
                 });
             });

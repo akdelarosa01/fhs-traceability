@@ -4713,7 +4713,7 @@ B. Synopsis: Notification Script
                         $('#notification_count').show();
                         $('#notification_count').html(noti_count)
                         _Notification.showNotification(content);
-                        _Notification.$tbl_obas.row.add(pallet).draw();
+                        //_Notification.$tbl_obas.row.add(pallet).draw();
                     }
                 });
             });
