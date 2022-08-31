@@ -80,7 +80,7 @@ B. Synopsis: Notification Script
         _Notification.showNotificationList();
 
         Echo.channel('pallet-transferred')
-            .listen('.PalletTransferred', function(e) {
+            .listen('PalletTransferred', function(e) {
                 var content = e._content;
                 var pallet = e._pallet;
                 var recepients = e._recepients;
