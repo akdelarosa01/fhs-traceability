@@ -26,6 +26,15 @@
             if (!$.fn.DataTable.isDataTable('#tbl_users')) {
                 self.$tbl_users = $('#tbl_users').DataTable({
                     processing: true,
+                    columnDefs: [ {
+                        orderable: false,
+                        searchable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    } ],
+                    select: {
+                        style: 'multiple',
+                    },
                     ajax: {
                         url: "/masters/users/list",
                         dataType: "JSON",
@@ -62,10 +71,9 @@
                         [7, "desc"]
                     ],
                     columns: [{
-                            data: function(x) {
-                                return '<input type="checkbox" class="table-checkbox check_user" value="' + x.id + '">';
-                            },
-                            name: 'id',
+                            data: function(data) {
+                                return '';
+                            }, name: 'id',
                             searchable: false,
                             orderable: false
                         },
@@ -262,20 +270,16 @@
         });
 
         $('#btn_user_access').on('click', function() {
-            var chkArray = [];
-            var table = $('#tbl_users').DataTable();
+            var ids = $.map(_Users.$tbl_users.rows({selected: true}).data(), function (item) {
+                return item.id;
+            });
 
-            for (var x = 0; x < table.context[0].aoData.length; x++) {
-                var DataRow = table.context[0].aoData[x];
-                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-                }
-            }
-            if (chkArray.length == 1) {
-                $('#user_id').val(chkArray[0]);
-                _Users.drawPageDatatables(chkArray[0]);
+
+            if (ids.length == 1) {
+                $('#user_id').val(ids[0]);
+                _Users.drawPageDatatables(ids[0]);
             } else {
-                _Users.showWarning('Please select or check 1 user.');
+                _Users.showWarning('Please select or check 1 user only.');
             }
             
         });
@@ -338,23 +342,17 @@
         });
 
         $('#btn_delete_users').on('click', function() {
-            var chkArray = [];
-            var table = $('#tbl_users').DataTable();
+            var ids = $.map(_Users.$tbl_users.rows({selected: true}).data(), function (item) {
+                return item.id;
+            });
 
-            for (var x = 0; x < table.context[0].aoData.length; x++) {
-                var DataRow = table.context[0].aoData[x];
-                if (DataRow.anCells !== null && DataRow.anCells[0].firstChild.checked == true) {
-                    chkArray.push(table.context[0].aoData[x].anCells[0].firstChild.value)
-                }
-            }
-
-            if (chkArray.length > 0) {
+            if (ids.length > 0) {
                 _Users.msg = "Are you sure you want to delete this User/s?";
-                _Users.confirmAction().then(function(approve) {
+                _Users.confirmAction(_Users.msg).then(function(approve) {
                     if (approve)
-                        _Users.deleteUser(chkArray);
+                        _Users.deleteUser(ids);
 
-                    $('.check_all_users').prop('checked', false);
+                        _Users.$tbl_users.rows().deselect();
                 });
             } else {
                 _Users.showWarning('Please select at least 1 user.');

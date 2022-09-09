@@ -53,6 +53,11 @@ class PalletTransferred implements ShouldBroadcast
         $this->_noti_count = Notification::whereNull('read_at')->where('to',$this->_current_user)->count();
     }
 
+    public function broadcastAs()
+    {
+        return 'pallet.transferred';
+    }
+
     /**
      * Get the channels the event should broadcast on.
      *

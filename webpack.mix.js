@@ -14,8 +14,9 @@ const mix = require('laravel-mix');
 const layoutCSS = [
     "resources/css/default/app.min.css",
     "resources/plugins/gritter/css/jquery.gritter.css",
-    "resources/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css",
-    "resources/plugins/datatables.net-select-bs4/css/select.bootstrap4.min.css",
+    "resources/plugins/DataTables/DataTables-1.12.1/css/dataTables.bootstrap4.min.css",
+    "resources/plugins/DataTables/Select-1.4.0/css/select.bootstrap4.min.css",
+    "resources/plugins/DataTables/Buttons-2.2.3/css/buttons.bootstrap4.min.css",
     "public/css/app.css"
 ];
 
@@ -26,10 +27,18 @@ const layoutJS = [
     "resources/plugins/slimscroll/jquery.slimscroll.min.js",
     "resources/js/theme/default.min.js",
     "resources/plugins/gritter/js/jquery.gritter.js",
-    "resources/plugins/datatables.net/js/jquery.dataTables.min.js",
-    "resources/plugins/datatables.net-bs4/js/dataTables.bootstrap4.min.js",
-    "resources/plugins/datatables.net-select/js/dataTables.select.min.js",
-    "resources/plugins/datatables.net-select-bs4/js/select.bootstrap4.min.js",
+    "resources/plugins/DataTables/DataTables-1.12.1/js/jquery.dataTables.min.js",
+    "resources/plugins/DataTables/DataTables-1.12.1/js/dataTables.bootstrap4.min.js",
+    "resources/plugins/DataTables/Select-1.4.0/js/dataTables.select.min.js",
+    "resources/plugins/DataTables/Select-1.4.0/js/select.bootstrap4.min.js",
+    "resources/plugins/DataTables/Buttons-2.2.3/js/dataTables.buttons.min.js",
+    "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.bootstrap4.min.js",
+    "resources/plugins/DataTables/JSZip-2.5.0/jszip.min.js",
+    "resources/plugins/DataTables/pdfmake-0.1.36/pdfmake.min.js",
+    "resources/plugins/DataTables/pdfmake-0.1.36/vfs_fonts.js",
+    "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.html5.min.js",
+    "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.print.min.js",
+    "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.colVis.min.js",
     "resources/js/menu.js"
 ];
 

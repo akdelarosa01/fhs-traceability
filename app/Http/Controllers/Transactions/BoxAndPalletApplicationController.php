@@ -9,11 +9,11 @@ use App\Events\PalletTransferred;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletModelMatrix;
-use App\Models\PalletPageAccess;
 use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class BoxAndPalletApplicationController extends Controller
@@ -107,7 +107,7 @@ class BoxAndPalletApplicationController extends Controller
                                         FROM pallet_box_pallet_dtls
                                         WHERE is_deleted = 0
                                         group by transaction_id) as dt"),'dt.transaction_id','=','t.id')
-                    // ->where('dt.is_deleted',0)
+                    ->where('t.is_deleted',0)
                     ->groupBy(
                         't.id',
                         't.model_id',
@@ -121,7 +121,7 @@ class BoxAndPalletApplicationController extends Controller
                         'm.hs_count_per_box',
                         'dt.total_scanned_box_qty',
                         't.created_at'
-                    );
+                    )->orderBy('t.created_at','desc');
 
             return Datatables::of($query)->make(true);
         } catch (\Throwable $th) {
@@ -310,7 +310,8 @@ class BoxAndPalletApplicationController extends Controller
                 $data = [
                     'data' => [
                         'count' => $count,
-                        'box_data' => $dtl
+                        'box_data' => $dtl,
+                        'success' => true
                     ],
                     'success' => true
                 ];
@@ -457,26 +458,26 @@ class BoxAndPalletApplicationController extends Controller
             }
 
             if ($pallet->update()) {
-                if ($req->mode == 'print') {
-                    $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
-    
-                    $trans = PalletTransaction::find($req->trans_id);
-    
-                    if ($trans->target_no_of_pallet > $pallet_count) {
-                        $hdr = new PalletBoxPalletHdr();
-                        $hdr->transaction_id = $req->trans_id;
-                        $hdr->model_id = $req->model_id;
-                        $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
-                        $hdr->pallet_status = 0;
-                        $hdr->pallet_location = "PRODUCTION";
-                        $hdr->create_user = Auth::user()->id;
-                        $hdr->update_user = Auth::user()->id;
-    
-                        $hdr->save();
-                    } else {
-                        $trans->model_status = 1;
-                        $trans->update();
-                    }
+                $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
+
+                $trans = PalletTransaction::find($req->trans_id);
+
+                if ($this->needToCreateNewPallet($req, $pallet_count)) {
+                    $hdr = new PalletBoxPalletHdr();
+                    $hdr->transaction_id = $req->trans_id;
+                    $hdr->model_id = $req->model_id;
+                    $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
+                    $hdr->pallet_status = 0;
+                    $hdr->pallet_location = "PRODUCTION";
+                    $hdr->create_user = Auth::user()->id;
+                    $hdr->update_user = Auth::user()->id;
+
+                    $hdr->save();
+                } 
+                
+                if ($this->readyStatus($req, $pallet_count)) {
+                    $trans->model_status = 1;
+                    $trans->update();
                 }
 
                 $mx = PalletModelMatrix::select('model')->where('id',$req->model_id)->first();
@@ -727,5 +728,97 @@ class BoxAndPalletApplicationController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function delete_transaction(Request $req)
+    {
+        $data = [
+			'msg' => 'Deleting Transaction has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $trans_id = $req->id;
+
+            $pallet_has_box = PalletBoxPalletDtl::where('transaction_id',$trans_id)->count();
+
+            if ($pallet_has_box < 1) {
+                foreach ($trans_id as $key => $id) {
+                    $trans = PalletTransaction::find($id);
+                    $trans->is_deleted = 1;
+                    $trans->update_user = Auth::user()->id;
+    
+                    if ($trans->update()) {
+    
+                        $data = [
+                            'msg' => "Transaction was successfully deleted.",
+                            'data' => [],
+                            'success' => true,
+                            'msgType' => 'success',
+                            'msgTitle' => 'Success!'
+                        ];
+                    }
+                }
+            } else {
+                $data = [
+                    'msg' => "This Transaction has already scanned boxes in its pallets.",
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'warning',
+                    'msgTitle' => 'Failed!'
+                ];
+            }
+
+            
+            
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    private function needToCreateNewPallet($req, $pallet_count)
+    {
+        if ((int)$req->target_no_of_pallet >= (int)$pallet_count) {
+            if ((int)$req->total_box_qty == (int)$req->total_scanned_box_qty) {
+                return false;
+            }
+
+            if ((int)$req->target_no_of_pallet == (int)$pallet_count) {
+                return false;
+            }
+
+            $pallets = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->get();
+            foreach ($pallets as $key => $pallet) {
+                $boxes = PalletBoxPalletDtl::where('pallet_id',$pallet->id)->count();
+
+                if ($req->box_per_pallet > $boxes) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private function readyStatus($req, $pallet_count)
+    {
+        if ((int)$req->target_no_of_pallet == (int)$pallet_count) {
+            if ((int)$req->total_box_qty == (int)$req->total_scanned_box_qty) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

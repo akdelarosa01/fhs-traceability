@@ -84,6 +84,7 @@ Route::group(['prefix' => 'reports'], function () {
 
     Route::group(['prefix' => 'box-pallet-data-search'], function () {
         Route::get('/', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'index'])->name('reports.box-pallet-data-search');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'generate_data'])->name('reports.box-pallet-data-search.generate-data');
     });
 });
 
@@ -102,6 +103,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/transfer-to', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'transfer_to'])->name('transactions.box-and-pallet.transfer-to');
         Route::get('/check-authorization', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'check_authorization'])->name('transactions.box-and-pallet.check-authorization');
         Route::post('/set-new-box-count', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'set_new_box_count'])->name('transactions.box-and-pallet.set-new-box-count');
+        Route::post('/delete-transaction', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'delete_transaction'])->name('transactions.box-and-pallet.delete-transaction');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {

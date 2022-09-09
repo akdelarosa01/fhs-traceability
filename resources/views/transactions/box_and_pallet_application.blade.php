@@ -202,6 +202,14 @@ Box and Pallet Application
 						</table>
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-block btn-red read-only" id="btn_delete_transaction" disabled>
+							<i class="fa fa-trash"></i> Delete Transaction
+						</button>
+					</div>
+				</div>
 			</div>
 
 			<div class="col-5">

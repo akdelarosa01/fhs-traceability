@@ -38,7 +38,7 @@ return [
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'encrypted' => true,
-                'host' => '127.0.0.1',
+                'host' => env('MIX_PUSHER_APP_WEBSOCKETS_SERVER'),
                 'port' => 6001,
                 'scheme' => 'http'
             ],

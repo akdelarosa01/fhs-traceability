@@ -90,6 +90,7 @@ class QAInspectionController extends Controller
                         'pb.model_id',
                         'qa.id as qa_id',
                         'pb.box_qr',
+                        DB::raw("pb.remarks as prod_remarks"),
                         DB::raw("ng.reason as remarks"),
                         DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
                         DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),

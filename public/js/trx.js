@@ -2735,6 +2735,10 @@ B. Synopsis: Class Module used to process data
                         if (errorThrown == "Internal Server Error") {
                             self.ErrorMsg(jqXHR);
                         }
+
+                        self.responseData = {
+                            success: false
+                        }
                         
                         resolve(false);
 
@@ -3408,7 +3412,7 @@ B. Synopsis: Notification Script
         _Notification.showNotificationList();
 
         Echo.channel('pallet-transferred')
-            .listen('PalletTransferred', function(e) {
+            .listen('.pallet.transferred', function(e) {
                 var content = e._content;
                 var pallet = e._pallet;
                 var recepients = e._recepients;

@@ -161,7 +161,8 @@ Q.A. Inspection
 								<th style="width: 10px;"></th>
 								<th>Box ID tested: <span id="box_tested">0</span> / <span id="box_tested_full">0</span></th>
 								<th>Inspection Sheet QR</th>
-								<th>Remarks</th>
+								<th>QA Remarks</th>
+								<th>Prod. Remarks</th>
 							</thead>
 						</table>
 					</div>

@@ -99,9 +99,7 @@
                             }, name: 'id', searchable: false, orderable: false, width: '15px'
                         },
                         { 
-                            data: function(data) {
-                                return '<h5 class="font-weight-normal m-0">'+data.box_qr+'</h5>';
-                            }, name: 'box_qr', searchable: false, orderable: false, width: '250px'
+                            data: 'box_qr', name: 'box_qr', searchable: false, orderable: false, width: '200px'
                         },
                         { 
                             data: function(data) {
@@ -131,6 +129,9 @@
                                 }
                                 
                             }, name: 'box_judgement', searchable: false, orderable: false, className: 'text-center align-middle'   
+                        },
+                        { 
+                            data: 'prod_remarks', name: 'prod_remarks', searchable: false, orderable: false
                         }
                     ],
                     rowCallback: function(row, data) {
@@ -207,10 +208,6 @@
 
                         $('[data-toggle="tooltip"]').tooltip();
 
-                        // if (inspected == data_count) {
-                        //     $('.remarks_td').css('background-color', '#ffffff');
-                        //     $('.remarks_td').css('color', '#333333');
-                        // }
                     },
                 }).on('page.dt', function() {
                 });

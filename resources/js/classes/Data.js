@@ -170,6 +170,10 @@ B. Synopsis: Class Module used to process data
                         if (errorThrown == "Internal Server Error") {
                             self.ErrorMsg(jqXHR);
                         }
+
+                        self.responseData = {
+                            success: false
+                        }
                         
                         resolve(false);
 
