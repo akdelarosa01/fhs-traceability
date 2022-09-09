@@ -11,7 +11,6 @@
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
         this.authorize = $("meta[name=authorize]").attr("content");
-        this.cust_checked = 0;
     }
     BoxPalletDataSearch.prototype = {
         permission: function() {
@@ -26,9 +25,35 @@
             if (!$.fn.DataTable.isDataTable('#tbl_data_search')) {
                 self.$tbl_data_search = $('#tbl_data_search').DataTable({
                     processing: true,
+                    dom: 'Bfrtip',
+                    lengthMenu: [
+                        [ 5, 10, 25, 50, -1 ],
+                        [ '5 rows', '10 rows', '25 rows', '50 rows', 'Show all' ]
+                    ],
+                    buttons: [
+                        'pageLength', {
+                            extend: 'collection',
+                            className: 'custom-html-collection',
+                            buttons: [
+                                '<h5>Export</h5>',
+                                'csv',
+                                'excel'
+                            ]
+                        }
+                    ],
                     ajax: {
-                        url: "/reports/box-pallet-data-search/list",
+                        url: "/reports/box-pallet-data-search/generate-data",
                         dataType: "JSON",
+                        data: function(d) {
+                            d._token = self.token;
+                            d.search_type = $('#search_type').val();
+                            d.search_value = $('#search_value').val();
+                            d.max_count = $('#max_count').val();
+                            d.shipping_date_from = $('#shipping_date_from').val();
+                            d.shipping_date_to = $('#shipping_date_to').val();
+                            d.production_date_from = $('#production_date_from').val();
+                            d.production_date_to = $('#production_date_to').val();
+                        },
                         error: function(response) {
                             console.log(response);
                         }
@@ -53,56 +78,42 @@
                             "first": "First"
                         }
                     },
-                    pageLength: 10,
+                    //pageLength: 10,
                     order: [
-                        [4, "desc"]
+                        [2, "desc"]
                     ],
-                    columns: [{
-                            data: function(x) {
-                                return '<input type="checkbox" class="table-checkbox check_reason" value="' + x.id + '">';
-                            },
-                            name: 'id',
-                            searchable: false,
-                            orderable: false
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
-                        { data: 'reason', name: 'reason' },
-                        { data: 'create_user', name: 'create_user' },
-                        { data: 'updated_at', name: 'updated_at' },
+                    columns: [
+                        { data: 'shipping_date', name: 'shipping_date' },
+                        { data: 'destination', name: 'destination' },
+                        { data: 'production_date', name: 'production_date' },
+                        { data: 'model', name: 'model' },
+                        { data: 'pallet_qr', name: 'pallet_qr' },
+                        { data: 'box_id', name: 'box_id' },
+                        { data: 'cust_part_no', name: 'cust_part_no' },
+                        { data: 'hs_serial', name: 'hs_serial' },
+                        { data: 'grease_batch', name: 'grease_batch' },
+                        { data: 'grease_no', name: 'grease_no' },
+                        { data: 'rca_value', name: 'rca_value' },
+                        { data: 'rca_judgment', name: 'rca_judgment' },
+                        { data: 'lot_no', name: 'lot_no' }
                     ],
                     rowCallback: function(row, data) {
-                        var td = $(row).find('td:first .check_reason');
-                        if (td.is(':checked')) {
-                            self.cust_checked++;
-                        }
-                    },
-                    createdRow: function(row, data, dataIndex) {
-                        if (data.is_deleted === 1) {
+                        var judgment = data.rca_judgment;
+                        if (judgment.includes('NG')) {
                             $(row).css('background-color', '#ff6266');
                             $(row).css('color', '#fff');
                         }
                     },
+                    createdRow: function(row, data, dataIndex) {
+                    },
                     initComplete: function() {
-                        $('.check_all_reasons').prop('checked', false);
                     },
                     fnDrawCallback: function() {
-                        if (self.cust_checked > 9) {
-                            $('.check_all_reasons').prop('checked', true);
-                        } else {
-                            $('.check_all_reasons').prop('checked', false);
-                        }
-                        self.checkCheckboxesInTable('#tbl_data_search', '.check_all_reasons', '.check_reason');
-                        self.checkAllCheckboxesInTable('#tbl_data_search', '.check_all_reasons', '.check_reason');
-                        $("#tbl_data_search").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
                     },
                 }).on('page.dt', function() {
-                    self.cust_checked = 0;
                 });
+
+                self.$tbl_data_search.buttons().container().appendTo( '#tbl_data_search_wrapper .col-md-6:eq(0)' );
             }
             return this;
         },
@@ -113,6 +124,7 @@
     $(document).ready(function() {
         var _BoxPalletDataSearch = BoxPalletDataSearch();
         _BoxPalletDataSearch.permission();
+        _BoxPalletDataSearch.drawDatatables();
 
         $('#shipping_date_from').on('change', function(e) {
             console.log(e.currentTarget.value);
@@ -122,6 +134,17 @@
         $('#shipping_date_to').on('change', function(e) {
             console.log(e.currentTarget.value);
             $('#shipping_date_from').attr('max', e.currentTarget.value);
+        });
+
+        $('#btn_search').on('click', function() {
+            var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
+            if (search_type == "" || search_value == "") {
+                _BoxPalletDataSearch.swMsg("Please Provide a the type of data to search","warning");
+            } else {
+                _BoxPalletDataSearch.$tbl_data_search.ajax.reload(false);
+            }
+            
         });
     });
 })();
