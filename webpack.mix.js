@@ -17,6 +17,7 @@ const layoutCSS = [
     "resources/plugins/DataTables/DataTables-1.12.1/css/dataTables.bootstrap4.min.css",
     "resources/plugins/DataTables/Select-1.4.0/css/select.bootstrap4.min.css",
     "resources/plugins/DataTables/Buttons-2.2.3/css/buttons.bootstrap4.min.css",
+    "resources/plugins/DataTables/FixedHeader-3.2.4/css/fixedHeader.bootstrap4.min.css",
     "public/css/app.css"
 ];
 
@@ -39,6 +40,8 @@ const layoutJS = [
     "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.html5.min.js",
     "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.print.min.js",
     "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.colVis.min.js",
+    "resources/plugins/DataTables/FixedHeader-3.2.4/js/dataTables.fixedHeader.min.js",
+    // "resources/plugins/DataTables/FixedHeader-3.2.4/js/fixedHeader.bootstrap4.min.js",
     "resources/js/menu.js"
 ];
 

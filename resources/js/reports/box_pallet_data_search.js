@@ -25,10 +25,11 @@
             if (!$.fn.DataTable.isDataTable('#tbl_data_search')) {
                 self.$tbl_data_search = $('#tbl_data_search').DataTable({
                     processing: true,
+                    fixedHeader: true,
                     dom: 'Bfrtip',
                     lengthMenu: [
-                        [ 5, 10, 25, 50, -1 ],
-                        [ '5 rows', '10 rows', '25 rows', '50 rows', 'Show all' ]
+                        [ 10, 25, 50, -1 ],
+                        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
                     ],
                     buttons: [
                         'pageLength', {
@@ -109,6 +110,7 @@
                     initComplete: function() {
                     },
                     fnDrawCallback: function() {
+                        $("#tbl_data_search").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
                     },
                 }).on('page.dt', function() {
                 });
