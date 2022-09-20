@@ -3,6 +3,7 @@
 namespace App\Common;
 
 use App\Models\Notification;
+use App\Models\PalletHeatSinkNgReason;
 use App\Models\PalletPageAccess;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -248,5 +249,20 @@ class Helpers
         }
 
         return response()->json($data);
+    }
+
+    public function getHSdefects($defect_id)
+    {
+        try {
+            $defect = PalletHeatSinkNgReason::where('id',$defect_id);
+            if ($defect->count() > 0) {
+                $defect = $defect->first();
+
+                return $defect->reason;
+            }
+            return null;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

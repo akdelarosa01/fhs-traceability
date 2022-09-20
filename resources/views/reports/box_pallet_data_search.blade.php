@@ -151,7 +151,7 @@ Box and Pallet Data Search
 
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-sm table-hover table-bordered" id="tbl_data_search" style="width: 100%">
+                <table class="table table-sm table-hover table-bordered table-striped" id="tbl_data_search" style="width: 100%">
                     <thead class="thead-dark">
                         <th>Shipping Date</th>
                         <th>Destination</th>

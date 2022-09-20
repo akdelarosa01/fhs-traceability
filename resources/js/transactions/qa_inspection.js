@@ -11,6 +11,9 @@
 
         this.$tbl_boxes = "";
         this.$tbl_affected_serials = "";
+        this.$tbl_inpection_sheet_serial = "";
+        this.$tbl_hs_serials_oba = "";
+        this.box_id = 0;
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
@@ -34,6 +37,7 @@
 				const dateTime =  now.getFullYear() + '/' + zeroFill((now.getMonth() + 1)) + '/' + zeroFill(now.getUTCDate()) + ' ' + zeroFill(now.getHours()) + ':' + zeroFill(now.getMinutes()) + ':' + zeroFill(now.getSeconds());
 
 				$('#date_and_time').val(dateTime);
+                $('#b_oba_process_date').val(dateTime);
 			}, 1000);
 		},
         drawBoxesDatatables: function() {
@@ -103,20 +107,6 @@
                         },
                         { 
                             data: function(data) {
-
-                                switch (data.box_qr_judgement) {
-                                    case 0:
-                                        return 'NOT MATCHED';
-                                    case 1:
-                                        return 'MATCHED';
-                                    default:
-                                        return '';
-                                }
-                                
-                            }, name: 'inspection', searchable: false, orderable: false, width: '150px', className: 'text-center align-middle' 
-                        },
-                        { 
-                            data: function(data) {
                                 var box_judgement = parseInt(data.box_judgement);
                                 var remarks = (data.remarks == null)? "" : data.remarks;
                                 switch (box_judgement) {
@@ -136,9 +126,10 @@
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
-
-                        var box_qr_judgement = parseInt(data.box_qr_judgement);
-                        switch (box_qr_judgement) {
+                        $(dataRow[0].cells[3]).addClass('py-0');
+                        
+                        var box_judgement = parseInt(data.box_judgement);
+                        switch (box_judgement) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#00acac');
                                 $(dataRow[0].cells[2]).css('color', '#FFFFFF');
@@ -148,26 +139,8 @@
                                 $(dataRow[0].cells[2]).css('color', '#FFFFFF');
                                 break;
                             default:
-                                $(dataRow[0].cells[2]).css('background-color', '#FFFFFF');
+                                $(dataRow[0].cells[2]).css('background-color', '#ced4da');
                                 $(dataRow[0].cells[2]).css('color', '#333333');
-                                break;
-                        }
-
-                        $(dataRow[0].cells[3]).addClass('py-0');
-                        
-                        var box_judgement = parseInt(data.box_judgement);
-                        switch (box_judgement) {
-                            case 1:
-                                $(dataRow[0].cells[3]).css('background-color', '#00acac');
-                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
-                                break;
-                            case 0:
-                                $(dataRow[0].cells[3]).css('background-color', '#ff5b57');
-                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
-                                break;
-                            default:
-                                $(dataRow[0].cells[3]).css('background-color', '#ced4da');
-                                $(dataRow[0].cells[3]).css('color', '#333333');
                                 break;
                         }
                     },
@@ -233,7 +206,7 @@
                         },
                         data: function(d) {
                             d._token = self.token;
-                            d.box_id = $('#box_id').val();
+                            d.box_id = self.box_id;
                             d.pallet_id = $('#pallet_id').val()
                         },
                         error: function(response) {
@@ -246,6 +219,134 @@
                             sortDescending: ": activate to sort column descending"
                         },
                         emptyTable: "No HS Serial No. was scanned.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'hs_serial', name: 'hs_serial', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: function(data) {
+                                switch (data.qa_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return data.remarks;//'<button class="btn btn-sm btn-danger disabled" data-toggle="tooltip" data-placement="top" title="'+data.remarks+'">NOT GOOD</button>';
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'qa_judgment', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        var qa_judgment = parseInt(data.qa_judgment);
+                        switch (qa_judgment) {
+                            case 1:
+                                $(row).addClass('disabled');
+                                $(row).css('background-color', '#00acac');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(row).addClass('disabled');
+                                $(row).css('background-color', '#ff5b57');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFFFFF');
+                                $(row).css('color', '#333333');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                    fnDrawCallback: function() {
+                        $('#tbl_affected_serials tbody tr').each( function() {
+                            
+                            var nTds = $('td', this);
+                            var judgment = $(nTds[1]).text();
+                            var sTitle= $(nTds[1]);
+                            console.log(sTitle);
+                             
+                        //     if ( sGrade == "A" )
+                        //         sTitle =  sBrowser+' will provide a first class (A) level of CSS support.';
+                        //     else if ( sGrade == "C" )
+                        //         sTitle = sBrowser+' will provide a core (C) level of CSS support.';
+                        //     else if ( sGrade == "X" )
+                        //         sTitle = sBrowser+' does not provide CSS support or has a broken implementation. Block CSS.';
+                        //     else
+                        //         sTitle = sBrowser+' will provide an undefined level of CSS support.';
+                             
+                        //     this.setAttribute( 'title', sTitle );
+                        } );
+                         
+                        // /* Init DataTables */
+                        // var oTable = $('#example').dataTable();
+                         
+                        // /* Apply the tooltips */
+                        // oTable.$('tr').tooltip( {
+                        //     "delay": 0,
+                        //     "track": true,
+                        //     "fade": 250
+                        // } );
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
+        drawInspectionSheetSerialDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_inpection_sheet_serial')) {
+                self.$tbl_inpection_sheet_serial = $('#tbl_inpection_sheet_serial').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-inspection-sheet-serials",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.box_id = self.box_id;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Inspection Sheet QR was scanned.",
                         info: "Showing _START_ to _END_ of _TOTAL_ records",
                         infoEmpty: "No records found",
                         infoFiltered: "(filtered1 from _MAX_ total records)",
@@ -284,6 +385,134 @@
             }
             return this;
         },
+        drawOBAHSSerialsDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_hs_serials_oba')) {
+                self.$tbl_hs_serials_oba = $('#tbl_hs_serials_oba').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    columnDefs: [ {
+                        orderable: false,
+                        searchable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    } ],
+                    select: {
+                        style: 'single',
+                        selector: 'td:not(:last-child)'
+                    },
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-affected-serial-no",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.box_id = self.box_id;
+                            d.pallet_id = $('#pallet_id').val()
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No HS Serial No. was scanned.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'id', render: function() {
+                                return '';
+                            }, name: 'id', searchable: false, orderable: false, width: '15px'
+                        },
+                        { 
+                            data: 'hs_serial', name: 'hs_serial', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: function(data) {
+                                switch (data.qa_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return data.remarks;//'<button class="btn btn-sm btn-danger disabled" data-toggle="tooltip" data-placement="top" title="'+data.remarks+'">NOT GOOD</button>';
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'qa_judgment', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        var qa_judgment = parseInt(data.qa_judgment);
+                        switch (qa_judgment) {
+                            case 1:
+                                // $(row).addClass('disabled');
+                                $(row).css('background-color', '#00acac');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                // $(row).addClass('disabled');
+                                $(row).css('background-color', '#ff5b57');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFFFFF');
+                                $(row).css('color', '#333333');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                    fnDrawCallback: function() {
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        var hs_total_count = self.$tbl_inpection_sheet_serial.data().count();
+                        $('#hs_scanned_count').html(data_count);
+
+                        if (hs_total_count > data_count) {
+                            $('#box_judgment').removeClass("badge badge-pill badge-danger");
+                            $('#box_judgment').removeClass("badge badge-pill badge-success");
+                            $('#box_judgment').addClass("badge badge-pill badge-secondary");
+                            $('#box_judgment').html("NOT YET COMPLETE");
+                        }
+
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         statusMsg: function(msg,status) {
             switch (status) {
                 case 'success':
@@ -307,47 +536,19 @@
             var self = this;
             self.submitType = "POST";
             self.jsonData = param;
-            self.formAction = "/transactions/qa-inspection/check-hs-serial";
+            self.formAction = "/transactions/qa-inspection/check-inspection-sheet";
             self.sendData().then(function() {
                 var response = self.responseData;
+                var count = self.$tbl_inpection_sheet_serial.data().count();
 
-                self.$tbl_boxes.row(param.row_index).data(response.box_data).draw();
-                 
-                if (response.matched == 1)  {
-                    $('.check_box').prop('checked', false);
-                    $('#inspqection_sheet_qr').val('');
-                    $('#inspqection_sheet_qr').prop('readonly', true);
-                    $('#scan_serial').prop('readonly', true);
-                    $('#match').css('display', 'block');
+                if (count > 0) {
+                    self.box_id = param.box_id;
+                    self.$tbl_inpection_sheet_serial.ajax.reload();
                 } else {
-                    $('.check_box').prop('checked', false);
-                    $('#inspqection_sheet_qr').val('');
-                    $('#inspqection_sheet_qr').prop('readonly', true);
-                    $('#scan_serial').prop('readonly', false);
-                    $('#not-match').css('display', 'block');
+                    self.$tbl_inpection_sheet_serial.rows.add(response).draw();
                 }
-
-                var next_row = param.row_index+1;
-                self.$tbl_boxes.row(next_row).select();
-
-                var box_count = self.$tbl_boxes.rows().count();
-                var all_data = self.$tbl_boxes.rows().data();
-                var inspection_sheet_count = 0;
-
-                $.each(all_data, function(i,x) {
-                    if (x.box_qr_judgement > -1) {
-                        inspection_sheet_count++;
-                    }
-                });
-
-                console.log(inspection_sheet_count);
-                console.log(box_count);
-
-                if (inspection_sheet_count == box_count) {
-                    $('#btn_good').prop('disabled', false);
-                    $('#btn_notgood').prop('disabled', false);
-                    $('#scan_serial').prop('readonly', false);
-                }
+                $('#b_qr_inspection_sheet').val('');
+                $('#b_oba_serial_no').focus();
             });
         },
         getLotNo: function(param, handle) {
@@ -360,28 +561,33 @@
                 handle(response);
             });
         },
-        boxJudgment: function(param) {
+        HSSerialJudgment: function(param) {
             var self = this;
             self.submitType = "POST";
             self.jsonData = param;
-            self.formAction = "/transactions/qa-inspection/box-judgment";
+            self.formAction = "/transactions/qa-inspection/hs-serial-judgment";
             self.sendData().then(function() {
                 var response = self.responseData;
-                console.log(response);
+                var nextRow = param.row_index + 1;
 
-                self.$tbl_boxes.row(param.row_index).data(response).draw();
+                self.$tbl_hs_serials_oba.row(param.row_index).data(response).draw();
+                self.$tbl_hs_serials_oba.row(param.row_index).deselect();
+                self.$tbl_hs_serials_oba.row(nextRow).select();
             });
         },
-        setBoxNGRemarks: function(param) {
+        setHSNGremarks: function(param) {
             var self = this;
             self.submitType = "POST";
             self.jsonData = param;
-            self.formAction = "/transactions/qa-inspection/set-box-ng-remarks";
+            self.formAction = "/transactions/qa-inspection/set-hs-ng-remarks";
             self.sendData().then(function() {
                 var response = self.responseData;
+                var netxRow = parseInt(param.hs_row_index) + 1;
 
-                self.$tbl_boxes.row(param.box_row_index).data(response).draw();
-                $('#modal_box_ng_reason').modal('hide');
+                self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
+                self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
+                self.$tbl_hs_serials_oba.row(netxRow).select();
+                $('#modal_hs_ng_reason').modal('hide');
             });
         },
         scanHSSerial: function(param) {
@@ -391,8 +597,40 @@
             self.formAction = "/transactions/qa-inspection/scan-hs-serial";
             self.sendData().then(function() {
                 var response = self.responseData;
-                $('#scan_serial').val('');
-                self.$tbl_affected_serials.row.add(response).order([0,'desc']).draw();
+                var error = self.responseError;
+
+                console.log(error);
+
+                if (error.hasOwnProperty('hs_serial')) {
+                    $('#b_oba_serial_no').addClass("input-error");
+                    $('#b_oba_serial_no').addClass('is-invalid');
+                    $('#hs_serial_feedback').addClass('invalid-feedback');
+                    $('#hs_serial_feedback').html(error.hs_serial[0])
+                    self.responseError = {};
+                } else {
+                    switch (response.matched) {
+                        case true:
+                            $('#box_judgment').removeClass("badge badge-pill badge-secondary");
+                            $('#box_judgment').removeClass("badge badge-pill badge-danger");
+                            $('#box_judgment').addClass("badge badge-pill badge-success");
+                            break;
+                        case false:
+                            $('#box_judgment').removeClass("badge badge-pill badge-success");
+                            $('#box_judgment').removeClass("badge badge-pill badge-secondary");
+                            $('#box_judgment').addClass("badge badge-pill badge-danger");
+                            break;
+                    
+                        default:
+                            $('#box_judgment').removeClass("badge badge-pill badge-danger");
+                            $('#box_judgment').removeClass("badge badge-pill badge-success");
+                            $('#box_judgment').addClass("badge badge-pill badge-secondary");
+                            break;
+                    }
+                    $('#box_judgment').html(response.matched);
+                    self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                }
+
+                $('#b_oba_serial_no').val('');
             });
         },
         palletDisposition: function (param) {
@@ -416,29 +654,57 @@
                 $('#modal_transfer_to').modal('hide');
             });
         },
+        getBoxDetails: function(box_qr) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = {
+                _token: self.token,
+                box_qr: box_qr
+            };
+            self.formAction = "/transactions/qa-inspection/get-box-details";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#b_box_id').val(box_qr);
+                $('#b_date_manufactured').val(response.date_manufactured);
+                $('#b_date_expired').val(response.date_expired);
+                $('#b_customer_part_no').val(response.cust_part_no);
+                $('#b_lot_no').val(response.lot_no);
+                $('#b_prod_line_no').val(response.prod_line_no);
+                $('#b_carton_label_no').val(response.carton_label_no);
+                $('#b_qty_per_box').val(response.qty_per_box);
+
+                $('#hs_total_count').html(response.qty_per_box);
+
+                $('#modal_box_inspection').modal('show');
+            });
+        }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
 	$(document).ready(function() {
 		var _QAInspection = QAInspection();
+
         _QAInspection.permission();
         _QAInspection.RunDateTime();
         _QAInspection.drawBoxesDatatables();
         _QAInspection.drawAffectedSerialsDatatables();
+        _QAInspection.drawInspectionSheetSerialDatatables();
+        _QAInspection.drawOBAHSSerialsDatatables();
 
         $('#btn_transfer').prop('disabled', true);
         $('#btn_disposition').prop('disabled', true);
+        $('#btn_box_inspection').prop('disabled', true);
 
         $('#btn_good').prop('disabled', true);
         $('#btn_notgood').prop('disabled', true);
 
-        $('#box_ng_reason').select2({
+        $('#hs_ng_reason').select2({
             allowClear: true,
-            placeholder: 'Select Box NG Reason',
+            placeholder: 'Select Heat Sink NG Reason',
             theme: 'bootstrap4',
             width: 'auto',
             ajax: {
-                url: "/transactions/qa-inspection/get-box-ng-remarks",
+                url: "/transactions/qa-inspection/get-hs-ng-remarks",
                 data: function(params) {
                     var query = "";
                     return {
@@ -554,7 +820,6 @@
 
             $('#btn_transfer').prop('disabled', false);
             $('#btn_disposition').prop('disabled', false);
-            $('#inspqection_sheet_qr').prop('readonly', true);
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
@@ -570,9 +835,7 @@
             $('#pallet_id').val('');
             $('#box_tested_full').html(0);
             $('#box_count_to_inspect').val('');
-            $('#inspqection_sheet_qr').val('');
             $('#inspection_sheet_count').val(0);
-            $('#inspqection_sheet_qr').prop('readonly', true);
 
             $('#box_id').val('');
             $('#box_qr').val('');
@@ -589,59 +852,22 @@
             var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
             var data = rowData[0];
             var box_count = _QAInspection.$tbl_boxes.data().count();
-            var all_data = _QAInspection.$tbl_boxes.rows().data();
 
             $('#box_id').val('');
             $('#box_qr').val(data.box_qr);
             $('#box_id').val(data.id);
             $('#box_count').html(box_count);
-            $('#hs_count_per_box').val(data.hs_count_per_box);
 
-            $('#inspqection_sheet_qr').prop('readonly', false);
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
 
-            var box_qr_judgement = parseInt(data.box_qr_judgement);
-            if (box_qr_judgement < 0) {
-                $('#inspqection_sheet_qr').focus();
-            } else {
-                $('#scan_serial').focus();
-            }
+            $('#btn_box_inspection').prop('disabled', false);
 
-            var inspection_sheet_count = 0;
-
-            $.each(all_data, function(i,x) {
-                if (x.box_qr_judgement > -1) {
-                    inspection_sheet_count++;
-                }
-            });
-
-            if (inspection_sheet_count == box_count) {
-                $('#btn_good').prop('disabled', false);
-                $('#btn_notgood').prop('disabled', false);
-                $('#scan_serial').prop('readonly', false);
-            }
-
-            var box_judgement = parseInt(data.box_judgement);
-            if (box_judgement > -1) {
-                $('#btn_good').prop('disabled', true);
-                $('#btn_notgood').prop('disabled', true);
-                // $('#scan_serial').prop('readonly', true);
-            }
-
-            var box_tested = parseFloat($('#box_tested').html());
-            var box_tested_full = parseFloat($('#box_tested_full').html());
-
-            if (box_tested == box_tested_full) {
-                $('#btn_good').prop('disabled', true);
-                $('#btn_notgood').prop('disabled', true);
-                // $('#scan_serial').prop('readonly', true);
-                // $('#inspqection_sheet_qr').prop('readonly', true);
-
-                _QAInspection.swMsg("Random Box inspection is done. Please judge the Pallet now.","warning");
-            }
-
+            
+            _QAInspection.box_id = data.id;
             _QAInspection.$tbl_affected_serials.ajax.reload();
+            _QAInspection.$tbl_inpection_sheet_serial.ajax.reload();
+            _QAInspection.$tbl_hs_serials_oba.ajax.reload();
 
             _QAInspection.statusMsg('','clear');
         })
@@ -650,121 +876,139 @@
             $('#box_qr').val('');
             $('#box_id').val('');
 
-            $('#box_count').html(0);
-            $('#hs_count_per_box').val(0);
+            _QAInspection.box_id = 0;
 
-            $('#inspqection_sheet_qr').prop('readonly', true);
-            $('#inspqection_sheet_qr').focus();
+            $('#box_count').html(0);
             $('#btn_transfer').prop('disabled', false);
             $('#btn_disposition').prop('disabled', false);
 
             $('#btn_good').prop('disabled', true);
             $('#btn_notgood').prop('disabled', true);
             $('#scan_serial').prop('readonly', true);
+            $('#btn_box_inspection').prop('disabled', true);
 
             _QAInspection.$tbl_affected_serials.ajax.reload();
         });
 
-        $('#btn_good').on('click', function() {
+        _QAInspection.$tbl_hs_serials_oba.on('select', function ( e, dt, type, indexes ) {
+            var rowData = _QAInspection.$tbl_hs_serials_oba.rows( indexes ).data().toArray();
+            var data = rowData[0];
+
+            $('#btn_good').prop('disabled', false);
+            $('#btn_notgood').prop('disabled', false);
+
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            $('#btn_good').prop('disabled', true);
+            $('#btn_notgood').prop('disabled', true);
+        });
+
+        $('#modal_box_inspection').on('shown.bs.modal', function() {
+            $('#b_qr_inspection_sheet').focus();
+            _QAInspection.$tbl_inpection_sheet_serial.columns.adjust();
+            _QAInspection.$tbl_hs_serials_oba.columns.adjust();
+        });
+
+        $('#btn_box_inspection').on('click', function() {
             var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
             var data = rowData[0];
-            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
 
-            var box_tested = parseFloat($('#box_tested').html());
-            var box_tested_full = parseFloat($('#box_tested_full').html());
+            if (data) {
+                $('#b_oba_serial_no').removeClass("input-error");
+                $('#b_oba_serial_no').removeClass('is-invalid');
+                $('#hs_serial_feedback').removeClass('invalid-feedback');
+                $('#hs_serial_feedback').html("");
 
-            if (box_tested == box_tested_full) {
-                _QAInspection.swMsg("Maximum box inspection per pallet has already met.","warning");
+                _QAInspection.getBoxDetails(data.box_qr);
             } else {
-                _QAInspection.boxJudgment({
-                    _token: _QAInspection.token,
-                    box_id: data.id,
-                    qa_id: data.qa_id,
-                    judgment: 1,
-                    row_index: row_index[0]
-                });
+                _QAInspection.swMsg("Please select 1 Box ID number.","warning");
             }
         });
 
-        $('#btn_notgood').on('click', function() {
-            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+        $('#btn_good').on('click', function() {
+            var rowData = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
             var data = rowData[0];
-            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+            var row_index = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes();
+            var hs_count = parseInt($('#hs_total_count').html());
 
-            _QAInspection.boxJudgment({
+            _QAInspection.HSSerialJudgment({
                 _token: _QAInspection.token,
-                box_id: data.id,
-                qa_id: data.qa_id,
-                judgment: 0,
+                id: data.id,
+                box_id: data.box_id,
+                pallet_id: data.pallet_id,
+                hs_serial: data.hs_serial,
+                judgment: 1,
+                hs_count: hs_count,
                 row_index: row_index[0]
             });
         });
 
-        $('#tbl_boxes tbody').on('click', '.box_ng', function() {
-            var data = _QAInspection.$tbl_boxes.row($(this).parents('tr')).data();
-            var index = _QAInspection.$tbl_boxes.row($(this).parents('tr')).index();
+        $('#btn_notgood').on('click', function() {
+            var rowData = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
+            var data = rowData[0];
+            var row_index = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes();
+            var hs_count = parseInt($('#hs_total_count').html());
 
-            $('#box_ng_id').val(data.id);
-            $('#box_ng_qa_id').val(data.qa_id);
-            $('#box_row_index').val(index);
-            $('#modal_box_ng_reason').modal('show');
+            $('#hs_ng_id').val(data.id);
+            $('#hs_ng_box_id').val(data.box_id);
+            $('#hs_row_index').val(row_index[0]);
+            $('#modal_hs_ng_reason').modal('show');
         });
 
-        $('#btn_save_box_ng_reason').on('click', function() {
-            var box_id = $('#box_ng_id').val();
-            var box_ng_qa_id = $('#box_ng_qa_id').val();
-            var box_row_index = $('#box_row_index').val();
-            var box_ng_reason = $('#box_ng_reason').val();
+        $('#btn_save_hs_ng_reason').on('click', function() {
+            var id = $('#hs_ng_id').val();
+            var hs_ng_box_id = $('#hs_ng_box_id').val();
+            var hs_row_index = $('#hs_row_index').val();
+            var hs_ng_reason = $('#hs_ng_reason').val();
 
-            if (box_ng_reason == null || box_ng_reason == "") {
+            if (hs_ng_reason == null || hs_ng_reason == "") {
                 _QAInspection.swMsg("Please provide a Reason.","warning");
             } else {
-                _QAInspection.setBoxNGRemarks({
+                _QAInspection.setHSNGremarks({
                     _token: _QAInspection.token,
-                    box_id: box_id,
-                    box_ng_qa_id: box_ng_qa_id,
-                    box_row_index: box_row_index,
-                    box_ng_reason: box_ng_reason
+                    id: id,
+                    judgment: 0,
+                    hs_ng_box_id: hs_ng_box_id,
+                    hs_row_index: hs_row_index,
+                    hs_ng_reason: hs_ng_reason
                 });
             }
             
         });
 
         var hs_count = 0;
-        $('#inspqection_sheet_qr').on('keypress', function(e) {
+        $('#b_qr_inspection_sheet').on('keypress', function(e) {
             var delayInMilliseconds = 1000; //1 second
-            var inspection_qr = $(this).val();
+            var inspection_sheet_qr = $(this).val();
 
             if (e.keyCode == 13) {
-                inspection_qr += (e.key == 'Enter')? '': e.key;
+                inspection_sheet_qr += (e.key == 'Enter')? '': e.key;
                 hs_count += 1;
                 e.preventDefault();
             }
 
-            var hs_count_per_box = $('#hs_count_per_box').val();
+            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+            var data = rowData[0];
+            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
 
-            if (hs_count_per_box == hs_count) {
-                console.log(inspection_qr);
-                var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-                var data = rowData[0];
-                var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
-
-                _QAInspection.scanInspectionSheet({
-                    _token: _QAInspection.token,
-                    hs_qrs: inspection_qr,
-                    box_id: data.id,
-                    box_qr: data.box_qr,
-                    pallet_id: $('#pallet_id').val(),
-                    inspector: $('#inspector').val(),
-                    row_index: row_index[0]
-                });
-
-                hs_count = 0;
-            }
+            _QAInspection.scanInspectionSheet({
+                _token: _QAInspection.token,
+                inspection_sheet_qr: inspection_sheet_qr,
+                box_id: data.id,
+                box_qr: data.box_qr,
+                pallet_id: $('#pallet_id').val(),
+                inspector: $('#inspector').val(),
+                row_index: row_index[0]
+            });
         });
 
-        $('#scan_serial').on('keypress', function(e) {
+        $('#b_oba_serial_no').on('keypress', function(e) {
             var hs_serial = $(this).val();
+
+            $('#b_oba_serial_no').removeClass("input-error");
+            $('#b_oba_serial_no').removeClass('is-invalid');
+            $('#hs_serial_feedback').removeClass('invalid-feedback');
+            $('#hs_serial_feedback').html('');
 
             if (e.keyCode == 13) {
                 var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();

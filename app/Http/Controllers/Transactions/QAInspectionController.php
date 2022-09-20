@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use App\Events\PalletTransferred;
-use App\Models\PalletBoxNgReason;
+use App\Models\PalletHeatSinkNgReason;
+use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletDispositionReason;
 use App\Models\PalletQaDisposition;
 use App\Models\QaAffectedSerial;
 use App\Models\QaHoldLot;
 use App\Models\QaInspectedBoxes;
+use App\Models\QaInspectionSheetSerial;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
@@ -91,9 +93,9 @@ class QAInspectionController extends Controller
                         'qa.id as qa_id',
                         'pb.box_qr',
                         DB::raw("pb.remarks as prod_remarks"),
-                        DB::raw("ng.reason as remarks"),
+                        DB::raw("'' as remarks"),
                         DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
-                        DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
+                        DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
                         'm.hs_count_per_box'
                     )
                     ->leftJoin('qa_inspected_boxes as qa', function($join) {
@@ -102,7 +104,7 @@ class QAInspectionController extends Controller
                         }
                     )
                     ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
-                    ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
+                    // ->leftJoin('pallet_hs_ng_reasons as ng','ng.id', '=', 'qa.remarks')
                     ->where('pb.pallet_id', $pallet_id)
                     ->where('pb.is_deleted', 0)
                     ->orderBy('pb.box_qr', 'desc');
@@ -124,14 +126,18 @@ class QAInspectionController extends Controller
         return $data;
     }
 
-    public function check_hs_serial(Request $req)
+    public function get_inspection_sheet_serials(Request $req)
+    {
+        $query = QaInspectionSheetSerial::where('box_id',$req->box_id);
+        return Datatables::of($query)->make(true);
+    }
+
+    public function check_inspection_sheet(Request $req)
     {
 
         $data = [
-			'msg' => 'Checking of HS Serial has failed.',
-            'data' => [
-                'matched' => false
-            ],
+			'msg' => 'Checking of Inspection Sheet QR has failed.',
+            'data' => [],
 			'success' => true,
             'msgType' => 'warning',
             'msgTitle' => 'Failed!'
@@ -140,6 +146,7 @@ class QAInspectionController extends Controller
         try {
             // HS serials in DB
             $arr_db_serials = [];
+            $output_serial = [];
             $db_serials = $this->serials($req->box_qr);
 
             foreach ($db_serials as $key => $hs) {
@@ -147,83 +154,55 @@ class QAInspectionController extends Controller
             }
 
             // HS serials were scanned in QA
-            $hs_qr = explode(';',$req->hs_qrs);
+            $hs_serial = explode(';',$req->inspection_sheet_qr);
 
             // checking if matched
             $matched = 1;
-            foreach ($hs_qr as $key => $hs) {
+            foreach ($hs_serial as $key => $hs) {
                 $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
 
                 if (!in_array($hs, $arr_db_serials)) {
                     if ($hs != "" && !is_null($hs) && $hs !== 'Enter') {
                         $matched = 0;
                         break;
-                    }                    
+                    }
                 }
+
+                $check = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial',$hs)->count();
+
+                if ($check < 1) {
+                    QaInspectionSheetSerial::create([
+                        'box_id' => $req->box_id,
+                        'box_qr' => $req->box_id,
+                        'hs_serial' => $hs,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
+                    ]);
+                }
+
+                array_push($output_serial, [
+                    'hs_serial' => $hs
+                ]);
             }
 
-            $box = QaInspectedBoxes::where([
-                        ['pallet_id','=',$req->pallet_id],
-                        ['box_id','=',$req->box_id]
-                    ])
-                    ->select('id')->first();
-
-            $is_box_checked = (is_null($box))? 0 : $box->count();
-
-            $insp = "";
-            $saved = 0;
-
-            if ($is_box_checked) {
-                $insp = QaInspectedBoxes::find($box->id);
-                $insp->box_qr_judgement = $matched;
-                $insp->update_user = Auth::user()->id;
-                $saved = $insp->update();
-
-            } else {
-                $insp = new QaInspectedBoxes();
-                $insp->pallet_id = (!isset($req->pallet_id))? "" : $req->pallet_id;
-                $insp->box_id = (!isset($req->box_id))? "" : $req->box_id;
-                $insp->box_qr = (!isset($req->box_qr))? "" : $req->box_qr;
-                $insp->box_qr_judgement = $matched;
-                $insp->inspector = $req->inspector;
-                $insp->create_user = Auth::user()->id;
-                $insp->update_user = Auth::user()->id;
-                $saved = $insp->save();
-            }
-
-            if ($saved) {
-                $box_data = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
-                                ->select(
-                                    'pb.id',
-                                    'pb.pallet_id',
-                                    'pb.model_id',
-                                    'pb.box_qr',
-                                    'pb.remarks',
-                                    DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement")
-                                )
-                                ->leftJoin('qa_inspected_boxes as qa', function($join) {
-                                        $join->on('qa.pallet_id','=','pb.pallet_id');
-                                        $join->on('pb.id','=','qa.box_id');
-                                    }
-                                )
-                                ->where('pb.pallet_id', $req->pallet_id)
-                                ->where('pb.id', $req->box_id)
-                                ->distinct()->first();
+            if ($matched > 0) {
                 $data = [
-                    'data' => [
-                        'box_data' => $box_data,
-                        'matched' => $matched
-                    ],
+                    'data' => $output_serial,
+                    'success' => true
+                ];
+            } else {
+                $data = [
+                    'msg' => 'Inspection Sheet is not matched with Box ID ['.$req->box_qr.']',
+                    'data' => [],
                     'success' => true,
+                    'msgType' => 'warning',
+                    'msgTitle' => 'Failed!'
                 ];
             }
-
         } catch (\Throwable $th) {
             $data = [
                 'msg' => $th->getMessage(),
-                'data' => [
-                    'matched' => false
-                ],
+                'data' => [],
                 'success' => false,
                 'msgType' => 'error',
                 'msgTitle' => 'Error!'
@@ -281,21 +260,24 @@ class QAInspectionController extends Controller
 
     private function affected_serial_no($pallet_id, $box_id)
     {
-        $query = QaAffectedSerial::where([
+        $query = DB::table('qa_affected_serials')->where([
                     ['pallet_id', '=', $pallet_id],
                     ['box_id', '=', $box_id]
-                ])->select([
-                    'id',
-                    'pallet_id',
-                    'box_id',
-                    'hs_serial',
-                    'is_deleted',
+                ])
+                ->select([
+                    DB::raw("id"),
+                    DB::raw("pallet_id"),
+                    DB::raw("box_id"),
+                    DB::raw("hs_serial"),
+                    DB::raw("qa_judgment"),
+                    DB::raw("remarks"),
+                    DB::raw("is_deleted"),
                 ]);
                     
         return $query;
     }
 
-    public function get_box_ng_remarks(Request $req)
+    public function get_hs_ng_remarks(Request $req)
 	{
         $results = [];
         $val = (!isset($req->q))? "" : $req->q;
@@ -314,7 +296,7 @@ class QAInspectionController extends Controller
             }
 
             if ($sql_query == null || $sql_query == "") {
-                $results = PalletBoxNgReason::select('id as id','reason as text')->where('is_deleted',0);
+                $results = PalletHeatSinkNgReason::select('id as id','reason as text')->where('is_deleted',0);
 
                 if ($val !== "") {
                     $results->where('reason','like',"%" . $val . "%");
@@ -333,10 +315,10 @@ class QAInspectionController extends Controller
         return $results;
 	}
 
-    public function box_judgment(Request $req)
+    public function hs_serial_judgment(Request $req)
     {
         $data = [
-			'msg' => 'Judging box has failed.',
+			'msg' => 'Judging HS Serial has failed.',
             'data' => [],
 			'success' => true,
             'msgType' => 'warning',
@@ -344,35 +326,35 @@ class QAInspectionController extends Controller
         ];
 
         try {
-            $insp = QaInspectedBoxes::find($req->qa_id);
-            $insp->box_judgement = (int)$req->judgment;
+            $insp = QaAffectedSerial::find($req->id);
+            $insp->pallet_id = $req->pallet_id;
+            $insp->box_id = $req->box_id;
+            $insp->hs_serial = $req->hs_serial;
+            $insp->qa_judgment = (int)$req->judgment;
+            $insp->remarks = $req->remarks;
             $insp->update_user = Auth::user()->id;
             if ($insp->update()) {
-                $box_data = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
-                                ->select(
-                                    'pb.id',
-                                    'pb.pallet_id',
-                                    'pb.model_id',
-                                    'qa.id as qa_id',
-                                    'pb.box_qr',
-                                    DB::raw("ng.reason as remarks"),
-                                    DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
-                                    DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
-                                    'm.hs_count_per_box'
-                                )
-                                ->leftJoin('qa_inspected_boxes as qa', function($join) {
-                                        $join->on('qa.pallet_id','=','pb.pallet_id');
-                                        $join->on('pb.id','=','qa.box_id');
-                                    }
-                                )
-                                ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
-                                ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
-                                ->where('qa.id', $req->qa_id)
-                                ->where('pb.is_deleted', 0)
-                                ->orderBy('pb.box_qr', 'desc')->first();
+                $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('qa_judgment','<>',-1);
+
+                if ($inspected->count() == $req->hs_count) {
+                    $inspected = $inspected->get();
+
+                    $box_judgment = 1;
+                    foreach ($inspected as $key => $ins) {
+                        if ($ins->qa_judgment == 0) {
+                            $box_judgment = 0;
+                            break;
+                        }
+                    }
+
+                    $box = PalletBoxPalletDtl::find($req->box_id);
+                    $box->box_judgment = $box_judgment;
+                    $box->update_user = Auth::user()->id;
+                    $box->update();
+                }
                 $data = [
-                    'msg' => 'Box was successfully judged.',
-                    'data' => $box_data,
+                    'msg' => 'HS Serial was successfully judged.',
+                    'data' => $insp,
                     'success' => true,
                     'msgType' => 'success',
                     'msgTitle' => 'Success!'
@@ -391,10 +373,10 @@ class QAInspectionController extends Controller
         return response()->json($data);
     }
 
-    public function set_box_ng_remarks(Request $req)
+    public function set_hs_ng_remarks(Request $req)
     {
         $data = [
-			'msg' => 'Setting Box NG reason has failed.',
+			'msg' => 'Setting Heat Sink NG reason has failed.',
             'data' => [],
 			'success' => true,
             'msgType' => 'warning',
@@ -402,36 +384,15 @@ class QAInspectionController extends Controller
         ];
 
         try {
-            $insp = QaInspectedBoxes::find($req->box_ng_qa_id);
-            $insp->remarks = (int)$req->box_ng_reason;
+            $insp = QaAffectedSerial::find($req->id);
+            $insp->qa_judgment = (int)$req->judgment;
+            $insp->remarks = $this->_helpers->getHSdefects($req->hs_ng_reason);
             $insp->update_user = Auth::user()->id;
 
             if ($insp->update()) {
-                $box_data = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
-                                ->select(
-                                    'pb.id',
-                                    'pb.pallet_id',
-                                    'pb.model_id',
-                                    'qa.id as qa_id',
-                                    'pb.box_qr',
-                                    DB::raw("ng.reason as remarks"),
-                                    DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
-                                    DB::raw("IFNULL(qa.box_judgement,-1) AS box_judgement"),
-                                    'm.hs_count_per_box'
-                                )
-                                ->leftJoin('qa_inspected_boxes as qa', function($join) {
-                                        $join->on('qa.pallet_id','=','pb.pallet_id');
-                                        $join->on('pb.id','=','qa.box_id');
-                                    }
-                                )
-                                ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
-                                ->leftJoin('pallet_box_ng_reasons as ng','ng.id', '=', 'qa.remarks')
-                                ->where('qa.id', $req->box_ng_qa_id)
-                                ->where('pb.is_deleted', 0)
-                                ->orderBy('pb.box_qr', 'desc')->first();
                 $data = [
-                    'msg' => 'Box NG reason was successfully set.',
-                    'data' => $box_data,
+                    'msg' => 'Heat Sink NG reason was successfully set.',
+                    'data' => $insp,
                     'success' => true,
                     'msgType' => 'success',
                     'msgTitle' => 'Success!'
@@ -461,10 +422,11 @@ class QAInspectionController extends Controller
         ];
 
         $rules = [
-            'hs_serial' => 'unique:qa_affected_serials,hs_serial'
+            'hs_serial' => 'unique:qa_affected_serials,hs_serial|exists:qa_inspection_sheet_serials,hs_serial'
         ];
         $customMessages = [
             'unique' => 'This HS serial was already scanned.',
+            'exists' => 'This HS serial is not included in Inspection Sheet QR.'
         ];
 
         $this->validate($req, $rules, $customMessages);
@@ -475,13 +437,37 @@ class QAInspectionController extends Controller
             $affected->pallet_id = $req->pallet_id;
             $affected->box_id = $req->box_id;
             $affected->hs_serial = $req->hs_serial;
+            $affected->qa_judgment = -1;
+            $affected->remarks = '';
             $affected->is_deleted = 0;
             $affected->create_user = Auth::user()->id;
             $affected->update_user = Auth::user()->id;
 
+            $matched = 'NOT YET COMPLETE';
             if ($affected->save()) {
+                $inspected = QaAffectedSerial::where('box_id', $req->box_id);
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
+
+                if ($inspected->count() == $serials->count()) {
+                    $serials = $serials->get();
+                    $inspected = $inspected->get()->toArray();
+
+                    $matched = true;
+                    foreach ($serials as $key => $iss) {
+                        if (!in_array($iss->hs_serial, $inspected)) {
+                            $matched = false;
+                            break;
+                        }
+                    }
+                }
+
+                
+                
                 $data = [
-                    'data' => $affected,
+                    'data' => [
+                        'affected_serials' => $affected,
+                        'matched' => $matched
+                    ],
                     'success' => true
                 ];
             }
@@ -806,6 +792,52 @@ class QAInspectionController extends Controller
                 'msgTitle' => 'Error!'
             ];
         }
+        return response()->json($data);
+    }
+
+    public function get_box_details(Request $req)
+    {
+        $data = [
+			'msg' => "Getting Box details has failed.",
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $query = DB::table('pallet_box_pallet_dtls as b')
+                        ->join('pallet_model_matrices as m','m.id','=','b.model_id')
+                        ->join('tinspectionsheetprintdata as o','o.BoxSerialNo','=','b.box_qr')
+                        ->select(
+                            DB::raw('b.id as id'),
+                            DB::raw('m.model as model'),
+                            DB::raw("str_to_date(o.production_date,'%d-%b-%y') as date_manufactured"),
+                            DB::raw("date_add(str_to_date(o.production_date,'%d-%b-%y'), interval 730 DAY) as date_expired"),
+                            DB::raw('o.cust_part_no as cust_part_no'),
+                            DB::raw('o.lot_no as lot_no'),
+                            DB::raw('o.machine as prod_line_no'),
+                            DB::raw('o.test_result as carton_label_no'),
+                            DB::raw('m.hs_count_per_box as qty_per_box')
+                        )
+                        ->where('b.box_qr', $req->box_qr);
+
+            if ($query->count()) {
+                $data = [
+                    'data' => $query->first(),
+                    'success' => true,
+                ];
+            } 
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
         return response()->json($data);
     }
 }

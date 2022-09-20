@@ -123,9 +123,9 @@ class PageSeeder extends Seeder
         ]);
 
         PalletPage::create([
-        	'page_name' => 'BoxNGReasonMaster',
-        	'page_label' => 'Box NG Reasons',
-        	'url' => '/masters/box-ng-reasons',
+        	'page_name' => 'HeatSinkNGReasonMaster',
+        	'page_label' => 'Heat Sink NG Reasons',
+        	'url' => '/masters/heat-sink-ng-reasons',
         	'has_sub' => 0,
             'parent_menu' => 'MasterMaintenance',
             'parent_name' => 'MasterMaintenance',
