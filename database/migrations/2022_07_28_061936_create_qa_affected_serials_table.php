@@ -18,6 +18,8 @@ class CreateQaAffectedSerialsTable extends Migration
             $table->integer('pallet_id')->default(0);
             $table->integer('box_id')->default(0);
             $table->text('hs_serial');
+            $table->integer('qa_judgment')->default(-1)->nullable();
+            $table->text('remarks')->nullable();
             $table->integer('is_deleted')->default(0);
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);

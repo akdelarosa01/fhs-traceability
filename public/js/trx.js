@@ -2729,6 +2729,7 @@ B. Synopsis: Class Module used to process data
                         console.log(self.responseError)
                         if (self.responseError.hasOwnProperty('errors')) {
                             var errors = self.responseError.errors;
+                            self.responseError = errors;
                             self.showInputErrors(errors);
                         }
 

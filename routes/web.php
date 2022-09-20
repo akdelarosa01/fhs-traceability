@@ -69,11 +69,11 @@ Route::group(['prefix' => 'masters'], function () {
         Route::post('/delete-model', [App\Http\Controllers\Masters\BoxPalletModelMatrixController::class, 'delete_model'])->name('masters.model-matrix.delete');
     });
 
-    Route::group(['prefix' => 'box-ng-reasons'], function () {
-        Route::get('/', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'index'])->name('masters.box-ng-reasons');
-        Route::get('/list', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'reason_list'])->name('masters.box-ng-reasons.list');
-        Route::post('/save-reason', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'save_reason'])->name('masters.box-ng-reasons.save');
-        Route::post('/delete-reason', [App\Http\Controllers\Masters\BoxNGReasonController::class, 'delete_reason'])->name('masters.box-ng-reasons.delete');
+    Route::group(['prefix' => 'heat-sink-ng-reasons'], function () {
+        Route::get('/', [App\Http\Controllers\Masters\HeatSinkNGReasonMasterController::class, 'index'])->name('masters.heat-sink-ng-reasons');
+        Route::get('/list', [App\Http\Controllers\Masters\HeatSinkNGReasonMasterController::class, 'reason_list'])->name('masters.heat-sink-ng-reasons.list');
+        Route::post('/save-reason', [App\Http\Controllers\Masters\HeatSinkNGReasonMasterController::class, 'save_reason'])->name('masters.heat-sink-ng-reasons.save');
+        Route::post('/delete-reason', [App\Http\Controllers\Masters\HeatSinkNGReasonMasterController::class, 'delete_reason'])->name('masters.box-ng-reasons.delete');
     });
 });
 
@@ -110,18 +110,20 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
         Route::post('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
         Route::post('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
-        Route::post('/check-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_hs_serial'])->name('transactions.qa-inspection.check-hs-serial');
-        Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_affected_serial_no'])->name('transactions.qa-inspection.get-affected-serial-no');
+        Route::post('/get-inspection-sheet-serials', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_inspection_sheet_serials'])->name('transactions.qa-inspection.get-inspection-sheet-serials');
+        Route::post('/check-inspection-sheet', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_inspection_sheet'])->name('transactions.qa-inspection.check-inspection-sheet');
         Route::get('/get-lot-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_lot_no'])->name('transactions.qa-inspection.get-lot-no');
-        Route::get('/get-box-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_ng_remarks'])->name('transactions.qa-inspection.get-box-ng-remarks');
-        Route::post('/box-judgment', [App\Http\Controllers\Transactions\QAInspectionController::class, 'box_judgment'])->name('transactions.qa-inspection.box-judgment');
-        Route::post('/set-box-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_box_ng_remarks'])->name('transactions.qa-inspection.set-box-ng-remarks');
+        Route::get('/get-hs-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_hs_ng_remarks'])->name('transactions.qa-inspection.get-hs-ng-remarks');
+        Route::post('/hs-serial-judgment', [App\Http\Controllers\Transactions\QAInspectionController::class, 'hs_serial_judgment'])->name('transactions.qa-inspection.hs-serial-judgment');
+        Route::post('/set-hs-ng-remarks', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_hs_ng_remarks'])->name('transactions.qa-inspection.set-hs-ng-remarks');
         Route::post('/scan-hs-serial', [App\Http\Controllers\Transactions\QAInspectionController::class, 'scan_hs_serial'])->name('transactions.qa-inspection.scan-hs-serial');
+        Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_affected_serial_no'])->name('transactions.qa-inspection.get-affected-serial-no');
         Route::get('/get-dispositions', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_dispositions'])->name('transactions.qa-inspection.get-dispositions');
         Route::post('/set-disposition', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_disposition'])->name('transactions.qa-inspection.set-disposition');
         Route::get('/get-disposition-reasons', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_disposition_reasons'])->name('transactions.qa-inspection.get-disposition-reasons');
         Route::get('/get-pallet-lot', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_pallet_lot'])->name('transactions.qa-inspection.get-pallet-lot');
         Route::post('/transfer-to', [App\Http\Controllers\Transactions\QAInspectionController::class, 'transfer_to'])->name('transactions.qa-inspection.transfer-to');
+        Route::get('/get-box-details', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_details'])->name('transactions.qa-inspection.get-box-details');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {
