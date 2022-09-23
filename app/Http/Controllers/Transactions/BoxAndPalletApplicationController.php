@@ -403,22 +403,24 @@ class BoxAndPalletApplicationController extends Controller
 
     private function boxes($pallet_id)
     {
-        $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as b')
+        $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
                     ->select(
-                        'b.id',
-                        'b.pallet_id',
-                        'b.model_id',
-                        'm.model',
-                        'm.box_count_per_pallet',
-                        'b.box_qr',
-                        'b.remarks',
-                        'b.created_at',
-                        'b.updated_at'
+                        DB::raw("pb.id as id"),
+                        DB::raw("pb.pallet_id as pallet_id"),
+                        DB::raw("pb.model_id as model_id"),
+                        DB::raw("pb.box_qr as box_qr"),
+                        DB::raw("pb.remarks as prod_remarks"),
+                        DB::raw("'' as remarks"),
+                        DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
+                        DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                        DB::raw("m.box_count_per_pallet as box_count_per_pallet"),
+                        DB::raw("pb.created_at as created_at"),
+                        DB::raw("pb.updated_at as updated_at")
                     )
-                    ->join('pallet_model_matrices as m','m.id','=','b.model_id')
-                    ->where('b.pallet_id',$pallet_id)
-                    ->where('b.is_deleted',0)
-                    ->orderBy('b.id','desc');
+                    ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                    ->where('pb.pallet_id', $pallet_id)
+                    ->where('pb.is_deleted', 0)
+                    ->orderBy('pb.id', 'desc');
         return $query;
     }
 

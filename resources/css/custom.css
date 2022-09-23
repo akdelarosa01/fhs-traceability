@@ -540,9 +540,9 @@ table.tbl-with-btns > thead > tr > th {
     font-size: 16px !important;
 }
 
-li.has-sub, .li-menu {
+/* li.has-sub, .li-menu {
     padding-left: 10px !important;
-}
+} */
 
 @media (min-width: 576px) {
     .modal-dialog {
@@ -870,4 +870,9 @@ td .form-control {
         max-width: 700px;
         margin: 10px auto;
     }
+}
+
+
+.swal2-container {
+    z-index: 99999;
 }

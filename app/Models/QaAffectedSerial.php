@@ -17,6 +17,8 @@ class QaAffectedSerial extends Model
         'hs_serial',
         'qa_judgment',
         'remarks',
+        'inspector',
+        'shift',
         'is_deleted',
         'create_user',
         'update_user'

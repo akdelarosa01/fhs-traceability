@@ -207,7 +207,7 @@ class PageSeeder extends Seeder
         	'has_sub' => 0,
             'parent_menu' => 'Reports',
             'parent_name' => 'Reports',
-            'parent_order' => 0,
+            'parent_order' => 400,
             'order' => 1,
             'icon' => 'fa fa-chart-column',
             'is_deleted' => 0,
@@ -222,9 +222,24 @@ class PageSeeder extends Seeder
         	'has_sub' => 0,
             'parent_menu' => 'Reports',
             'parent_name' => 'Reports',
-            'parent_order' => 0,
-            'order' => 1,
+            'parent_order' => 400,
+            'order' => 2,
             'icon' => 'fa fa-chart-bar',
+            'is_deleted' => 0,
+        	'create_user' => 1,
+        	'update_user' => 1
+        ]);
+
+        PalletPage::create([
+        	'page_name' => 'QADataQuery',
+        	'page_label' => 'QA Data Query',
+        	'url' => '/reports/qa-data-query',
+        	'has_sub' => 0,
+            'parent_menu' => 'Reports',
+            'parent_name' => 'Reports',
+            'parent_order' => 400,
+            'order' => 3,
+            'icon' => 'fa fa-chart-line',
             'is_deleted' => 0,
         	'create_user' => 1,
         	'update_user' => 1
