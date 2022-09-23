@@ -60,6 +60,7 @@ Q.A. Inspection
 							</div>
 							<input type="hidden" class="clear" id="box_qr" name="box_qr"/>
 							<input type="hidden" class="clear" id="pallet_id" name="pallet_id"/>
+							<input type="hidden" class="clear" id="pallet_row_index" name="pallet_row_index"/>
 							{{-- <input type="hidden" class="clear" id="box_id" name="box_id"/> --}}
 							<input type="hidden" class="clear" id="inspection_sheet_count" name="inspection_sheet_count" value="0">
 							<input type="hidden" class="clear" id="hs_count_per_box" name="hs_count_per_box" value="0">
@@ -88,11 +89,49 @@ Q.A. Inspection
 							<div class="input-group-prepend">
 								<span class="input-group-text">Box to Inspect</span>
 							</div>
-							<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_to_inspect" name="box_count_to_inspect" placeholder="Box Count to Inspect" autocomplete="off" readonly>
+							<input type="number" step="1" class="form-control form-control-sm clear" id="box_count_to_inspect" name="box_count_to_inspect" placeholder="Box Count to Inspect" autocomplete="off">
+							<div class="input-group-append">
+								<button type="button" class="btn btn-sm btn-blue btn-block" id="btn_set_new_box_count_to_inspect">Set New Box Count to Inspect</button>
+							</div>
 							<div id="box_count_to_inspect_feedback"></div>
 						</div>
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="col-12">
+						<div class="input-group input-group-sm mb-2">
+							<div class="input-group-prepend">
+								<span class="input-group-text">Shift</span>
+							</div>
+							<select class="form-control form-control-sm select-clear" name="shift" id="shift">
+								<option value="@if(Session::has('shift')){{Session::get('shift')}}@endif">
+									<?php
+										if (Session::has('shift')) {
+											switch (Session::get('shift')) {
+												case 'DS':
+													echo 'Day Shift';
+													break;
+												
+												default:
+													echo 'Night Shift';
+													break;
+											}
+										}
+
+									?>
+								</option>
+								<option value="DS">Day Shift</option>
+								<option value="NS">Night Shift</option>
+							</select>
+							<div class="input-group-append">
+								<button type="button" class="btn btn-sm btn-blue btn-block" id="btn_set_shift">Set Shift</button>
+							</div>
+							<div id="shift_feedback"></div>
+						</div>
+					</div>
+				</div>
+
 			</div>
 
 			<div class="col-4">
@@ -153,11 +192,11 @@ Q.A. Inspection
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
+					{{-- <div class="col-md-6 col-sm-6 col-xs-12 mb-2">
 						<button type="button" class="btn btn-sm btn-block btn-purple read-only" id="update_serial" disabled>
 							<i class="fa fa-pen"></i> Update
 						</button>
-					</div>
+					</div> --}}
 					{{-- <div class="col-md-6 col-sm-6 col-xs-12 mb-2">
 						<button type="button" class="btn btn-sm btn-block btn-blue read-only" id="delete_serial" disabled>
 							<i class="fa fa-trash"></i> Delete

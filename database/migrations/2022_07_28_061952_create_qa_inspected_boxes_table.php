@@ -17,11 +17,15 @@ class CreateQaInspectedBoxesTable extends Migration
             $table->id();
             $table->integer('pallet_id')->default(0);
             $table->integer('box_id')->default(0);
-            $table->text('box_qr');
-            $table->integer('box_qr_judgement')->length(1)->default(-1); // 0 = NOT MATCHED, 1 = MATCHED
-            $table->integer('box_judgement')->length(1)->default(-1); // 0 = NG, 1 = GOOD
-            $table->integer('remarks')->length(11)->default(0);
-            $table->string('inspector')->nullable()->length(100);
+            $table->text('box_qr')->nullable();
+            $table->date('date_manufactured')->nullable();
+            $table->date('date_expired')->nullable();
+            $table->string('customer_pn')->length(50)->nullable();
+            $table->text('lot_no')->nullable();
+            $table->string('prod_line_no')->length(50)->nullable();
+            $table->string('carton_no')->length(50)->nullable();
+            $table->double('qty_per_box',20,2)->default(0);
+            $table->text('inspection_sheet_qr')->nullable();
             $table->integer('create_user')->default(0);
             $table->integer('update_user')->default(0);
             $table->timestamps();

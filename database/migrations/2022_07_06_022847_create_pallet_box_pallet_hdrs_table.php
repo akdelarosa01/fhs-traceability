@@ -21,6 +21,7 @@ class CreatePalletBoxPalletHdrsTable extends Migration
             $table->integer('pallet_status')->length(1)->default(0); // 0 = ON PROGRESS / 1 = FOR OBA / 2 = GOOD / 3 = REWORK / 4 = HOLD PALLET / 5 = HOLD LOT
             $table->string('pallet_location');
             $table->integer('new_box_count')->nullable();
+            $table->integer('new_box_to_inspect')->nullable();
             $table->integer('is_printed')->length(1)->default(0);
             $table->integer('disposition_reason')->default(0);
             $table->dateTime('print_date')->nullable();

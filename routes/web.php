@@ -124,6 +124,9 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-pallet-lot', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_pallet_lot'])->name('transactions.qa-inspection.get-pallet-lot');
         Route::post('/transfer-to', [App\Http\Controllers\Transactions\QAInspectionController::class, 'transfer_to'])->name('transactions.qa-inspection.transfer-to');
         Route::get('/get-box-details', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_details'])->name('transactions.qa-inspection.get-box-details');
+        Route::post('/set-shift', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_shift'])->name('transactions.qa-inspection.set-shift');
+        Route::post('/set-new-box-to-inspect', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_new_box_to_inspect'])->name('transactions.qa-inspection.set-new-box-to-inspect');
+        
     });
 
     Route::group(['prefix' => 'warehouse'], function () {
