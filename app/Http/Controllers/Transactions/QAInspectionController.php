@@ -13,6 +13,7 @@ use App\Models\PalletDispositionReason;
 use App\Models\PalletQaDisposition;
 use App\Models\QaAffectedSerial;
 use App\Models\QaHoldLot;
+use App\Models\QaHoldPallet;
 use App\Models\QaInspectedBoxes;
 use App\Models\QaInspectionSheetSerial;
 use Illuminate\Support\Facades\Auth;
@@ -55,7 +56,7 @@ class QAInspectionController extends Controller
                 DB::raw("p.new_box_count as new_box_count"),
                 DB::raw("p.pallet_location as pallet_location"),
                 DB::raw("p.is_printed as is_printed"),
-                DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
+                DB::raw("ifnull(p.new_box_to_inspect,m.box_count_to_inspect) as box_count_to_inspect"),
                 DB::raw("p.created_at as created_at"),
                 DB::raw("p.updated_at as updated_at"),
                 DB::raw("r.disposition as reason"),
@@ -87,24 +88,16 @@ class QAInspectionController extends Controller
     {
         $query = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
                     ->select(
-                        'pb.id',
-                        'pb.pallet_id',
-                        'pb.model_id',
-                        'qa.id as qa_id',
-                        'pb.box_qr',
+                        DB::raw("pb.id as id"),
+                        DB::raw("pb.pallet_id as pallet_id"),
+                        DB::raw("pb.model_id as model_id"),
+                        DB::raw("pb.box_qr as box_qr"),
                         DB::raw("pb.remarks as prod_remarks"),
                         DB::raw("'' as remarks"),
-                        DB::raw("IFNULL(qa.box_qr_judgement,-1) AS box_qr_judgement"),
                         DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
-                        'm.hs_count_per_box'
-                    )
-                    ->leftJoin('qa_inspected_boxes as qa', function($join) {
-                            $join->on('qa.pallet_id','=','pb.pallet_id');
-                            $join->on('pb.id','=','qa.box_id');
-                        }
+                        DB::raw("m.hs_count_per_box as hs_count_per_box")
                     )
                     ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
-                    // ->leftJoin('pallet_hs_ng_reasons as ng','ng.id', '=', 'qa.remarks')
                     ->where('pb.pallet_id', $pallet_id)
                     ->where('pb.is_deleted', 0)
                     ->orderBy('pb.box_qr', 'desc');
@@ -186,6 +179,25 @@ class QAInspectionController extends Controller
             }
 
             if ($matched > 0) {
+                // save box details
+                QaInspectedBoxes::create([
+                    'pallet_id' => $req->pallet_id,
+                    'box_id' => $req->box_id,
+                    'box_qr' => $req->box_qr,
+                    'date_manufactured' => $req->date_manufactured,
+                    'date_expired' => $req->date_expired,
+                    'customer_pn' => $req->customer_pn,
+                    'lot_no' => $req->lot_no,
+                    'prod_line_no' => $req->prod_line_no,
+                    'carton_no' => $req->carton_no,
+                    'qty_per_box' => $req->qty_per_box,
+                    'inspector' => $req->inspector,
+                    'shift' => $req->shift,
+                    'inspection_sheet_qr' => $req->inspection_sheet_qr,
+                    'create_user' => Auth::user()->id,
+                    'update_user' => Auth::user()->id
+                ]);
+
                 $data = [
                     'data' => $output_serial,
                     'success' => true
@@ -332,6 +344,8 @@ class QAInspectionController extends Controller
             $insp->hs_serial = $req->hs_serial;
             $insp->qa_judgment = (int)$req->judgment;
             $insp->remarks = $req->remarks;
+            $insp->inspector = $req->inspector;
+            $insp->shift = $req->shift;
             $insp->update_user = Auth::user()->id;
             if ($insp->update()) {
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('qa_judgment','<>',-1);
@@ -460,8 +474,6 @@ class QAInspectionController extends Controller
                         }
                     }
                 }
-
-                
                 
                 $data = [
                     'data' => [
@@ -540,16 +552,38 @@ class QAInspectionController extends Controller
             $pallet->update_user = Auth::user()->id;
 
             if ($pallet->update()) {
-                QaHoldLot::where('pallet_id', $req->pallet_id)->delete();
 
-                foreach ($req->lot_no as $key => $lot_no) {
-                    QaHoldLot::create([
-                        'pallet_id' => $req->pallet_id,
-                        'lot_no' => $lot_no,
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id,
-                    ]);
+                switch ($req->pallet_disposition) {
+                    case '5':
+                        QaHoldLot::where('pallet_id', $req->pallet_id)->delete();
+                        QaHoldPallet::where('pallet_id', $req->pallet_id)->delete();
+
+                        foreach ($req->lot_no as $key => $lot_no) {
+                            QaHoldLot::create([
+                                'pallet_id' => $req->pallet_id,
+                                'lot_no' => $lot_no,
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id,
+                            ]);
+                        }
+                        break;
+                    case '4':
+                        QaHoldLot::where('pallet_id', $req->pallet_id)->delete();
+                        QaHoldPallet::where('pallet_id', $req->pallet_id)->delete();
+
+                        QaHoldPallet::create([
+                            'pallet_id' => $req->pallet_id,
+                            'create_user' => Auth::user()->id,
+                            'update_user' => Auth::user()->id,
+                        ]);
+                        break;
+                    
+                    default:
+                        QaHoldLot::where('pallet_id', $req->pallet_id)->delete();
+                        QaHoldPallet::where('pallet_id', $req->pallet_id)->delete();
+                        break;
                 }
+                
                 $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
                     DB::raw("p.id as id"),
                     DB::raw("p.model_id as model_id"),
@@ -832,6 +866,118 @@ class QAInspectionController extends Controller
             $data = [
                 'msg' => $th->getMessage(),
                 'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function set_shift(Request $req)
+    {
+        $data = [
+			'msg' => "Setting Shift has failed.",
+            'data' => [
+                'shift' => ''
+            ],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $shift = $req->shift;
+
+            $req->session()->forget('shift');
+            $req->session()->put('shift', $shift);
+
+            $data = [
+                'msg' => "Setting Shift was successful.",
+                'data' => [
+                    'shift' => $shift
+                ],
+                'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+            ];
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [
+                    'shift' => ''
+                ],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function set_new_box_to_inspect(Request $req)
+    {
+        $data = [
+			'msg' => "Setting number of Box to Inspect has failed.",
+            'data' => [
+                'pallet' => '',
+                'box_count_to_inspect' => ''
+            ],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $pallet_id = $req->pallet_id;
+            $new_box_to_inspect = $req->box_count_to_inspect;
+
+            $pallet = PalletBoxPalletHdr::find($pallet_id);
+            $pallet->new_box_to_inspect = $new_box_to_inspect;
+
+            if ($pallet->update()) {
+                $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+                                    DB::raw("p.id as id"),
+                                    DB::raw("p.model_id as model_id"),
+                                    DB::raw("p.transaction_id as transaction_id"),
+                                    DB::raw("p.pallet_status as pallet_status"),
+                                    DB::raw("p.pallet_qr as pallet_qr"),
+                                    DB::raw("p.new_box_count as new_box_count"),
+                                    DB::raw("p.pallet_location as pallet_location"),
+                                    DB::raw("p.is_printed as is_printed"),
+                                    DB::raw("ifnull(p.new_box_to_inspect,m.box_count_to_inspect) as box_count_to_inspect"),
+                                    DB::raw("p.created_at as created_at"),
+                                    DB::raw("p.updated_at as updated_at"),
+                                    DB::raw("r.disposition as reason"),
+                                    DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
+                                ])
+                                ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+                                ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+                                ->where('p.id','=',$pallet_id)
+                                ->first();
+
+                $data = [
+                    'msg' => "Setting number of Box to Inspect was successful.",
+                    'data' => [
+                        'pallet' => $pallet_data,
+                        'box_count_to_inspect' => $new_box_to_inspect
+                    ],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }            
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [
+                    'pallet' => '',
+                    'box_count_to_inspect' => ''
+                ],
                 'success' => false,
                 'msgType' => 'error',
                 'msgTitle' => 'Error!'

@@ -74,6 +74,12 @@
                         },
                         error: function(response) {
                             console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
                         }
                     },
                     language: {
@@ -126,7 +132,7 @@
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
-                        $(dataRow[0].cells[3]).addClass('py-0');
+                        $(dataRow[0].cells[2]).addClass('py-0');
                         
                         var box_judgement = parseInt(data.box_judgement);
                         switch (box_judgement) {
@@ -211,6 +217,12 @@
                         },
                         error: function(response) {
                             console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
                         }
                     },
                     language: {
@@ -339,6 +351,12 @@
                         },
                         error: function(response) {
                             console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json.hasOwnProperty('message')) {
+                                    self.showError(json.message);
+                                }
+                            }
                         }
                     },
                     language: {
@@ -379,6 +397,7 @@
                         $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
                     },
                 }).on('page.dt', function() {
                 });
@@ -419,6 +438,12 @@
                         },
                         error: function(response) {
                             console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
                         }
                     },
                     language: {
@@ -491,22 +516,9 @@
 
                         $('.dataTables_scrollBody').css('min-height','10vh');
                         $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
-
-                        $('[data-toggle="tooltip"]').tooltip('toggle');
                     },
                     fnDrawCallback: function() {
-                        var data = this.fnGetData();
-                        var data_count = data.length;
-                        var hs_total_count = self.$tbl_inpection_sheet_serial.data().count();
-                        $('#hs_scanned_count').html(data_count);
-
-                        if (hs_total_count > data_count) {
-                            $('#box_judgment').removeClass("badge badge-pill badge-danger");
-                            $('#box_judgment').removeClass("badge badge-pill badge-success");
-                            $('#box_judgment').addClass("badge badge-pill badge-secondary");
-                            $('#box_judgment').html("NOT YET COMPLETE");
-                        }
-
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
                     },
                 }).on('page.dt', function() {
                 });
@@ -570,6 +582,7 @@
                 var response = self.responseData;
                 var nextRow = param.row_index + 1;
 
+                self.$tbl_affected_serials.ajax.reload();
                 self.$tbl_hs_serials_oba.row(param.row_index).data(response).draw();
                 self.$tbl_hs_serials_oba.row(param.row_index).deselect();
                 self.$tbl_hs_serials_oba.row(nextRow).select();
@@ -584,6 +597,7 @@
                 var response = self.responseData;
                 var netxRow = parseInt(param.hs_row_index) + 1;
 
+                self.$tbl_affected_serials.ajax.reload();
                 self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
                 self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
                 self.$tbl_hs_serials_oba.row(netxRow).select();
@@ -654,7 +668,7 @@
                 $('#modal_transfer_to').modal('hide');
             });
         },
-        getBoxDetails: function(box_qr) {
+        getBoxDetails: function(box_qr, box_judgement) {
             var self = this;
             self.submitType = "GET";
             self.jsonData = {
@@ -675,7 +689,44 @@
 
                 $('#hs_total_count').html(response.qty_per_box);
 
+                var hs_scanned_count = self.$tbl_hs_serials_oba.rows().count()
+                $('#hs_scanned_count').html(hs_scanned_count);
+
+                if (response.qty_per_box > hs_scanned_count) {
+                    $('#box_judgment').removeClass("badge badge-pill badge-danger");
+                    $('#box_judgment').removeClass("badge badge-pill badge-success");
+                    $('#box_judgment').addClass("badge badge-pill badge-secondary");
+                    $('#box_judgment').html("NOT YET COMPLETE");
+                } else if (box_judgement == 'GOOD') {
+                    $('#box_judgment').removeClass("badge badge-pill badge-danger");
+                    $('#box_judgment').removeClass("badge badge-pill badge-secondary");
+                    $('#box_judgment').addClass("badge badge-pill badge-success");
+                    $('#box_judgment').html(box_judgement);
+                }
+
                 $('#modal_box_inspection').modal('show');
+            });
+        },
+        setShift: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/set-shift";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#shift').val(response.shift);
+            });
+        },
+        setNewBoxToInspect: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/set-new-box-to-inspect";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#tbl_obas').DataTable().row(param.pallet_row_index).data(response.pallet).draw();
+                $('#box_count_to_inspect').val(response.box_count_to_inspect);
+                $('#box_tested_full').html(response.box_count_to_inspect);
             });
         }
 	}
@@ -785,14 +836,13 @@
         }).val(null).trigger('change.select2');
         
         $('#tbl_obas').DataTable().on('select', function ( e, dt, type, indexes ) {
-            var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
-            var data = rowData[0];
+            var data = $('#tbl_obas').DataTable().row( indexes ).data();
             
             $('#pallet_id').val(data.id);
             $('#box_tested_full').html(data.box_count_to_inspect);
             $('#box_count_to_inspect').val(data.box_count_to_inspect);
             $('#inspection_sheet_count').val(data.inspection_sheet_count);
-
+            $('#pallet_row_index').val(indexes[0]);
             var row = "";
 
             _QAInspection.getLotNo({
@@ -827,8 +877,7 @@
 
         })
         .on('deselect', function ( e, dt, type, indexes ) {
-            var rowData = $('#tbl_obas').DataTable().rows( indexes ).data().toArray();
-            var data = rowData[0];
+            var data = $('#tbl_obas').DataTable().row( indexes ).data();
 
             $('#r'+data.id+'_child_tr').remove();
 
@@ -836,6 +885,7 @@
             $('#box_tested_full').html(0);
             $('#box_count_to_inspect').val('');
             $('#inspection_sheet_count').val(0);
+            $('#pallet_row_index').val('');
 
             $('#box_id').val('');
             $('#box_qr').val('');
@@ -860,13 +910,12 @@
 
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
-
             $('#btn_box_inspection').prop('disabled', false);
-
             
             _QAInspection.box_id = data.id;
-            _QAInspection.$tbl_affected_serials.ajax.reload();
             _QAInspection.$tbl_inpection_sheet_serial.ajax.reload();
+
+            _QAInspection.$tbl_affected_serials.ajax.reload();
             _QAInspection.$tbl_hs_serials_oba.ajax.reload();
 
             _QAInspection.statusMsg('','clear');
@@ -907,6 +956,15 @@
             $('#b_qr_inspection_sheet').focus();
             _QAInspection.$tbl_inpection_sheet_serial.columns.adjust();
             _QAInspection.$tbl_hs_serials_oba.columns.adjust();
+        }).on('hide.bs.modal', function () {
+            var index = _QAInspection.$tbl_hs_serials_oba.row({selected: true}).index();
+            _QAInspection.$tbl_hs_serials_oba.row(index).deselect();
+        });
+
+        $('#modal_disposition').on('hide.bs.modal', function () {
+            $('#pallet_disposition').val(null).trigger('change');
+            $('#disposition_reason').val(null).trigger('change');
+            $('#lot_no').val(null).trigger('change');
         });
 
         $('#btn_box_inspection').on('click', function() {
@@ -919,7 +977,9 @@
                 $('#hs_serial_feedback').removeClass('invalid-feedback');
                 $('#hs_serial_feedback').html("");
 
-                _QAInspection.getBoxDetails(data.box_qr);
+                var box_judgement = (data.box_judgement == 1)? 'GOOD' : 'NOT GOOD';
+
+                _QAInspection.getBoxDetails(data.box_qr, box_judgement);
             } else {
                 _QAInspection.swMsg("Please select 1 Box ID number.","warning");
             }
@@ -993,11 +1053,19 @@
 
             _QAInspection.scanInspectionSheet({
                 _token: _QAInspection.token,
-                inspection_sheet_qr: inspection_sheet_qr,
+                pallet_id: $('#pallet_id').val(),
                 box_id: data.id,
                 box_qr: data.box_qr,
-                pallet_id: $('#pallet_id').val(),
                 inspector: $('#inspector').val(),
+                shift: $('#shift').val(),
+                date_manufactured: $('#b_date_manufactured').val(),
+                date_expired: $('#b_date_expired').val(),
+                customer_pn: $('#b_customer_part_no').val(),
+                lot_no: $('#b_lot_no').val(),
+                prod_line_no: $('#b_prod_line_no').val(),
+                carton_no: $('#b_carton_label_no').val(),
+                qty_per_box: $('#b_qty_per_box').val(),
+                inspection_sheet_qr: inspection_sheet_qr,
                 row_index: row_index[0]
             });
         });
@@ -1138,6 +1206,42 @@
             });
         });
         
+        $('#btn_set_shift').on('click', function() {
+            var selected_data = $('#tbl_obas').DataTable().rows({selected:true}).count();
+            if (selected_data > 0) {
+                if ($('#shift').val() == "") {
+                    _QAInspection.swMsg("Please select your assigned shift.", "warning");
+                } else {
+                    _QAInspection.setShift({
+                        _token: _QAInspection.token,
+                        shift: $('#shift').val(),
+                    });
+                }
+                
+            } else {
+                _QAInspection.swMsg("Please Select a Pallet first.", "warning");
+            }
+        });
+
+        $('#btn_set_new_box_count_to_inspect').on('click', function() {
+            var selected_data = $('#tbl_obas').DataTable().rows({selected:true}).count();
+            if (selected_data > 0) {
+                if ($('#box_count_to_inspect').val() == "") {
+                    _QAInspection.swMsg("Please input new number of Boxes to Inspect", "warning");
+                } else {
+                    _QAInspection.setNewBoxToInspect({
+                        _token: _QAInspection.token,
+                        pallet_id: $('#pallet_id').val(),
+                        box_count_to_inspect: $('#box_count_to_inspect').val(),
+                        pallet_row_index: $('#pallet_row_index').val()
+                    });
+                }
+                
+            } else {
+                _QAInspection.swMsg("Please Select a Pallet first.", "warning");
+            }
+            
+        });
 	});
 
 })();

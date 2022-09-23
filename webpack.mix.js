@@ -18,7 +18,6 @@ const layoutCSS = [
     "resources/plugins/DataTables/Select-1.4.0/css/select.bootstrap4.min.css",
     "resources/plugins/DataTables/Buttons-2.2.3/css/buttons.bootstrap4.min.css",
     "resources/plugins/DataTables/FixedHeader-3.2.4/css/fixedHeader.bootstrap4.min.css",
-    "resources/css/custom.css",
     "public/css/app.css"
 ];
 
@@ -65,7 +64,8 @@ const TrxCSS = [
     "resources/plugins/iziModal/css/iziModal.css",
     "resources/plugins/Parsleyjs/src/parsley.min.css",
     "resources/plugins/gritter/css/jquery.gritter.css",
-    "resources/plugins/sweetalert2/dist/sweetalert2.min.css"
+    "resources/plugins/sweetalert2/dist/sweetalert2.min.css",
+    "resources/css/custom.css"
 ];
 
 
