@@ -86,6 +86,11 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'index'])->name('reports.box-pallet-data-search');
         Route::get('/generate-data', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'generate_data'])->name('reports.box-pallet-data-search.generate-data');
     });
+
+    Route::group(['prefix' => 'qa-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\QADataQueryController::class, 'index'])->name('reports.qa-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\QADataQueryController::class, 'generate_data'])->name('reports.qa-data-query.generate-data');
+    });
 });
 
 Route::group(['prefix' => 'transactions'], function () {
