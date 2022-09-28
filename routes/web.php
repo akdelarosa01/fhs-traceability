@@ -109,6 +109,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/check-authorization', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'check_authorization'])->name('transactions.box-and-pallet.check-authorization');
         Route::post('/set-new-box-count', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'set_new_box_count'])->name('transactions.box-and-pallet.set-new-box-count');
         Route::post('/delete-transaction', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'delete_transaction'])->name('transactions.box-and-pallet.delete-transaction');
+        Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_affected_serial_no'])->name('transactions.box-and-pallet.get-affected-serial-no');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {

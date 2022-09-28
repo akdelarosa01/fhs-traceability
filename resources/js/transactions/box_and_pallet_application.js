@@ -10,7 +10,9 @@
         this.$tbl_transactions = "";
         this.$tbl_pallets = "";
         this.$tbl_boxes = "";
+        this.$tbl_affected_serials = "";
         this.id = 0;
+        this.box_id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
         this.authorize = $("meta[name=authorize]").attr("content");
@@ -518,15 +520,16 @@
                     columns: [
                         { 
                             data: function(data) {
-                                return '<button type="button" class="btn btn-danger btn_remove_box" disabled><i class="fa fa-times"></i></button>'+
+                                return '<div class="btn-group"><button type="button" class="btn btn-danger btn_remove_box" title="Remove Box" disabled><i class="fa fa-times"></i></button>'+
+                                '<button type="button" class="btn btn-purple btn_view_serials" title="View Heat Sinks"><i class="fa fa-eye"></i></div>'+
                                 '<input type="hidden" class="update_box_id" name="update_box_id[]" value="'+data.id+'"/>';
                             }, name: 'id', searchable: false, orderable: false, width: '10px'
                         },
                         { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
                         { data: function(data) {
-                            var remarks = (data.remarks == null)? "" : data.remarks;
+                            var remarks = (data.prod_remarks == null)? "" : data.prod_remarks;
                             return '<textarea class="form-control remarks_input" name="remarks_input[]" placeholder="Write Remarks here..." style="resize:none;" disabled>'+remarks+'</textarea>';
-                        }, name: 'remarks', searchable: false, orderable: false, className:'remarks' }
+                        }, name: 'prod_remarks', searchable: false, orderable: false, className:'prod_remarks' }
                     ],
                     rowCallback: function(row, data) {
                     },
@@ -573,6 +576,119 @@
                             }
                         }
                         
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
+        drawAffectedSerialsDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_affected_serials')) {
+                self.$tbl_affected_serials = $('#tbl_affected_serials').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-affected-serial-no",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.box_id = self.box_id;
+                            d.pallet_id = $('#pallet_id').val()
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No HS Serial No. was scanned.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'hs_serial', name: 'hs_serial', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: function(data) {
+                                switch (data.qa_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return data.remarks;//'<button class="btn btn-sm btn-danger disabled" data-toggle="tooltip" data-placement="top" title="'+data.remarks+'">NOT GOOD</button>';
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'qa_judgment', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        var qa_judgment = parseInt(data.qa_judgment);
+                        switch (qa_judgment) {
+                            case 1:
+                                $(row).addClass('disabled');
+                                $(row).css('background-color', '#00acac');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(row).addClass('disabled');
+                                $(row).css('background-color', '#ff5b57');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFFFFF');
+                                $(row).css('color', '#333333');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                    fnDrawCallback: function() {
+                        $('#tbl_affected_serials tbody tr').each( function() {
+                            var nTds = $('td', this);
+                            var judgment = $(nTds[1]).text();
+                            var sTitle= $(nTds[1]);
+                            console.log(sTitle);
+                        } );
                     },
                 }).on('page.dt', function() {
                 });
@@ -743,6 +859,8 @@
                 $('#save_div').hide();
                 $('#preview_div').show();
 
+                $('.btn_view_serials').prop('disabled', false);
+
                 self.$tbl_boxes.ajax.reload();
             });
         },
@@ -767,6 +885,7 @@
         _BoxPalletApp.drawTransactionsDatatables();
         _BoxPalletApp.drawPalletsDatatables();
         _BoxPalletApp.drawBoxesDatatables();
+        _BoxPalletApp.drawAffectedSerialsDatatables();
         _BoxPalletApp.permission();
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
@@ -1296,6 +1415,7 @@
                             $('#modal_authentication').modal('hide');
 
                             $('.btn_remove_box').prop('disabled', false);
+                            $('.btn_view_serials').prop('disabled', true);
                             $('.remarks_input').prop('disabled', false);
                             $('#btn_save_box').prop('disabled', false);
                             $('#btn_start_scan').prop('disabled', true);
@@ -1330,6 +1450,7 @@
                     if (approve)
                         if (_BoxPalletApp.authorize == 1) {
                             $('.btn_remove_box').prop('disabled', false);
+                            $('.btn_view_serials').prop('disabled', true);
                             $('.remarks_input').prop('disabled', false);
                             $('#btn_save_box').prop('disabled', false);
                             $('#btn_start_scan').prop('disabled', true);
@@ -1360,6 +1481,13 @@
                     $('#btn_save_box').prop('disabled', false);
                     _BoxPalletApp.$tbl_boxes.row(this_row).remove().draw();
             });
+        });
+
+        $('#tbl_boxes tbody').on('click', '.btn_view_serials', function() {
+            var data = _BoxPalletApp.$tbl_boxes.row($(this).parents('tr')).data();
+            _BoxPalletApp.box_id = data.id;
+            _BoxPalletApp.$tbl_affected_serials.ajax.reload();
+            $('#modal_affected_hs').modal('show');
         });
         
         $('#btn_save_box').on('click', function() {
