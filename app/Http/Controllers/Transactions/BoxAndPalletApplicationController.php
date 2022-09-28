@@ -823,4 +823,35 @@ class BoxAndPalletApplicationController extends Controller
 
         return false;
     }
+
+    public function get_affected_serial_no(Request $req)
+    {
+        $data = [];
+        try {
+            $query = $this->affected_serial_no($req->pallet_id,$req->box_id);
+            return Datatables::of($query)->make(true);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+    }
+
+    private function affected_serial_no($pallet_id, $box_id)
+    {
+        $query = DB::table('qa_affected_serials')->where([
+                    ['pallet_id', '=', $pallet_id],
+                    ['box_id', '=', $box_id]
+                ])
+                ->select([
+                    DB::raw("id"),
+                    DB::raw("pallet_id"),
+                    DB::raw("box_id"),
+                    DB::raw("hs_serial"),
+                    DB::raw("qa_judgment"),
+                    DB::raw("remarks"),
+                    DB::raw("is_deleted"),
+                ]);
+                    
+        return $query;
+    }
 }
