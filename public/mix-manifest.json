@@ -27,6 +27,8 @@
     "/css/reports/pallet_tracking_history.css": "/css/reports/pallet_tracking_history.css",
     "/js/reports/box_pallet_data_search.js": "/js/reports/box_pallet_data_search.js",
     "/css/reports/box_pallet_data_search.css": "/css/reports/box_pallet_data_search.css",
+    "/js/reports/qa_data_query.js": "/js/reports/qa_data_query.js",
+    "/css/reports/qa_data_query.css": "/css/reports/qa_data_query.css",
     "/js/transactions/box_and_pallet_application.js": "/js/transactions/box_and_pallet_application.js",
     "/css/transactions/box_and_pallet_application.css": "/css/transactions/box_and_pallet_application.css",
     "/js/transactions/qa_inspection.js": "/js/transactions/qa_inspection.js",
