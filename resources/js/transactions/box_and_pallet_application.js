@@ -11,8 +11,10 @@
         this.$tbl_pallets = "";
         this.$tbl_boxes = "";
         this.$tbl_affected_serials = "";
+        this.$tbl_box_history = "";
         this.id = 0;
         this.box_id = 0;
+        this.box_qr = "";
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
         this.authorize = $("meta[name=authorize]").attr("content");
@@ -520,21 +522,23 @@
                     columns: [
                         { 
                             data: function(data) {
-                                return '<div class="btn-group"><button type="button" class="btn btn-danger btn_remove_box" title="Remove Box" disabled><i class="fa fa-times"></i></button>'+
-                                '<button type="button" class="btn btn-purple btn_view_serials" title="View Heat Sinks"><i class="fa fa-eye"></i></div>'+
+                                return '<div class="btn-group"><button type="button" class="btn btn-sm btn-danger btn_remove_box" title="Remove Box" disabled><i class="fa fa-times"></i></button>'+
+                                '<button type="button" class="btn btn-sm btn-purple btn_view_serials" title="View Heat Sinks"><i class="fa fa-eye"></i></button>'+
+                                '<button type="button" class="btn btn-sm btn-blue btn_history" title="View Box History"><i class="fa fa-barcode"></i></button></div>'+
                                 '<input type="hidden" class="update_box_id" name="update_box_id[]" value="'+data.id+'"/>';
                             }, name: 'id', searchable: false, orderable: false, width: '10px'
                         },
                         { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
                         { data: function(data) {
                             var remarks = (data.prod_remarks == null)? "" : data.prod_remarks;
-                            return '<textarea class="form-control remarks_input" name="remarks_input[]" placeholder="Write Remarks here..." style="resize:none;" disabled>'+remarks+'</textarea>';
+                            return '<textarea class="form-control remarks_input" name="remarks_input[]" rows="2" placeholder="Write Remarks here..." style="resize:none;" disabled>'+remarks+'</textarea>';
                         }, name: 'prod_remarks', searchable: false, orderable: false, className:'prod_remarks' }
                     ],
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {     
-                        var dataRow = $(row);  
+                        var dataRow = $(row); 
+                        $(dataRow[0].cells[0]).addClass('p-0');   
                         $(dataRow[0].cells[2]).addClass('p-0');                
                     },
                     initComplete: function() {
@@ -689,6 +693,91 @@
                             var sTitle= $(nTds[1]);
                             console.log(sTitle);
                         } );
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
+        drawBoxHistoryDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_box_history')) {
+                self.$tbl_box_history = $('#tbl_box_history').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-box-history",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.box_qr = self.box_qr;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No HS Serial No. record.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'old_serial', name: 'old_serial', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: function(data) {
+                                return '<input type="text" name="new_serial[]" class="form-control-plaintext form-control-sm new_serial" value="'+data.new_serial+'"/>';
+                            }, name: 'new_serial', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        $('#new_box_id').val(data.box_qr);
+                    },
+                    createdRow: function(row, data, dataIndex) {     
+                        var dataRow = $(row); 
+                        $(dataRow[0].cells[1]).addClass('p-0');
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                    fnDrawCallback: function() {
                     },
                 }).on('page.dt', function() {
                 });
@@ -860,6 +949,7 @@
                 $('#preview_div').show();
 
                 $('.btn_view_serials').prop('disabled', false);
+                $('.btn_history').prop('disabled', false);
 
                 self.$tbl_boxes.ajax.reload();
             });
@@ -886,6 +976,7 @@
         _BoxPalletApp.drawPalletsDatatables();
         _BoxPalletApp.drawBoxesDatatables();
         _BoxPalletApp.drawAffectedSerialsDatatables();
+        _BoxPalletApp.drawBoxHistoryDatatables();
         _BoxPalletApp.permission();
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
@@ -1416,6 +1507,7 @@
 
                             $('.btn_remove_box').prop('disabled', false);
                             $('.btn_view_serials').prop('disabled', true);
+                            $('.btn_history').prop('disabled', true);
                             $('.remarks_input').prop('disabled', false);
                             $('#btn_save_box').prop('disabled', false);
                             $('#btn_start_scan').prop('disabled', true);
@@ -1451,6 +1543,7 @@
                         if (_BoxPalletApp.authorize == 1) {
                             $('.btn_remove_box').prop('disabled', false);
                             $('.btn_view_serials').prop('disabled', true);
+                            $('.btn_history').prop('disabled', true);
                             $('.remarks_input').prop('disabled', false);
                             $('#btn_save_box').prop('disabled', false);
                             $('#btn_start_scan').prop('disabled', true);
@@ -1488,6 +1581,14 @@
             _BoxPalletApp.box_id = data.id;
             _BoxPalletApp.$tbl_affected_serials.ajax.reload();
             $('#modal_affected_hs').modal('show');
+        });
+
+        $('#tbl_boxes tbody').on('click', '.btn_history', function() {
+            var data = _BoxPalletApp.$tbl_boxes.row($(this).parents('tr')).data();
+            _BoxPalletApp.box_qr = data.box_qr;
+            $('#new_box_id').val(data.box_qr);
+            _BoxPalletApp.$tbl_box_history.ajax.reload();
+            $('#modal_box_history').modal('show');
         });
         
         $('#btn_save_box').on('click', function() {
