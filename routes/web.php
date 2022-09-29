@@ -110,6 +110,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/set-new-box-count', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'set_new_box_count'])->name('transactions.box-and-pallet.set-new-box-count');
         Route::post('/delete-transaction', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'delete_transaction'])->name('transactions.box-and-pallet.delete-transaction');
         Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_affected_serial_no'])->name('transactions.box-and-pallet.get-affected-serial-no');
+        Route::post('/get-box-history', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_box_history'])->name('transactions.box-and-pallet.get-box-history');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {
@@ -132,7 +133,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-box-details', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_details'])->name('transactions.qa-inspection.get-box-details');
         Route::post('/set-shift', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_shift'])->name('transactions.qa-inspection.set-shift');
         Route::post('/set-new-box-to-inspect', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_new_box_to_inspect'])->name('transactions.qa-inspection.set-new-box-to-inspect');
-        
+        Route::post('/get-hs-history', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_hs_history'])->name('transactions.qa-inspection.get-hs-history');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

@@ -854,4 +854,45 @@ class BoxAndPalletApplicationController extends Controller
                     
         return $query;
     }
+
+    public function get_box_history(Request $req)
+    {
+        $data = [];
+        try {
+            $query = $this->serials($req->box_qr);
+            return Datatables::of($query)->make(true);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+    }
+
+    private function serials($box_qr)
+    {
+        $query = DB::connection('mysql')
+                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c10 else f.c4 end as old_serial,
+                            case when f.c10 <> '' and f.c10 is not null then f.c4 else '' end as new_serial,
+                            b.BoxSerialNo as box_qr
+                            FROM furukawa.tinspectionsheetprintdata as b
+                            join formal.barcode as f
+                            on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
+                            and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
+                            and b.lot_no = f.c9
+                            where b.BoxSerialNo = '".$box_qr."R'");
+
+        if (count((array)$query) == 0) {
+            $query = DB::connection('mysql')
+                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c10 else f.c4 end as old_serial,
+                            case when f.c10 <> '' and f.c10 is not null then f.c4 else '' end as new_serial,
+                            b.BoxSerialNo as box_qr
+                            FROM furukawa.tinspectionsheetprintdata as b
+                            join formal.barcode as f
+                            on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
+                            and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
+                            and b.lot_no = f.c9
+                            where b.BoxSerialNo = '".$box_qr."'");
+        }
+        return $query;
+    }
 }

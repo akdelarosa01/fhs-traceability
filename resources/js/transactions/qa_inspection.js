@@ -13,7 +13,10 @@
         this.$tbl_affected_serials = "";
         this.$tbl_inpection_sheet_serial = "";
         this.$tbl_hs_serials_oba = "";
+        this.$tbl_hs_history = "";
         this.box_id = 0;
+        this.hs_serial = "";
+        this.lot_no = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
@@ -525,6 +528,79 @@
             }
             return this;
         },
+        drawHSHistoryDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_hs_history')) {
+                self.$tbl_hs_history = $('#tbl_hs_history').DataTable({
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-hs-history",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.hs_serial = self.hs_serial;
+                            d.lot_no = self.lot_no;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json.hasOwnProperty('message')) {
+                                    self.showError(json.message);
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No History Record.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'old_serial', name: 'old_serial', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'new_serial', name: 'new_serial', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
+                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         statusMsg: function(msg,status) {
             switch (status) {
                 case 'success':
@@ -741,6 +817,7 @@
         _QAInspection.drawAffectedSerialsDatatables();
         _QAInspection.drawInspectionSheetSerialDatatables();
         _QAInspection.drawOBAHSSerialsDatatables();
+        _QAInspection.drawHSHistoryDatatables();
 
         $('#btn_transfer').prop('disabled', true);
         $('#btn_disposition').prop('disabled', true);
@@ -899,8 +976,8 @@
         });
 
         _QAInspection.$tbl_boxes.on('select', function ( e, dt, type, indexes ) {
-            var rowData = _QAInspection.$tbl_boxes.rows( indexes ).data().toArray();
-            var data = rowData[0];
+            var rowData = _QAInspection.$tbl_boxes.row( indexes ).data();
+            var data = rowData;
             var box_count = _QAInspection.$tbl_boxes.data().count();
 
             $('#box_id').val('');
@@ -940,11 +1017,16 @@
         });
 
         _QAInspection.$tbl_hs_serials_oba.on('select', function ( e, dt, type, indexes ) {
-            var rowData = _QAInspection.$tbl_hs_serials_oba.rows( indexes ).data().toArray();
-            var data = rowData[0];
+            var rowData = _QAInspection.$tbl_hs_serials_oba.row( indexes ).data();
+            var data = rowData;
+
+            _QAInspection.hs_serial = data.hs_serial;
+            _QAInspection.lot_no = $('#b_lot_no').val();
 
             $('#btn_good').prop('disabled', false);
             $('#btn_notgood').prop('disabled', false);
+
+            _QAInspection.$tbl_hs_history.ajax.reload();
 
         })
         .on('deselect', function ( e, dt, type, indexes ) {

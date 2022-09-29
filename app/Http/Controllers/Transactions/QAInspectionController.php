@@ -225,12 +225,24 @@ class QAInspectionController extends Controller
 
     private function serials($box_qr)
     {
-        $query = DB::connection('mysql')->table('tboxqrdetails as bqrd')
-                    ->select(
-                        'bqrd.HS_Serial'
-                    )
-                    ->join('tboxqr as bqr','bqr.ID','=','bqrd.Box_ID')
-                    ->where('bqr.qrBarcode',$box_qr)->get()->toArray();
+        $query = DB::connection('mysql')
+                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
+                            FROM furukawa.tinspectionsheetprintdata as b
+                            join formal.barcode as f
+                            on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
+                            and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
+                            and b.lot_no = f.c9
+                            where b.BoxSerialNo = '".$box_qr."R'");
+        if (count((array)$query) == 0) {
+            $query = DB::connection('mysql')
+                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
+                            FROM furukawa.tinspectionsheetprintdata as b
+                            join formal.barcode as f
+                            on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
+                            and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
+                            and b.lot_no = f.c9
+                            where b.BoxSerialNo = '".$box_qr."'");
+        }
         return $query;
     }
 
@@ -985,5 +997,34 @@ class QAInspectionController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function get_hs_history(Request $req)
+    {
+        $data = [];
+        try {
+            $query = $this->serial_history($req->hs_serial,$req->lot_no);
+            return Datatables::of($query)->make(true);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+    }
+
+    private function serial_history($hs_serial,$lot_no)
+    {
+        $query = DB::connection('mysql')
+                    ->table('formal.barcode')
+                    ->select(
+                        DB::raw("case when c10 <> '' and c10 is not null then c10 else c4 end as old_serial"),
+                        DB::raw("case when c10 <> '' and c10 is not null then c4 else '' end as new_serial")
+                    )
+                    ->where('c9',$lot_no)
+                    ->where('c10',$hs_serial)
+                    ->orWhere('c4',$hs_serial)
+                    ->limit(1)
+                    ->get();
+        return $query;
     }
 }

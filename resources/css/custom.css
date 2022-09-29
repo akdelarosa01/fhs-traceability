@@ -771,9 +771,9 @@ legend.scheduler-border {
     white-space: nowrap !important;
 }
 
-.table > tfoot > tr > th, .table thead tr:nth-child(2) th {
+/* .table > tfoot > tr > th, .table thead tr:nth-child(2) th {
     padding: 0;
-}
+} */
 
 thead .form-control, tfoot .form-control {
     width: 100% !important;

@@ -221,54 +221,75 @@ Q.A. Inspection
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-4">
-						<table class="table table-bordered"- style="width: 100%">
-							<tbody>
-								<tr>
-									<th>OBA Process Date:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_oba_process_date" /></td>
-								</tr>
-	
-								<tr>
-									<th>Box ID:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_box_id" /></td>
-								</tr>
-	
-								<tr>
-									<th>Date Manufactured:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_date_manufactured" /></td>
-								</tr>
-	
-								<tr>
-									<th>Date Expired:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_date_expired" /></td>
-								</tr>
-	
-								<tr>
-									<th>Customer P/N:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_customer_part_no" /></td>
-								</tr>
-	
-								<tr>
-									<th>Lot Number:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_lot_no" /></td>
-								</tr>
-	
-								<tr>
-									<th>Production Line No.:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_prod_line_no" /></td>
-								</tr>
+						<div class="row">
+							<div class="col-12">
+								<table class="table table-bordered table-light table-striped" style="width: 100%">
+									<tbody>
+										<tr>
+											<th class="p-5">OBA Process Date:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_oba_process_date" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Box ID:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_box_id" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Date Manufactured:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_date_manufactured" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Date Expired:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_date_expired" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Customer P/N:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_customer_part_no" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Lot Number:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_lot_no" /></td>
+										</tr>
+			
+										<tr>
+											<th class="p-5">Production Line No.:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_prod_line_no" /></td>
+										</tr>
+		
+										<tr>
+											<th class="p-5">Carton Label No.:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_carton_label_no" /></td>
+										</tr>
+		
+										<tr>
+											<th class="p-5">Qty per Box:</th>
+											<td class="p-5"><input type="text" readonly class="form-control-plaintext" id="b_qty_per_box" /></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 
-								<tr>
-									<th>Carton Label No.:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_carton_label_no" /></td>
-								</tr>
-
-								<tr>
-									<th>Qty per Box:</th>
-									<td><input type="text" readonly class="form-control-plaintext" id="b_qty_per_box" /></td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="row">
+							<div class="col-12">
+								<table class="table table-bordered table-light table-striped" style="width: 100%" id="tbl_hs_history">
+									<thead>
+										<tr>
+											<th colspan="2" class="justify-content-center">Heat Sink History</th>
+										</tr>
+										<tr>
+											<th class="justify-content-center">Old Serial No.</th>
+											<th class="justify-content-center">New Seial No.</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+						</div>
+						
 					</div>
 
 					<div class="col-8">
@@ -328,8 +349,6 @@ Q.A. Inspection
 						
 					</div>
 				</div>
-
-				
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-danger" data-dismiss="modal">
