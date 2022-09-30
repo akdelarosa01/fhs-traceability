@@ -356,8 +356,8 @@ class QAInspectionController extends Controller
             $insp->hs_serial = $req->hs_serial;
             $insp->qa_judgment = (int)$req->judgment;
             $insp->remarks = $req->remarks;
-            $insp->inspector = $req->inspector;
-            $insp->shift = $req->shift;
+            // $insp->inspector = $req->inspector;
+            // $insp->shift = $req->shift;
             $insp->update_user = Auth::user()->id;
             if ($insp->update()) {
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('qa_judgment','<>',-1);
