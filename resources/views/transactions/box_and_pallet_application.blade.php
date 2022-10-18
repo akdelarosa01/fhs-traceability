@@ -184,9 +184,12 @@ Box and Pallet Application
 		</div>
 
 		<div class="row mb-2">
-			<div class="offset-8 col-4" style="font-size: 14px;">
+			<div class="offset-6 col-4" style="font-size: 14px;">
 				<strong>Status message: </strong>
 				<span id="status_msg"></span>
+			</div>
+			<div class="col-2">
+				<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_move_to_history">Move Records to Pallet History</button>
 			</div>
 		</div>
 
@@ -217,6 +220,7 @@ Box and Pallet Application
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
 							<thead>
+								<th style="width: 10px;"></th>
 								<th style="width: 10px;"></th>
 								<th>Pallet Count: <span id="pallet_count">0</span> / <span id="pallet_count_full">0</span></th>
 								<th>Status</th>
@@ -284,6 +288,37 @@ Box and Pallet Application
 			</div>
 		</div>
 		
+	</div>
+</div>
+
+<div class="modal fade" id="modal_pallet_history" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog ">
+		<div class="modal-content modal-xl">
+			<div class="modal-header">
+				<h4 class="modal-title">Pallet History</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row mb-2">
+					<div class="col-12"> <!--  style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1" -->
+						<table class="table table-sm table-hover table-striped" id="tbl_pallet_history" style="width: 100%">
+							<thead>
+								<th>Pallet ID</th>
+								<th>Box ID</th>
+								<th>History Date</th>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<button type="button" class="btn btn-default" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+			</div>
+		</div>
 	</div>
 </div>
 

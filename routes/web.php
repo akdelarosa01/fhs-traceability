@@ -111,6 +111,8 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/delete-transaction', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'delete_transaction'])->name('transactions.box-and-pallet.delete-transaction');
         Route::post('/get-affected-serial-no', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_affected_serial_no'])->name('transactions.box-and-pallet.get-affected-serial-no');
         Route::post('/get-box-history', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_box_history'])->name('transactions.box-and-pallet.get-box-history');
+        Route::post('/move-to-pallet-history', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'move_to_pallet_history'])->name('transactions.box-and-pallet.move-to-pallet-history');
+        Route::get('/get-pallet-history', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_pallet_history'])->name('transactions.box-and-pallet.get-pallet-history');
     });
 
     Route::group(['prefix' => 'qa-inspection'], function () {

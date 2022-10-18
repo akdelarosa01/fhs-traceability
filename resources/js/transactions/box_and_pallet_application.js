@@ -12,6 +12,7 @@
         this.$tbl_boxes = "";
         this.$tbl_affected_serials = "";
         this.$tbl_box_history = "";
+        this.$tbl_pallet_history = "";
         this.id = 0;
         this.box_id = 0;
         this.box_qr = "";
@@ -24,6 +25,7 @@
         this.prv_box_id_qr = "";
         this.prv_pallet_id_qr = "";
         this.removed_box_arr = [];
+        this.pallet_id = 0;
     }
     BoxPalletApp.prototype = {
         permission: function() {
@@ -344,6 +346,7 @@
                     } ],
                     select: {
                         style: 'single',
+                        selector: 'td:not(:nth-child(2))'
                     },
                     ajax: {
                         url: "/transactions/box-and-pallet/get-pallets",
@@ -386,6 +389,11 @@
                                 return '';
                             }, name: 'id', searchable: false, orderable: false, target: 0 , width: '15px'
                         },
+                        { 
+                            data: function(data) {
+                                return '<button class="btn btn-sm btn-primary btn_pallet_history"><i class="fa fa-boxes"></i></button>';
+                            }, name: 'id', searchable: false, orderable: false, target: 0 , width: '15px'
+                        },
                         {
                             data: function(data) {
                                 return '<span>'+data.pallet_qr+'</span><br>' +
@@ -426,28 +434,28 @@
                         var checkbox = $(dataRow[0].cells[0].firstChild);
                         switch (data.pallet_status) {
                             case 1:
-                                $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#FFC4DD');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                             case 2:
-                                $(dataRow[0].cells[2]).css('background-color', '#36AE7C');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#36AE7C');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                             case 3:
-                                $(dataRow[0].cells[2]).css('background-color', '#47B5FF');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#47B5FF');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                             case 4:
-                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                             case 5:
-                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                             default:
-                                $(dataRow[0].cells[2]).css('background-color', '#FFDCAE');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                $(dataRow[0].cells[3]).css('background-color', '#FFDCAE');
+                                $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
                         }
                         
@@ -538,8 +546,10 @@
                     },
                     createdRow: function(row, data, dataIndex) {     
                         var dataRow = $(row); 
-                        $(dataRow[0].cells[0]).addClass('p-0');   
-                        $(dataRow[0].cells[2]).addClass('p-0');                
+                        $(dataRow[0].cells[0]).addClass('p-0');
+                        $(dataRow[0].cells[1]).addClass('p-0');
+                        $(dataRow[0].cells[2]).addClass('p-0');
+                        $(dataRow[0].cells[3]).addClass('p-0');
                     },
                     initComplete: function() {
                         $('.dataTables_scrollBody').slimscroll();
@@ -784,6 +794,89 @@
             }
             return this;
         },
+        drawPalletHistoryDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_pallet_history')) {
+                self.$tbl_pallet_history = $('#tbl_pallet_history').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    rowsGroup: [0,2],
+                    ajax: {
+                        url: "/transactions/box-and-pallet/get-pallet-history",
+                        type: "GET",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.pallet_id = self.pallet_id;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No Pallet History Record record.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    order: [[0,'asc'], [2,'asc']],
+                    columns: [
+                        { 
+                            data: 'pallet_qr', name: 'pallet_qr', searchable: false
+                        },
+                        { 
+                            data: 'box_qr', name: 'box_qr', searchable: false
+                        },
+                        { 
+                            data: 'created_at', name: 'created_at', searchable: false
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+                    },
+                    fnDrawCallback: function() {
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         scanBoxQR: function(param) {
             
             var self = this;
@@ -963,7 +1056,45 @@
                 self.$tbl_transactions.ajax.reload();
                 self.viewState('');
             });
-        }
+        },
+        moveToPalletHistory: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/move-to-pallet-history";
+            self.sendData().then(function() {
+                self.$tbl_pallets.ajax.reload();
+                self.$tbl_boxes.ajax.reload();
+                self.viewState('');
+            });
+        },
+        getPalletHistoryData: function(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/get-pallet-history";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                var hdrs = response.hdr;
+                var dtls = response.dtls;
+
+                console.log(response);
+
+                var tbl_pallet_history = "";
+
+                $.each(hdrs, function(i,x) {
+                    tbl_pallet_history += '<tr><th colspan="2">'+x.pallet_qr+'</th></tr>';
+
+                    $.each(dtls, function(ii,xx) {
+                        if (i.id == ii.history_id) {
+                            tbl_pallet_history += '<tr><td></td><td>'+xx.box_qr+'</td></tr>';
+                        }
+                    });
+                });
+
+                $('#tbl_pallet_history tbody').html(tbl_pallet_history);
+            });
+        },
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -977,6 +1108,7 @@
         _BoxPalletApp.drawBoxesDatatables();
         _BoxPalletApp.drawAffectedSerialsDatatables();
         _BoxPalletApp.drawBoxHistoryDatatables();
+        _BoxPalletApp.drawPalletHistoryDatatables();
         _BoxPalletApp.permission();
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
@@ -1626,7 +1758,36 @@
             $('#total_box_qty').val(total_box_qty);
         });
 
-        
+        $('#tbl_pallets tbody').on('click', '.btn_pallet_history',function() {
+            var data = _BoxPalletApp.$tbl_pallets.row($(this).parents('tr')).data();
+            // var param = {
+            //     _token: _BoxPalletApp.token,
+            //     pallet_id: data.id
+            // }
+            _BoxPalletApp.pallet_id = data.id;
+            _BoxPalletApp.$tbl_pallet_history.ajax.reload();
+            //_BoxPalletApp.getPalletHistoryData(param);
+            $('#modal_pallet_history').modal('show');
+        });
+
+        $('#btn_move_to_history').on('click', function() {
+            if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
+                var data = _BoxPalletApp.$tbl_pallets.row({ selected: true }).data();
+                
+                var msg = "Do you want to boxes as Pallet's History?";
+                _BoxPalletApp.msg = msg;
+
+                _BoxPalletApp.confirmAction(msg).then(function(approve) {
+                    if (approve) {
+                        var param = {
+                            _token: _BoxPalletApp.token,
+                            pallet_data: data,
+                        }
+                        _BoxPalletApp.moveToPalletHistory(param);
+                    }
+                });
+            }
+        });
     });
 })();
 

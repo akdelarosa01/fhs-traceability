@@ -18,6 +18,7 @@ class PalletBoxPalletDtl extends Model
         'box_qr',
         'remarks',
         'is_deleted',
+        'pallet_history',
         'create_user',
         'update_user'
     ];

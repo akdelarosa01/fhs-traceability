@@ -8,6 +8,8 @@ use App\Common\Helpers;
 use App\Events\PalletTransferred;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
+use App\Models\PalletHistoryDtl;
+use App\Models\PalletHistoryHdr;
 use App\Models\PalletModelMatrix;
 use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
@@ -894,5 +896,156 @@ class BoxAndPalletApplicationController extends Controller
                             where b.BoxSerialNo = '".$box_qr."'");
         }
         return $query;
+    }
+
+    public function get_pallet_history(Request $req)
+    {
+        $data = [];
+        try {
+            $sql = "SELECT h.pallet_id as pallet_id,
+                            h.pallet_qr as pallet_qr,
+                            d.box_qr as box_qr,
+                            H.created_at as created_at
+                        FROM furukawa.pallet_history_hdrs as h
+                        join furukawa.pallet_history_dtls as d
+                        on h.id = d.history_id
+                        where h.pallet_id = ". $req->pallet_id;
+            $query = DB::select($sql);
+            
+            return Datatables::of($query)->make(true);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
+
+        // $data = [
+		// 	'msg' => 'Viewing of Pallet History was failed.',
+        //     'data' => [
+        //         'hdr' => [],
+        //         'dtls' => []
+        //     ],
+		// 	'success' => true,
+        //     'msgType' => 'warning',
+        //     'msgTitle' => 'Failed!'
+        // ];
+
+        // try {
+        //     $query = "SELECT h.pallet_id as pallet_id,
+        //                 h.pallet_qr as pallet_qr,
+        //                 d.box_qr as box_qr,
+        //                 H.created_at as created_at
+        //             FROM furukawa.pallet_history_hdrs as h
+        //             join furukawa.pallet_history_dtls as d
+        //             on h.id = d.history_id
+        //             where h.pallet_id = ". $req->pallet_id;
+        //     $hdr = PalletHistoryHdr::where('pallet_id', $req->pallet_id)->get();
+        //     $dtls = PalletHistoryDtl::where('pallet_id', $req->pallet_id)->get();
+
+        //     $data = [
+        //         'data' => [
+        //             'hdr' => $hdr,
+        //             'dtls' => $dtls
+        //         ],
+        //         'success' => true,
+        //     ];
+
+        // } catch (\Throwable $th) {
+        //     $data = [
+        //         'msg' => 'Viewing of Pallet History was failed.',
+        //         'data' => [
+        //             'hdr' => [],
+        //             'dtls' => []
+        //         ],
+        //         'success' => true,
+        //         'msgType' => 'warning',
+        //         'msgTitle' => 'Failed!'
+        //     ];
+        // }
+        // return response()->json($data);
+    }
+
+    public function move_to_pallet_history(Request $req)
+    {
+        $data = [
+			'msg' => 'Moving to Pallet History was failed.',
+            'data' => [
+                'hdr' => [],
+                'dtls' => []
+            ],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $data = $req->pallet_data;
+
+            DB::beginTransaction();
+
+            $pallet_id = $data['id'];
+            $pallet = PalletBoxPalletHdr::find($pallet_id);
+            $pallet->pallet_qr = $data['pallet_qr'].'R';
+            $pallet->update_user = Auth::user()->id;
+
+            if ($pallet->update()) {
+                $history = new PalletHistoryHdr();
+                $history->pallet_id = $data['id'];
+                $history->pallet_qr = $data['pallet_qr'];
+                $history->create_user = Auth::user()->id;
+                $history->update_user = Auth::user()->id;
+
+                if ($history->save()) {
+                    $boxes = PalletBoxPalletDtl::where('pallet_id',$data['id'])->where('is_deleted',0)->get();
+
+                    foreach ($boxes as $key => $box) {
+                        PalletHistoryDtl::insert([
+                            'history_id' => $history->id,
+                            'pallet_id' => $data['id'],
+                            'pallet_qr' => $data['pallet_qr'],
+                            'box_id' => $box->id,
+                            'box_qr' => $box->box_qr
+                        ]);
+                    }
+
+                    PalletBoxPalletDtl::where('pallet_id',$data['id'])
+                                    ->where('is_deleted',0)
+                                    ->update([
+                                        'is_deleted' => 1,
+                                        'pallet_history' => 1,
+                                        'update_user' => Auth::user()->id,
+                                        'updated_at' => date('Y-m-d H:i:s')
+                                    ]);
+                    $dtls = PalletHistoryDtl::where('history_id', $history->id)->get();
+
+                    $data = [
+                        'msg' => "Pallet's data was successfully moved as history.",
+                        'data' => [
+                            'hdr' => $history,
+                            'dtls' => $dtls
+                        ],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+
+                    DB::commit();
+                }
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [
+                    'hdr' => [],
+                    'dtls' => []
+                ],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }
