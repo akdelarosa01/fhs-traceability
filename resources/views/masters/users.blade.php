@@ -10,20 +10,20 @@ Users Master
 
 @section('content')
 
-<div class="row mb-3 justify-content-center">
-	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+<div class="row mb-1 justify-content-center">
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
 		<button class="btn btn-sm btn-success btn-block read-only" id="btn_add_users">
 			<i class="fa fa-user-plus"></i> Add User
 		</button>
 	</div>
 
-	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
 		<button class="btn btn-sm btn-danger btn-block read-only" id="btn_delete_users">
 			<i class="fa fa-user-times"></i> Delete User
 		</button>
 	</div>
 
-	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-1">
+	<div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-xs-12 mb-2">
 		<button class="btn btn-sm btn-primary btn-block" id="btn_user_access">
 			<i class="fa fa-file-circle-plus"></i> Page Access
 		</button>
@@ -139,7 +139,7 @@ Users Master
 </div>
 
 <div class="modal fade" id="modal_user_access" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title">Access</h4>
@@ -152,16 +152,19 @@ Users Master
 				@csrf
 				<input type="hidden" class="clear" id="user_id" name="user_id" value="">
 				<div class="modal-body">
-					<table class="table table-sm table-striped table-hover table-bordered" id="tbl_pages" style="width: 100%;">
-						<thead>
-							<th colspan="2">Module Name</th>
-							<th class="text-center">Authorize</th>
-							<th class="text-center">Read Only</th>
-							<th class="text-center">Read & Write</th>
-							<th class="text-center">Delete</th>
-						</thead>
-						<tbody></tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-sm table-striped table-hover table-bordered" id="tbl_pages">
+							<thead>
+								<th colspan="2">Module Name</th>
+								<th class="text-center">Authorize</th>
+								<th class="text-center">Read Only</th>
+								<th class="text-center">Read & Write</th>
+								<th class="text-center">Delete</th>
+							</thead>
+							<tbody></tbody>
+						</table>
+					</div>
+					
 				</div>
 				<div class="modal-footer justify-content-between">
 					<button type="button" class="btn btn-default" data-dismiss="modal">

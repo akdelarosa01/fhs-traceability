@@ -1047,7 +1047,7 @@ class QAInspectionController extends Controller
                     ->where('c9',$lot_no)
                     ->where('c10',$hs_serial)
                     ->orWhere('c4',$hs_serial)
-                    ->limit(1)
+                    ->limit(1)->distinct()
                     ->get();
         return $query;
     }

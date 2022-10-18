@@ -1292,10 +1292,10 @@ html {
     z-index: 1;
 }
 
-.content {
+/* .content {
     margin-left: 220px;
     padding: 10px;
-}
+} */
 
 #main-panel {
     margin-bottom: 0px !important;

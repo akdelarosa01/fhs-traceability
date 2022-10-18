@@ -212,9 +212,9 @@ table.dataTable.fixedHeader-floating,table.dataTable.fixedHeader-locked{backgrou
     white-space: nowrap !important;
 }
 
-.content {
+/* .content {
     padding: 10px 15px;
-}
+} */
 
 body table.dataTable tbody tr.selected td {
     background: #DDDDDD;
