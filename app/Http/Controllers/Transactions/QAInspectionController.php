@@ -121,7 +121,15 @@ class QAInspectionController extends Controller
 
     public function get_inspection_sheet_serials(Request $req)
     {
-        $query = QaInspectionSheetSerial::where('box_id',$req->box_id);
+        $query = DB::table('furukawa.qa_inspection_sheet_serials as qa')
+                    ->join("formal.barcode as b",DB::raw("CONVERT(b.c4 USING latin1)"),"=","qa.hs_serial")
+                    ->where('qa.box_id',$req->box_id)
+                    ->select([
+                        DB::raw("qa.hs_serial as hs_serial"),
+                        DB::raw("b.c1 as prod_date"),
+                        DB::raw("b.c6 as operator"),
+                        DB::raw("b.c8 as work_order")
+                    ])->distinct();
         return Datatables::of($query)->make(true);
     }
 
@@ -166,7 +174,7 @@ class QAInspectionController extends Controller
                 if ($check < 1) {
                     QaInspectionSheetSerial::create([
                         'box_id' => $req->box_id,
-                        'box_qr' => $req->box_id,
+                        'box_qr' => $req->box_qr,
                         'hs_serial' => $hs,
                         'create_user' => Auth::user()->id,
                         'update_user' => Auth::user()->id
@@ -350,36 +358,52 @@ class QAInspectionController extends Controller
         ];
 
         try {
-            $insp = QaAffectedSerial::find($req->id);
-            $insp->pallet_id = $req->pallet_id;
-            $insp->box_id = $req->box_id;
-            $insp->hs_serial = $req->hs_serial;
-            $insp->qa_judgment = (int)$req->judgment;
-            $insp->remarks = $req->remarks;
-            // $insp->inspector = $req->inspector;
-            // $insp->shift = $req->shift;
-            $insp->update_user = Auth::user()->id;
-            if ($insp->update()) {
-                $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('qa_judgment','<>',-1);
+            $data = $req->row_data;
+            $error = 0;
+            $count = 0;
 
-                if ($inspected->count() == $req->hs_count) {
-                    $inspected = $inspected->get();
+            foreach ($data as $key => $qa) {
+                $count++;
+                $insp = QaAffectedSerial::find($qa['id']);
+                $insp->pallet_id = $qa['pallet_id'];
+                $insp->box_id = $qa['box_id'];
+                $insp->hs_serial = $qa['hs_serial'];
+                $insp->qa_judgment = (int)$req->judgment;
+                $insp->remarks = $qa['remarks'];
+                $insp->update_user = Auth::user()->id;
 
-                    $box_judgment = 1;
-                    foreach ($inspected as $key => $ins) {
-                        if ($ins->qa_judgment == 0) {
-                            $box_judgment = 0;
-                            break;
+                if ($insp->update()) {
+                    $inspected = QaAffectedSerial::where('box_id', $qa['box_id'])->where('qa_judgment','<>',-1);
+
+                    if ($inspected->count() == $req->hs_count) {
+                        $inspected = $inspected->get();
+
+                        $box_judgment = 1;
+                        foreach ($inspected as $key => $ins) {
+                            if ($ins->qa_judgment == 0) {
+                                $box_judgment = 0;
+                                break;
+                            }
                         }
-                    }
 
-                    $box = PalletBoxPalletDtl::find($req->box_id);
-                    $box->box_judgment = $box_judgment;
-                    $box->update_user = Auth::user()->id;
-                    $box->update();
+                        $box = PalletBoxPalletDtl::find($qa['box_id']);
+                        $box->box_judgment = $box_judgment;
+                        $box->update_user = Auth::user()->id;
+                        $box->update();
+                    }
+                } else {
+                    $error++;
                 }
+            }
+
+            if ($error < 1) {
+                $msg = "HS Serial was successfully judged.";
+                if ($count > 1) {
+                    $msg = "HS Serials were successfully judged.";
+                }
+
                 $data = [
-                    'msg' => 'HS Serial was successfully judged.',
+                    'msg' => $msg,
                     'data' => $insp,
                     'success' => true,
                     'msgType' => 'success',

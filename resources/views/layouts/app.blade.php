@@ -10,6 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="read-only" content="{{ $read_only }}">
     <meta name="authorize" content="{{ $authorize }}">
+    <meta name="shift_session" content="@if(Session::has('shift')){{Session::get('shift')}}@endif">
 
     <title>@yield('title') | {{ config('app.name', 'FHS Traceability System') }}</title>
 

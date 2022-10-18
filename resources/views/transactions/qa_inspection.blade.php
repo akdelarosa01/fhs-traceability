@@ -328,18 +328,21 @@ Q.A. Inspection
 						</div>
 
 						<div class="row">
-							<div class="col-5" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+							<div class="col-6" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_inpection_sheet_serial" style="width: 100%">
 									<thead>
-										<th>QR Inspection Sheet S/N <span id="box_judgment" class="pull-right"></span></th>
+										<th>QR Inspection Sheet S/N</th>
+										<th>Prod. Date</th>
+										<th>Operator</th>
+										<th><span id="box_judgment" class="pull-right"></span></th>
 									</thead>
 								</table>
 							</div>
 
-							<div class="col-7" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+							<div class="col-6" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_hs_serials_oba" style="width: 100%">
 									<thead>
-										<th></th>
+										<th>Select</th>
 										<th>Serial Number <span id="hs_scanned_count">0</span> / <span id="hs_total_count">0</span></th>
 										<th>QA Judgment</th>
 									</thead>

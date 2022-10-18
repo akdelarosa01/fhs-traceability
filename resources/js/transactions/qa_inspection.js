@@ -297,34 +297,6 @@
                         $('[data-toggle="tooltip"]').tooltip('toggle');
                     },
                     fnDrawCallback: function() {
-                        $('#tbl_affected_serials tbody tr').each( function() {
-                            
-                            var nTds = $('td', this);
-                            var judgment = $(nTds[1]).text();
-                            var sTitle= $(nTds[1]);
-                            console.log(sTitle);
-                             
-                        //     if ( sGrade == "A" )
-                        //         sTitle =  sBrowser+' will provide a first class (A) level of CSS support.';
-                        //     else if ( sGrade == "C" )
-                        //         sTitle = sBrowser+' will provide a core (C) level of CSS support.';
-                        //     else if ( sGrade == "X" )
-                        //         sTitle = sBrowser+' does not provide CSS support or has a broken implementation. Block CSS.';
-                        //     else
-                        //         sTitle = sBrowser+' will provide an undefined level of CSS support.';
-                             
-                        //     this.setAttribute( 'title', sTitle );
-                        } );
-                         
-                        // /* Init DataTables */
-                        // var oTable = $('#example').dataTable();
-                         
-                        // /* Apply the tooltips */
-                        // oTable.$('tr').tooltip( {
-                        //     "delay": 0,
-                        //     "track": true,
-                        //     "fade": 250
-                        // } );
                     },
                 }).on('page.dt', function() {
                 });
@@ -386,6 +358,15 @@
                         { 
                             data: 'hs_serial', name: 'hs_serial', searchable: false, orderable: false 
                         },
+                        { 
+                            data: 'prod_date', name: 'prod_date', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'operator', name: 'operator', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'work_order', name: 'work_order', searchable: false, orderable: false 
+                        },
                     ],
                     rowCallback: function(row, data) {
                     },
@@ -424,8 +405,7 @@
                         targets:   0
                     } ],
                     select: {
-                        style: 'single',
-                        selector: 'td:not(:last-child)'
+                        style: 'multi',
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-affected-serial-no",
@@ -435,18 +415,22 @@
                             'X-CSRF-TOKEN': self.token
                         },
                         data: function(d) {
+                            console.log(d);
                             d._token = self.token;
                             d.box_id = self.box_id;
                             d.pallet_id = $('#pallet_id').val()
                         },
                         error: function(response) {
                             console.log(response);
-                            if (response.hasOwnProperty('responseJSON')) {
-                                var json = response.responseJSON;
-                                if (json != undefined) {
-                                    self.showError(json.message);
+                            if (response != undefined) {
+                                if (response.hasOwnProperty('responseJSON')) {
+                                    var json = response.responseJSON;
+                                    if (json != undefined) {
+                                        self.showError(json.message);
+                                    }
                                 }
                             }
+                            
                         }
                     },
                     language: {
@@ -551,10 +535,14 @@
                         },
                         error: function(response) {
                             console.log(response);
-                            if (response.hasOwnProperty('responseJSON')) {
-                                var json = response.responseJSON;
-                                if (json.hasOwnProperty('message')) {
-                                    self.showError(json.message);
+                            if (response != undefined) {
+                                if (response.hasOwnProperty('responseJSON')) {
+                                    var json = response.responseJSON;
+                                    if (json != undefined) {
+                                        if (json.hasOwnProperty('message')) {
+                                            self.showError(json.message);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -656,12 +644,20 @@
             self.formAction = "/transactions/qa-inspection/hs-serial-judgment";
             self.sendData().then(function() {
                 var response = self.responseData;
-                var nextRow = param.row_index + 1;
-
                 self.$tbl_affected_serials.ajax.reload();
-                self.$tbl_hs_serials_oba.row(param.row_index).data(response).draw();
-                self.$tbl_hs_serials_oba.row(param.row_index).deselect();
-                self.$tbl_hs_serials_oba.row(nextRow).select();
+                var row_indexes = param.row_indexes;
+
+                for (let i = 0; i < row_indexes.length; i++) {
+                    var row = row_indexes[i];
+                    var nextRow = row + 1;
+
+                    self.$tbl_hs_serials_oba.row(row).data(response).draw();
+                    self.$tbl_hs_serials_oba.row(row).deselect();
+                    self.$tbl_hs_serials_oba.row(nextRow).select();
+                }
+                
+                self.$tbl_boxes.ajax.reload();
+
             });
         },
         setHSNGremarks: function(param) {
@@ -718,6 +714,8 @@
                     }
                     $('#box_judgment').html(response.matched);
                     self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                    var scanned_hs = self.$tbl_hs_serials_oba.rows().count();
+                    $('#hs_scanned_count').html(scanned_hs);
                 }
 
                 $('#b_oba_serial_no').val('');
@@ -804,6 +802,24 @@
                 $('#box_count_to_inspect').val(response.box_count_to_inspect);
                 $('#box_tested_full').html(response.box_count_to_inspect);
             });
+        },
+        boxInspection: function() {
+            var self = this;
+            var rowData = self.$tbl_boxes.row({selected:  true}).data();
+            var data = rowData;
+
+            if (data) {
+                $('#b_oba_serial_no').removeClass("input-error");
+                $('#b_oba_serial_no').removeClass('is-invalid');
+                $('#hs_serial_feedback').removeClass('invalid-feedback');
+                $('#hs_serial_feedback').html("");
+
+                var box_judgement = (data.box_judgement == 1)? 'GOOD' : 'NOT GOOD';
+
+                self.getBoxDetails(data.box_qr, box_judgement);
+            } else {
+                self.swMsg("Please select 1 Box ID number.","warning");
+            }
         }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
@@ -1050,51 +1066,63 @@
         });
 
         $('#btn_box_inspection').on('click', function() {
-            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-            var data = rowData[0];
+            var box_tested = parseInt($('#box_tested').html());
+            var box_tested_full = parseInt($('#box_tested_full').html());
+            var shift = $("meta[name=shift_session]").attr("content");
 
-            if (data) {
-                $('#b_oba_serial_no').removeClass("input-error");
-                $('#b_oba_serial_no').removeClass('is-invalid');
-                $('#hs_serial_feedback').removeClass('invalid-feedback');
-                $('#hs_serial_feedback').html("");
+            var rowData = _QAInspection.$tbl_boxes.row({selected:  true}).data();
+            var data = rowData;
 
-                var box_judgement = (data.box_judgement == 1)? 'GOOD' : 'NOT GOOD';
-
-                _QAInspection.getBoxDetails(data.box_qr, box_judgement);
+            if (shift !== "" && shift !== null) {
+                if (box_tested_full > box_tested) {
+                    _QAInspection.boxInspection();
+                } else {
+                    if (data.box_judgement < 0) {
+                        _QAInspection.swMsg("Please adjust a new Box Count to Inspect.", "warning");
+                    } else {
+                        _QAInspection.boxInspection();
+                    }
+                }
             } else {
-                _QAInspection.swMsg("Please select 1 Box ID number.","warning");
-            }
+                _QAInspection.swMsg("Please select your Shift.", "warning");
+            }            
         });
 
         $('#btn_good').on('click', function() {
-            var rowData = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
-            var data = rowData[0];
-            var row_index = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes();
+            var data = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
+            console.log(data);
+            // var data = rowData[0];
+            var row_indexes = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes().toArray();
             var hs_count = parseInt($('#hs_total_count').html());
 
             _QAInspection.HSSerialJudgment({
                 _token: _QAInspection.token,
-                id: data.id,
-                box_id: data.box_id,
-                pallet_id: data.pallet_id,
-                hs_serial: data.hs_serial,
+                row_data: data,
+                // id: data.id,
+                // box_id: data.box_id,
+                // pallet_id: data.pallet_id,
+                // hs_serial: data.hs_serial,
                 judgment: 1,
                 hs_count: hs_count,
-                row_index: row_index[0]
+                row_indexes: row_indexes
             });
         });
 
         $('#btn_notgood').on('click', function() {
+            var selected_count = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).count();
             var rowData = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
             var data = rowData[0];
             var row_index = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes();
-            var hs_count = parseInt($('#hs_total_count').html());
 
-            $('#hs_ng_id').val(data.id);
-            $('#hs_ng_box_id').val(data.box_id);
-            $('#hs_row_index').val(row_index[0]);
-            $('#modal_hs_ng_reason').modal('show');
+            if (selected_count == 1) {
+                $('#hs_ng_id').val(data.id);
+                $('#hs_ng_box_id').val(data.box_id);
+                $('#hs_row_index').val(row_index[0]);
+                $('#modal_hs_ng_reason').modal('show');
+            } else {
+                _QAInspection.swMsg("Select only 1 H.S. Serial number.","warning");
+            }
+            
         });
 
         $('#btn_save_hs_ng_reason').on('click', function() {
@@ -1129,27 +1157,35 @@
                 e.preventDefault();
             }
 
-            var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-            var data = rowData[0];
-            var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+            var hs_count_per_box = parseInt($('#b_qty_per_box').val());
 
-            _QAInspection.scanInspectionSheet({
-                _token: _QAInspection.token,
-                pallet_id: $('#pallet_id').val(),
-                box_id: data.id,
-                box_qr: data.box_qr,
-                inspector: $('#inspector').val(),
-                shift: $('#shift').val(),
-                date_manufactured: $('#b_date_manufactured').val(),
-                date_expired: $('#b_date_expired').val(),
-                customer_pn: $('#b_customer_part_no').val(),
-                lot_no: $('#b_lot_no').val(),
-                prod_line_no: $('#b_prod_line_no').val(),
-                carton_no: $('#b_carton_label_no').val(),
-                qty_per_box: $('#b_qty_per_box').val(),
-                inspection_sheet_qr: inspection_sheet_qr,
-                row_index: row_index[0]
-            });
+            if (hs_count_per_box == hs_count) {
+                console.log(inspection_sheet_qr);
+                var data = _QAInspection.$tbl_boxes.row({selected:  true}).data();
+                var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+    
+                _QAInspection.scanInspectionSheet({
+                    _token: _QAInspection.token,
+                    pallet_id: $('#pallet_id').val(),
+                    box_id: data.id,
+                    box_qr: data.box_qr,
+                    inspector: $('#inspector').val(),
+                    shift: $('#shift').val(),
+                    date_manufactured: $('#b_date_manufactured').val(),
+                    date_expired: $('#b_date_expired').val(),
+                    customer_pn: $('#b_customer_part_no').val(),
+                    lot_no: $('#b_lot_no').val(),
+                    prod_line_no: $('#b_prod_line_no').val(),
+                    carton_no: $('#b_carton_label_no').val(),
+                    qty_per_box: $('#b_qty_per_box').val(),
+                    inspection_sheet_qr: inspection_sheet_qr,
+                    row_index: row_index[0]
+                });
+
+                hs_count = 0;
+            }
+
+           
         });
 
         $('#b_oba_serial_no').on('keypress', function(e) {
