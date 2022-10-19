@@ -1773,19 +1773,30 @@
         $('#btn_move_to_history').on('click', function() {
             if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
                 var data = _BoxPalletApp.$tbl_pallets.row({ selected: true }).data();
-                
-                var msg = "Do you want to boxes as Pallet's History?";
-                _BoxPalletApp.msg = msg;
 
-                _BoxPalletApp.confirmAction(msg).then(function(approve) {
-                    if (approve) {
-                        var param = {
-                            _token: _BoxPalletApp.token,
-                            pallet_data: data,
+                console.log(data);
+
+                var pallet_location = data.pallet_location;
+                var pallet_status = data.pallet_status;
+
+                if (pallet_location.indexOf('PRODUCTION') > -1 && pallet_status == 3) {
+                    var msg = "Do you want to boxes as Pallet's History?";
+                    _BoxPalletApp.msg = msg;
+
+                    _BoxPalletApp.confirmAction(msg).then(function(approve) {
+                        if (approve) {
+                            var param = {
+                                _token: _BoxPalletApp.token,
+                                pallet_data: data,
+                            }
+                            _BoxPalletApp.moveToPalletHistory(param);
                         }
-                        _BoxPalletApp.moveToPalletHistory(param);
-                    }
-                });
+                    });
+                } else {
+                    _BoxPalletApp.swMsg("Pallet must be in Production and for Rework Process.","warning");
+                }
+            } else {
+                _BoxPalletApp.swMsg("Please select a Pallet in Production with Rework Process.","warning");
             }
         });
     });
