@@ -104,7 +104,9 @@ class QADataQueryController extends Controller
                     'serial_nos' => $box->serial_nos,
                     'qty_per_box' => $box->qty_per_box,
                     'qc_incharge' => $box->qc_incharge,
-                    'remarks' => $box->remarks
+                    'hs_history' => $box->hs_history,
+                    'disposition' => $box->disposition,
+                    'qa_judgment' => $box->qa_judgment
                 ];
 
                 $heat_sinks = QaAffectedSerial::where([

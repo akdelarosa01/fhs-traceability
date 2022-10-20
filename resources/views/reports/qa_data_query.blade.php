@@ -170,7 +170,9 @@ Q.A. Data Query
                         <th>Serial No</th>
                         <th>Qty per Box</th>
                         <th>QC In-charge</th>
-                        <th>Remarks</th>
+                        <th>HS History</th>
+                        <th>QA Remarks</th>
+                        <th>QA Judgment</th>
                         <?php
                             for ($i=1; $i <= 60; $i++) { 
                                 echo '<th>Product '.$i.'</th>';

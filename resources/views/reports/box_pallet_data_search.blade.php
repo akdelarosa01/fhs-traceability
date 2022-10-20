@@ -161,6 +161,7 @@ Box and Pallet Data Search
                         <th>Box ID</th>
                         <th>CPN</th>
                         <th>S/N</th>
+                        <th>QA Judgment</th>
                         <th>Grease Batch</th>
                         <th>Grease Bin</th>
                         <th>RCA Value</th>

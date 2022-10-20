@@ -92,6 +92,7 @@
                         { data: 'box_id', name: 'box_id' },
                         { data: 'cust_part_no', name: 'cust_part_no' },
                         { data: 'hs_serial', name: 'hs_serial' },
+                        { data: 'qa_judgment', name: 'qa_judgment' },
                         { data: 'grease_batch', name: 'grease_batch' },
                         { data: 'grease_no', name: 'grease_no' },
                         { data: 'rca_value', name: 'rca_value' },
