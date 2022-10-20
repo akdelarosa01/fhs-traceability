@@ -328,7 +328,7 @@ Q.A. Inspection
 						</div>
 
 						<div class="row">
-							<div class="col-6" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+							<div class="col-6" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_inpection_sheet_serial" style="width: 100%">
 									<thead>
 										<th>QR Inspection Sheet S/N</th>
@@ -339,17 +339,51 @@ Q.A. Inspection
 								</table>
 							</div>
 
-							<div class="col-6" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
+							<div class="col-6" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_hs_serials_oba" style="width: 100%">
 									<thead>
-										<th>Select</th>
+										<th></th>
 										<th>Serial Number <span id="hs_scanned_count">0</span> / <span id="hs_total_count">0</span></th>
 										<th>QA Judgment</th>
+										<th></th>
 									</thead>
 								</table>
 							</div>
 						</div>
 						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_box_history" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title">Box History of Heat Sink</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12">
+						<table class="table table-sm table-secondary table-striped" id="tbl_box_history" style="width: 100%">
+							<thead>
+								<th>Pallet No.</th>
+								<th>Box No.</th>
+								<th>Judgment</th>
+								<th>Remarks</th>
+								<th>Judgment Date</th>
+							</thead>
+						</table>
 					</div>
 				</div>
 			</div>

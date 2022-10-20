@@ -14,8 +14,10 @@
         this.$tbl_inpection_sheet_serial = "";
         this.$tbl_hs_serials_oba = "";
         this.$tbl_hs_history = "";
+        this.$tbl_box_history = "";
         this.box_id = 0;
         this.hs_serial = "";
+        this.box_history_hs_serial = "";
         this.lot_no = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
@@ -307,7 +309,7 @@
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_inpection_sheet_serial')) {
                 self.$tbl_inpection_sheet_serial = $('#tbl_inpection_sheet_serial').DataTable({
-                    scrollY: "43vh",
+                    scrollY: "38vh",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -392,7 +394,7 @@
             var self = this;
             if (!$.fn.DataTable.isDataTable('#tbl_hs_serials_oba')) {
                 self.$tbl_hs_serials_oba = $('#tbl_hs_serials_oba').DataTable({
-                    scrollY: "43vh",
+                    scrollY: "38vh",
                     processing: true,
                     searching: false, 
                     paging: false, 
@@ -406,6 +408,7 @@
                     } ],
                     select: {
                         style: 'multi',
+                        selector: 'td:not(:nth-child(4))'
                     },
                     ajax: {
                         url: "/transactions/qa-inspection/get-affected-serial-no",
@@ -473,6 +476,11 @@
                                         return '';
                                 }
                             }, name: 'qa_judgment', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'id', render: function() {
+                                return '<button type="button" class="btn btn-sm btn-success btn_box_history"><i class="fa fa-boxes"></i></button>';
+                            }, name: 'id', searchable: false, orderable: false, width: '15px'
                         },
                     ],
                     rowCallback: function(row, data) {
@@ -583,6 +591,115 @@
                     },
                     fnDrawCallback: function() {
                         $('[data-toggle="tooltip"]').tooltip('toggle');
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
+        drawBoxHistoryDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_box_history')) {
+                self.$tbl_box_history = $('#tbl_box_history').DataTable({
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-box-history",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.hs_serial = self.box_history_hs_serial;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response != undefined) {
+                                if (response.hasOwnProperty('responseJSON')) {
+                                    var json = response.responseJSON;
+                                    if (json != undefined) {
+                                        if (json.hasOwnProperty('message')) {
+                                            self.showError(json.message);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No History Record.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    order: [[4,'desc']],
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'box_qr', name: 'box_qr', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: function(data) {
+                                switch (data.qa_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return 'NOT GOOD'
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'qa_judgment', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'remarks', name: 'remarks', searchable: false, orderable: false 
+                        },
+                        { 
+                            data: 'updated_at', name: 'updated_at', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        var qa_judgment = parseInt(data.qa_judgment);
+                        switch (qa_judgment) {
+                            case 1:
+                                $(row).css('background-color', '#00acac');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(row).css('background-color', '#ff5b57');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFFFFF');
+                                $(row).css('color', '#333333');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
                     },
                 }).on('page.dt', function() {
                 });
@@ -834,6 +951,7 @@
         _QAInspection.drawInspectionSheetSerialDatatables();
         _QAInspection.drawOBAHSSerialsDatatables();
         _QAInspection.drawHSHistoryDatatables();
+        _QAInspection.drawBoxHistoryDatatables();
 
         $('#btn_transfer').prop('disabled', true);
         $('#btn_disposition').prop('disabled', true);
@@ -1360,6 +1478,17 @@
             }
             
         });
+
+        $('#tbl_hs_serials_oba').on('click', '.btn_box_history',function() {
+            var data = _QAInspection.$tbl_hs_serials_oba.row($(this).parents('tr')).data();
+            console.log(data);
+            _QAInspection.box_history_hs_serial = data.hs_serial;
+            _QAInspection.$tbl_box_history.ajax.reload();
+
+            $('#modal_box_history').modal('show');
+        });
+
+
 	});
 
 })();

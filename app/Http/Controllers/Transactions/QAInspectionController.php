@@ -18,6 +18,7 @@ use App\Models\QaInspectedBoxes;
 use App\Models\QaInspectionSheetSerial;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\Datatables\Datatables;
 
 class QAInspectionController extends Controller
@@ -181,8 +182,19 @@ class QAInspectionController extends Controller
                     ]);
                 }
 
+                $hs_dt = DB::connection('ftl_china')->table('barcode')
+                            ->where('c4',$hs)
+                            ->select(
+                                DB::raw("c1 as prod_date"),
+                                DB::raw("c6 as operator"),
+                                DB::raw("c8 as work_order")
+                            )->first();
+
                 array_push($output_serial, [
-                    'hs_serial' => $hs
+                    'hs_serial' => $hs,
+                    'prod_date' => $hs_dt->prod_date,
+                    'operator' => $hs_dt->operator,
+                    'work_order' => $hs_dt->work_order
                 ]);
             }
 
@@ -369,7 +381,7 @@ class QAInspectionController extends Controller
                 $insp->box_id = $qa['box_id'];
                 $insp->hs_serial = $qa['hs_serial'];
                 $insp->qa_judgment = (int)$req->judgment;
-                $insp->remarks = $qa['remarks'];
+                $insp->remarks = ((int)$req->judgment == 1)? null : $qa['remarks'];
                 $insp->update_user = Auth::user()->id;
 
                 if ($insp->update()) {
@@ -472,7 +484,15 @@ class QAInspectionController extends Controller
         ];
 
         $rules = [
-            'hs_serial' => 'unique:qa_affected_serials,hs_serial|exists:qa_inspection_sheet_serials,hs_serial'
+            'hs_serial' => [
+                'exists:qa_inspection_sheet_serials,hs_serial',
+                Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
+                    return $query->where([
+                        ['hs_serial', '=', $req->hs_serial],
+                        ['qa_judgment', '=', -1]
+                    ]);
+                })
+            ]
         ];
         $customMessages = [
             'unique' => 'This HS serial was already scanned.',
@@ -484,12 +504,19 @@ class QAInspectionController extends Controller
         try {
             $affected = new QaAffectedSerial();
 
+            $hs = QaAffectedSerial::where([
+                ['hs_serial','=',$req->hs_serial]
+            ])->count();
+
+            $qa_judgement_count = $hs+1;
+
             $affected->pallet_id = $req->pallet_id;
             $affected->box_id = $req->box_id;
             $affected->hs_serial = $req->hs_serial;
             $affected->qa_judgment = -1;
             $affected->remarks = '';
             $affected->is_deleted = 0;
+            $affected->qa_judgement_count = $qa_judgement_count;
             $affected->create_user = Auth::user()->id;
             $affected->update_user = Auth::user()->id;
 
@@ -1050,5 +1077,28 @@ class QAInspectionController extends Controller
                     ->limit(1)->distinct()
                     ->get();
         return $query;
+    }
+
+    public function get_box_history(Request $req)
+    {
+        $data = [];
+        try {
+            $query = DB::select("SELECT p.pallet_qr as pallet_qr,
+                                b.box_qr as box_qr,
+                                qa.qa_judgment as qa_judgment,
+                                qa.remarks as remarks,
+                                qa.updated_at as updated_at
+                            FROM qa_affected_serials as qa
+                            JOIN pallet_box_pallet_hdrs as p
+                            on p.id = qa.pallet_id
+                            JOIN pallet_box_pallet_dtls as b
+                            on b.id = qa.box_id
+                            where qa.hs_serial = '".$req->hs_serial."'");
+            return Datatables::of($query)->make(true);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
     }
 }
