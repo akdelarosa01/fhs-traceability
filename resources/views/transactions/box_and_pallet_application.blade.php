@@ -255,8 +255,8 @@ Box and Pallet Application
 						
 						<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%">
 							<thead>
-								<th>Box Count: </th>
-								<th><span id="box_count">0</span> / <span id="box_count_full">30</span></th>
+								<th></th>
+								<th>Box Count:  <span id="box_count">0</span> / <span id="box_count_full">30</span></th>
 								<th>Remarks</th>
 							</thead>
 						</table>

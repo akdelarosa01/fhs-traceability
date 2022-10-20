@@ -534,15 +534,30 @@
                                 '<button type="button" class="btn btn-sm btn-purple btn_view_serials" title="View Heat Sinks"><i class="fa fa-eye"></i></button>'+
                                 '<button type="button" class="btn btn-sm btn-blue btn_history" title="View Box History"><i class="fa fa-barcode"></i></button></div>'+
                                 '<input type="hidden" class="update_box_id" name="update_box_id[]" value="'+data.id+'"/>';
-                            }, name: 'id', searchable: false, orderable: false, width: '10px'
+                            }, name: 'id', searchable: false, orderable: false, width: '12px'
                         },
-                        { data: 'box_qr', name: 'box_qr', searchable: false, orderable: false },
+                        { data: 'box_qr', name: 'box_qr', className: 'text-center',searchable: false, orderable: false },
                         { data: function(data) {
                             var remarks = (data.prod_remarks == null)? "" : data.prod_remarks;
                             return '<textarea class="form-control remarks_input" name="remarks_input[]" rows="2" placeholder="Write Remarks here..." style="resize:none;" disabled>'+remarks+'</textarea>';
                         }, name: 'prod_remarks', searchable: false, orderable: false, className:'prod_remarks' }
                     ],
                     rowCallback: function(row, data) {
+                        var box_judgement = parseInt(data.box_judgement);
+                        switch (box_judgement) {
+                            case 1:
+                                $(row).css('background-color', '#00acac');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(row).css('background-color', '#ff5b57');
+                                $(row).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(row).css('background-color', '#FFFFFF');
+                                $(row).css('color', '#333333');
+                                break;
+                        }
                     },
                     createdRow: function(row, data, dataIndex) {     
                         var dataRow = $(row); 
