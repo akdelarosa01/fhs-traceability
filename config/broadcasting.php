@@ -32,13 +32,13 @@ return [
 
         'pusher' => [
             'driver' => 'pusher',
-            'key' => env('PUSHER_APP_KEY'),
-            'secret' => env('PUSHER_APP_SECRET'),
-            'app_id' => env('PUSHER_APP_ID'),
+            'key' => 'local',
+            'secret' => 'local',
+            'app_id' => 'local',
             'options' => [
-                'cluster' => env('PUSHER_APP_CLUSTER'),
+                'cluster' => 'ap1',
                 'encrypted' => true,
-                'host' => env('MIX_PUSHER_APP_WEBSOCKETS_SERVER'),
+                'host' => '192.168.4.136',
                 'port' => 6001,
                 'scheme' => 'http'
             ],
