@@ -282,8 +282,8 @@ Q.A. Inspection
 											<th colspan="2" class="justify-content-center">Heat Sink History</th>
 										</tr>
 										<tr>
-											<th class="justify-content-center">Old Serial No.</th>
-											<th class="justify-content-center">New Seial No.</th>
+											<th class="justify-content-center">Original Serial No.</th>
+											<th class="justify-content-center">New Serial No.</th>
 										</tr>
 									</thead>
 								</table>

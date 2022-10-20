@@ -906,6 +906,7 @@
             self.sendData().then(function() {
                 var response = self.responseData;
                 $('#shift').val(response.shift);
+                $('meta[name=shift_session]').attr('content',response.shift);
             });
         },
         setNewBoxToInspect: function(param) {
@@ -1186,7 +1187,7 @@
         $('#btn_box_inspection').on('click', function() {
             var box_tested = parseInt($('#box_tested').html());
             var box_tested_full = parseInt($('#box_tested_full').html());
-            var shift = $("meta[name=shift_session]").attr("content");
+            var shift = $("#shift").val();
 
             var rowData = _QAInspection.$tbl_boxes.row({selected:  true}).data();
             var data = rowData;

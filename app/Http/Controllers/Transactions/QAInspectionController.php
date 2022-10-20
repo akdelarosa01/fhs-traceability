@@ -486,6 +486,9 @@ class QAInspectionController extends Controller
         $rules = [
             'hs_serial' => [
                 'exists:qa_inspection_sheet_serials,hs_serial',
+                Rule::exists('qa_inspection_sheet_serials')->where(function ($query) use ($req) {
+                    $query->where('hs_serial', $req->hs_serial)->where('box_id', $req->box_id);
+                }),
                 Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
                     return $query->where([
                         ['hs_serial', '=', $req->hs_serial],
