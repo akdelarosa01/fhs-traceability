@@ -10,6 +10,7 @@ use App\Models\PalletPageAccess;
 use Illuminate\Support\Facades\Hash;
 use Yajra\Datatables\Datatables;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -234,20 +235,71 @@ class UsersMasterController extends Controller
         try {
             $has_access = PalletPageAccess::where('user_id',$req->user_id)->count();
             if ($has_access > 0) {
-                $query = DB::select("SELECT p.id,
-                                        p.page_label,
-                                        p.parent_name,
-                                        p.has_sub,
+                $pages = PalletPage::select([
+                                    'id', 'page_label', 'parent_name','has_sub',
+                                    DB::raw("0 as read_only"),
+                                    DB::raw("0 as read_and_write"),
+                                    DB::raw("0 as `delete`"),
+                                    DB::raw("0 as authorize")
+                                ])
+                                ->where('is_deleted',0)
+                                ->get();
+
+                $access = DB::select("SELECT pp.page_id,
+                                        pp.user_id,
                                         IFNULL(pp.`read_only`,0) as `read_only`,
                                         IFNULL(pp.read_and_write,0) as read_and_write,
                                         IFNULL(pp.`delete`,0) as `delete`,
                                         IFNULL(pp.authorize,0) as authorize
-                                    FROM pallet_pages as p
-                                    left join pallet_page_accesses as pp
-                                    on p.id = pp.page_id
-                                    where p.is_deleted = 0
-                                    and pp.user_id = ".$req->user_id."
+                                    FROM pallet_page_accesses as pp
+                                    where pp.user_id = ".$req->user_id."
                                     or pp.read_and_write is null");
+
+                $query = new Collection;
+                foreach ($pages as $key => $p) {
+                    $read_only = 0;
+                    $read_and_write = 0;
+                    $delete = 0;
+                    $authorize = 0;
+
+                    foreach ($access as $key => $acc) {
+                        if ($p->id == $acc->page_id) {
+                            $read_only = $acc->read_only;
+                            $read_and_write = $acc->read_and_write;
+                            $delete = $acc->delete;
+                            $authorize = $acc->authorize;
+                        }
+                    }
+
+                    $query->push([
+                        'id' => $p->id,
+                        'page_label' => $p->page_label,
+                        'parent_name' => $p->parent_name,
+                        'has_sub' => $p->has_sub,
+                        'read_only' => $read_only,
+                        'read_and_write' => $read_and_write,
+                        'delete' => $delete,
+                        'authorize' => $authorize
+                    ]);
+                }
+
+
+                // $query = DB::select("SELECT p.id,
+                //                         p.page_label,
+                //                         p.parent_name,
+                //                         p.has_sub,
+                //                         IFNULL(pp.`read_only`,0) as `read_only`,
+                //                         IFNULL(pp.read_and_write,0) as read_and_write,
+                //                         IFNULL(pp.`delete`,0) as `delete`,
+                //                         IFNULL(pp.authorize,0) as authorize
+                //                     FROM pallet_pages as p
+                //                     left join pallet_page_accesses as pp
+                //                     on p.id = pp.page_id
+                //                     where p.is_deleted = 0
+                //                     and pp.user_id = ".$req->user_id."
+                //                     or pp.read_and_write is null");
+
+                $query = $query->all();
             } else {
                 $query = PalletPage::select([
                     'id', 'page_label', 'parent_name','has_sub',
