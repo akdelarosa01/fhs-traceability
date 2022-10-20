@@ -137,6 +137,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/set-new-box-to-inspect', [App\Http\Controllers\Transactions\QAInspectionController::class, 'set_new_box_to_inspect'])->name('transactions.qa-inspection.set-new-box-to-inspect');
         Route::post('/get-hs-history', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_hs_history'])->name('transactions.qa-inspection.get-hs-history');
         Route::post('/get-box-history', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_history'])->name('transactions.qa-inspection.get-box-history');
+        Route::get('/check-all-scanned-box', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_all_scanned_box'])->name('transactions.qa-inspection.check-all-scanned-box');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

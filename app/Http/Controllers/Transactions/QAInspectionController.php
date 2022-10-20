@@ -452,6 +452,27 @@ class QAInspectionController extends Controller
             $insp->update_user = Auth::user()->id;
 
             if ($insp->update()) {
+                $inspected = QaAffectedSerial::where('box_id', (int)$req->hs_ng_box_id)->where('qa_judgment','<>',-1);
+
+                $count = $inspected->count();
+                $hs_count = (int)$req->hs_count;
+
+                if ($inspected->count() == (int)$req->hs_count) {
+                    $inspected = $inspected->get();
+                    $box_judgment = 1;
+                    foreach ($inspected as $key => $ins) {
+                        if ($ins->qa_judgment == 0) {
+                            $box_judgment = 0;
+                            break;
+                        }
+                    }
+
+                    $box = PalletBoxPalletDtl::find($req->hs_ng_box_id);
+                    $box->box_judgment = $box_judgment;
+                    $box->update_user = Auth::user()->id;
+                    $box->update();
+                }
+
                 $data = [
                     'msg' => 'Heat Sink NG reason was successfully set.',
                     'data' => $insp,
@@ -1103,5 +1124,55 @@ class QAInspectionController extends Controller
             //throw $th;
         }
         return $data;
+    }
+
+    public function check_all_scanned_box(Request $req)
+    {
+        $data = [
+			'msg' => "Please Scan all Inspection Sheet before assigning disposition.",
+            'data' => [
+                'is_scanned_all' => false
+            ],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $scanned = false;
+            $boxes = $this->boxes($req->pallet_id);
+            $boxes = $boxes->get();
+
+            foreach ($boxes as $key => $box) {
+                $ins_boxes = DB::table('qa_inspection_sheet_serials')
+                                ->where('box_id',$box->id)->count();
+                if ($ins_boxes > 0) {
+                    $scanned = true;
+                } else {
+                    $scanned = false;
+                    break;
+                }
+            }
+
+            $data = [
+                'data' => [
+                    'is_scanned_all' => $scanned
+                ],
+                'success' => true,
+            ];
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [
+                    'is_scanned_all' => false
+                ],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }

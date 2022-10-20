@@ -790,6 +790,8 @@
                 self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
                 self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
                 self.$tbl_hs_serials_oba.row(netxRow).select();
+
+                self.$tbl_boxes.ajax.reload();
                 $('#modal_hs_ng_reason').modal('hide');
             });
         },
@@ -938,6 +940,51 @@
             } else {
                 self.swMsg("Please select 1 Box ID number.","warning");
             }
+        },
+        checkAllScannedBox: function(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/check-all-scanned-box";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                if (response.is_scanned_all) {
+                    $('#lot_no').select2({
+                        allowClear: true,
+                        placeholder: 'Select Lot',
+                        theme: 'bootstrap4',
+                        width: 'auto',
+                        ajax: {
+                            url: "/transactions/qa-inspection/get-pallet-lot",
+                            data: function(params) {
+                                var query = "";
+                                return {
+                                    q: params.term,
+                                    id: '',
+                                    text: '',
+                                    table: '',
+                                    condition: '',
+                                    display: 'id&text',
+                                    orderBy: '',
+                                    sql_query: query,
+                                    pallet_id: $('#pallet_id').val()
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: data
+                                };
+                            },
+                        }
+                    }).val(null).trigger('change.select2');
+                    
+                    $('#div_disposition_reason').hide();
+                    $('#div_hold_lot').hide();
+                    $('#modal_disposition').modal('show');
+                } else {
+                    self.swMsg("Please Scan all Inspection Sheet before assigning disposition.","warning");
+                }
+            });
         }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
@@ -1187,7 +1234,7 @@
         $('#btn_box_inspection').on('click', function() {
             var box_tested = parseInt($('#box_tested').html());
             var box_tested_full = parseInt($('#box_tested_full').html());
-            var shift = $("#shift").val();
+            var shift = $("meta[name=shift_session]").attr('content');
 
             var rowData = _QAInspection.$tbl_boxes.row({selected:  true}).data();
             var data = rowData;
@@ -1249,6 +1296,7 @@
             var hs_ng_box_id = $('#hs_ng_box_id').val();
             var hs_row_index = $('#hs_row_index').val();
             var hs_ng_reason = $('#hs_ng_reason').val();
+            var hs_count = parseInt($('#hs_total_count').html());
 
             if (hs_ng_reason == null || hs_ng_reason == "") {
                 _QAInspection.swMsg("Please provide a Reason.","warning");
@@ -1259,7 +1307,8 @@
                     judgment: 0,
                     hs_ng_box_id: hs_ng_box_id,
                     hs_row_index: hs_row_index,
-                    hs_ng_reason: hs_ng_reason
+                    hs_ng_reason: hs_ng_reason,
+                    hs_count: hs_count
                 });
             }
             
@@ -1352,38 +1401,13 @@
         });
 
         $('#btn_disposition').on('click', function() {
-            $('#lot_no').select2({
-                allowClear: true,
-                placeholder: 'Select Lot',
-                theme: 'bootstrap4',
-                width: 'auto',
-                ajax: {
-                    url: "/transactions/qa-inspection/get-pallet-lot",
-                    data: function(params) {
-                        var query = "";
-                        return {
-                            q: params.term,
-                            id: '',
-                            text: '',
-                            table: '',
-                            condition: '',
-                            display: 'id&text',
-                            orderBy: '',
-                            sql_query: query,
-                            pallet_id: $('#pallet_id').val()
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: data
-                        };
-                    },
-                }
-            }).val(null).trigger('change.select2');
-            
-            $('#div_disposition_reason').hide();
-            $('#div_hold_lot').hide();
-            $('#modal_disposition').modal('show');
+            var pallet_id = $('#pallet_id').val();
+            var param = {
+                _token: _QAInspection.token,
+                pallet_id: pallet_id
+            };
+
+            _QAInspection.checkAllScannedBox(param);
         });
 
         $('#btn_save_disposition').on('click', function() {
