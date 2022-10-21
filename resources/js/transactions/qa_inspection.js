@@ -1240,15 +1240,16 @@
             var data = rowData;
 
             if (shift !== "" && shift !== null) {
-                if (box_tested_full > box_tested) {
-                    _QAInspection.boxInspection();
-                } else {
-                    if (data.box_judgement < 0) {
-                        _QAInspection.swMsg("Please adjust a new Box Count to Inspect.", "warning");
-                    } else {
-                        _QAInspection.boxInspection();
-                    }
-                }
+                // if (box_tested_full > box_tested) {
+                //     _QAInspection.boxInspection();
+                // } else {
+                //     if (data.box_judgement < 0) {
+                //         _QAInspection.swMsg("Please adjust a new Box Count to Inspect.", "warning");
+                //     } else {
+                //         _QAInspection.boxInspection();
+                //     }
+                // }
+                _QAInspection.boxInspection();
             } else {
                 _QAInspection.swMsg("Please select your Shift.", "warning");
             }            
@@ -1357,25 +1358,34 @@
         });
 
         $('#b_oba_serial_no').on('keypress', function(e) {
-            var hs_serial = $(this).val();
+            var box_tested = parseInt($('#box_tested').html());
+            var box_tested_full = parseInt($('#box_tested_full').html());
 
-            $('#b_oba_serial_no').removeClass("input-error");
-            $('#b_oba_serial_no').removeClass('is-invalid');
-            $('#hs_serial_feedback').removeClass('invalid-feedback');
-            $('#hs_serial_feedback').html('');
+            if (box_tested_full > box_tested) {
+                var hs_serial = $(this).val();
 
-            if (e.keyCode == 13) {
-                var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-                var data = rowData[0];
+                $('#b_oba_serial_no').removeClass("input-error");
+                $('#b_oba_serial_no').removeClass('is-invalid');
+                $('#hs_serial_feedback').removeClass('invalid-feedback');
+                $('#hs_serial_feedback').html('');
 
-                _QAInspection.scanHSSerial({
-                    _token: _QAInspection.token,
-                    hs_serial: hs_serial,
-                    box_id: data.id,
-                    pallet_id: $('#pallet_id').val()
-                });
-                e.preventDefault();
+                if (e.keyCode == 13) {
+                    var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+                    var data = rowData[0];
+
+                    _QAInspection.scanHSSerial({
+                        _token: _QAInspection.token,
+                        hs_serial: hs_serial,
+                        box_id: data.id,
+                        pallet_id: $('#pallet_id').val()
+                    });
+                    e.preventDefault();
+                }
+            } else {
+                _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
             }
+
+            
         });
 
         $('#pallet_disposition').on('select2:select', function(e) {
