@@ -78,24 +78,13 @@ B. Synopsis: Real Time Script
                             data: function(data) {
                                 switch (data.pallet_status) {
                                     case 1:
-                                        return 'FOR OBA';
-                                        break;
                                     case 2:
-                                        return 'GOOD';
-                                        break;
                                     case 3:
-                                        return 'REWORK';
-                                        break;
                                     case 4:
-                                        return 'HOLD PALLET';
-                                        break;
                                     case 5:
-                                        return 'HOLD LOT';
-                                        break;
-                                
+                                        return data.disposition;
                                     default:
                                         return 'ON PROGRESS'
-                                        break;
                                 }
                             }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
                         },

@@ -103,8 +103,6 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/get-boxes', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'get_boxes'])->name('transactions.box-and-pallet.get-boxes');
         Route::post('/save-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'save_box'])->name('transactions.box-and-pallet.save-box');
         Route::post('/update-box', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'update_box'])->name('transactions.box-and-pallet.update-box');
-        Route::post('/print-pallet', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'print_pallet'])->name('transactions.box-and-pallet.print-pallet');
-        Route::get('/print-preview', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'print_preview'])->name('transactions.box-and-pallet.print-preview');
         Route::post('/transfer-to', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'transfer_to'])->name('transactions.box-and-pallet.transfer-to');
         Route::get('/check-authorization', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'check_authorization'])->name('transactions.box-and-pallet.check-authorization');
         Route::post('/set-new-box-count', [App\Http\Controllers\Transactions\BoxAndPalletApplicationController::class, 'set_new_box_count'])->name('transactions.box-and-pallet.set-new-box-count');
@@ -138,6 +136,8 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/get-hs-history', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_hs_history'])->name('transactions.qa-inspection.get-hs-history');
         Route::post('/get-box-history', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_box_history'])->name('transactions.qa-inspection.get-box-history');
         Route::get('/check-all-scanned-box', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_all_scanned_box'])->name('transactions.qa-inspection.check-all-scanned-box');
+        Route::post('/print-pallet', [App\Http\Controllers\Transactions\QAInspectionController::class, 'print_pallet'])->name('transactions.qa-inspection.print-pallet');
+        Route::get('/print-preview', [App\Http\Controllers\Transactions\QAInspectionController::class, 'print_preview'])->name('transactions.qa-inspection.print-preview');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

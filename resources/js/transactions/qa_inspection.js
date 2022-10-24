@@ -18,6 +18,17 @@
         this.box_id = 0;
         this.hs_serial = "";
         this.box_history_hs_serial = "";
+
+        this.box_qr_code = "";
+        this.pallet_qr_code = "";
+        this.prv_box_id_qr = "";
+        this.prv_pallet_id_qr = "";
+        this.pallet_qr = "";
+        this.transaction_id = 0;
+        this.model_id = 0;
+        this.pallet_id = 0;
+        this.running_model = "";
+
         this.lot_no = "";
         this.id = 0;
         this.token = $("meta[name=csrf-token]").attr("content");
@@ -985,7 +996,66 @@
                     self.swMsg("Please Scan all Inspection Sheet before assigning disposition.","warning");
                 }
             });
-        }
+        },
+        printPallet: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/print-pallet";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#btn_print_preview').prop('disabled',false);
+                $('#btn_reprint_pallet').prop('disabled',false);
+                $('#btn_print_pallet').prop('disabled',true);
+                $('#btn_preview_print').prop('disabled',true);
+                self.statusMsg("Pallet was already printed!","success");
+
+                console.log(response);
+
+                // self.$tbl_transactions.row(param.row_index).data(response).draw();
+                $('#tbl_obas').DataTable().ajax.reload();
+
+                $('#pallet_id').val('');
+                $('#pallet_id_qr').val('');
+                $('#is_printed').val(0);
+                $('#box_per_pallet').val(0);
+                $('#box_count_full').html(0);
+
+                $('#btn_transfer').prop('disabled', true);
+                $('#btn_update').prop('disabled', true);
+                $('#btn_broken_pallet').prop('disabled', true);
+                $('#box_count').html(0);
+
+                $('#tbl_transactions').removeClass('disabled');
+                $('#tbl_pallets').removeClass('disabled');
+                $('#tbl_boxes').removeClass('disabled');
+
+                self.$tbl_boxes.ajax.reload();
+            });
+        },
+        printPreview: function(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/print-preview";
+            self.sendData().then(function() {
+                var response = self.responseData;
+
+                $('#prv_model').html(response.model);
+                $('#prv_date').html(response.print_date);
+                $('#prv_box_count').html(response.box_qty);
+                $('#prv_pallet_id_val').html(response.pallet_qr);
+                $('#prv_lot_no').html(response.lot_no);
+
+                self.box_qr_code.clear();
+                self.box_qr_code.makeCode(response.box_qr);
+                
+                self.pallet_qr_code.clear();
+                self.pallet_qr_code.makeCode(response.pallet_qr);
+
+                $('#modal_print_preview').modal('show');
+            });
+        },
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
@@ -1000,6 +1070,26 @@
         _QAInspection.drawOBAHSSerialsDatatables();
         _QAInspection.drawHSHistoryDatatables();
         _QAInspection.drawBoxHistoryDatatables();
+
+        var prv_box_id_qr = document.getElementById('prv_box_id_qr')
+        _QAInspection.box_qr_code = new QRCode(prv_box_id_qr, {
+            text: "",
+            width: 290,
+            height: 290,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+
+        var prv_pallet_id_qr = document.getElementById('prv_pallet_id_qr')
+        _QAInspection.pallet_qr_code = new QRCode(prv_pallet_id_qr, {
+            text: "",
+            width: 80,
+            height: 80,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
 
         $('#btn_transfer').prop('disabled', true);
         $('#btn_disposition').prop('disabled', true);
@@ -1129,6 +1219,26 @@
 
             $('#btn_transfer').prop('disabled', false);
             $('#btn_disposition').prop('disabled', false);
+            _QAInspection.pallet_qr = data.pallet_qr;
+            _QAInspection.transaction_id = data.transaction_id;
+            _QAInspection.model_id = data.model_id;
+            _QAInspection.pallet_id = data.id;
+            _QAInspection.running_model = data.model;
+
+            // GOOD and REWORK
+            if (data.pallet_status == 1 || data.pallet_status == 3) {
+                if (data.is_printed > 0) {
+                    $('#btn_print_pallet').prop('disabled', true);
+                } else {
+                    $('#btn_print_pallet').prop('disabled', false);
+                }
+                $('#btn_reprint_pallet').prop('disabled', false);
+                $('#btn_print_preview').prop('disabled', false);
+            } else {
+                $('#btn_print_pallet').prop('disabled', true);
+                $('#btn_reprint_pallet').prop('disabled', true);
+                $('#btn_print_preview').prop('disabled', true);
+            }
             
             _QAInspection.statusMsg('','clear');
             _QAInspection.$tbl_boxes.ajax.reload();
@@ -1152,6 +1262,16 @@
             _QAInspection.$tbl_boxes.ajax.reload();
             _QAInspection.$tbl_affected_serials.ajax.reload();
             $('#box_tested').html(0);
+
+            _QAInspection.pallet_qr = "";
+            _QAInspection.transaction_id = 0;
+            _QAInspection.model_id = 0;
+            _QAInspection.pallet_id = 0;
+            _QAInspection.running_model = "";
+
+            $('#btn_print_pallet').prop('disabled', true);
+            $('#btn_reprint_pallet').prop('disabled', true);
+            $('#btn_print_preview').prop('disabled', true);
 
             $('#btn_transfer').prop('disabled', true);
             $('#btn_disposition').prop('disabled', true);
@@ -1523,7 +1643,109 @@
             $('#modal_box_history').modal('show');
         });
 
+        /**
+         * Print Events
+         */
 
+         $('#btn_print_pallet, #btn_preview_print').on('click', function() {
+            var box_ids = "";
+            const month = moment().format('MMM');
+            var box_count = parseFloat($('#box_count').html());
+            var box_count_full = parseFloat($('#box_count_full').html());
+            var box_qty = 0;
+            // var row_index = _QAInspection.$tbl_transactions.rows({selected:  true}).indexes();
+
+            if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
+                if (box_count_full > box_count) {
+                    _QAInspection.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
+                } else {
+                    _QAInspection.$tbl_boxes.rows().data().map((row) => {
+                        box_qty++;
+                        box_ids += row.box_qr+";"+"\n";
+                    });
+        
+                    _QAInspection.printPallet({
+                        _token: _QAInspection.token,
+                        month: month.toUpperCase(),
+                        trans_id: _QAInspection.transaction_id,
+                        model_id: _QAInspection.model_id,
+                        pallet_id: _QAInspection.pallet_id,
+                        model: _QAInspection.running_model,
+                        lot_no: '------',
+                        box_qty: box_qty,
+                        box_qr: box_ids,
+                        pallet_qr: _QAInspection.pallet_qr,
+                        mode: 'print',
+                        // row_index: row_index[0],
+                        // target_no_of_pallet: $('#target_no_of_pallet').val(),
+                        // total_box_qty: $('#total_box_qty').val(),
+                        // total_scanned_box_qty: $('#total_scanned_box_qty').val(),
+                        // box_per_pallet: $('#box_per_pallet').val()
+                    });
+                }
+            } else {
+                _QAInspection.swMsg("Please select a pallet first.","warning");
+            }
+
+           
+            
+        });
+
+        $('#btn_reprint_pallet').on('click', function() {
+            var box_ids = "";
+            var box_qty = 0;
+            const month = moment().format('MMM');
+            // var row_index = _QAInspection.$tbl_transactions.rows({selected:  true}).indexes();
+
+            if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
+                _QAInspection.$tbl_boxes.rows().data().map((row) => {
+                    box_qty++;
+                    box_ids += row.box_qr+";"+"\r";
+                });
+
+                _QAInspection.printPallet({
+                    _token: _QAInspection.token,
+                    month: month.toUpperCase(),
+                    trans_id: _QAInspection.transaction_id,
+                    model_id: _QAInspection.model_id,
+                    pallet_id: _QAInspection.pallet_id,
+                    model: _QAInspection.running_model,
+                    lot_no: '------',
+                    box_qty: box_qty,
+                    box_qr: box_ids,
+                    pallet_qr: _QAInspection.pallet_qr,
+                    mode: 'reprint',
+                    // row_index: row_index[0],
+                    // target_no_of_pallet: $('#target_no_of_pallet').val(),
+                    // total_box_qty: $('#total_box_qty').val(),
+                    // total_scanned_box_qty: $('#total_scanned_box_qty').val(),
+                    // box_per_pallet: $('#box_per_pallet').val()
+                });
+            } else {
+                _QAInspection.swMsg("Please select a pallet first.","warning");
+            }
+        });
+
+        $('#btn_print_preview').on('click', function() {
+            var pallet_qr = $('#pallet_id_qr').val();
+            var pallet_id = $('#pallet_id').val();
+
+            if (pallet_qr != "") {
+                const month = moment().format('MMM');
+
+                $('#modal_form_title').html("Print Preview: " + pallet_qr);
+                $('#prv_label_title').html(month.toUpperCase() + " FTL PALLET LABEL");
+
+                _QAInspection.printPreview({
+                    _token: _QAInspection.token,
+                    pallet_id: pallet_id
+                });
+                
+            } else {
+                _QAInspection.showWarning("Please click the pallet number to select.");
+            }
+            
+        });
 	});
 
 })();

@@ -214,6 +214,7 @@ mix.js('resources/js/app.js', 'public/js')
         "public/js/theme.js",
         "public/js/trx.js",
         "resources/plugins/select2/dist/js/select2.full.min.js",
+        "resources/plugins/qrcodejs/qrcode.min.js",
         "resources/js/transactions/qa_inspection.js"
     ], "public/js/transactions/qa_inspection.js")
     .styles([

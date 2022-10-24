@@ -180,16 +180,14 @@ Box and Pallet Application
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
 
-		<div class="row mb-2">
-			<div class="offset-md-6 col-md-4 col-xs-8" style="font-size: 14px;">
-				<strong>Status message: </strong><br/>
-				<span id="status_msg"></span>
-			</div>
-			<div class="col-md-2 col-xs-4">
-				<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_move_to_history">Move Records to Pallet History</button>
+				<div class="row mb-2">
+					<div class="col-md-9 col-xs-8" style="font-size: 14px;">
+						<strong>Status message: </strong><br/>
+						<div class="alert alert-success" role="alert" id="status_msg" style="display: none;"></div>
+					</div>
+					
+				</div>
 			</div>
 		</div>
 
@@ -264,6 +262,9 @@ Box and Pallet Application
 				</div>
 
 				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12 mb-2">
+						<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_move_to_history">Move Records to Pallet History</button>
+					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="save_div">
 						<button type="button" class="btn btn-sm btn-block btn-green" id="btn_save_box" disabled>
 							<i class="fa fa-save"></i> Save
@@ -387,52 +388,6 @@ Box and Pallet Application
 			<div class="modal-footer justify-content-between">
 				<button type="button" class="btn btn-red" data-dismiss="modal">
 					<i class="fa fa-times"></i> Close
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal fade" id="modal_print_preview" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-	<div class="modal-dialog ">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="modal_form_title"></h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<h3 class="text-center" id="prv_label_title"></h3>
-				<div class="row">
-					<div class="col-md-8">
-						<div id="prv_box_id_qr"></div>
-					</div>
-					<div class="col-md-4">
-						<div class="row">
-							<div class="col-md-12">
-								<p>Model: <span id="prv_model"></span></p>
-								<p>Print Date: <span id="prv_date"></span></p>
-								<p>Lot Number: </p>
-								<p id="prv_lot_no"></p>
-								<p>Box Qty: <span id="prv_box_count"></span> pcs</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div id="prv_pallet_id_qr"></div>
-								<p id="prv_pallet_id_val"></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer justify-content-between">
-				<button type="button" class="btn btn-default" data-dismiss="modal">
-					<i class="fa fa-times"></i> Close
-				</button>
-				<button type="button" class="btn btn-primary" id="btn_preview_print">
-					<i class="fa fa-print"></i> Print
 				</button>
 			</div>
 		</div>

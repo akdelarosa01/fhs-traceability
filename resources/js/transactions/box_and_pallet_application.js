@@ -1126,25 +1126,25 @@
         _BoxPalletApp.drawPalletHistoryDatatables();
         _BoxPalletApp.permission();
 
-        var prv_box_id_qr = document.getElementById('prv_box_id_qr')
-        _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
-            text: "",
-            width: 290,
-            height: 290,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
+        // var prv_box_id_qr = document.getElementById('prv_box_id_qr')
+        // _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
+        //     text: "",
+        //     width: 290,
+        //     height: 290,
+        //     colorDark : "#000000",
+        //     colorLight : "#ffffff",
+        //     correctLevel : QRCode.CorrectLevel.H
+        // });
 
-        var prv_pallet_id_qr = document.getElementById('prv_pallet_id_qr')
-        _BoxPalletApp.pallet_qr_code = new QRCode(prv_pallet_id_qr, {
-            text: "",
-            width: 80,
-            height: 80,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
+        // var prv_pallet_id_qr = document.getElementById('prv_pallet_id_qr')
+        // _BoxPalletApp.pallet_qr_code = new QRCode(prv_pallet_id_qr, {
+        //     text: "",
+        //     width: 80,
+        //     height: 80,
+        //     colorDark : "#000000",
+        //     colorLight : "#ffffff",
+        //     correctLevel : QRCode.CorrectLevel.H
+        // });
         
         $('#btn_add_new').on('click', function() {
             if ($(this).hasClass('btn-primary')) {
@@ -1318,9 +1318,7 @@
             $('#pallet_id_qr').val('');
             $('#is_printed').val('');
             $('#box_count_full').html(0);
-
-            $('#btn_print_preview').prop('disabled', true);
-            $('#btn_print_pallet').prop('disabled', true);
+            
             $('#btn_delete_transaction').prop('disabled', false);
 
             _BoxPalletApp.statusMsg('','clear');
@@ -1360,8 +1358,6 @@
             $('#btn_transfer').prop('disabled', true);
             $('#btn_update').prop('disabled', true);
             $('#btn_broken_pallet').prop('disabled', true);
-            $('#btn_print_preview').prop('disabled', true);
-            $('#btn_print_pallet').prop('disabled', true);
             $('#btn_reprint_pallet').prop('disabled', true);
 
             _BoxPalletApp.statusMsg('','clear');
