@@ -49,7 +49,7 @@ Q.A. Inspection
 	<div class="panel-body">
 		
 		<div class="row mb-3">
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<input type="hidden" class="clear" id="id" name="id" value="">
 
 				<div class="row">
@@ -134,13 +134,13 @@ Q.A. Inspection
 
 			</div>
 
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<button class="btn btn-sm btn-block btn-green" id="btn_box_inspection" style="height: 68px">Box Inspection</button>
 			</div>
 		</div>
 		
 		<div class="row">
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_obas" style="width: 100%;">
@@ -166,7 +166,7 @@ Q.A. Inspection
 					</div>
 				</div>
 			</div>
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_boxes" style="width: 100%;">
@@ -179,8 +179,26 @@ Q.A. Inspection
 						</table>
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12" id="preview_div">
+						<button type="button" class="btn btn-sm btn-block btn-lime mb-2" id="btn_print_preview" disabled>
+							<i class="fa fa-eye"></i> Print Preview
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<button type="button" class="btn btn-sm btn-block btn-blue mb-2" id="btn_print_pallet" disabled>
+							<i class="fa fa-print"></i> Print Label
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<button type="button" class="btn btn-sm btn-block btn-aqua mb-2" id="btn_reprint_pallet" disabled>
+							<i class="fa fa-print"></i> Re-print Label
+						</button>
+					</div>
+				</div>
 			</div>
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_affected_serials" style="width: 100%">
@@ -220,7 +238,7 @@ Q.A. Inspection
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<div class="col-4">
+					<div class="col-md-4 col-xs-12">
 						<div class="row">
 							<div class="col-12">
 								<table class="table table-bordered table-light table-striped" style="width: 100%">
@@ -292,10 +310,10 @@ Q.A. Inspection
 						
 					</div>
 
-					<div class="col-8">
+					<div class="col-md-8 col-xs-12">
 
 						<div class="row mb-2">
-							<div class="col-6">
+							<div class="col-md-6 col-xs-12">
 								<div class="row">
 									<div class="col-sm-12">
 										<h5 for="b_qr_inspection_sheet">Scan QR Inspection Sheet: </h5>
@@ -304,7 +322,7 @@ Q.A. Inspection
 								</div>
 							</div>
 		
-							<div class="col-6">
+							<div class="col-md-6 col-xs-12">
 								<div class="row mb-2">
 									<div class="col-sm-12">
 										<h5 for="b_oba_serial_no">Scan OBA Serial No.: </h5>
@@ -328,7 +346,7 @@ Q.A. Inspection
 						</div>
 
 						<div class="row">
-							<div class="col-6" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
+							<div class="col-md-6 col-xs-12" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_inpection_sheet_serial" style="width: 100%">
 									<thead>
 										<th>QR Inspection Sheet S/N</th>
@@ -339,7 +357,7 @@ Q.A. Inspection
 								</table>
 							</div>
 
-							<div class="col-6" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
+							<div class="col-md-6 col-xs-12" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
 								<table class="table table-sm table-hover" id="tbl_hs_serials_oba" style="width: 100%">
 									<thead>
 										<th></th>

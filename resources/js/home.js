@@ -32,8 +32,23 @@
             $.each(menuObj, function(i, x) {
                 if (x.url != "#") {
                     var parent_name = (x.parent_name == 0)? "Transaction" : x.parent_name;
+                    var color_div = "";
+                    switch (x.parent_name) {
+                        case "Reports":
+                            color_div = "bg-red";
+                            break;
+
+                        case "MasterMaintenance":
+                            color_div = "bg-blue";
+                            break;
+                    
+                        default:
+                            color_div = "bg-info";
+                            break;
+                    }
+
                     HomeMenu +='<div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12">'+
-                    '<div class="widget widget-stats bg-info">'+
+                    '<div class="widget widget-stats '+color_div+'">'+
                     '<div class="stats-icon"><i class="'+x.icon+'"></i></div>'+
                     '<div class="stats-info">'+
                     '<h4>'+parent_name+'</h4>'+
