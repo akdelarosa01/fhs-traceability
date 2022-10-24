@@ -34,7 +34,7 @@ Box and Pallet Application
 	<div class="panel-body">
 
 		<div class="row mb-2">
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<form action="/transactions/box-and-pallet/proceed" method="post" id="frm_transactions">
 					@csrf
 					<input type="hidden" class="clear" id="id" name="id" value="">
@@ -103,19 +103,19 @@ Box and Pallet Application
 					</div>
 
 					<div class="row">
-						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12 mb-2">
 							<button type="button" class="btn btn-sm btn-primary btn-block read-only" id="btn_add_new">
 								<i class="fa fa-plus"></i> Add New
 							</button>
 						</div>
 
-						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12 mb-2">
 							<button type="submit" class="btn btn-sm btn-danger btn-block read-only" id="btn_cancel">
 								<i class="fa fa-times"></i> Cancel
 							</button>
 						</div>
 					
-						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+						<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-12 mb-2">
 							<button type="submit" class="btn btn-sm btn-success btn-block read-only" id="btn_proceed">
 								<i class="fa fa-check"></i> Proceed
 							</button>
@@ -124,7 +124,7 @@ Box and Pallet Application
 				</form>
 			</div>
 
-			<div class="col-8">
+			<div class="col-md-8 col-xs-12">
 				<div class="row">
 					<div class="col-12">
 						<div class="input-group input-group-lg mb-2">
@@ -139,7 +139,7 @@ Box and Pallet Application
 				</div>
 
 				<div class="row">
-					<div class="col-6">
+					<div class="col-md-6 col-xs-12">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
 								<span class="input-group-text">Running Model</span>
@@ -149,7 +149,7 @@ Box and Pallet Application
 						</div>
 					</div>
 
-					<div class="col-6">
+					<div class="col-md-6 col-xs-12">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
 								<span class="input-group-text">Total Box Scanned</span>
@@ -160,7 +160,7 @@ Box and Pallet Application
 				</div>
 
 				<div class="row">
-					<div class="col-6">
+					<div class="col-md-6 col-xs-12">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
 								<span class="input-group-text">Pallet QR</span>
@@ -171,7 +171,7 @@ Box and Pallet Application
 						</div>
 					</div>
 
-					<div class="col-6">
+					<div class="col-md-6 col-xs-12">
 						<div class="input-group input-group-sm mb-2">
 							<div class="input-group-prepend">
 								<span class="input-group-text">Box per Pallet</span>
@@ -184,17 +184,17 @@ Box and Pallet Application
 		</div>
 
 		<div class="row mb-2">
-			<div class="offset-6 col-4" style="font-size: 14px;">
-				<strong>Status message: </strong>
+			<div class="offset-md-6 col-md-4 col-xs-8" style="font-size: 14px;">
+				<strong>Status message: </strong><br/>
 				<span id="status_msg"></span>
 			</div>
-			<div class="col-2">
+			<div class="col-md-2 col-xs-4">
 				<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_move_to_history">Move Records to Pallet History</button>
 			</div>
 		</div>
 
 		<div class="row">
-			<div class="col-3">
+			<div class="col-md-3 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_transactions" style="width: 100%">
@@ -215,7 +215,7 @@ Box and Pallet Application
 				</div>
 			</div>
 
-			<div class="col-5">
+			<div class="col-md-5 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
@@ -249,7 +249,7 @@ Box and Pallet Application
 				</div>
 			</div>
 
-			<div class="col-4">
+			<div class="col-md-4 col-xs-12">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						
@@ -269,7 +269,7 @@ Box and Pallet Application
 							<i class="fa fa-save"></i> Save
 						</button>
 					</div>
-					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="preview_div">
+					{{-- <div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="preview_div">
 						<button type="button" class="btn btn-sm btn-block btn-lime" id="btn_print_preview" disabled>
 							<i class="fa fa-eye"></i> Print Preview
 						</button>
@@ -283,7 +283,7 @@ Box and Pallet Application
 						<button type="button" class="btn btn-sm btn-block btn-aqua" id="btn_reprint_pallet" disabled>
 							<i class="fa fa-print"></i> Re-print Label
 						</button>
-					</div>
+					</div> --}}
 				</div>
 			</div>
 		</div>
