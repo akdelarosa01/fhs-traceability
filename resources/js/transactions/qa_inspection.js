@@ -798,6 +798,7 @@
                                 }
                             }, name: 'new_judgment', searchable: false, orderable: false
                         },
+                        { data: 'reason', name: 'reason' },
                         { data: 'create_user', name: 'create_user' },
                         { data: 'created_at', name: 'created_at' },
                     ],

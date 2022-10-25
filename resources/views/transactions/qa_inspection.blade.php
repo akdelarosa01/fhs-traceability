@@ -439,6 +439,7 @@ Q.A. Inspection
 								<th>H.S. Serial</th>
 								<th>Orig. Judgment</th>
 								<th>New Judgment</th>
+								<th>Reason</th>
 								<th>Inspected by</th>
 								<th>Date Inspected</th>
 							</thead>
