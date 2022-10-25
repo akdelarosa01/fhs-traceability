@@ -1161,6 +1161,69 @@
                 }
             });
         },
+        printLabel: function(type, printer) {
+            var self = this;
+            const month = moment().format('MMM');
+            var box_qty = 0;
+            var box_ids = "";
+
+            if (type == "REPRINT") {
+                if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
+                    self.$tbl_boxes.rows().data().map((row) => {
+                        box_qty++;
+                        box_ids += row.box_qr+";"+"\r";
+                    });
+
+                    self.printPallet({
+                        _token: self.token,
+                        month: month.toUpperCase(),
+                        trans_id: self.transaction_id,
+                        model_id: self.model_id,
+                        pallet_id: self.pallet_id,
+                        model: self.running_model,
+                        lot_no: '------',
+                        box_qty: box_qty,
+                        box_qr: box_ids,
+                        pallet_qr: self.pallet_qr,
+                        mode: 'reprint',
+                        printer: printer
+                    });
+                } else {
+                    self.swMsg("Please select a pallet first.","warning");
+                }
+            } else {
+                var box_count = parseFloat($('#box_count').html());
+                var box_count_full = parseFloat($('#box_count_full').html());
+
+                if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
+                    if (box_count_full > box_count) {
+                        self.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
+                    } else {
+                        self.$tbl_boxes.rows().data().map((row) => {
+                            box_qty++;
+                            box_ids += row.box_qr+";"+"\n";
+                        });
+            
+                        self.printPallet({
+                            _token: self.token,
+                            month: month.toUpperCase(),
+                            trans_id: self.transaction_id,
+                            model_id: self.model_id,
+                            pallet_id: self.pallet_id,
+                            model: self.running_model,
+                            lot_no: '------',
+                            box_qty: box_qty,
+                            box_qr: box_ids,
+                            pallet_qr: self.pallet_qr,
+                            mode: 'print',
+                            printer: printer
+                        });
+                    }
+                } else {
+                    self.swMsg("Please select a pallet first.","warning");
+                }
+            }
+        },
         printPallet: function(param) {
             var self = this;
             self.submitType = "POST";
@@ -1173,10 +1236,6 @@
                 $('#btn_print_pallet').prop('disabled',true);
                 $('#btn_preview_print').prop('disabled',true);
                 self.statusMsg("Pallet was already printed!","success");
-
-                console.log(response);
-
-                // self.$tbl_transactions.row(param.row_index).data(response).draw();
                 $('#tbl_obas').DataTable().ajax.reload();
 
                 $('#pallet_id').val('');
@@ -1184,15 +1243,9 @@
                 $('#is_printed').val(0);
                 $('#box_per_pallet').val(0);
                 $('#box_count_full').html(0);
-
-                $('#btn_transfer').prop('disabled', true);
-                $('#btn_update').prop('disabled', true);
-                $('#btn_broken_pallet').prop('disabled', true);
                 $('#box_count').html(0);
-
-                $('#tbl_transactions').removeClass('disabled');
-                $('#tbl_pallets').removeClass('disabled');
-                $('#tbl_boxes').removeClass('disabled');
+                $("#print_type").val("");
+                $('#modal_print').modal('hide');
 
                 self.$tbl_boxes.ajax.reload();
             });
@@ -1884,82 +1937,13 @@
          */
 
         $('#btn_print_pallet, #btn_preview_print').on('click', function() {
-            var box_ids = "";
-            const month = moment().format('MMM');
-            var box_count = parseFloat($('#box_count').html());
-            var box_count_full = parseFloat($('#box_count_full').html());
-            var box_qty = 0;
-            // var row_index = _QAInspection.$tbl_transactions.rows({selected:  true}).indexes();
-
-            if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
-                if (box_count_full > box_count) {
-                    _QAInspection.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
-                } else {
-                    _QAInspection.$tbl_boxes.rows().data().map((row) => {
-                        box_qty++;
-                        box_ids += row.box_qr+";"+"\n";
-                    });
-        
-                    _QAInspection.printPallet({
-                        _token: _QAInspection.token,
-                        month: month.toUpperCase(),
-                        trans_id: _QAInspection.transaction_id,
-                        model_id: _QAInspection.model_id,
-                        pallet_id: _QAInspection.pallet_id,
-                        model: _QAInspection.running_model,
-                        lot_no: '------',
-                        box_qty: box_qty,
-                        box_qr: box_ids,
-                        pallet_qr: _QAInspection.pallet_qr,
-                        mode: 'print',
-                        // row_index: row_index[0],
-                        // target_no_of_pallet: $('#target_no_of_pallet').val(),
-                        // total_box_qty: $('#total_box_qty').val(),
-                        // total_scanned_box_qty: $('#total_scanned_box_qty').val(),
-                        // box_per_pallet: $('#box_per_pallet').val()
-                    });
-                }
-            } else {
-                _QAInspection.swMsg("Please select a pallet first.","warning");
-            }
-
-           
-            
+            $('#print_type').val('PRINT');
+            $('#modal_print').modal('show');            
         });
 
         $('#btn_reprint_pallet').on('click', function() {
-            var box_ids = "";
-            var box_qty = 0;
-            const month = moment().format('MMM');
-            // var row_index = _QAInspection.$tbl_transactions.rows({selected:  true}).indexes();
-
-            if ($('#tbl_obas').DataTable().rows({ selected: true }).any()) {
-                _QAInspection.$tbl_boxes.rows().data().map((row) => {
-                    box_qty++;
-                    box_ids += row.box_qr+";"+"\r";
-                });
-
-                _QAInspection.printPallet({
-                    _token: _QAInspection.token,
-                    month: month.toUpperCase(),
-                    trans_id: _QAInspection.transaction_id,
-                    model_id: _QAInspection.model_id,
-                    pallet_id: _QAInspection.pallet_id,
-                    model: _QAInspection.running_model,
-                    lot_no: '------',
-                    box_qty: box_qty,
-                    box_qr: box_ids,
-                    pallet_qr: _QAInspection.pallet_qr,
-                    mode: 'reprint',
-                    // row_index: row_index[0],
-                    // target_no_of_pallet: $('#target_no_of_pallet').val(),
-                    // total_box_qty: $('#total_box_qty').val(),
-                    // total_scanned_box_qty: $('#total_scanned_box_qty').val(),
-                    // box_per_pallet: $('#box_per_pallet').val()
-                });
-            } else {
-                _QAInspection.swMsg("Please select a pallet first.","warning");
-            }
+            $('#print_type').val('REPRINT');
+            $('#modal_print').modal('show');
         });
 
         $('#btn_print_preview').on('click', function() {
@@ -1980,6 +1964,14 @@
             } else {
                 _QAInspection.showWarning("Please click the pallet number to select.");
             }
+            
+        });
+
+        $('#btn_print_now').on('click', function() {
+            var type = $("#print_type").val();
+            var printer = $("#printer").val();
+
+            _QAInspection.printLabel(type,printer);
             
         });
 	});

@@ -581,6 +581,41 @@ Q.A. Inspection
 	</div>
 </div>
 
+<div class="modal fade" id="modal_print" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h3 class="text-center">Select Printer</h3>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<input type="hidden" name="print_type" id="print_type" />
+							<select class="form-control form-control-sm" id="printer" name="printer">
+								<option value=""></option>
+								<option value="pallet_print_pallet_labels1">Line 1 Printer</option>
+								<option value="pallet_print_pallet_labels2">Line 2 Printer</option>
+								<option value="pallet_print_pallet_labels3">Line 3 Printer</option>
+								<option value="pallet_print_pallet_labels4">Line 4 Printer</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-center border-0">
+				<button type="button" class="btn btn-primary" id="btn_print_now">
+					<i class="fa fa-print"></i> Print
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="modal fade" id="modal_disposition" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 	<div class="modal-dialog">
 		<div class="modal-content">

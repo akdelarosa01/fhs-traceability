@@ -1440,19 +1440,21 @@ class QAInspectionController extends Controller
                 // $mx = PalletModelMatrix::select('model')->where('id',$req->model_id)->first();
 
                 // insert into the Bartender Table
-                $print = new PalletPrintPalletLabel();
 
-                $print->month = $month;
-                $print->model = $req->model;
-                $print->lot_no = $lots;
-                $print->box_qty = $req->box_qty;
-                $print->box_qr = $req->box_qr;
-                $print->pallet_qr = $req->pallet_qr;
-                $print->print_date = $print_date;
+                $print = DB::connection('mysql')->table($req->printer)
+                            ->insert([
+                                'month' => $month,
+                                'model' => $req->model,
+                                'lot_no' => $lots,
+                                'box_qty' => $req->box_qty,
+                                'box_qr' => $req->box_qr,
+                                'pallet_qr' => $req->pallet_qr,
+                                'print_date' => $print_date,
+                            ]);
 
-                if ($print->save()) {
-
-                    $query = DB::connection('mysql')->table('pallet_transactions as t')->select([
+                if ($print) {
+                    $query = DB::connection('mysql')->table('pallet_transactions as t')
+                                ->select([
                                     DB::raw("t.id as id"),
                                     DB::raw("t.model_id as model_id"),
                                     DB::raw("t.model_status as model_status"),
