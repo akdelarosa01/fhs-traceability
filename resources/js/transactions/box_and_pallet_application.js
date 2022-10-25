@@ -22,8 +22,6 @@
         this.BoxPalletApp_checked = 0;
         this.box_qr_code = "";
         this.pallet_qr_code = "";
-        this.prv_box_id_qr = "";
-        this.prv_pallet_id_qr = "";
         this.removed_box_arr = [];
         this.pallet_id = 0;
     }
@@ -181,7 +179,7 @@
 
                         self.hideInputErrors('box_qr');
                     }
-                    
+                    $('#btn_move_to_history').prop('disabled', true);
                     break;
             
                 default:
@@ -214,6 +212,8 @@
                     $('#btn_update').prop('disabled', true);
                     $('#btn_broken_pallet').prop('disabled', true);
                     $('#btn_reprint_pallet').prop('disabled', true);
+
+                    $('#btn_move_to_history').prop('disabled', true);
                     
                     break;
             }
@@ -1125,26 +1125,6 @@
         _BoxPalletApp.drawBoxHistoryDatatables();
         _BoxPalletApp.drawPalletHistoryDatatables();
         _BoxPalletApp.permission();
-
-        // var prv_box_id_qr = document.getElementById('prv_box_id_qr')
-        // _BoxPalletApp.box_qr_code = new QRCode(prv_box_id_qr, {
-        //     text: "",
-        //     width: 290,
-        //     height: 290,
-        //     colorDark : "#000000",
-        //     colorLight : "#ffffff",
-        //     correctLevel : QRCode.CorrectLevel.H
-        // });
-
-        // var prv_pallet_id_qr = document.getElementById('prv_pallet_id_qr')
-        // _BoxPalletApp.pallet_qr_code = new QRCode(prv_pallet_id_qr, {
-        //     text: "",
-        //     width: 80,
-        //     height: 80,
-        //     colorDark : "#000000",
-        //     colorLight : "#ffffff",
-        //     correctLevel : QRCode.CorrectLevel.H
-        // });
         
         $('#btn_add_new').on('click', function() {
             if ($(this).hasClass('btn-primary')) {
@@ -1402,6 +1382,8 @@
                 $('#btn_broken_pallet').prop('disabled', false);
             }
 
+            $('#btn_move_to_history').prop('disabled', false);
+
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_boxes.ajax.reload();
         })
@@ -1416,6 +1398,8 @@
             $('#btn_update').prop('disabled', true);
             $('#btn_broken_pallet').prop('disabled', true);
             $('#box_count').html(0);
+
+            $('#btn_move_to_history').prop('disabled', true);
 
             _BoxPalletApp.$tbl_boxes.ajax.reload();
         });

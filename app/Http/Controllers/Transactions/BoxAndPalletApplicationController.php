@@ -11,7 +11,6 @@ use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletHistoryDtl;
 use App\Models\PalletHistoryHdr;
 use App\Models\PalletModelMatrix;
-use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -145,15 +144,15 @@ class BoxAndPalletApplicationController extends Controller
             'msgTitle' => 'Failed!'
         ];
 
-        $this->validate($req, [
-            'model_id' => 'required',
-            'target_hs_qty' => 'required|numeric|min:0|not_in:0',
-        ]);
+        if (isset($req->id)) {
+            $this->validate($req, [
+                'model_id' => 'required',
+                'target_hs_qty' => 'required|numeric|min:0|not_in:0'
+            ]);
 
-        try {
-            if (isset($req->id)) {
+            try {
                 $trans = PalletTransaction::find($req->id);
-            
+        
                 $trans->target_hs_qty = $req->target_hs_qty;
                 $trans->total_box_qty = $req->total_box_qty;
                 $trans->target_no_of_pallet = $req->target_no_of_pallet;
@@ -170,9 +169,34 @@ class BoxAndPalletApplicationController extends Controller
                         'msgTitle' => 'Success!'
                     ];
                 }
-            } else {
-                $trans = new PalletTransaction();
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+            }
+
             
+        } else {
+            $this->validate($req, [
+                'model_id' => [
+                    'required',
+                    Rule::unique('pallet_transactions')->where(function ($query) use ($req) {
+                        return $query->where('model_id', $req->model_id)->whereRaw(DB::raw("DATE_FORMAT(created_at,'%Y-%m-%d') = '".date('Y-m-d')."'"));
+                    })
+                ],
+                'target_hs_qty' => 'required|numeric|min:0|not_in:0',
+            ], [
+                'model_id.unique' => 'This model was already had a transaction for this day.',
+            ]);
+
+            try {
+                $trans = new PalletTransaction();
+        
                 $trans->model_id = $req->model_id;
                 $trans->target_hs_qty = $req->target_hs_qty;
                 $trans->total_box_qty = $req->total_box_qty;
@@ -202,17 +226,16 @@ class BoxAndPalletApplicationController extends Controller
                         'msgTitle' => 'Success!'
                     ];
                 }
+            } catch (\Throwable $th) {
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'inputs' => $inputs,
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
             }
-            
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'inputs' => $inputs,
-                'success' => false,
-                'msgType' => 'error',
-                'msgTitle' => 'Error!'
-            ];
         }
 
         return response()->json($data);
@@ -592,41 +615,6 @@ class BoxAndPalletApplicationController extends Controller
         }
 
         return response()->json($data);
-    }
-
-    private function needToCreateNewPallet($req, $pallet_count)
-    {
-        if ((int)$req->target_no_of_pallet >= (int)$pallet_count) {
-            if ((int)$req->total_box_qty == (int)$req->total_scanned_box_qty) {
-                return false;
-            }
-
-            if ((int)$req->target_no_of_pallet == (int)$pallet_count) {
-                return false;
-            }
-
-            $pallets = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->get();
-            foreach ($pallets as $key => $pallet) {
-                $boxes = PalletBoxPalletDtl::where('pallet_id',$pallet->id)->count();
-
-                if ($req->box_per_pallet > $boxes) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private function readyStatus($req, $pallet_count)
-    {
-        if ((int)$req->target_no_of_pallet == (int)$pallet_count) {
-            if ((int)$req->total_box_qty == (int)$req->total_scanned_box_qty) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function get_affected_serial_no(Request $req)
