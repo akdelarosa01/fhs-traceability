@@ -138,6 +138,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/check-all-scanned-box', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_all_scanned_box'])->name('transactions.qa-inspection.check-all-scanned-box');
         Route::post('/print-pallet', [App\Http\Controllers\Transactions\QAInspectionController::class, 'print_pallet'])->name('transactions.qa-inspection.print-pallet');
         Route::get('/print-preview', [App\Http\Controllers\Transactions\QAInspectionController::class, 'print_preview'])->name('transactions.qa-inspection.print-preview');
+        Route::post('/change-judgment-reason', [App\Http\Controllers\Transactions\QAInspectionController::class, 'change_judgment_reason'])->name('transactions.qa-inspection.change-judgment-reason');
     });
 
     Route::group(['prefix' => 'warehouse'], function () {

@@ -18,6 +18,7 @@
         this.box_id = 0;
         this.hs_serial = "";
         this.box_history_hs_serial = "";
+        this.qa_judgment = -1;
 
         this.box_qr_code = "";
         this.pallet_qr_code = "";
@@ -418,7 +419,7 @@
                         targets:   0
                     } ],
                     select: {
-                        style: 'multi',
+                        style: 'single',
                         selector: 'td:not(:nth-child(4))'
                     },
                     ajax: {
@@ -490,7 +491,7 @@
                         },
                         { 
                             data: 'id', render: function() {
-                                return '<button type="button" class="btn btn-sm btn-success btn_box_history"><i class="fa fa-boxes"></i></button>';
+                                return '<button type="button" class="btn btn-sm btn-info btn_box_history"><i class="fa fa-boxes"></i></button>';
                             }, name: 'id', searchable: false, orderable: false, width: '15px'
                         },
                     ],
@@ -843,7 +844,24 @@
                             break;
                     }
                     $('#box_judgment').html(response.matched);
-                    self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                    if (param.hasOwnProperty('hs_row_index')) {
+                        self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response.affected_serials).draw();
+                        self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
+
+                        if (param.new_judgment > 0) {
+                            $('#cr_type').val('NORMAL');
+                            $('#cr_reason').val("");
+                            $('#modal_change_judgment_reason').modal('hide');
+                        } else {
+                            $('#hs_ng_type').val('NORMAL');
+                            $('#change_jdg_ng_reason_div').hide();
+                            $('#modal_hs_ng_reason').modal('hide');
+                        }
+                    } else {
+                        $('#modal_hs_ng_reason').modal('hide');
+                        self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                    }
+                    
                     var scanned_hs = self.$tbl_hs_serials_oba.rows().count();
                     $('#hs_scanned_count').html(scanned_hs);
                 }
@@ -1056,6 +1074,18 @@
                 $('#modal_print_preview').modal('show');
             });
         },
+        changeJudgmentReason: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/qa-inspection/change-judgment-reason";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                $('#cr_reason').val('');
+                self.$tbl_hs_serials_oba.row(param.index).data(response).draw();
+                $('#modal_change_judgment_reason').modal('hide');
+            });
+        }
 	}
 	QAInspection.init.prototype = $.extend(QAInspection.prototype, $D.init.prototype, $F.init.prototype, $R.init.prototype);
    
@@ -1095,8 +1125,8 @@
         $('#btn_disposition').prop('disabled', true);
         $('#btn_box_inspection').prop('disabled', true);
 
-        $('#btn_good').prop('disabled', true);
-        $('#btn_notgood').prop('disabled', true);
+        // $('#btn_good').prop('disabled', true);
+        // $('#btn_notgood').prop('disabled', true);
 
         $('#hs_ng_reason').select2({
             allowClear: true,
@@ -1310,8 +1340,8 @@
             $('#btn_transfer').prop('disabled', false);
             $('#btn_disposition').prop('disabled', false);
 
-            $('#btn_good').prop('disabled', true);
-            $('#btn_notgood').prop('disabled', true);
+            // $('#btn_good').prop('disabled', true);
+            // $('#btn_notgood').prop('disabled', true);
             $('#scan_serial').prop('readonly', true);
             $('#btn_box_inspection').prop('disabled', true);
 
@@ -1323,17 +1353,21 @@
             var data = rowData;
 
             _QAInspection.hs_serial = data.hs_serial;
+            _QAInspection.qa_judgment = data.qa_judgment;
             _QAInspection.lot_no = $('#b_lot_no').val();
 
-            $('#btn_good').prop('disabled', false);
-            $('#btn_notgood').prop('disabled', false);
+            // $('#btn_good').prop('disabled', false);
+            // $('#btn_notgood').prop('disabled', false);
 
             _QAInspection.$tbl_hs_history.ajax.reload();
 
         })
         .on('deselect', function ( e, dt, type, indexes ) {
-            $('#btn_good').prop('disabled', true);
-            $('#btn_notgood').prop('disabled', true);
+            _QAInspection.hs_serial = "";
+            _QAInspection.qa_judgment = -1;
+            _QAInspection.lot_no = "";
+            // $('#btn_good').prop('disabled', true);
+            // $('#btn_notgood').prop('disabled', true);
         });
 
         $('#modal_box_inspection').on('shown.bs.modal', function() {
@@ -1376,62 +1410,186 @@
         });
 
         $('#btn_good').on('click', function() {
-            var data = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
-            console.log(data);
-            // var data = rowData[0];
-            var row_indexes = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes().toArray();
-            var hs_count = parseInt($('#hs_total_count').html());
+            var box_tested = parseInt($('#box_tested').html());
+            var box_tested_full = parseInt($('#box_tested_full').html());
 
-            _QAInspection.HSSerialJudgment({
-                _token: _QAInspection.token,
-                row_data: data,
-                // id: data.id,
-                // box_id: data.box_id,
-                // pallet_id: data.pallet_id,
-                // hs_serial: data.hs_serial,
-                judgment: 1,
-                hs_count: hs_count,
-                row_indexes: row_indexes
-            });
+            var hs_serial = $('#b_oba_serial_no').val();
+            var boxData = _QAInspection.$tbl_boxes.row({selected:  true}).data();            
+            var selected_hs = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).count();
+
+            if (selected_hs > 0) {
+                var hsData = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).data();
+                var hsIndex = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).index();
+                $('#cr_box_id').val(boxData.id);
+                $('#cr_pallet_id').val(boxData.pallet_id);
+                $('#cr_hs_serial').val(hsData.hs_serial);
+                $('#cr_orig_judgment').val(hsData.qa_judgment);
+                $('#cr_hs_id').val(hsData.id);
+                $('#cr_index').val(hsIndex);
+                $('#cr_new_judgment').val(1);
+                $('#cr_type').val('CHANGE');
+
+                $('#modal_change_judgment_reason').modal('show');
+            } else {
+                if (box_tested_full > box_tested) {
+                    if (hs_serial != "" && hs_serial != null) {
+                        $('#cr_type').val('NORMAL');
+                        $('#b_oba_serial_no').removeClass("input-error");
+                        $('#b_oba_serial_no').removeClass('is-invalid');
+                        $('#hs_serial_feedback').removeClass('invalid-feedback');
+                        $('#hs_serial_feedback').html('');
+
+                        _QAInspection.scanHSSerial({
+                            _token: _QAInspection.token,
+                            hs_serial: hs_serial,
+                            box_id: boxData.id,
+                            pallet_id: $('#pallet_id').val(),
+                            judgment: 1
+                        });
+                    } else {
+                        _QAInspection.swMsg("Please scan or input an H.S. Serial Number.","warning");
+                    }
+                } else {
+                    _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
+                }
+            }
         });
 
         $('#btn_notgood').on('click', function() {
-            var selected_count = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).count();
-            var rowData = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).data().toArray();
-            var data = rowData[0];
-            var row_index = _QAInspection.$tbl_hs_serials_oba.rows({selected:  true}).indexes();
+            var box_tested = parseInt($('#box_tested').html());
+            var box_tested_full = parseInt($('#box_tested_full').html());
 
-            if (selected_count == 1) {
-                $('#hs_ng_id').val(data.id);
-                $('#hs_ng_box_id').val(data.box_id);
-                $('#hs_row_index').val(row_index[0]);
+            var hs_serial = $('#b_oba_serial_no').val();
+            var boxData = _QAInspection.$tbl_boxes.row({selected:  true}).data();
+            var selected_hs = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).count();
+
+            if (selected_hs > 0) {
+                var hsData = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).data();
+                var hsIndex = _QAInspection.$tbl_hs_serials_oba.row({selected:  true}).index();
+
+                $('#hs_ng_id').val(hsData.id);
+                $('#hs_ng_box_id').val(boxData.id);
+                $('#hs_ng_pallet_id').val(boxData.pallet_id);
+                $('#hs_ng_hs_serial').val(hsData.hs_serial);
+                $('#hs_row_index').val(hsIndex);
+                $('#hs_ng_orig_judgment').val(hsData.qa_judgment);
+                $('#hs_ng_new_judgment').val(0);
+                $('#hs_ng_reason').val(null).trigger('change');
+                $('#hs_ng_cr_reason').val("");
+                $('#hs_ng_type').val('CHANGE');
+
+                $('#change_jdg_ng_reason_div').show();
+
                 $('#modal_hs_ng_reason').modal('show');
             } else {
-                _QAInspection.swMsg("Select only 1 H.S. Serial number.","warning");
+                if (box_tested_full > box_tested) {
+                    if (hs_serial != "" && hs_serial != null) {
+                        $('#hs_ng_type').val('NORMAL');
+                        $('#modal_hs_ng_reason').modal('show');
+                        $('#hs_ng_reason').val(null).trigger('change');
+                    } else {
+                        _QAInspection.swMsg("Please scan or input an H.S. Serial Number.","warning");
+                    }
+                } else {
+                    _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
+                }
             }
             
         });
 
         $('#btn_save_hs_ng_reason').on('click', function() {
-            var id = $('#hs_ng_id').val();
-            var hs_ng_box_id = $('#hs_ng_box_id').val();
-            var hs_row_index = $('#hs_row_index').val();
+            var box_tested = parseInt($('#box_tested').html());
+            var box_tested_full = parseInt($('#box_tested_full').html());
+            var hs_serial = $('#b_oba_serial_no').val();
             var hs_ng_reason = $('#hs_ng_reason').val();
-            var hs_count = parseInt($('#hs_total_count').html());
 
-            if (hs_ng_reason == null || hs_ng_reason == "") {
-                _QAInspection.swMsg("Please provide a Reason.","warning");
+            if (box_tested_full > box_tested) {
+                if (hs_ng_reason == null || hs_ng_reason == "") {
+                    _QAInspection.swMsg("Please provide a Reason.","warning");
+                } else {
+                    $('#b_oba_serial_no').removeClass("input-error");
+                    $('#b_oba_serial_no').removeClass('is-invalid');
+                    $('#hs_serial_feedback').removeClass('invalid-feedback');
+                    $('#hs_serial_feedback').html('');
+
+                    var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+                    var data = rowData[0];
+                    var hs_ng_type = $('#hs_ng_type').val();
+
+                    if (hs_ng_type == 'NORMAL') {
+                        _QAInspection.scanHSSerial({
+                            _token: _QAInspection.token,
+                            hs_serial: hs_serial,
+                            box_id: data.id,
+                            pallet_id: $('#pallet_id').val(),
+                            judgment: 0,
+                            hs_ng_reason: hs_ng_reason
+                        });
+                    } else {
+                        var reason = $('#hs_ng_cr_reason').val();
+                        if (reason != "") {
+
+                            _QAInspection.scanHSSerial({
+                                _token: _QAInspection.token,
+                                hs_ng_type: hs_ng_type,
+                                hs_id: $('#hs_ng_id').val(),
+                                box_id: $('#hs_ng_box_id').val(),
+                                pallet_id: $('#hs_ng_pallet_id').val(),
+                                hs_serial: $('#hs_ng_hs_serial').val(),
+                                orig_judgment: $('#hs_ng_orig_judgment').val(),
+                                new_judgment: $('#hs_ng_new_judgment').val(),
+                                hs_ng_reason: hs_ng_reason,
+                                reason: reason,
+                                hs_row_index: $('#hs_row_index').val()
+                            });
+                        } else {
+                            _QAInspection.swMsg("Please provide your reason for changing of judgment.","warning");
+                        }
+                    }
+                }
+                
             } else {
-                _QAInspection.setHSNGremarks({
-                    _token: _QAInspection.token,
-                    id: id,
-                    judgment: 0,
-                    hs_ng_box_id: hs_ng_box_id,
-                    hs_row_index: hs_row_index,
-                    hs_ng_reason: hs_ng_reason,
-                    hs_count: hs_count
-                });
+                _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
             }
+        });
+
+        $('#btn_save_cr_reason').on('click', function() {
+            var reason = $('#cr_reason').val();
+            if (reason != "") {
+
+                _QAInspection.scanHSSerial({
+                    _token: _QAInspection.token,
+                    type: $('#cr_type').val(),
+                    hs_id: $('#cr_hs_id').val(),
+                    box_id: $('#cr_box_id').val(),
+                    pallet_id: $('#cr_pallet_id').val(),
+                    hs_serial: $('#cr_hs_serial').val(),
+                    orig_judgment: $('#cr_orig_judgment').val(),
+                    new_judgment: $('#cr_new_judgment').val(),
+                    reason: reason,
+                    hs_row_index: $('#cr_index').val()
+                });
+            } else {
+                _QAInspection.swMsg("Please provide your reason for changing of judgment.","warning");
+            }
+
+            // var reason = $('#cr_reason').val();
+            // if (reason != "") {
+            //     var param = {
+            //         _token: _QAInspection.token,
+            //         hs_id: $('#cr_hs_id').val(),
+            //         box_id: $('#cr_box_id').val(),
+            //         pallet_id: $('#cr_pallet_id').val(),
+            //         hs_serial: $('#cr_hs_serial').val(),
+            //         orig_judgment: $('#cr_orig_judgment').val(),
+            //         new_judgment: $('#cr_new_judgment').val(),
+            //         index: $('#cr_index').val(),
+            //         reason: reason,
+            //     };
+            //     _QAInspection.changeJudgmentReason(param);
+            // } else {
+            //     _QAInspection.swMsg("Please provide your reason for changing of judgment.","warning");
+            // }
             
         });
 
@@ -1475,37 +1633,6 @@
             }
 
            
-        });
-
-        $('#b_oba_serial_no').on('keypress', function(e) {
-            var box_tested = parseInt($('#box_tested').html());
-            var box_tested_full = parseInt($('#box_tested_full').html());
-
-            if (box_tested_full > box_tested) {
-                var hs_serial = $(this).val();
-
-                $('#b_oba_serial_no').removeClass("input-error");
-                $('#b_oba_serial_no').removeClass('is-invalid');
-                $('#hs_serial_feedback').removeClass('invalid-feedback');
-                $('#hs_serial_feedback').html('');
-
-                if (e.keyCode == 13) {
-                    var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-                    var data = rowData[0];
-
-                    _QAInspection.scanHSSerial({
-                        _token: _QAInspection.token,
-                        hs_serial: hs_serial,
-                        box_id: data.id,
-                        pallet_id: $('#pallet_id').val()
-                    });
-                    e.preventDefault();
-                }
-            } else {
-                _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
-            }
-
-            
         });
 
         $('#pallet_disposition').on('select2:select', function(e) {

@@ -10,11 +10,10 @@ use App\Models\PalletHeatSinkNgReason;
 use App\Models\PalletBoxPalletDtl;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletDispositionReason;
-use App\Models\PalletModelMatrix;
 use App\Models\PalletPrintPalletLabel;
 use App\Models\PalletQaDisposition;
-use App\Models\PalletTransaction;
 use App\Models\QaAffectedSerial;
+use App\Models\QaChangeJudgmentReason;
 use App\Models\QaHoldLot;
 use App\Models\QaHoldPallet;
 use App\Models\QaInspectedBoxes;
@@ -532,19 +531,47 @@ class QAInspectionController extends Controller
         $this->validate($req, $rules, $customMessages);
         
         try {
-            $affected = new QaAffectedSerial();
+            if (isset($req->type) ) {
+                $data = $this->hs_judgment_change($req);
+            } else {
+                $data = $this->hs_judgment($req);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
 
+        return response()->json($data);
+    }
+
+    private function hs_judgment($req)
+    {
+        try {
             $hs = QaAffectedSerial::where([
                 ['hs_serial','=',$req->hs_serial]
             ])->count();
 
             $qa_judgement_count = $hs+1;
+            $remarks = "";
 
+            DB::beginTransaction();
+            $affected = new QaAffectedSerial();
             $affected->pallet_id = $req->pallet_id;
             $affected->box_id = $req->box_id;
             $affected->hs_serial = $req->hs_serial;
-            $affected->qa_judgment = -1;
-            $affected->remarks = '';
+            $affected->qa_judgment = (int)$req->judgment;
+
+            if ((int)$req->judgment == 0) {
+                $remarks = $this->_helpers->getHSdefects($req->hs_ng_reason);
+            }
+
+            $affected->remarks = $remarks;
             $affected->is_deleted = 0;
             $affected->qa_judgement_count = $qa_judgement_count;
             $affected->create_user = Auth::user()->id;
@@ -555,9 +582,42 @@ class QAInspectionController extends Controller
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id);
                 $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
 
+                if (isset($req->hs_ng_type)) {
+                    $ch = DB::connection('mysql')
+                            ->table('qa_change_judgment_reasons')
+                            ->insert([
+                                'pallet_id' => $req->pallet_id,
+                                'box_id' => $req->box_id,
+                                'hs_serial' => $req->hs_serial,
+                                'orig_judgment' => $req->orig_judgment,
+                                'new_judgment' => $req->new_judgment,
+                                'reason' => $req->reason,
+                                'create_user' => Auth::user()->id,
+                                'created_at' => date('Y-m-d H:i:s')
+                            ]);
+                    if ($ch) {
+                        $insp = QaAffectedSerial::find($affected->id);
+                        $insp->qa_judgment = (int)$req->new_judgment;
+                        $insp->update();
+                    }
+                }
+
                 if ($inspected->count() == $serials->count()) {
                     $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
+
+                    $box_judgment = 1;
+                    foreach ($inspected as $key => $ins) {
+                        if ($ins['qa_judgment'] == 0) {
+                            $box_judgment = 0;
+                            break;
+                        }
+                    }
+
+                    $box = PalletBoxPalletDtl::find($req->box_id);
+                    $box->box_judgment = $box_judgment;
+                    $box->update_user = Auth::user()->id;
+                    $box->update();
 
                     $matched = true;
                     foreach ($serials as $key => $iss) {
@@ -575,6 +635,165 @@ class QAInspectionController extends Controller
                     ],
                     'success' => true
                 ];
+
+                DB::commit();
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+                $data = [
+                    'msg' => $th->getMessage(),
+                    'data' => [],
+                    'success' => false,
+                    'msgType' => 'error',
+                    'msgTitle' => 'Error!'
+                ];
+        }
+
+        return $data;
+    }
+
+    private function hs_judgment_change($req)
+    {
+        try {
+            $hs = QaAffectedSerial::where([
+                ['hs_serial','=',$req->hs_serial]
+            ])->count();
+
+            $qa_judgement_count = $hs+1;
+            $remarks = "";
+
+            DB::beginTransaction();
+
+            $affected = QaAffectedSerial::find($req->hs_id);
+            $affected->pallet_id = $req->pallet_id;
+            $affected->box_id = $req->box_id;
+            $affected->hs_serial = $req->hs_serial;
+            $affected->qa_judgment = (int)$req->new_judgment;
+
+            if ((int)$req->new_judgment == 0) {
+                $remarks = $this->_helpers->getHSdefects($req->hs_ng_reason);
+            }
+
+            $affected->remarks = $remarks;
+            $affected->is_deleted = 0;
+            $affected->qa_judgement_count = $qa_judgement_count;
+            $affected->update_user = Auth::user()->id;
+
+            $matched = 'NOT YET COMPLETE';
+            if ($affected->update()) {
+                DB::connection('mysql')
+                    ->table('qa_change_judgment_reasons')
+                    ->insert([
+                        'pallet_id' => $req->pallet_id,
+                        'box_id' => $req->box_id,
+                        'hs_serial' => $req->hs_serial,
+                        'orig_judgment' => $req->orig_judgment,
+                        'new_judgment' => $req->new_judgment,
+                        'reason' => $req->reason,
+                        'create_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+
+                $inspected = QaAffectedSerial::where('box_id', $req->box_id);
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
+
+                if ($inspected->count() == $serials->count()) {
+                    $serials = $serials->get();
+                    $inspected = $inspected->get()->toArray();
+
+                    $box_judgment = 1;
+                    foreach ($inspected as $key => $ins) {
+                        if ($ins['qa_judgment'] == 0) {
+                            $box_judgment = 0;
+                            break;
+                        }
+                    }
+
+                    $box = PalletBoxPalletDtl::find($req->box_id);
+                    $box->box_judgment = $box_judgment;
+                    $box->update_user = Auth::user()->id;
+                    $box->update();
+
+                    $matched = true;
+                    foreach ($serials as $key => $iss) {
+                        if (!in_array($iss->hs_serial, $inspected)) {
+                            $matched = false;
+                            break;
+                        }
+                    }
+                }
+                
+                $data = [
+                    'msg' => 'Changing of Judgment was successful.',
+                    'data' => [
+                        'affected_serials' => $affected,
+                        'matched' => $matched
+                    ],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+
+                DB::commit();
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return $data;
+    }
+
+    public function change_judgment_reason(Request $req)
+    {
+        $data = [
+			'msg' => 'Changing of Judgment has failed.',
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+        try {
+            $ch = DB::connection('mysql')
+                    ->table('qa_change_judgment_reasons')
+                    ->insert([
+                        'pallet_id' => $req->pallet_id,
+                        'box_id' => $req->box_id,
+                        'hs_serial' => $req->hs_serial,
+                        'orig_judgment' => $req->orig_judgment,
+                        'new_judgment' => $req->new_judgment,
+                        'reason' => $req->reason,
+                        'create_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d H:i:s')
+                    ]);
+            if ($ch) {
+                $insp = QaAffectedSerial::find($req->hs_id);
+                $insp->qa_judgment = (int)$req->new_judgment;
+                if ($insp->update()) {
+                    $affected = DB::table('qa_affected_serials')->where('id',$req->hs_id)
+                                ->select([
+                                    DB::raw("id"),
+                                    DB::raw("pallet_id"),
+                                    DB::raw("box_id"),
+                                    DB::raw("hs_serial"),
+                                    DB::raw("qa_judgment"),
+                                    DB::raw("remarks"),
+                                    DB::raw("is_deleted"),
+                                ])->first();
+                    $data = [
+                        'msg' => 'Changing of Judgment was successful.',
+                        'data' => $affected,
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
             }
         } catch (\Throwable $th) {
             $data = [

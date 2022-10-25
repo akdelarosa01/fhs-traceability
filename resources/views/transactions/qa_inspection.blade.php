@@ -476,14 +476,62 @@ Q.A. Inspection
 						<div class="form-group">
 							<input type="hidden" name="hs_ng_id" id="hs_ng_id" />
 							<input type="hidden" name="hs_ng_box_id" id="hs_ng_box_id" />
+							<input type="hidden" name="hs_ng_pallet_id" id="hs_ng_pallet_id" />
+							<input type="hidden" name="hs_ng_hs_serial" id="hs_ng_hs_serial" />
 							<input type="hidden" name="hs_row_index" id="hs_row_index" />
+							<input type="hidden" name="hs_ng_orig_judgment" id="hs_ng_orig_judgment" />
+							<input type="hidden" name="hs_ng_new_judgment" id="hs_ng_new_judgment" />
+							<input type="hidden" name="hs_ng_type" id="hs_ng_type" />
 							<select class="form-control form-control-sm" id="hs_ng_reason" name="hs_ng_reason"></select>
+						</div>
+					</div>
+				</div>
+				<div class="row" id="change_jdg_ng_reason_div" style="display:none;">
+					<div class="col-md-12">
+						<div class="form-group">
+							<textarea class="form-control" name="cr_reason" id="hs_ng_cr_reason" rows="5" style="resize:none;"></textarea>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer justify-content-center border-0">
 				<button type="button" class="btn btn-primary" id="btn_save_hs_ng_reason">
+					<i class="fa fa-save"></i> Save
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_change_judgment_reason" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<h3 class="text-center">Change Judgment Reason</h3>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<input type="hidden" name="cr_hs_id" id="cr_hs_id" />
+							<input type="hidden" name="cr_box_id" id="cr_box_id" />
+							<input type="hidden" name="cr_pallet_id" id="cr_pallet_id" />
+							<input type="hidden" name="cr_hs_serial" id="cr_hs_serial" />
+							<input type="hidden" name="cr_orig_judgment" id="cr_orig_judgment" />
+							<input type="hidden" name="cr_new_judgment" id="cr_new_judgment" />
+							<input type="hidden" name="cr_index" id="cr_index" />
+							<input type="hidden" name="cr_type" id="cr_type" />
+							<textarea class="form-control" name="cr_reason" id="cr_reason" rows="5" style="resize:none;"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-center border-0">
+				<button type="button" class="btn btn-primary" id="btn_save_cr_reason">
 					<i class="fa fa-save"></i> Save
 				</button>
 			</div>
