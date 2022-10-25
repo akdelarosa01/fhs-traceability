@@ -784,64 +784,6 @@ class QAInspectionController extends Controller
         return $data;
     }
 
-    public function change_judgment_reason(Request $req)
-    {
-        $data = [
-			'msg' => 'Changing of Judgment has failed.',
-            'data' => [],
-			'success' => true,
-            'msgType' => 'warning',
-            'msgTitle' => 'Failed!'
-        ];
-        try {
-            $ch = DB::connection('mysql')
-                    ->table('qa_change_judgment_reasons')
-                    ->insert([
-                        'pallet_id' => $req->pallet_id,
-                        'box_id' => $req->box_id,
-                        'hs_serial' => $req->hs_serial,
-                        'orig_judgment' => $req->orig_judgment,
-                        'new_judgment' => $req->new_judgment,
-                        'reason' => $req->reason,
-                        'create_user' => Auth::user()->id,
-                        'created_at' => date('Y-m-d H:i:s')
-                    ]);
-            if ($ch) {
-                $insp = QaAffectedSerial::find($req->hs_id);
-                $insp->qa_judgment = (int)$req->new_judgment;
-                if ($insp->update()) {
-                    $affected = DB::table('qa_affected_serials')->where('id',$req->hs_id)
-                                ->select([
-                                    DB::raw("id"),
-                                    DB::raw("pallet_id"),
-                                    DB::raw("box_id"),
-                                    DB::raw("hs_serial"),
-                                    DB::raw("qa_judgment"),
-                                    DB::raw("remarks"),
-                                    DB::raw("is_deleted"),
-                                ])->first();
-                    $data = [
-                        'msg' => 'Changing of Judgment was successful.',
-                        'data' => $affected,
-                        'success' => true,
-                        'msgType' => 'success',
-                        'msgTitle' => 'Success!'
-                    ];
-                }
-            }
-        } catch (\Throwable $th) {
-            $data = [
-                'msg' => $th->getMessage(),
-                'data' => [],
-                'success' => false,
-                'msgType' => 'error',
-                'msgTitle' => 'Error!'
-            ];
-        }
-
-        return response()->json($data);
-    }
-
     public function get_dispositions(Request $req)
     {
         $results = [];
@@ -1632,5 +1574,34 @@ class QAInspectionController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function get_change_judgment_reasons(Request $req)
+    {
+        $data = [];
+        try {
+            $query = DB::select(
+                        DB::raw("SELECT p.pallet_qr as pallet_qr,
+                                b.box_qr as box_qr,
+                                jd.hs_serial as hs_serial,
+                                jd.orig_judgment as orig_judgment,
+                                jd.new_judgment as new_judgment,
+                                u.firstname as create_user,
+                                jd.created_at as created_at
+                            FROM qa_change_judgment_reasons as jd
+                            JOIN pallet_box_pallet_hdrs as p
+                            ON p.id = jd.pallet_id
+                            JOIN pallet_box_pallet_dtls as b
+                            ON b.id = jd.box_id
+                            JOIN users as u
+                            ON u.id = jd.create_user
+                            where jd.box_id = ".$req->box_id)
+                    );
+            return Datatables::of($query)->make(true);
+
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data; 
     }
 }

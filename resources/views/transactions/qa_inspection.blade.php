@@ -341,6 +341,12 @@ Q.A. Inspection
 											<i class="fa fa-thumbs-down"></i> NG
 										</button>
 									</div>
+
+									<div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-xs-6 mb-2">
+										<button type="button" class="btn btn-lg btn-block btn-black read-only" id="btn_change_judgment_reason_logs"  data-toggle="modal" data-target="#modal_change_judgment_reason_logs" >
+											<i class="fa fa-list"></i> Judgment Logs
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -400,6 +406,41 @@ Q.A. Inspection
 								<th>Judgment</th>
 								<th>Remarks</th>
 								<th>Judgment Date</th>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" data-dismiss="modal">
+					<i class="fa fa-times"></i> Close
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal_change_judgment_reason_logs" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h4 class="modal-title">Change Reason Judgment Logs</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12">
+						<table class="table table-sm table-secondary table-striped" id="tbl_change_judgment_reasons" style="width: 100%">
+							<thead>
+								<th>Pallet No.</th>
+								<th>Box No.</th>
+								<th>H.S. Serial</th>
+								<th>Orig. Judgment</th>
+								<th>New Judgment</th>
+								<th>Inspected by</th>
+								<th>Date Inspected</th>
 							</thead>
 						</table>
 					</div>

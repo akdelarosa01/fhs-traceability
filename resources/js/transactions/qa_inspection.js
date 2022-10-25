@@ -15,6 +15,7 @@
         this.$tbl_hs_serials_oba = "";
         this.$tbl_hs_history = "";
         this.$tbl_box_history = "";
+        this.$tbl_change_judgment_reasons = "";
         this.box_id = 0;
         this.hs_serial = "";
         this.box_history_hs_serial = "";
@@ -718,6 +719,141 @@
             }
             return this;
         },
+        drawChangeJudgmentReasonsDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_change_judgment_reasons')) {
+                self.$tbl_change_judgment_reasons = $('#tbl_change_judgment_reasons').DataTable({
+                    processing: true,
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-change-judgment-reasons",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            console.log(d);
+                            d._token = self.token;
+                            d.box_id = self.box_id;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response != undefined) {
+                                if (response.hasOwnProperty('responseJSON')) {
+                                    var json = response.responseJSON;
+                                    if (json != undefined) {
+                                        self.showError(json.message);
+                                    }
+                                }
+                            }
+                            
+                        }
+                    },
+                    order: [[6, 'desc']],
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "No HS Serial No. was scanned.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { data: 'pallet_qr', name: 'pallet_qr' },
+                        { data: 'box_qr', name: 'box_qr' },
+                        { data: 'hs_serial', name: 'hs_serial' },
+                        { 
+                            data: function(data) {
+                                switch (data.orig_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return 'NOT GOOD'
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'orig_judgment', searchable: false, orderable: false
+                        },
+                        { 
+                            data: function(data) {
+                                switch (data.new_judgment) {
+                                    case 1:
+                                        return 'GOOD';
+                                    case 0:
+                                        return 'NOT GOOD'
+                                    default:
+                                        return '';
+                                }
+                            }, name: 'new_judgment', searchable: false, orderable: false
+                        },
+                        { data: 'create_user', name: 'create_user' },
+                        { data: 'created_at', name: 'created_at' },
+                    ],
+                    rowCallback: function(row, data) {
+                        var dataRow = $(row);
+
+                        var orig_judgment = parseInt(data.orig_judgment);
+                        switch (orig_judgment) {
+                            case 1:
+                                $(dataRow[0].cells[3]).css('background-color', '#00acac');
+                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(dataRow[0].cells[3]).css('background-color', '#ff5b57');
+                                $(dataRow[0].cells[3]).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(dataRow[0].cells[3]).css('background-color', '#FFFFFF');
+                                $(dataRow[0].cells[3]).css('color', '#333333');
+                                break;
+                        }
+
+                        var new_judgment = parseInt(data.new_judgment);
+                        switch (new_judgment) {
+                            case 1:
+                                $(dataRow[0].cells[4]).css('background-color', '#00acac');
+                                $(dataRow[0].cells[4]).css('color', '#FFFFFF');
+                                break;
+                            case 0:
+                                $(dataRow[0].cells[4]).css('background-color', '#ff5b57');
+                                $(dataRow[0].cells[4]).css('color', '#FFFFFF');
+                                break;
+                            default:
+                                $(dataRow[0].cells[4]).css('background-color', '#FFFFFF');
+                                $(dataRow[0].cells[4]).css('color', '#333333');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+                    },
+                    fnDrawCallback: function() {
+                        $("#tbl_change_judgment_reasons").wrap("<div style='overflow:auto; width:100%;position:relative;'></div>");
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         statusMsg: function(msg,status) {
             switch (status) {
                 case 'success':
@@ -766,47 +902,47 @@
                 handle(response);
             });
         },
-        HSSerialJudgment: function(param) {
-            var self = this;
-            self.submitType = "POST";
-            self.jsonData = param;
-            self.formAction = "/transactions/qa-inspection/hs-serial-judgment";
-            self.sendData().then(function() {
-                var response = self.responseData;
-                self.$tbl_affected_serials.ajax.reload();
-                var row_indexes = param.row_indexes;
+        // HSSerialJudgment: function(param) {
+        //     var self = this;
+        //     self.submitType = "POST";
+        //     self.jsonData = param;
+        //     self.formAction = "/transactions/qa-inspection/hs-serial-judgment";
+        //     self.sendData().then(function() {
+        //         var response = self.responseData;
+        //         self.$tbl_affected_serials.ajax.reload();
+        //         var row_indexes = param.row_indexes;
 
-                for (let i = 0; i < row_indexes.length; i++) {
-                    var row = row_indexes[i];
-                    var nextRow = row + 1;
+        //         for (let i = 0; i < row_indexes.length; i++) {
+        //             var row = row_indexes[i];
+        //             var nextRow = row + 1;
 
-                    self.$tbl_hs_serials_oba.row(row).data(response).draw();
-                    self.$tbl_hs_serials_oba.row(row).deselect();
-                    self.$tbl_hs_serials_oba.row(nextRow).select();
-                }
+        //             self.$tbl_hs_serials_oba.row(row).data(response).draw();
+        //             self.$tbl_hs_serials_oba.row(row).deselect();
+        //             self.$tbl_hs_serials_oba.row(nextRow).select();
+        //         }
                 
-                self.$tbl_boxes.ajax.reload();
+        //         self.$tbl_boxes.ajax.reload();
 
-            });
-        },
-        setHSNGremarks: function(param) {
-            var self = this;
-            self.submitType = "POST";
-            self.jsonData = param;
-            self.formAction = "/transactions/qa-inspection/set-hs-ng-remarks";
-            self.sendData().then(function() {
-                var response = self.responseData;
-                var netxRow = parseInt(param.hs_row_index) + 1;
+        //     });
+        // },
+        // setHSNGremarks: function(param) {
+        //     var self = this;
+        //     self.submitType = "POST";
+        //     self.jsonData = param;
+        //     self.formAction = "/transactions/qa-inspection/set-hs-ng-remarks";
+        //     self.sendData().then(function() {
+        //         var response = self.responseData;
+        //         var netxRow = parseInt(param.hs_row_index) + 1;
 
-                self.$tbl_affected_serials.ajax.reload();
-                self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
-                self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
-                self.$tbl_hs_serials_oba.row(netxRow).select();
+        //         self.$tbl_affected_serials.ajax.reload();
+        //         self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
+        //         self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
+        //         self.$tbl_hs_serials_oba.row(netxRow).select();
 
-                self.$tbl_boxes.ajax.reload();
-                $('#modal_hs_ng_reason').modal('hide');
-            });
-        },
+        //         self.$tbl_boxes.ajax.reload();
+        //         $('#modal_hs_ng_reason').modal('hide');
+        //     });
+        // },
         scanHSSerial: function(param) {
             var self = this;
             self.submitType = "POST";
@@ -969,6 +1105,8 @@
                 $('#hs_serial_feedback').removeClass('invalid-feedback');
                 $('#hs_serial_feedback').html("");
 
+                self.$tbl_change_judgment_reasons.ajax.reload();
+
                 var box_judgement = (data.box_judgement == 1)? 'GOOD' : 'NOT GOOD';
 
                 self.getBoxDetails(data.box_qr, box_judgement);
@@ -1094,6 +1232,7 @@
         _QAInspection.drawOBAHSSerialsDatatables();
         _QAInspection.drawHSHistoryDatatables();
         _QAInspection.drawBoxHistoryDatatables();
+        _QAInspection.drawChangeJudgmentReasonsDatatables();
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
         _QAInspection.box_qr_code = new QRCode(prv_box_id_qr, {
