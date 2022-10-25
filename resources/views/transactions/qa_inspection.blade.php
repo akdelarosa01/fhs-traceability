@@ -489,7 +489,7 @@ Q.A. Inspection
 				<div class="row" id="change_jdg_ng_reason_div" style="display:none;">
 					<div class="col-md-12">
 						<div class="form-group">
-							<textarea class="form-control" name="cr_reason" id="hs_ng_cr_reason" rows="5" style="resize:none;"></textarea>
+							<textarea class="form-control" name="cr_reason" id="hs_ng_cr_reason" rows="5" style="resize:none;" placeholder="Please input your reason for judgment change..."></textarea>
 						</div>
 					</div>
 				</div>
@@ -525,7 +525,7 @@ Q.A. Inspection
 							<input type="hidden" name="cr_new_judgment" id="cr_new_judgment" />
 							<input type="hidden" name="cr_index" id="cr_index" />
 							<input type="hidden" name="cr_type" id="cr_type" />
-							<textarea class="form-control" name="cr_reason" id="cr_reason" rows="5" style="resize:none;"></textarea>
+							<textarea class="form-control" name="cr_reason" id="cr_reason" rows="5" style="resize:none;" placeholder="Please input your reason for judgment change..."></textarea>
 						</div>
 					</div>
 				</div>

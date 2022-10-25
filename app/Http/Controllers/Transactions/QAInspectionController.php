@@ -627,11 +627,28 @@ class QAInspectionController extends Controller
                         }
                     }
                 }
+
+                $box = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
+                        ->select(
+                            DB::raw("pb.id as id"),
+                            DB::raw("pb.pallet_id as pallet_id"),
+                            DB::raw("pb.model_id as model_id"),
+                            DB::raw("pb.box_qr as box_qr"),
+                            DB::raw("pb.remarks as prod_remarks"),
+                            DB::raw("'' as remarks"),
+                            DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
+                            DB::raw("m.hs_count_per_box as hs_count_per_box")
+                        )
+                        ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                        ->where('pb.id', $req->box_id)
+                        ->where('pb.is_deleted', 0)
+                        ->orderBy('pb.box_qr', 'desc')->first();
                 
                 $data = [
                     'data' => [
                         'affected_serials' => $affected,
-                        'matched' => $matched
+                        'matched' => $matched,
+                        'box' => $box
                     ],
                     'success' => true
                 ];
@@ -722,12 +739,29 @@ class QAInspectionController extends Controller
                         }
                     }
                 }
+
+                $box = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
+                        ->select(
+                            DB::raw("pb.id as id"),
+                            DB::raw("pb.pallet_id as pallet_id"),
+                            DB::raw("pb.model_id as model_id"),
+                            DB::raw("pb.box_qr as box_qr"),
+                            DB::raw("pb.remarks as prod_remarks"),
+                            DB::raw("'' as remarks"),
+                            DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
+                            DB::raw("m.hs_count_per_box as hs_count_per_box")
+                        )
+                        ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                        ->where('pb.id', $req->box_id)
+                        ->where('pb.is_deleted', 0)
+                        ->orderBy('pb.box_qr', 'desc')->first();
                 
                 $data = [
                     'msg' => 'Changing of Judgment was successful.',
                     'data' => [
                         'affected_serials' => $affected,
-                        'matched' => $matched
+                        'matched' => $matched,
+                        'box' => $box
                     ],
                     'success' => true,
                     'msgType' => 'success',
