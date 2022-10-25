@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <meta content="FHS Traceability" name="description" />
+    <meta content="FTL Data Traceability" name="description" />
     <meta content="Arjay Kurt Dela Rosa" name="author" />
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') | {{ config('app.name', 'FHS Traceability System') }}</title>
+    <title>@yield('title') | {{ config('app.name', 'FTL Traceability System') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -27,7 +27,7 @@
             <div class="login-container">
                 <div class="login-header">
                     <div class="brand">
-                        <span class="logo"></span> <b>FHS</b> Traceability
+                        <span class="logo"></span> <b>FTL</b> Traceability System
                         <small>Box ID system and Production Traceability</small>
                     </div>
                     <div class="icon">

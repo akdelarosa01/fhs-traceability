@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'FHS Traceability System'),
+    'name' => env('APP_NAME', 'FTL Traceability System'),
 
     /*
     |--------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <meta content="FHS Traceability" name="description" />
+    <meta content="FTL Data Traceability" name="description" />
     <meta content="Arjay Kurt Dela Rosa" name="author" />
 
     <!-- CSRF Token -->
@@ -12,7 +12,7 @@
     <meta name="authorize" content="{{ $authorize }}">
     <meta name="shift_session" content="@if(Session::has('shift')){{Session::get('shift')}}@endif">
 
-    <title>@yield('title') | {{ config('app.name', 'FHS Traceability System') }}</title>
+    <title>@yield('title') | {{ config('app.name', 'FTL Traceability System') }}</title>
 
     @stack('styles')
     
