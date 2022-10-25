@@ -518,7 +518,9 @@ class QAInspectionController extends Controller
                 Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
                     return $query->where([
                         ['hs_serial', '=', $req->hs_serial],
-                        ['qa_judgment', '=', -1]
+                        ['box_id', '=', $req->box_id],
+                        ['pallet_id', '=', $req->box_id],
+                        ['is_deleted','=', 0]
                     ]);
                 })
             ]

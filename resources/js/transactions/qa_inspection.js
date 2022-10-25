@@ -749,13 +749,13 @@
                             
                         }
                     },
-                    order: [[6, 'desc']],
+                    order: [[7, 'desc']],
                     language: {
                         aria: {
                             sortAscending: ": activate to sort column ascending",
                             sortDescending: ": activate to sort column descending"
                         },
-                        emptyTable: "No HS Serial No. was scanned.",
+                        emptyTable: "No judgment was changed in this box.",
                         info: "Showing _START_ to _END_ of _TOTAL_ records",
                         infoEmpty: "No records found",
                         infoFiltered: "(filtered1 from _MAX_ total records)",
