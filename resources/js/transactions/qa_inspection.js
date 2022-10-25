@@ -1005,6 +1005,7 @@
                         self.$tbl_boxes.row(param.box_index).data(response.box).draw();
                     }
                     
+                    self.$tbl_change_judgment_reasons.ajax().reload();
                     self.$tbl_affected_serials.ajax.reload();
                 }
 

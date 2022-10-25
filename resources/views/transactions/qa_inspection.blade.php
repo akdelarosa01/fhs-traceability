@@ -432,7 +432,7 @@ Q.A. Inspection
 			<div class="modal-body">
 				<div class="row">
 					<div class="col-12">
-						<table class="table table-sm table-secondary table-striped" id="tbl_change_judgment_reasons" style="width: 100%">
+						<table class="table table-sm table-striped" id="tbl_change_judgment_reasons" style="width: 100%">
 							<thead>
 								<th>Pallet No.</th>
 								<th>Box No.</th>

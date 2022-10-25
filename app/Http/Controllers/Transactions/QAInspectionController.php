@@ -1586,6 +1586,7 @@ class QAInspectionController extends Controller
                                 jd.hs_serial as hs_serial,
                                 jd.orig_judgment as orig_judgment,
                                 jd.new_judgment as new_judgment,
+                                jd.reason as reason,
                                 u.firstname as create_user,
                                 jd.created_at as created_at
                             FROM qa_change_judgment_reasons as jd
