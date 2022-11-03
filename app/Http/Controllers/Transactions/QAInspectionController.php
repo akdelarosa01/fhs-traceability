@@ -101,12 +101,15 @@ class QAInspectionController extends Controller
                         DB::raw("pb.remarks as prod_remarks"),
                         DB::raw("'' as remarks"),
                         DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
-                        DB::raw("m.hs_count_per_box as hs_count_per_box")
+                        DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                        DB::raw("IF(qa.box_qr is null, 0, 1) scanned")
                     )
                     ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                    ->leftJoin('qa_inspection_sheet_serials as qa','qa.box_id', '=', 'pb.id')
                     ->where('pb.pallet_id', $pallet_id)
                     ->where('pb.is_deleted', 0)
-                    ->orderBy('pb.box_qr', 'desc');
+                    ->orderBy('pb.box_qr', 'desc')
+                    ->distinct();
                     
         return $query;
 
@@ -511,15 +514,14 @@ class QAInspectionController extends Controller
 
         $rules = [
             'hs_serial' => [
-                'exists:qa_inspection_sheet_serials,hs_serial',
                 Rule::exists('qa_inspection_sheet_serials')->where(function ($query) use ($req) {
                     $query->where('hs_serial', $req->hs_serial)->where('box_id', $req->box_id);
                 }),
                 Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
                     return $query->where([
                         ['hs_serial', '=', $req->hs_serial],
-                        ['box_id', '=', $req->box_id],
-                        ['pallet_id', '=', $req->box_id],
+                        ['box_id', '=', (int)$req->box_id],
+                        ['pallet_id', '=', (int)$req->pallet_id],
                         ['is_deleted','=', 0]
                     ]);
                 })
@@ -604,7 +606,7 @@ class QAInspectionController extends Controller
                     }
                 }
 
-                if ($inspected->count() == $serials->count()) {
+                if ($inspected->count() >= $serials->count()) {
                     $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
@@ -639,12 +641,15 @@ class QAInspectionController extends Controller
                             DB::raw("pb.remarks as prod_remarks"),
                             DB::raw("'' as remarks"),
                             DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
-                            DB::raw("m.hs_count_per_box as hs_count_per_box")
+                            DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                            DB::raw("IF(qa.box_qr is null, 0, 1) scanned")
                         )
                         ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                        ->leftJoin('qa_inspection_sheet_serials as qa','qa.box_id', '=', 'pb.id')
                         ->where('pb.id', $req->box_id)
                         ->where('pb.is_deleted', 0)
-                        ->orderBy('pb.box_qr', 'desc')->first();
+                        ->orderBy('pb.box_qr', 'desc')
+                        ->distinct()->first();
                 
                 $data = [
                     'data' => [
@@ -716,7 +721,7 @@ class QAInspectionController extends Controller
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id);
                 $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
 
-                if ($inspected->count() == $serials->count()) {
+                if ($inspected->count() >= $serials->count()) {
                     $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
@@ -751,12 +756,16 @@ class QAInspectionController extends Controller
                             DB::raw("pb.remarks as prod_remarks"),
                             DB::raw("'' as remarks"),
                             DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
-                            DB::raw("m.hs_count_per_box as hs_count_per_box")
+                            DB::raw("m.hs_count_per_box as hs_count_per_box"),
+                            DB::raw("IF(qa.box_qr is null, 0, 1) scanned")
                         )
                         ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
+                        ->leftJoin('qa_inspection_sheet_serials as qa','qa.box_id', '=', 'pb.id')
                         ->where('pb.id', $req->box_id)
                         ->where('pb.is_deleted', 0)
-                        ->orderBy('pb.box_qr', 'desc')->first();
+                        ->orderBy('pb.box_qr', 'desc')
+                        ->distinct()
+                        ->first();
                 
                 $data = [
                     'msg' => 'Changing of Judgment was successful.',

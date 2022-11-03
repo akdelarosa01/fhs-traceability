@@ -135,7 +135,17 @@ Q.A. Inspection
 			</div>
 
 			<div class="col-md-4 col-xs-12">
-				<button class="btn btn-sm btn-block btn-green" id="btn_box_inspection" style="height: 68px">Box Inspection</button>
+				<div class="row mb-2">
+					<div class="col-md-12">
+						<button class="btn btn-sm btn-block btn-green" id="btn_box_inspection" style="height: 68px">Box Inspection</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<h4>Scanned Inspection Sheet: <span id="scanned_is_count">0</span> / <span id="total_is_count">0</span></h4>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 		

@@ -167,6 +167,16 @@
                                 $(dataRow[0].cells[2]).css('color', '#333333');
                                 break;
                         }
+
+                        if (data.scanned == 1) {
+                            $(dataRow[0].cells[1]).css('background-color', '#372948');
+                            $(dataRow[0].cells[1]).css('color', '#FFFFFF');
+                        } else {
+                            $(dataRow[0].cells[1]).css('background-color', '#FFFFFF');
+                            $(dataRow[0].cells[1]).css('color', '#333333');
+                        }
+
+                        
                     },
                     createdRow: function(row, data, dataIndex) {
                     },
@@ -186,6 +196,9 @@
                         var data = this.fnGetData();
                         var data_count = data.length;
                         $('#box_count').html(data_count);
+                        $('#total_is_count').html(data_count);
+
+                        console.log(data);
 
                         var inspected = 0;
                         $.each(data, function(i, x) {
@@ -195,12 +208,15 @@
                         });
 
                         var box_judge = 0;
+                        var scanned_is_count = 0;
                         $.each(data, function(i, x) {
+                            scanned_is_count += x.scanned;
                             if (x.box_judgement > -1) {
                                 box_judge = box_judge+1;
                             }
                         });
 
+                        $('#scanned_is_count').html(scanned_is_count);
                         $('#box_tested').html(box_judge);
 
                         $('[data-toggle="tooltip"]').tooltip();
@@ -343,7 +359,7 @@
                             console.log(response);
                             if (response.hasOwnProperty('responseJSON')) {
                                 var json = response.responseJSON;
-                                if (json.hasOwnProperty('message')) {
+                                if (json != undefined) {
                                     self.showError(json.message);
                                 }
                             }
@@ -438,15 +454,12 @@
                         },
                         error: function(response) {
                             console.log(response);
-                            if (response != undefined) {
-                                if (response.hasOwnProperty('responseJSON')) {
-                                    var json = response.responseJSON;
-                                    if (json != undefined) {
-                                        self.showError(json.message);
-                                    }
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
                                 }
                             }
-                            
                         }
                     },
                     language: {
@@ -1587,6 +1600,9 @@
             var box_tested = parseInt($('#box_tested').html());
             var box_tested_full = parseInt($('#box_tested_full').html());
 
+            var hs_scanned_count = parseInt($('#hs_scanned_count').html());
+            var hs_total_count = parseInt($('#hs_total_count').html());
+
             var hs_serial = $('#b_oba_serial_no').val();
             var boxData = _QAInspection.$tbl_boxes.row({selected:  true}).data();
             var box_index = _QAInspection.$tbl_boxes.row({selected:  true}).index();
@@ -1607,24 +1623,29 @@
                 $('#modal_change_judgment_reason').modal('show');
             } else {
                 if (box_tested_full > box_tested) {
-                    if (hs_serial != "" && hs_serial != null) {
-                        $('#cr_type').val('NORMAL');
-                        $('#b_oba_serial_no').removeClass("input-error");
-                        $('#b_oba_serial_no').removeClass('is-invalid');
-                        $('#hs_serial_feedback').removeClass('invalid-feedback');
-                        $('#hs_serial_feedback').html('');
-
-                        _QAInspection.scanHSSerial({
-                            _token: _QAInspection.token,
-                            hs_serial: hs_serial,
-                            box_id: boxData.id,
-                            pallet_id: $('#pallet_id').val(),
-                            judgment: 1,
-                            box_index: box_index
-                        });
+                    if (hs_total_count > hs_scanned_count) {
+                        if (hs_serial != "" && hs_serial != null) {
+                            $('#cr_type').val('NORMAL');
+                            $('#b_oba_serial_no').removeClass("input-error");
+                            $('#b_oba_serial_no').removeClass('is-invalid');
+                            $('#hs_serial_feedback').removeClass('invalid-feedback');
+                            $('#hs_serial_feedback').html('');
+    
+                            _QAInspection.scanHSSerial({
+                                _token: _QAInspection.token,
+                                hs_serial: hs_serial,
+                                box_id: boxData.id,
+                                pallet_id: $('#pallet_id').val(),
+                                judgment: 1,
+                                box_index: box_index
+                            });
+                        } else {
+                            _QAInspection.swMsg("Please scan or input an H.S. Serial Number.","warning");
+                        }
                     } else {
-                        _QAInspection.swMsg("Please scan or input an H.S. Serial Number.","warning");
+                        _QAInspection.swMsg("Heat Sink to be scanned has already been completed.","warning");
                     }
+                    
                 } else {
                     _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
                 }
@@ -1679,6 +1700,9 @@
             var hs_serial = $('#b_oba_serial_no').val();
             var hs_ng_reason = $('#hs_ng_reason').val();
 
+            var hs_scanned_count = parseInt($('#hs_scanned_count').html());
+            var hs_total_count = parseInt($('#hs_total_count').html());
+
             var box_index = _QAInspection.$tbl_boxes.row({selected:  true}).index();
 
             if (box_tested_full > box_tested) {
@@ -1695,15 +1719,21 @@
                     var hs_ng_type = $('#hs_ng_type').val();
 
                     if (hs_ng_type == 'NORMAL') {
-                        _QAInspection.scanHSSerial({
-                            _token: _QAInspection.token,
-                            hs_serial: hs_serial,
-                            box_id: data.id,
-                            pallet_id: $('#pallet_id').val(),
-                            judgment: 0,
-                            hs_ng_reason: hs_ng_reason,
-                            box_index: box_index
-                        });
+                        if (hs_total_count > hs_scanned_count) {
+                            _QAInspection.scanHSSerial({
+                                _token: _QAInspection.token,
+                                hs_serial: hs_serial,
+                                box_id: data.id,
+                                pallet_id: $('#pallet_id').val(),
+                                judgment: 0,
+                                hs_ng_reason: hs_ng_reason,
+                                box_index: box_index
+                            });
+                            
+                        } else {
+                            _QAInspection.swMsg("Heat Sink to be scanned has already been completed.","warning");
+                        }
+                       
                     } else {
                         var reason = $('#hs_ng_cr_reason').val();
                         if (reason != "") {
