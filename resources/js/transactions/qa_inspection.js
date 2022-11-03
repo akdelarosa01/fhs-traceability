@@ -198,8 +198,6 @@
                         $('#box_count').html(data_count);
                         $('#total_is_count').html(data_count);
 
-                        console.log(data);
-
                         var inspected = 0;
                         $.each(data, function(i, x) {
                             if (x.box_qr_judgement > -1) {
@@ -1104,7 +1102,8 @@
             self.formAction = "/transactions/qa-inspection/set-new-box-to-inspect";
             self.sendData().then(function() {
                 var response = self.responseData;
-                $('#tbl_obas').DataTable().row(param.pallet_row_index).data(response.pallet).draw();
+                console.log(response.pallet);
+                $('#tbl_obas').DataTable().row({selected: true}).data(response.pallet).draw();
                 $('#box_count_to_inspect').val(response.box_count_to_inspect);
                 $('#box_tested_full').html(response.box_count_to_inspect);
             });
@@ -1457,7 +1456,7 @@
             _QAInspection.running_model = data.model;
 
             // GOOD and REWORK
-            if (data.pallet_status == 1 || data.pallet_status == 3) {
+            if (data.pallet_dispo_status == 1 || data.pallet_dispo_status == 3) {
                 if (data.is_printed > 0) {
                     $('#btn_print_pallet').prop('disabled', true);
                 } else {
@@ -1939,12 +1938,25 @@
                 if ($('#box_count_to_inspect').val() == "") {
                     _QAInspection.swMsg("Please input new number of Boxes to Inspect", "warning");
                 } else {
-                    _QAInspection.setNewBoxToInspect({
-                        _token: _QAInspection.token,
-                        pallet_id: $('#pallet_id').val(),
-                        box_count_to_inspect: $('#box_count_to_inspect').val(),
-                        pallet_row_index: $('#pallet_row_index').val()
-                    });
+                    var box_count_to_inspect = parseFloat($('#box_count_to_inspect').val());
+                    var scanned_is_count = parseFloat($('#scanned_is_count').html());
+                    var total_is_count = parseFloat($('#total_is_count').html());
+                    var box_tested = parseFloat($('#box_tested').html());
+
+                    if (box_count_to_inspect < box_tested) {
+                        _QAInspection.swMsg("Box to Inspect value is less than the inspected box inside this Pallet. Please set Box to Inspect not less than "+$('#box_tested').html()+" inspected box/es.","warning");
+                    } else if (box_count_to_inspect < scanned_is_count) {
+                        _QAInspection.swMsg("Box to Inspect value is less than the scanned box inside this Pallet. Please set Box to Inspect not less than "+$('#scanned_is_count').html()+" scanned box/es.","warning");
+                    } else if (box_count_to_inspect > total_is_count) {
+                        _QAInspection.swMsg("Box to Inspect value is more than the box inside this Pallet. Please set Box to Inspect not more than "+$('#total_is_count').html()+".","warning");
+                    } else {
+                        _QAInspection.setNewBoxToInspect({
+                            _token: _QAInspection.token,
+                            pallet_id: $('#pallet_id').val(),
+                            box_count_to_inspect: $('#box_count_to_inspect').val(),
+                            pallet_row_index: $('#pallet_row_index').val()
+                        });
+                    }
                 }
                 
             } else {

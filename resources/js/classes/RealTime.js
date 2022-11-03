@@ -75,18 +75,7 @@ B. Synopsis: Real Time Script
                             }, name: 'pallet_qr', searchable: false, orderable: false 
                         },
                         {
-                            data: function(data) {
-                                switch (data.pallet_status) {
-                                    case 1:
-                                    case 2:
-                                    case 3:
-                                    case 4:
-                                    case 5:
-                                        return data.disposition;
-                                    default:
-                                        return 'ON PROGRESS'
-                                }
-                            }, name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
+                            data: 'pallet_status', name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
                         },
                         { 
                             data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
@@ -95,7 +84,7 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
-                        switch (data.pallet_status) {
+                        switch (data.pallet_dispo_status) {
                             case 1:
                                 $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
                                 $(dataRow[0].cells[2]).css('color', '#000000');
