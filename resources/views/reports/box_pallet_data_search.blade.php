@@ -98,8 +98,8 @@ Box and Pallet Data Search
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Production Date From</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="prodction_date_from" name="prodction_date_from">
-                                <div id="prodction_date_from_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="production_date_from" name="production_date_from">
+                                <div id="production_date_from_feedback"></div>
                             </div>
                         </div>
 
@@ -108,8 +108,8 @@ Box and Pallet Data Search
 								<div class="input-group-append">
                                     <span class="input-group-text">Production Date To</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="production_Date_to" name="production_Date_to">
-								<div id="production_Date_to_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="production_date_to" name="production_date_to">
+								<div id="production_date_to_feedback"></div>
 							</div>
 						</div>
 
