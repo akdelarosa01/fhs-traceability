@@ -513,32 +513,47 @@ class QAInspectionController extends Controller
             'msgTitle' => 'Failed!'
         ];
 
-        $rules = [
-            'hs_serial' => [
-                Rule::exists('qa_inspection_sheet_serials')->where(function ($query) use ($req) {
-                    $query->where('hs_serial', $req->hs_serial)->where('box_id', $req->box_id);
-                }),
-                Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
-                    return $query->where([
-                        ['hs_serial', '=', $req->hs_serial],
-                        ['box_id', '=', (int)$req->box_id],
-                        ['pallet_id', '=', (int)$req->pallet_id],
-                        ['is_deleted','=', 0]
-                    ]);
-                })
-            ]
-        ];
-        $customMessages = [
-            'unique' => 'This HS serial was already scanned.',
-            'exists' => 'This HS serial is not included in Inspection Sheet QR.'
-        ];
-
-        $this->validate($req, $rules, $customMessages);
+        
         
         try {
             if (isset($req->type) ) {
+                $rules = [
+                    'hs_serial' => [
+                        Rule::exists('qa_inspection_sheet_serials')->where(function ($query) use ($req) {
+                            $query->where('hs_serial', $req->hs_serial)->where('box_id', $req->box_id);
+                        })
+                    ]
+                ];
+                $customMessages = [
+                    'exists' => 'This HS serial is not included in Inspection Sheet QR.'
+                ];
+        
+                $this->validate($req, $rules, $customMessages);
+
                 $data = $this->hs_judgment_change($req);
             } else {
+                $rules = [
+                    'hs_serial' => [
+                        Rule::exists('qa_inspection_sheet_serials')->where(function ($query) use ($req) {
+                            $query->where('hs_serial', $req->hs_serial)->where('box_id', $req->box_id);
+                        }),
+                        Rule::unique('qa_affected_serials')->where(function ($query) use ($req) {
+                            return $query->where([
+                                ['hs_serial', '=', $req->hs_serial],
+                                ['box_id', '=', (int)$req->box_id],
+                                ['pallet_id', '=', (int)$req->pallet_id],
+                                ['is_deleted','=', 0]
+                            ]);
+                        })
+                    ]
+                ];
+                $customMessages = [
+                    'unique' => 'This HS serial was already scanned.',
+                    'exists' => 'This HS serial is not included in Inspection Sheet QR.'
+                ];
+        
+                $this->validate($req, $rules, $customMessages);
+
                 $data = $this->hs_judgment($req);
             }
         } catch (\Throwable $th) {
