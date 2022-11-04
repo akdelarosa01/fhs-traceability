@@ -1568,9 +1568,11 @@
                     if (approve) {
                         if (box_per_pallet != box_count) {
                             _BoxPalletApp.swMsg("Scanned Boxes must be equal to Number of Box per Pallet Requirement. Box Count ("+box_count+" / "+box_per_pallet+")","warning");
-                        } else if (data.is_printed != 1) {
-                            _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
-                        } else {
+                        } 
+                        // else if (data.is_printed != 1) {
+                        //     _BoxPalletApp.swMsg("Please print Pallet label first before transferring","warning");
+                        // } 
+                        else {
                             _BoxPalletApp.transferTo({
                                 _token: _BoxPalletApp.token,
                                 id: data.id
