@@ -656,7 +656,7 @@ Q.A. Inspection
 						</div>
 					</div>
 				</div>
-				.
+				
 				<div id="div_hold_lot">
 					<h3 class="text-center">Lot Number to hold</h3>
 					<div class="row">

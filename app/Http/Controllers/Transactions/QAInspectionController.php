@@ -312,7 +312,13 @@ class QAInspectionController extends Controller
             array_push($arr_boxes,$box->box_qr);
         }
 
-        $lot_nos = $this->_helpers->lot_no($arr_boxes);
+        $lot_nos = DB::connection('mysql')->table('tinspectionsheetprintdata')
+            ->whereIn('BoxSerialNo',$arr_boxes)
+            ->select('lot_no')
+            ->distinct()
+            ->get();
+
+        // $lot_nos = $this->_helpers->lot_no($arr_boxes);
 
         $data = [
             'data' => $lot_nos,
@@ -623,7 +629,7 @@ class QAInspectionController extends Controller
             $matched = 'NOT YET COMPLETE';
             if ($affected->save()) {
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('hs_serial','<>',"");
-                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"");
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"")->select('hs_serial','box_qr','box_id')->distinct()->get()->toArray();
 
                 if (isset($req->hs_ng_type)) {
                     $ch = DB::connection('mysql')
@@ -646,10 +652,10 @@ class QAInspectionController extends Controller
                 }
 
                 $inspected_count = $inspected->count();
-                $serials_count = $serials->count();
+                $serials_count = count($serials);
 
                 if ($inspected_count >= $serials_count) {
-                    $serials = $serials->get();
+                    // $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
                     $box_judgment = 1;
@@ -667,7 +673,7 @@ class QAInspectionController extends Controller
 
                     $matched = true;
                     foreach ($serials as $key => $iss) {
-                        if (!in_array($iss->hs_serial, $inspected)) {
+                        if (!in_array($iss['hs_serial'], $inspected)) {
                             $matched = false;
                             break;
                         }
@@ -761,13 +767,13 @@ class QAInspectionController extends Controller
                     ]);
 
                 $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('hs_serial','<>',"");
-                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"");
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"")->select('hs_serial','box_qr','box_id')->distinct()->get()->toArray();
 
                 $inspected_count = $inspected->count();
-                $serials_count = $serials->count();
+                $serials_count = count($serials);
 
                 if ($inspected_count >= $serials_count) {
-                    $serials = $serials->get();
+                    // $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
                     $box_judgment = 1;
@@ -785,7 +791,7 @@ class QAInspectionController extends Controller
 
                     $matched = true;
                     foreach ($serials as $key => $iss) {
-                        if (!in_array($iss->hs_serial, $inspected)) {
+                        if (!in_array($iss['hs_serial'], $inspected)) {
                             $matched = false;
                             break;
                         }
@@ -949,7 +955,7 @@ class QAInspectionController extends Controller
                 ->join('pallet_model_matrices as m','p.model_id','=','m.id')
                 ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
                 ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
-                ->where('p.pallet_location','=','Q.A.')->first();
+                ->where('p.id','=',$req->pallet_id)->first();
 
                 $data = [
                     'msg' => "Pallet was successfully judged.",
@@ -1040,32 +1046,38 @@ class QAInspectionController extends Controller
                     array_push($arr_boxes,$box->box_qr);
                 }
 
-                $hs_serials = DB::connection('mysql')->table('tboxqr as bqr')
-                                ->select('bqrd.HS_Serial')
-                                ->join('tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
-                                ->whereIn('bqr.qrBarcode',$arr_boxes);
+                $results = DB::connection('mysql')->table('tinspectionsheetprintdata')
+                        ->whereIn('BoxSerialNo',$arr_boxes)
+                        ->select('lot_no as id','lot_no as text')
+                        ->distinct();
 
-                $hs_serial_count = $hs_serials->count();
+                // $hs_serials = DB::connection('mysql')->table('tboxqr as bqr')
+                //                 ->select('bqrd.HS_Serial')
+                //                 ->join('tboxqrdetails as bqrd','bqrd.Box_ID','=','bqr.ID')
+                //                 ->whereIn('bqr.qrBarcode',$arr_boxes);
 
-                if ( $hs_serial_count > 0) {
-                    $hs_serials = $hs_serials->get();
-                    $serials = [];
+                // $hs_serial_count = $hs_serials->count();
+
+                // if ( $hs_serial_count > 0) {
+                //     $hs_serials = $hs_serials->get();
+                //     $serials = [];
     
-                    foreach ($hs_serials as $key => $hs) {
-                        array_push($serials,$hs->HS_Serial);
-                    }
+                //     foreach ($hs_serials as $key => $hs) {
+                //         array_push($serials,$hs->HS_Serial);
+                //     }
     
-                    // get data from china DB
-                    $results = DB::connection('ftl_china')->table('barcode')
-                                ->select('c9 as id','c9 as text')
-                                ->whereIn('c4',$serials)
-                                ->distinct();
+                //     // get data from china DB
+                //     $results = DB::connection('ftl_china')->table('barcode')
+                //                 ->select('c9 as id','c9 as text')
+                //                 ->whereIn('c4',$serials)
+                //                 ->distinct();
     
                     
-                }
+                // }
 
                 if ($val !== "") {
-                    $results->where('c9','like',"%" . $val . "%");
+                    // $results->where('c9','like',"%" . $val . "%");
+                    $results->where('lot_no','like',"%" . $val . "%");
                 }
             }
             

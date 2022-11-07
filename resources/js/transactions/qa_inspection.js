@@ -1817,6 +1817,8 @@
                 inspection_sheet_qr += (e.key == 'Enter')? '': e.key;
                 hs_count += 1;
                 e.preventDefault();
+
+                console.log(inspection_sheet_qr);
             }
 
             var hs_count_per_box = parseInt($('#b_qty_per_box').val());
@@ -1845,7 +1847,39 @@
                 });
 
                 hs_count = 0;
-            }
+            } 
+            
+            // var inspection_sheet_qr_arr = inspection_sheet_qr.split(";");
+            // hs_count = inspection_sheet_qr_arr.length;
+
+            // console.log(hs_count_per_box +"=="+ hs_count)
+
+            // if ( hs_count_per_box == hs_count ) {
+            //     var data = _QAInspection.$tbl_boxes.row({selected:  true}).data();
+            //     var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
+    
+            //     _QAInspection.scanInspectionSheet({
+            //         _token: _QAInspection.token,
+            //         pallet_id: $('#pallet_id').val(),
+            //         box_id: data.id,
+            //         box_qr: data.box_qr,
+            //         inspector: $('#inspector').val(),
+            //         shift: $('#shift').val(),
+            //         date_manufactured: $('#b_date_manufactured').val(),
+            //         date_expired: $('#b_date_expired').val(),
+            //         customer_pn: $('#b_customer_part_no').val(),
+            //         lot_no: $('#b_lot_no').val(),
+            //         prod_line_no: $('#b_prod_line_no').val(),
+            //         carton_no: $('#b_carton_label_no').val(),
+            //         qty_per_box: $('#b_qty_per_box').val(),
+            //         inspection_sheet_qr: inspection_sheet_qr,
+            //         row_index: row_index[0]
+            //     });
+
+            //     hs_count = 0;
+
+            //     return false;
+            // }
 
            
         });
