@@ -1456,7 +1456,7 @@
             _QAInspection.running_model = data.model;
 
             // GOOD and REWORK
-            if (data.pallet_dispo_status == 1 || data.pallet_dispo_status == 3) {
+            if (data.pallet_dispo_status == 2) {
                 if (data.is_printed > 0) {
                     $('#btn_print_pallet').prop('disabled', true);
                 } else {
@@ -1465,13 +1465,9 @@
                 $('#btn_reprint_pallet').prop('disabled', false);
                 $('#btn_print_preview').prop('disabled', false);
             } else {
-                if (data.is_printed > 0) {
-                    $('#btn_print_pallet').prop('disabled', true);
-                } else {
-                    $('#btn_print_pallet').prop('disabled', false);
-                }
-                $('#btn_reprint_pallet').prop('disabled', false);
-                $('#btn_print_preview').prop('disabled', false);
+                $('#btn_print_pallet').prop('disabled', true);
+                $('#btn_reprint_pallet').prop('disabled', true);
+                $('#btn_print_preview').prop('disabled', true);
             }
             
             _QAInspection.statusMsg('','clear');
@@ -1708,20 +1704,20 @@
 
             var box_index = _QAInspection.$tbl_boxes.row({selected:  true}).index();
 
-            if (box_tested_full > box_tested) {
-                if (hs_ng_reason == null || hs_ng_reason == "") {
-                    _QAInspection.swMsg("Please provide a Reason.","warning");
-                } else {
-                    $('#b_oba_serial_no').removeClass("input-error");
-                    $('#b_oba_serial_no').removeClass('is-invalid');
-                    $('#hs_serial_feedback').removeClass('invalid-feedback');
-                    $('#hs_serial_feedback').html('');
+            if (hs_ng_reason == null || hs_ng_reason == "") {
+                _QAInspection.swMsg("Please provide a Reason.","warning");
+            } else {
+                $('#b_oba_serial_no').removeClass("input-error");
+                $('#b_oba_serial_no').removeClass('is-invalid');
+                $('#hs_serial_feedback').removeClass('invalid-feedback');
+                $('#hs_serial_feedback').html('');
 
-                    var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
-                    var data = rowData[0];
-                    var hs_ng_type = $('#hs_ng_type').val();
+                var rowData = _QAInspection.$tbl_boxes.rows({selected:  true}).data().toArray();
+                var data = rowData[0];
+                var hs_ng_type = $('#hs_ng_type').val();
 
-                    if (hs_ng_type == 'NORMAL') {
+                if (hs_ng_type == 'NORMAL') {
+                    if (box_tested_full > box_tested) {
                         if (hs_total_count > hs_scanned_count) {
                             _QAInspection.scanHSSerial({
                                 _token: _QAInspection.token,
@@ -1736,33 +1732,32 @@
                         } else {
                             _QAInspection.swMsg("Heat Sink to be scanned has already been completed.","warning");
                         }
-                       
                     } else {
-                        var reason = $('#hs_ng_cr_reason').val();
-                        if (reason != "") {
+                        _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
+                    }
+                    
+                } else {
+                    var reason = $('#hs_ng_cr_reason').val();
+                    if (reason != "") {
 
-                            _QAInspection.scanHSSerial({
-                                _token: _QAInspection.token,
-                                type: hs_ng_type,
-                                hs_id: $('#hs_ng_id').val(),
-                                box_id: $('#hs_ng_box_id').val(),
-                                pallet_id: $('#hs_ng_pallet_id').val(),
-                                hs_serial: $('#hs_ng_hs_serial').val(),
-                                orig_judgment: $('#hs_ng_orig_judgment').val(),
-                                new_judgment: $('#hs_ng_new_judgment').val(),
-                                hs_ng_reason: hs_ng_reason,
-                                reason: reason,
-                                hs_row_index: $('#hs_row_index').val(),
-                                box_index: box_index
-                            });
-                        } else {
-                            _QAInspection.swMsg("Please provide your reason for changing of judgment.","warning");
-                        }
+                        _QAInspection.scanHSSerial({
+                            _token: _QAInspection.token,
+                            type: hs_ng_type,
+                            hs_id: $('#hs_ng_id').val(),
+                            box_id: $('#hs_ng_box_id').val(),
+                            pallet_id: $('#hs_ng_pallet_id').val(),
+                            hs_serial: $('#hs_ng_hs_serial').val(),
+                            orig_judgment: $('#hs_ng_orig_judgment').val(),
+                            new_judgment: $('#hs_ng_new_judgment').val(),
+                            hs_ng_reason: hs_ng_reason,
+                            reason: reason,
+                            hs_row_index: $('#hs_row_index').val(),
+                            box_index: box_index
+                        });
+                    } else {
+                        _QAInspection.swMsg("Please provide your reason for changing of judgment.","warning");
                     }
                 }
-                
-            } else {
-                _QAInspection.swMsg("Box to judge is already full. Please adjust a new Box Count to Inspect.", "warning");
             }
         });
 
@@ -1867,9 +1862,19 @@
             var pallet_disposition = $('#pallet_disposition').val();
             var lot_no = $('#lot_no').val();
             var disposition_reason = $('#disposition_reason').val();
+            var has_NG = 0;
+
+            _QAInspection.$tbl_boxes.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                var data = this.data();
+                if (data.box_judgement == 0) {
+                    has_NG++;
+                }
+            } );
 
             if (pallet_disposition == null || pallet_disposition == "") {
                 _QAInspection.swMsg("Please provide a Disposition.","warning");
+            } else if (has_NG > 0 && parseInt(pallet_disposition) == 2) {
+                _QAInspection.swMsg("This Pallet cannot be judged as Good. Please check some boxes that are judged as NG","warning");
             } else {
                 _QAInspection.palletDisposition({
                     _token: _QAInspection.token,
@@ -2016,8 +2021,24 @@
         $('#btn_print_now').on('click', function() {
             var type = $("#print_type").val();
             var printer = $("#printer").val();
+            var has_NG = 0;
+            var pallet = $('#tbl_obas').DataTable().row({selected: true}).data();
 
-            _QAInspection.printLabel(type,printer);
+            console.log(pallet);
+
+            _QAInspection.$tbl_boxes.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                var data = this.data();
+                if (data.box_judgement == 0) {
+                    has_NG++;
+                }
+            } );
+
+            if (pallet.pallet_dispo_status == 2 && has_NG > 0) {
+                _QAInspection.swMsg("Please check some boxes that are judged as NG","warning");
+            } else {
+                _QAInspection.printLabel(type,printer);
+            }
+            
             
         });
 	});

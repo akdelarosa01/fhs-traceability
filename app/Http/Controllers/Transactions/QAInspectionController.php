@@ -599,8 +599,8 @@ class QAInspectionController extends Controller
 
             $matched = 'NOT YET COMPLETE';
             if ($affected->save()) {
-                $inspected = QaAffectedSerial::where('box_id', $req->box_id);
-                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
+                $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('hs_serial','<>',"");
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"");
 
                 if (isset($req->hs_ng_type)) {
                     $ch = DB::connection('mysql')
@@ -622,7 +622,10 @@ class QAInspectionController extends Controller
                     }
                 }
 
-                if ($inspected->count() >= $serials->count()) {
+                $inspected_count = $inspected->count();
+                $serials_count = $serials->count();
+
+                if ($inspected_count >= $serials_count) {
                     $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
@@ -734,10 +737,13 @@ class QAInspectionController extends Controller
                         'created_at' => date('Y-m-d H:i:s')
                     ]);
 
-                $inspected = QaAffectedSerial::where('box_id', $req->box_id);
-                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id);
+                $inspected = QaAffectedSerial::where('box_id', $req->box_id)->where('hs_serial','<>',"");
+                $serials = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial','<>',"");
 
-                if ($inspected->count() >= $serials->count()) {
+                $inspected_count = $inspected->count();
+                $serials_count = $serials->count();
+
+                if ($inspected_count >= $serials_count) {
                     $serials = $serials->get();
                     $inspected = $inspected->get()->toArray();
 
@@ -902,13 +908,16 @@ class QAInspectionController extends Controller
                 $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
                     DB::raw("p.id as id"),
                     DB::raw("p.model_id as model_id"),
+                    DB::raw("m.model as model"),
                     DB::raw("p.transaction_id as transaction_id"),
-                    DB::raw("p.pallet_status as pallet_status"),
+                    DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
+                    DB::raw("p.pallet_status as pallet_dispo_status"),
+                    DB::raw("qad.disposition as disposition"),
                     DB::raw("p.pallet_qr as pallet_qr"),
                     DB::raw("p.new_box_count as new_box_count"),
                     DB::raw("p.pallet_location as pallet_location"),
                     DB::raw("p.is_printed as is_printed"),
-                    DB::raw("m.box_count_to_inspect as box_count_to_inspect"),
+                    DB::raw("ifnull(p.new_box_to_inspect,m.box_count_to_inspect) as box_count_to_inspect"),
                     DB::raw("p.created_at as created_at"),
                     DB::raw("p.updated_at as updated_at"),
                     DB::raw("r.disposition as reason"),
@@ -916,6 +925,7 @@ class QAInspectionController extends Controller
                 ])
                 ->join('pallet_model_matrices as m','p.model_id','=','m.id')
                 ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+                ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
                 ->where('p.pallet_location','=','Q.A.')->first();
 
                 $data = [
@@ -1436,7 +1446,7 @@ class QAInspectionController extends Controller
             $pallet->update_user = Auth::user()->id;
 
             if ($req->mode == 'print') {
-                $pallet->pallet_status = 1; // FOR OBA
+                // $pallet->pallet_status = 1; // FOR OBA
                 $pallet->print_date = $print_date;
             } else { // reprint
                 $print_date = date('Y/m/d',strtotime($pallet->print_date));
