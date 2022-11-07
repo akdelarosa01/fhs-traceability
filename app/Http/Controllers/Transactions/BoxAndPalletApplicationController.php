@@ -306,7 +306,7 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         $rules = [
-                    'box_qr' => 'unique:pallet_box_pallet_dtls,box_qr|exists:tboxqr,qrBarcode'
+                    'box_qr' => 'unique:pallet_box_pallet_dtls,box_qr|exists:tinspectionsheetprintdata,BoxSerialNo'
                 ];
         $customMessages = [
             'unique' => 'This Box ID was already scanned.',
