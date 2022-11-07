@@ -1021,7 +1021,17 @@
                         }
                     } else {
                         $('#modal_hs_ng_reason').modal('hide');
-                        self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                        var same = 0;
+                        self.$tbl_hs_serials_oba.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                            var data = this.data();
+                            if (data.hs_serial == param.hs_serial) {
+                                same++;
+                            }
+                        } );
+
+                        if (same == 0) {
+                            self.$tbl_hs_serials_oba.row.add(response.affected_serials).draw();
+                        }
                     }
                     
                     var scanned_hs = self.$tbl_hs_serials_oba.rows().count();
