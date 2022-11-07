@@ -898,10 +898,24 @@
                     self.box_id = param.box_id;
                     self.$tbl_inpection_sheet_serial.ajax.reload();
                 } else {
-                    self.$tbl_inpection_sheet_serial.rows.add(response).draw();
+                    var output_serial = response.output_serial;
+                    var box = response.box;
+
+                    if (output_serial != undefined) {
+                        var index = self.$tbl_boxes.row({selected: true}).index();
+                    
+                        self.$tbl_boxes.row({selected: true}).data(box).draw();
+                        self.$tbl_inpection_sheet_serial.rows.add(output_serial).draw();
+
+                        var nextIndex = index+1;
+                        self.$tbl_boxes.row(index).deselect();
+                        self.$tbl_boxes.row(nextIndex).select();
+                    }
+                    
                 }
                 $('#b_qr_inspection_sheet').val('');
-                $('#b_oba_serial_no').focus();
+                $('#b_qr_inspection_sheet').focus();
+                // $('#b_oba_serial_no').focus();
             });
         },
         getLotNo: function(param, handle) {
@@ -1081,7 +1095,7 @@
                     $('#box_judgment').html(box_judgement);
                 }
 
-                $('#modal_box_inspection').modal('show');
+                // $('#modal_box_inspection').modal('show');
             });
         },
         setShift: function(param) {
@@ -1325,9 +1339,6 @@
         $('#btn_disposition').prop('disabled', true);
         $('#btn_box_inspection').prop('disabled', true);
 
-        // $('#btn_good').prop('disabled', true);
-        // $('#btn_notgood').prop('disabled', true);
-
         $('#hs_ng_reason').select2({
             allowClear: true,
             placeholder: 'Select Heat Sink NG Reason',
@@ -1522,10 +1533,13 @@
             $('#btn_box_inspection').prop('disabled', false);
             
             _QAInspection.box_id = data.id;
+            _QAInspection.boxInspection();
+
             _QAInspection.$tbl_inpection_sheet_serial.ajax.reload();
 
             _QAInspection.$tbl_affected_serials.ajax.reload();
             _QAInspection.$tbl_hs_serials_oba.ajax.reload();
+            
 
             _QAInspection.statusMsg('','clear');
         })
@@ -1589,7 +1603,8 @@
             var shift = $("meta[name=shift_session]").attr('content');
 
             if (shift !== "" && shift !== null) {
-                _QAInspection.boxInspection();
+                // _QAInspection.boxInspection();
+                $('#modal_box_inspection').modal('show');
             } else {
                 _QAInspection.swMsg("Please select your Shift.", "warning");
             }            
