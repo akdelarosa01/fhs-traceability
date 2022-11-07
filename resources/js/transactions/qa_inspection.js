@@ -1465,9 +1465,13 @@
                 $('#btn_reprint_pallet').prop('disabled', false);
                 $('#btn_print_preview').prop('disabled', false);
             } else {
-                $('#btn_print_pallet').prop('disabled', true);
-                $('#btn_reprint_pallet').prop('disabled', true);
-                $('#btn_print_preview').prop('disabled', true);
+                if (data.is_printed > 0) {
+                    $('#btn_print_pallet').prop('disabled', true);
+                } else {
+                    $('#btn_print_pallet').prop('disabled', false);
+                }
+                $('#btn_reprint_pallet').prop('disabled', false);
+                $('#btn_print_preview').prop('disabled', false);
             }
             
             _QAInspection.statusMsg('','clear');
