@@ -58,6 +58,7 @@ class QAInspectionController extends Controller
                 DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
                 DB::raw("p.pallet_status as pallet_dispo_status"),
                 DB::raw("qad.disposition as disposition"),
+                DB::raw("qad.color_hex as color_hex"),
                 DB::raw("p.pallet_qr as pallet_qr"),
                 DB::raw("p.new_box_count as new_box_count"),
                 DB::raw("p.pallet_location as pallet_location"),
@@ -942,6 +943,7 @@ class QAInspectionController extends Controller
                     DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
                     DB::raw("p.pallet_status as pallet_dispo_status"),
                     DB::raw("qad.disposition as disposition"),
+                    DB::raw("qad.color_hex as color_hex"),
                     DB::raw("p.pallet_qr as pallet_qr"),
                     DB::raw("p.new_box_count as new_box_count"),
                     DB::raw("p.pallet_location as pallet_location"),
@@ -1307,6 +1309,7 @@ class QAInspectionController extends Controller
                                     DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
                                     DB::raw("p.pallet_status as pallet_dispo_status"),
                                     DB::raw("qad.disposition as disposition"),
+                                    DB::raw("qad.color_hex as color_hex"),
                                     DB::raw("p.pallet_qr as pallet_qr"),
                                     DB::raw("p.new_box_count as new_box_count"),
                                     DB::raw("p.pallet_location as pallet_location"),
@@ -1466,11 +1469,16 @@ class QAInspectionController extends Controller
         try {
             $box_qr = explode(";",$req->box_qr);
 
-            $lot_nos = $this->_helpers->lot_no($box_qr);
+            // $lot_nos = $this->_helpers->lot_no($box_qr);
+            $lot_nos = DB::connection('mysql')->table('tinspectionsheetprintdata')
+                            ->whereIn('BoxSerialNo',$box_qr)
+                            ->select('lot_no')
+                            ->distinct()
+                            ->get();
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= $lot->lot_no."\r";
+                $lots .= $lot->lot_no."; ";
             }
 
             $print_date = date('Y-m-d');
@@ -1489,29 +1497,6 @@ class QAInspectionController extends Controller
             }
 
             if ($pallet->update()) {
-                // $pallet_count = PalletBoxPalletHdr::where('transaction_id', $req->trans_id)->count();
-
-                // $trans = PalletTransaction::find($req->trans_id);
-
-                // if ($this->needToCreateNewPallet($req, $pallet_count)) {
-                //     $hdr = new PalletBoxPalletHdr();
-                //     $hdr->transaction_id = $req->trans_id;
-                //     $hdr->model_id = $req->model_id;
-                //     $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
-                //     $hdr->pallet_status = 0;
-                //     $hdr->pallet_location = "PRODUCTION";
-                //     $hdr->create_user = Auth::user()->id;
-                //     $hdr->update_user = Auth::user()->id;
-
-                //     $hdr->save();
-                // } 
-                
-                // if ($this->readyStatus($req, $pallet_count)) {
-                //     $trans->model_status = 1;
-                //     $trans->update();
-                // }
-
-                // $mx = PalletModelMatrix::select('model')->where('id',$req->model_id)->first();
 
                 // insert into the Bartender Table
 

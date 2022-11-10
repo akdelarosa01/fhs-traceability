@@ -3230,23 +3230,23 @@ B. Synopsis: Real Time Script
                         dataRow.attr('id','r'+data.id);
                         switch (data.pallet_dispo_status) {
                             case 1:
-                                $(dataRow[0].cells[2]).css('background-color', '#FFC4DD');
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 2:
-                                $(dataRow[0].cells[2]).css('background-color', '#36AE7C');
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 3:
-                                $(dataRow[0].cells[2]).css('background-color', '#47B5FF');
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 4:
-                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             case 5:
-                                $(dataRow[0].cells[2]).css('background-color', '#FF0063');
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[2]).css('color', '#000000');
                                 break;
                             default:
