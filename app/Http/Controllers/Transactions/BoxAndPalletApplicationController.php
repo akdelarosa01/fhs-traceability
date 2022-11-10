@@ -774,9 +774,15 @@ class BoxAndPalletApplicationController extends Controller
 
             DB::beginTransaction();
 
+            $pallet_qr = $data['pallet_qr'];
+
+            if (strpos($data['pallet_qr'], 'R') == false) {
+                $pallet_qr = $pallet_qr.'R';
+            }
+
             $pallet_id = $data['id'];
             $pallet = PalletBoxPalletHdr::find($pallet_id);
-            $pallet->pallet_qr = $data['pallet_qr'].'R';
+            $pallet->pallet_qr = $pallet_qr;
             $pallet->update_user = Auth::user()->id;
 
             if ($pallet->update()) {
