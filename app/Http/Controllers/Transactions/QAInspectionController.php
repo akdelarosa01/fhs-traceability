@@ -196,7 +196,9 @@ class QAInspectionController extends Controller
                                 'operator' => $pkg->operator,
                                 'work_order' => $pkg->work_order,
                                 'create_user' => Auth::user()->id,
-                                'update_user' => Auth::user()->id
+                                'update_user' => Auth::user()->id,
+                                'created_at' => date('Y-m-d H:i:s'),
+                                'updated_at' => date('Y-m-d H:i:s')
                             ]);
                             break;
                         }
