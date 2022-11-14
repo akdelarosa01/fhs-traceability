@@ -1477,7 +1477,11 @@ class QAInspectionController extends Controller
         ];
 
         try {
-            $box_qr = explode(";",$req->box_qr);
+            $box_qr = explode(";\n",$req->box_qr);
+
+            for ($i=0; $i < count($box_qr); $i++) { 
+                $box_qr[$i] = str_replace(";","",$box_qr[$i]);
+            }
 
             // $lot_nos = $this->_helpers->lot_no($box_qr);
             $lot_nos = DB::connection('mysql')->table('tinspectionsheetprintdata')
