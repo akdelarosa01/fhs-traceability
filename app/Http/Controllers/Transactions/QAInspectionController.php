@@ -132,21 +132,13 @@ class QAInspectionController extends Controller
 
     public function get_inspection_sheet_serials(Request $req)
     {
-        $query = DB::table('furukawa.qa_inspection_sheet_serials as qa')
-                    ->join("formal.barcode as b",DB::raw("CONVERT(b.c4 USING latin1)"),"=","qa.hs_serial")
-                    ->where('qa.box_id',$req->box_id)
-                    ->select([
-                        DB::raw("qa.hs_serial as hs_serial"),
-                        DB::raw("b.c1 as prod_date"),
-                        DB::raw("b.c6 as operator"),
-                        DB::raw("b.c8 as work_order")
-                    ])->distinct();
+        $query = DB::connection('mysql')->table('qa_inspection_sheet_serials')
+                    ->where('box_id',$req->box_id)->distinct();
         return Datatables::of($query)->make(true);
     }
 
     public function check_inspection_sheet(Request $req)
     {
-
         $data = [
 			'msg' => 'Checking of Inspection Sheet QR has failed.',
             'data' => [],
@@ -170,6 +162,17 @@ class QAInspectionController extends Controller
 
             // checking if matched
             $matched = 1;
+
+            DB::beginTransaction();
+            $hs_dt = DB::connection('ftl_china')->table('barcode')
+                            ->whereIn('c4',$hs_serial)
+                            ->select(
+                                DB::raw("c1 as prod_date"),
+                                DB::raw("c4 as serial"),
+                                DB::raw("c6 as operator"),
+                                DB::raw("c8 as work_order")
+                            )->get();
+
             foreach ($hs_serial as $key => $hs) {
                 $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
 
@@ -183,29 +186,31 @@ class QAInspectionController extends Controller
                 $check = QaInspectionSheetSerial::where('box_id',$req->box_id)->where('hs_serial',$hs)->count();
 
                 if ($check < 1) {
-                    QaInspectionSheetSerial::create([
-                        'box_id' => $req->box_id,
-                        'box_qr' => $req->box_qr,
-                        'hs_serial' => $hs,
-                        'create_user' => Auth::user()->id,
-                        'update_user' => Auth::user()->id
-                    ]);
+                    foreach ($hs_dt as $key => $pkg) {
+                        if ($hs == $pkg->serial) {
+                            array_push($output_serial, [
+                                'box_id' => $req->box_id,
+                                'box_qr' => $req->box_qr,
+                                'hs_serial' => $hs,
+                                'prod_date' => $pkg->prod_date,
+                                'operator' => $pkg->operator,
+                                'work_order' => $pkg->work_order,
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id
+                            ]);
+                            break;
+                        }
+                    }
                 }
+            }
 
-                $hs_dt = DB::connection('ftl_china')->table('barcode')
-                            ->where('c4',$hs)
-                            ->select(
-                                DB::raw("c1 as prod_date"),
-                                DB::raw("c6 as operator"),
-                                DB::raw("c8 as work_order")
-                            )->first();
+            if (count($output_serial) > 0) {
+                $insert = array_chunk($output_serial, 1000);
 
-                array_push($output_serial, [
-                    'hs_serial' => $hs,
-                    'prod_date' => $hs_dt->prod_date,
-                    'operator' => $hs_dt->operator,
-                    'work_order' => $hs_dt->work_order
-                ]);
+                $saved = false;
+                foreach ($insert as $batch) {
+                    $saved = DB::connection('mysql')->table('qa_inspection_sheet_serials')->insert($batch);
+                }
             }
 
             if ($matched > 0) {
@@ -255,6 +260,8 @@ class QAInspectionController extends Controller
                     ],
                     'success' => true
                 ];
+
+                DB::commit();
             } else {
                 $data = [
                     'msg' => 'Inspection Sheet is not matched with Box ID ['.$req->box_qr.']',
@@ -265,6 +272,7 @@ class QAInspectionController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
+            DB::rollBack();
             $data = [
                 'msg' => $th->getMessage(),
                 'data' => [],
