@@ -376,6 +376,8 @@ class BoxAndPalletApplicationController extends Controller
                                 ]);
             }
 
+            $update_box = false;
+
             // update all boxes that has remarks
             if (isset($req->update_box_id) && count($req->update_box_id) > 0) {
                 foreach ($req->update_box_id as $key => $id) {
