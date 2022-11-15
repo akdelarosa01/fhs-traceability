@@ -366,6 +366,9 @@ class BoxAndPalletApplicationController extends Controller
 
         try {
             DB::beginTransaction();
+            $remove_boxes = false;
+            $update_box = false;
+
             // remove all boxes that were removed
             if (isset($req->remove_box_id) && count($req->remove_box_id) > 0) {
                 $remove_boxes = DB::connection('mysql')->table('pallet_box_pallet_dtls')->whereIn('id',$req->remove_box_id)
@@ -375,8 +378,6 @@ class BoxAndPalletApplicationController extends Controller
                                     'updated_at' => date('Y-m-d H:i:s')
                                 ]);
             }
-
-            $update_box = false;
 
             // update all boxes that has remarks
             if (isset($req->update_box_id) && count($req->update_box_id) > 0) {
@@ -388,21 +389,21 @@ class BoxAndPalletApplicationController extends Controller
                                     'updated_at' => date('Y-m-d H:i:s')
                                 ]);
                 }
+            }
 
-                if ($update_box) {
-                    DB::commit();
-                    $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
-    
-                    $data = [
-                        'msg' => 'Updating boxes were successful.',
-                        'data' => [
-                            'count' => $count
-                        ],
-                        'success' => true,
-                        'msgType' => 'success',
-                        'msgTitle' => 'Success!'
-                    ];
-                }
+            if ($update_box || $remove_boxes) {
+                DB::commit();
+                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+
+                $data = [
+                    'msg' => 'Updating boxes were successful.',
+                    'data' => [
+                        'count' => $count
+                    ],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
             }
             
         } catch (\Throwable $th) {
