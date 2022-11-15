@@ -388,21 +388,23 @@ class BoxAndPalletApplicationController extends Controller
                                     'updated_at' => date('Y-m-d H:i:s')
                                 ]);
                 }
-            }
-            if ($update_box) {
-                DB::commit();
-                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
 
-                $data = [
-                    'msg' => 'Updating boxes were successful.',
-                    'data' => [
-                        'count' => $count
-                    ],
-                    'success' => true,
-                    'msgType' => 'success',
-                    'msgTitle' => 'Success!'
-                ];
+                if ($update_box) {
+                    DB::commit();
+                    $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+    
+                    $data = [
+                        'msg' => 'Updating boxes were successful.',
+                        'data' => [
+                            'count' => $count
+                        ],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
             }
+            
         } catch (\Throwable $th) {
             DB::rollBack();
             $data = [
