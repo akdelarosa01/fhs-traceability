@@ -1487,7 +1487,7 @@ class QAInspectionController extends Controller
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= $lot->lot_no."; ";
+                $lots .= $lot->lot_no."\n\r";
             }
 
             $print_date = date('Y-m-d');

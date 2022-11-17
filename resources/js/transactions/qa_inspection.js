@@ -1972,9 +1972,13 @@
 
                     if (box_count_to_inspect < box_tested) {
                         _QAInspection.swMsg("Box to Inspect value is less than the inspected box inside this Pallet. Please set Box to Inspect not less than "+$('#box_tested').html()+" inspected box/es.","warning");
-                    } else if (box_count_to_inspect < scanned_is_count) {
-                        _QAInspection.swMsg("Box to Inspect value is less than the scanned box inside this Pallet. Please set Box to Inspect not less than "+$('#scanned_is_count').html()+" scanned box/es.","warning");
-                    } else if (box_count_to_inspect > total_is_count) {
+                    } 
+                    
+                    // else if (box_count_to_inspect < scanned_is_count) {
+                    //     _QAInspection.swMsg("Box to Inspect value is less than the scanned box inside this Pallet. Please set Box to Inspect not less than "+$('#scanned_is_count').html()+" scanned box/es.","warning");
+                    // } 
+                    
+                    else if (box_count_to_inspect > total_is_count) {
                         _QAInspection.swMsg("Box to Inspect value is more than the box inside this Pallet. Please set Box to Inspect not more than "+$('#total_is_count').html()+".","warning");
                     } else {
                         _QAInspection.setNewBoxToInspect({
