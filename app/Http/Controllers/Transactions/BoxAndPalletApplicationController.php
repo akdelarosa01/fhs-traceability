@@ -276,22 +276,45 @@ class BoxAndPalletApplicationController extends Controller
 
     private function pallets($trans_id)
     {
-        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
-                    ->select(
-                        'p.id',
-                        'p.transaction_id',
-                        'p.model_id',
-                        'm.model',
-                        DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
-                        'p.pallet_qr',
-                        'p.pallet_status',
-                        'p.pallet_location',
-                        'p.is_printed',
-                        'p.created_at',
-                        'p.updated_at'
-                    )
-                    ->join('pallet_model_matrices as m','m.id','=','p.model_id')
-                    ->where('p.transaction_id',$trans_id);
+        // $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
+        //             ->select(
+        //                 'p.id',
+        //                 'p.transaction_id',
+        //                 'p.model_id',
+        //                 'm.model',
+        //                 DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
+        //                 'p.pallet_qr',
+        //                 'p.pallet_status',
+        //                 'p.pallet_location',
+        //                 'p.is_printed',
+        //                 'p.created_at',
+        //                 'p.updated_at'
+        //             )
+        //             ->join('pallet_model_matrices as m','m.id','=','p.model_id')
+        //             ->where('p.transaction_id',$trans_id);
+        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+                    DB::raw("p.id as id"),
+                    DB::raw("p.model_id as model_id"),
+                    DB::raw("m.model as model"),
+                    DB::raw("p.transaction_id as transaction_id"),
+                    DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
+                    DB::raw("p.pallet_status as pallet_dispo_status"),
+                    DB::raw("qad.disposition as disposition"),
+                    DB::raw("qad.color_hex as color_hex"),
+                    DB::raw("p.pallet_qr as pallet_qr"),
+                    DB::raw("p.new_box_count as new_box_count"),
+                    DB::raw("p.pallet_location as pallet_location"),
+                    DB::raw("p.is_printed as is_printed"),
+                    DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
+                    DB::raw("p.created_at as created_at"),
+                    DB::raw("p.updated_at as updated_at"),
+                    DB::raw("r.disposition as reason"),
+                    DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
+                ])
+                ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+                ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+                ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
+                ->where('p.transaction_id',$trans_id);
         return $query;
     }
 
@@ -306,7 +329,16 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         $rules = [
-                    'box_qr' => 'unique:pallet_box_pallet_dtls,box_qr|exists:tinspectionsheetprintdata,BoxSerialNo'
+                    'box_qr' => [
+                        Rule::unique('pallet_box_pallet_dtls')->where(function ($query) use ($req) {
+                            return $query->where([
+                                ['box_qr', '=', $req->box_qr],
+                                ['is_deleted','=', 0],
+                                ['pallet_history','=', 0]
+                            ]);
+                        })
+                    ], 
+                    'exists:tinspectionsheetprintdata,BoxSerialNo'
                 ];
         $customMessages = [
             'unique' => 'This Box ID was already scanned.',
@@ -393,12 +425,12 @@ class BoxAndPalletApplicationController extends Controller
 
             if ($update_box || $remove_boxes) {
                 DB::commit();
-                $count = PalletBoxPalletDtl::where('pallet_id',$req->trans_id)->where('is_deleted',0)->count();
+                $count = PalletBoxPalletDtl::where('transaction_id',$req->trans_id)->where('is_deleted',0)->count();
 
                 $data = [
                     'msg' => 'Updating boxes were successful.',
                     'data' => [
-                        'count' => $count
+                        'total_scanned_box_qty' => $count
                     ],
                     'success' => true,
                     'msgType' => 'success',
@@ -698,14 +730,9 @@ class BoxAndPalletApplicationController extends Controller
     {
         $data = [];
         try {
-            $sql = "SELECT h.pallet_id as pallet_id,
-                            h.pallet_qr as pallet_qr,
-                            d.box_qr as box_qr,
-                            H.created_at as created_at
-                        FROM furukawa.pallet_history_hdrs as h
-                        join furukawa.pallet_history_dtls as d
-                        on h.id = d.history_id
-                        where h.pallet_id = ". $req->pallet_id;
+            $sql = "SELECT id, pallet_id, pallet_qr, created_at
+                        FROM furukawa.pallet_history_hdrs
+                        where pallet_id = ". $req->pallet_id;
             $query = DB::select($sql);
             
             return Datatables::of($query)->make(true);
@@ -714,51 +741,29 @@ class BoxAndPalletApplicationController extends Controller
             //throw $th;
         }
         return $data;
+    }
 
-        // $data = [
-		// 	'msg' => 'Viewing of Pallet History was failed.',
-        //     'data' => [
-        //         'hdr' => [],
-        //         'dtls' => []
-        //     ],
-		// 	'success' => true,
-        //     'msgType' => 'warning',
-        //     'msgTitle' => 'Failed!'
-        // ];
+    public function get_pallet_history_details(Request $req)
+    {
+        $data = [];
+        try {
+            $sql = "SELECT h.box_qr as box_qr,
+                            b.box_judgment
+                        FROM furukawa.pallet_history_dtls as h
+                        join furukawa.pallet_box_pallet_dtls as b
+                        on b.id = h.box_id
+                        where h.history_id = ". $req->history_id;
+            $query = DB::select($sql);
+            
+            $data = [
+                'data' => $query,
+                'success' => true
+            ];
 
-        // try {
-        //     $query = "SELECT h.pallet_id as pallet_id,
-        //                 h.pallet_qr as pallet_qr,
-        //                 d.box_qr as box_qr,
-        //                 H.created_at as created_at
-        //             FROM furukawa.pallet_history_hdrs as h
-        //             join furukawa.pallet_history_dtls as d
-        //             on h.id = d.history_id
-        //             where h.pallet_id = ". $req->pallet_id;
-        //     $hdr = PalletHistoryHdr::where('pallet_id', $req->pallet_id)->get();
-        //     $dtls = PalletHistoryDtl::where('pallet_id', $req->pallet_id)->get();
-
-        //     $data = [
-        //         'data' => [
-        //             'hdr' => $hdr,
-        //             'dtls' => $dtls
-        //         ],
-        //         'success' => true,
-        //     ];
-
-        // } catch (\Throwable $th) {
-        //     $data = [
-        //         'msg' => 'Viewing of Pallet History was failed.',
-        //         'data' => [
-        //             'hdr' => [],
-        //             'dtls' => []
-        //         ],
-        //         'success' => true,
-        //         'msgType' => 'warning',
-        //         'msgTitle' => 'Failed!'
-        //     ];
-        // }
-        // return response()->json($data);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+        return $data;
     }
 
     public function move_to_pallet_history(Request $req)
@@ -813,7 +818,7 @@ class BoxAndPalletApplicationController extends Controller
                     PalletBoxPalletDtl::where('pallet_id',$data['id'])
                                     ->where('is_deleted',0)
                                     ->update([
-                                        'is_deleted' => 1,
+                                        // 'is_deleted' => 1,
                                         'pallet_history' => 1,
                                         'update_user' => Auth::user()->id,
                                         'updated_at' => date('Y-m-d H:i:s')

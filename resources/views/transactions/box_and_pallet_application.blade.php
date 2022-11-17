@@ -303,11 +303,11 @@ Box and Pallet Application
 			</div>
 			<div class="modal-body">
 				<div class="row mb-2">
-					<div class="col-12"> <!--  style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1" -->
-						<table class="table table-sm table-hover table-striped" id="tbl_pallet_history" style="width: 100%">
-							<thead>
+					<div class="col-12" style="height: 60vh; max-height: 60vh; border: 1px solid #a7b6c1"> <!--  style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1" -->
+						<table class="table table-sm table-bordered" id="tbl_pallet_history" style="width: 100%">
+							<thead class="thead-dark">
+								<th></th>
 								<th>Pallet ID</th>
-								<th>Box ID</th>
 								<th>History Date</th>
 							</thead>
 						</table>

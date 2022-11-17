@@ -928,47 +928,6 @@
                 handle(response);
             });
         },
-        // HSSerialJudgment: function(param) {
-        //     var self = this;
-        //     self.submitType = "POST";
-        //     self.jsonData = param;
-        //     self.formAction = "/transactions/qa-inspection/hs-serial-judgment";
-        //     self.sendData().then(function() {
-        //         var response = self.responseData;
-        //         self.$tbl_affected_serials.ajax.reload();
-        //         var row_indexes = param.row_indexes;
-
-        //         for (let i = 0; i < row_indexes.length; i++) {
-        //             var row = row_indexes[i];
-        //             var nextRow = row + 1;
-
-        //             self.$tbl_hs_serials_oba.row(row).data(response).draw();
-        //             self.$tbl_hs_serials_oba.row(row).deselect();
-        //             self.$tbl_hs_serials_oba.row(nextRow).select();
-        //         }
-                
-        //         self.$tbl_boxes.ajax.reload();
-
-        //     });
-        // },
-        // setHSNGremarks: function(param) {
-        //     var self = this;
-        //     self.submitType = "POST";
-        //     self.jsonData = param;
-        //     self.formAction = "/transactions/qa-inspection/set-hs-ng-remarks";
-        //     self.sendData().then(function() {
-        //         var response = self.responseData;
-        //         var netxRow = parseInt(param.hs_row_index) + 1;
-
-        //         self.$tbl_affected_serials.ajax.reload();
-        //         self.$tbl_hs_serials_oba.row(param.hs_row_index).data(response).draw();
-        //         self.$tbl_hs_serials_oba.row(param.hs_row_index).deselect();
-        //         self.$tbl_hs_serials_oba.row(netxRow).select();
-
-        //         self.$tbl_boxes.ajax.reload();
-        //         $('#modal_hs_ng_reason').modal('hide');
-        //     });
-        // },
         scanHSSerial: function(param) {
             var self = this;
             self.submitType = "POST";

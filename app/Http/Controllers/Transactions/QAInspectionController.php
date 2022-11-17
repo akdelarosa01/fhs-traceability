@@ -48,36 +48,31 @@ class QAInspectionController extends Controller
 
     public function pallet_list()
     {
-        $data = [];
+        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+            DB::raw("p.id as id"),
+            DB::raw("p.model_id as model_id"),
+            DB::raw("m.model as model"),
+            DB::raw("p.transaction_id as transaction_id"),
+            DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
+            DB::raw("p.pallet_status as pallet_dispo_status"),
+            DB::raw("qad.disposition as disposition"),
+            DB::raw("qad.color_hex as color_hex"),
+            DB::raw("p.pallet_qr as pallet_qr"),
+            DB::raw("p.new_box_count as new_box_count"),
+            DB::raw("p.pallet_location as pallet_location"),
+            DB::raw("p.is_printed as is_printed"),
+            DB::raw("ifnull(p.new_box_to_inspect,m.box_count_to_inspect) as box_count_to_inspect"),
+            DB::raw("p.created_at as created_at"),
+            DB::raw("p.updated_at as updated_at"),
+            DB::raw("r.disposition as reason"),
+            DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
+        ])
+        ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+        ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+        ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
+        ->where('p.pallet_location','=','Q.A.');
 
-            $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
-                DB::raw("p.id as id"),
-                DB::raw("p.model_id as model_id"),
-                DB::raw("m.model as model"),
-                DB::raw("p.transaction_id as transaction_id"),
-                DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
-                DB::raw("p.pallet_status as pallet_dispo_status"),
-                DB::raw("qad.disposition as disposition"),
-                DB::raw("qad.color_hex as color_hex"),
-                DB::raw("p.pallet_qr as pallet_qr"),
-                DB::raw("p.new_box_count as new_box_count"),
-                DB::raw("p.pallet_location as pallet_location"),
-                DB::raw("p.is_printed as is_printed"),
-                DB::raw("ifnull(p.new_box_to_inspect,m.box_count_to_inspect) as box_count_to_inspect"),
-                DB::raw("p.created_at as created_at"),
-                DB::raw("p.updated_at as updated_at"),
-                DB::raw("r.disposition as reason"),
-                DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
-            ])
-            ->join('pallet_model_matrices as m','p.model_id','=','m.id')
-            ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
-            ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
-            ->where('p.pallet_location','=','Q.A.');
-
-            return Datatables::of($query)->make(true);
-        
-
-        return $data;
+        return Datatables::of($query)->make(true);
     }
     
     public function get_boxes(Request $req)
