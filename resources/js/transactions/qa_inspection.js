@@ -339,8 +339,7 @@
                     scrollY: "38vh",
                     processing: true,
                     searching: false, 
-                    paging: false, 
-                    info: false,
+                    paging: false,
                     sorting: false,
                     ajax: {
                         url: "/transactions/qa-inspection/get-inspection-sheet-serials",
