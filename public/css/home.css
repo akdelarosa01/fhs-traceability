@@ -1686,17 +1686,9 @@ table.DTFC_Cloned tr.even {
     z-index: 999999 !important;
 }
 
-.modal-content {
-    /*background: #515a62;*/
-}
-
 .modal-header {
     /*background: #515a62;*/
     padding-bottom: 8px;
-}
-
-.modal-title, .close {
-    /*color: #fff;*/
 }
 
 .modal-body {
@@ -2387,4 +2379,11 @@ td .form-control {
 
 .swal2-container {
     z-index: 99999;
+}
+
+.table-display-wrapper {
+    height: 43vh;
+    max-height: 43vh;
+    border: 1px solid #a7b6c1;
+    background-color: #fbfcfc;
 }

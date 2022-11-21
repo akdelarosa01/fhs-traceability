@@ -362,10 +362,10 @@ Q.A. Inspection
 						</div>
 
 						<div class="row">
-							<div class="col-md-6 col-xs-12" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
-								<table class="table table-sm table-hover" id="tbl_inpection_sheet_serial" style="width: 100%">
+							<div class="col-md-6 col-xs-12 table-display-wrapper">
+								<table class="table table-sm table-hover table-light" id="tbl_inpection_sheet_serial" style="width: 100%">
 									<thead>
-										<th>QR Inspection Sheet S/N</th>
+										<th>QR Inspection Sheet S/N (<span id="inspection_sheet_sn_count">0</span>)</th>
 										<th>Prod. Date</th>
 										<th>Operator</th>
 										<th><span id="box_judgment" class="pull-right"></span></th>
@@ -373,8 +373,8 @@ Q.A. Inspection
 								</table>
 							</div>
 
-							<div class="col-md-6 col-xs-12" style="height: 43vh; max-height: 43vh; border: 1px solid #a7b6c1">
-								<table class="table table-sm table-hover" id="tbl_hs_serials_oba" style="width: 100%">
+							<div class="col-md-6 col-xs-12 table-display-wrapper">
+								<table class="table table-sm table-hover table-light" id="tbl_hs_serials_oba" style="width: 100%">
 									<thead>
 										<th></th>
 										<th>Serial Number <span id="hs_scanned_count">0</span> / <span id="hs_total_count">0</span></th>

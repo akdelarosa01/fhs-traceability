@@ -341,6 +341,7 @@
                     searching: false, 
                     paging: false,
                     sorting: false,
+                    info: false,
                     ajax: {
                         url: "/transactions/qa-inspection/get-inspection-sheet-serials",
                         type: "POST",
@@ -409,7 +410,15 @@
                         $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
                     },
                     fnDrawCallback: function() {
-                        $('[data-toggle="tooltip"]').tooltip('toggle');
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        var b_qty_per_box = ($('#b_qty_per_box').val() == "")? 0 : parseInt($('#b_qty_per_box').val());
+
+                        if (b_qty_per_box == data_count) {
+                            $('#inspection_sheet_sn_count').html(data_count).css('color','#00acac');
+                        } else {
+                            $('#inspection_sheet_sn_count').html(data_count).css('color','#ff5b57');
+                        }
                     },
                 }).on('page.dt', function() {
                 });
@@ -1063,6 +1072,8 @@
                     $('#box_judgment').html(box_judgement);
                 }
 
+                self.$tbl_inpection_sheet_serial.ajax.reload();
+
                 // $('#modal_box_inspection').modal('show');
             });
         },
@@ -1503,11 +1514,8 @@
             _QAInspection.box_id = data.id;
             _QAInspection.boxInspection();
 
-            _QAInspection.$tbl_inpection_sheet_serial.ajax.reload();
-
             _QAInspection.$tbl_affected_serials.ajax.reload();
             _QAInspection.$tbl_hs_serials_oba.ajax.reload();
-            
 
             _QAInspection.statusMsg('','clear');
         })
@@ -1538,8 +1546,7 @@
             _QAInspection.qa_judgment = data.qa_judgment;
             _QAInspection.lot_no = $('#b_lot_no').val();
 
-            // $('#btn_good').prop('disabled', false);
-            // $('#btn_notgood').prop('disabled', false);
+            $('#b_oba_serial_no').prop('readonly', true);
 
             _QAInspection.$tbl_hs_history.ajax.reload();
 
@@ -1548,8 +1555,7 @@
             _QAInspection.hs_serial = "";
             _QAInspection.qa_judgment = -1;
             _QAInspection.lot_no = "";
-            // $('#btn_good').prop('disabled', true);
-            // $('#btn_notgood').prop('disabled', true);
+            $('#b_oba_serial_no').prop('readonly', false);
         });
 
         $('#modal_box_inspection').on('shown.bs.modal', function() {
