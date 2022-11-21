@@ -1368,6 +1368,15 @@
                     };
                 },
                 processResults: function(data) {
+                    var box_tested = parseInt($('#box_tested').html());
+                    var box_tested_full = parseInt($('#box_tested_full').html());
+                    $.each(data, function(i,x) {
+                        if (box_tested_full > box_tested) {
+                            if (x.text == 'GOOD') {
+                                data[i] = { id: x.id, text: x.text, disabled: true };
+                            }
+                        }
+                    });
                     return {
                         results: data
                     };
