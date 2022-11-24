@@ -97,12 +97,15 @@ class QAInspectionController extends Controller
                         DB::raw("pb.box_qr as box_qr"),
                         DB::raw("pb.remarks as prod_remarks"),
                         DB::raw("'' as remarks"),
-                        DB::raw("IFNULL(pb.box_judgment,-1) AS box_judgement"),
+                        DB::raw("IFNULL(pb.box_judgment, -1) AS box_judgement"),
                         DB::raw("m.hs_count_per_box as hs_count_per_box"),
-                        DB::raw("IF(qa.box_qr is null, 0, 1) scanned")
+                        DB::raw("IF(qa.box_qr is null, 0, 1) as scanned"),
+                        DB::raw("IFNULL(qa.scan_count, 0) as scan_count")
                     )
                     ->join('pallet_model_matrices as m','m.id', '=', 'pb.model_id')
-                    ->leftJoin('qa_inspection_sheet_serials as qa','qa.box_id', '=', 'pb.id')
+                    ->leftJoin(DB::raw("(SELECT COUNT(box_qr) as scan_count, box_qr, box_id 
+                                        from qa_inspection_sheet_serials group by box_qr, box_id) as qa"),'qa.box_id', '=', 'pb.id')
+                    // ->leftJoin('qa_inspection_sheet_serials as qa','qa.box_id', '=', 'pb.id')
                     ->where('pb.pallet_id', $pallet_id)
                     ->where('pb.is_deleted', 0)
                     ->orderBy('pb.box_qr', 'desc')
@@ -132,6 +135,13 @@ class QAInspectionController extends Controller
         return Datatables::of($query)->make(true);
     }
 
+    public function get_not_detected_serials(Request $req)
+    {
+        $query = DB::connection('mysql')->table('qa_inspected_box_not_detecteds')
+                    ->where('box_id',$req->box_id)->distinct();
+        return Datatables::of($query)->make(true);
+    }
+
     public function check_inspection_sheet(Request $req)
     {
         $data = [
@@ -146,6 +156,7 @@ class QAInspectionController extends Controller
             // HS serials in DB
             $arr_db_serials = [];
             $output_serial = [];
+            $not_detected = [];
             $db_serials = $this->serials($req->box_qr);
 
             foreach ($db_serials as $key => $hs) {
@@ -172,6 +183,25 @@ class QAInspectionController extends Controller
                                 DB::raw("c6 as operator"),
                                 DB::raw("c8 as work_order")
                             )->get();
+
+            $pkg_hs = [];
+            foreach ($hs_dt as $key => $pk) {
+                array_push($pkg_hs,$pk->serial);
+            }
+
+            foreach ($hs_serial as $key => $serial) {
+                if (!in_array($serial,$pkg_hs)) {
+                    array_push($not_detected, [
+                        'box_id' => $req->box_id,
+                        'box_qr' => $req->box_qr,
+                        'hs_serial' => $serial,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+            }
 
             foreach ($hs_serial as $key => $hs) {
                 $hs = trim(str_replace(" ","",preg_replace('/\t+/','',$hs)));
@@ -212,6 +242,20 @@ class QAInspectionController extends Controller
                 $saved = false;
                 foreach ($insert as $batch) {
                     $saved = DB::connection('mysql')->table('qa_inspection_sheet_serials')->insert($batch);
+                }
+            }
+
+            if (count($not_detected) > 0) {
+                DB::connection('mysql')->table('qa_inspected_box_not_detecteds')
+                    ->where('box_id', $req->box_id)
+                    ->where('box_qr',$req->box_qr)
+                    ->delete();
+
+                $nd_insert = array_chunk($not_detected, 1000);
+
+                $saved = false;
+                foreach ($nd_insert as $b) {
+                    $saved = DB::connection('mysql')->table('qa_inspected_box_not_detecteds')->insert($b);
                 }
             }
 
@@ -258,6 +302,7 @@ class QAInspectionController extends Controller
                 $data = [
                     'data' => [
                         'output_serial' => $output_serial,
+                        'not_detected' => $not_detected,
                         'box' => $box
                     ],
                     'success' => true
@@ -309,7 +354,6 @@ class QAInspectionController extends Controller
                 array_push($hs_serials,[
                     'HS_Serial' => str_replace("\r","",$serials[$i])
                 ]);
-                
             }
 
             $query = collect($hs_serials);

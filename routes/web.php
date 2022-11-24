@@ -118,6 +118,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\QAInspectionController::class, 'index'])->name('transactions.qa-inspection');
         Route::post('/get-pallets', [App\Http\Controllers\Transactions\QAInspectionController::class, 'pallet_list'])->name('transactions.qa-inspection.get-pallets');
         Route::post('/get-boxes', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_boxes'])->name('transactions.qa-inspection.get-boxes');
+        Route::post('/get-not-detected-serials', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_not_detected_serials'])->name('transactions.qa-inspection.get-not-detected-serials');
         Route::post('/get-inspection-sheet-serials', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_inspection_sheet_serials'])->name('transactions.qa-inspection.get-inspection-sheet-serials');
         Route::post('/check-inspection-sheet', [App\Http\Controllers\Transactions\QAInspectionController::class, 'check_inspection_sheet'])->name('transactions.qa-inspection.check-inspection-sheet');
         Route::get('/get-lot-no', [App\Http\Controllers\Transactions\QAInspectionController::class, 'get_lot_no'])->name('transactions.qa-inspection.get-lot-no');

@@ -361,7 +361,7 @@ Q.A. Inspection
 							</div>
 						</div>
 
-						<div class="row">
+						<div class="row mb-3">
 							<div class="col-md-6 col-xs-12 table-display-wrapper">
 								<table class="table table-sm table-hover table-light" id="tbl_inpection_sheet_serial" style="width: 100%">
 									<thead>
@@ -380,6 +380,16 @@ Q.A. Inspection
 										<th>Serial Number <span id="hs_scanned_count">0</span> / <span id="hs_total_count">0</span></th>
 										<th>QA Judgment</th>
 										<th></th>
+									</thead>
+								</table>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+								<table class="table table-sm table-hover table-light" id="tbl_hs_not_detected" style="width: 100%">
+									<thead>
+										<th>Serials That were not detected from Packaging.</th>
 									</thead>
 								</table>
 							</div>

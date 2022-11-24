@@ -16,6 +16,7 @@
         this.$tbl_hs_history = "";
         this.$tbl_box_history = "";
         this.$tbl_change_judgment_reasons = "";
+        this.$tbl_hs_not_detected = "";
         this.box_id = 0;
         this.hs_serial = "";
         this.box_history_hs_serial = "";
@@ -168,15 +169,18 @@
                                 break;
                         }
 
-                        if (data.scanned == 1) {
+                        if (data.scan_count == data.hs_count_per_box) {
                             $(dataRow[0].cells[1]).css('background-color', '#372948');
                             $(dataRow[0].cells[1]).css('color', '#FFFFFF');
-                        } else {
+                        } 
+                        else if (data.scan_count > 1 && data.scan_count < data.hs_count_per_box) {
+                            $(dataRow[0].cells[1]).css('background-color', '#FFE15D');
+                            $(dataRow[0].cells[1]).css('color', '#333333');
+                        }
+                        else {
                             $(dataRow[0].cells[1]).css('background-color', '#FFFFFF');
                             $(dataRow[0].cells[1]).css('color', '#333333');
                         }
-
-                        
                     },
                     createdRow: function(row, data, dataIndex) {
                     },
@@ -194,6 +198,7 @@
                     fnDrawCallback: function() {
                         $('div.dataTables_scrollBody').scrollTop(pageScrollPos);
                         var data = this.fnGetData();
+                        console.log(data);
                         var data_count = data.length;
                         $('#box_count').html(data_count);
                         $('#total_is_count').html(data_count);
@@ -874,6 +879,75 @@
             }
             return this;
         },
+        drawHSNotDetectedDatatables: function() {
+            var self = this;
+            if (!$.fn.DataTable.isDataTable('#tbl_hs_not_detected')) {
+                self.$tbl_hs_not_detected = $('#tbl_hs_not_detected').DataTable({
+                    processing: true,
+                    searching: false, 
+                    info: false,
+                    sorting: false,
+                    lengthChange: false,
+                    ajax: {
+                        url: "/transactions/qa-inspection/get-not-detected-serials",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.box_id = self.box_id;
+                        },
+                        error: function(response) {
+                            console.log(response);
+                            if (response.hasOwnProperty('responseJSON')) {
+                                var json = response.responseJSON;
+                                if (json != undefined) {
+                                    self.showError(json.message);
+                                }
+                            }
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "All HS Serial Numbers in Inspection sheet are detected.",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "All HS Serial Numbers in Inspection sheet are detected.",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'hs_serial', name: 'hs_serial', searchable: false, orderable: false 
+                        },
+                    ],
+                    rowCallback: function(row, data) {
+                        
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                    },
+                    fnDrawCallback: function() {
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         statusMsg: function(msg,status) {
             switch (status) {
                 case 'success':
@@ -905,8 +979,10 @@
                 if (count > 0) {
                     self.box_id = param.box_id;
                     self.$tbl_inpection_sheet_serial.ajax.reload();
+                    self.$tbl_hs_not_detected.ajax.reload();
                 } else {
                     var output_serial = response.output_serial;
+                    var not_detected = response.not_detected;
                     var box = response.box;
 
                     if (output_serial != undefined) {
@@ -914,6 +990,7 @@
                     
                         self.$tbl_boxes.row({selected: true}).data(box).draw();
                         self.$tbl_inpection_sheet_serial.rows.add(output_serial).draw();
+                        self.$tbl_hs_not_detected.rows.add(not_detected).draw();
 
                         var nextIndex = index+1;
                         self.$tbl_boxes.row(index).deselect();
@@ -1073,6 +1150,7 @@
                 }
 
                 self.$tbl_inpection_sheet_serial.ajax.reload();
+                self.$tbl_hs_not_detected.ajax.reload();
 
                 // $('#modal_box_inspection').modal('show');
             });
@@ -1293,6 +1371,7 @@
         _QAInspection.drawHSHistoryDatatables();
         _QAInspection.drawBoxHistoryDatatables();
         _QAInspection.drawChangeJudgmentReasonsDatatables();
+        _QAInspection.drawHSNotDetectedDatatables();
 
         var prv_box_id_qr = document.getElementById('prv_box_id_qr')
         _QAInspection.box_qr_code = new QRCode(prv_box_id_qr, {
@@ -1570,6 +1649,7 @@
         $('#modal_box_inspection').on('shown.bs.modal', function() {
             $('#b_qr_inspection_sheet').focus();
             _QAInspection.$tbl_inpection_sheet_serial.columns.adjust();
+            _QAInspection.$tbl_hs_not_detected.columns.adjust();
             _QAInspection.$tbl_hs_serials_oba.columns.adjust();
         }).on('hide.bs.modal', function () {
             var index = _QAInspection.$tbl_hs_serials_oba.row({selected: true}).index();
