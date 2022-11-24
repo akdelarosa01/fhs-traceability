@@ -149,7 +149,12 @@ class QAInspectionController extends Controller
             $db_serials = $this->serials($req->box_qr);
 
             foreach ($db_serials as $key => $hs) {
-                array_push($arr_db_serials,str_replace("\r","",$hs->HS_Serial));
+                if (is_array($hs)) {
+                    array_push($arr_db_serials,$hs['HS_Serial']);
+                } else {
+                    array_push($arr_db_serials,str_replace("\r","",$hs->HS_Serial));
+                }
+                
             }
 
             // HS serials were scanned in QA
@@ -284,7 +289,7 @@ class QAInspectionController extends Controller
     private function serials($box_qr)
     {
         $query = DB::connection('mysql')
-                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
+                    ->select("SELECT distinct case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
                             FROM furukawa.tinspectionsheetprintdata as b
                             join formal.barcode as f
                             on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
@@ -292,14 +297,31 @@ class QAInspectionController extends Controller
                             and b.lot_no = f.c9
                             where b.BoxSerialNo = '".$box_qr."R'");
         if (count((array)$query) == 0) {
-            $query = DB::connection('mysql')
-                    ->select("SELECT case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
-                            FROM furukawa.tinspectionsheetprintdata as b
-                            join formal.barcode as f
-                            on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
-                            and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
-                            and b.lot_no = f.c9
-                            where b.BoxSerialNo = '".$box_qr."'");
+            $hs_serials = [];
+            $query = DB::connection('mysql')->table("tinspectionsheetprintdata")
+                        ->select('qrBarcodes')
+                        ->where("BoxSerialNo",$box_qr)
+                        ->orderBy('id','desc')->first();
+
+            $serials = explode(';',$query->qrBarcodes);
+
+            for ($i=0; $i < count($serials); $i++) {
+                array_push($hs_serials,[
+                    'HS_Serial' => str_replace("\r","",$serials[$i])
+                ]);
+                
+            }
+
+            $query = collect($hs_serials);
+
+            // $query = DB::connection('mysql')
+            //         ->select("SELECT distinct case when f.c10 <> '' and f.c10 is not null then f.c4 else f.c4 end as HS_Serial
+            //                 FROM furukawa.tinspectionsheetprintdata as b
+            //                 join formal.barcode as f
+            //                 on CASE WHEN right(b.BoxSerialNo,1) = 'R' then SUBSTRING(b.BoxSerialNo,-4,3) else right(b.BoxSerialNo,3) end = LPAD(f.c7,3,'0')
+            //                 and f.c3 = LEFT(b.BoxSerialNo,LENGTH(f.c3))
+            //                 and b.lot_no = f.c9
+            //                 where b.BoxSerialNo = '".$box_qr."'");
         }
         return $query;
     }
