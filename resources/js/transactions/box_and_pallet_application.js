@@ -139,6 +139,7 @@
                         $('#tbl_boxes').addClass('disabled');
 
                         $('#btn_delete_transaction').prop('disabled', true);
+                        $('#btn_new_pallet').prop('disabled', true);
                         $('#btn_transfer').prop('disabled', true);
                         $('#btn_update').prop('disabled', true);
                         $('#btn_broken_pallet').prop('disabled', true);
@@ -170,6 +171,7 @@
                         $('#tbl_boxes').removeClass('disabled');
 
                         $('#btn_delete_transaction').prop('disabled', false);
+                        $('#btn_new_pallet').prop('disabled', false);
                         $('#btn_transfer').prop('disabled', false);
                         $('#btn_update').prop('disabled', false);
                         $('#btn_broken_pallet').prop('disabled', false);
@@ -208,6 +210,7 @@
                     $('#preview_div').show()
 
                     $('#btn_delete_transaction').prop('disabled', true);
+                    $('#btn_new_pallet').prop('disabled', true);
                     $('#btn_transfer').prop('disabled', true);
                     $('#btn_update').prop('disabled', true);
                     $('#btn_broken_pallet').prop('disabled', true);
@@ -454,6 +457,7 @@
                         var data = this.fnGetData();
                         var data_count = data.length;
                         $('#pallet_count').html(data_count);
+                        console.log(data)
                     },
                 }).on('page.dt', function() {
                 });
@@ -1089,6 +1093,17 @@
                 $('#tbl_pallet_history tbody').html(tbl_pallet_history);
             });
         },
+        newPallet: function(param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/box-and-pallet/new-pallet";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                self.$tbl_pallets.row.add(response.pallet).draw();
+                self.viewState('');
+            });
+        }
     }
     BoxPalletApp.init.prototype = $.extend(BoxPalletApp.prototype, $D.init.prototype, $F.init.prototype);
     BoxPalletApp.init.prototype = BoxPalletApp.prototype;
@@ -1278,6 +1293,7 @@
             $('#box_count_full').html(0);
             
             $('#btn_delete_transaction').prop('disabled', false);
+            $('#btn_new_pallet').prop('disabled', false);
 
             _BoxPalletApp.statusMsg('','clear');
             _BoxPalletApp.$tbl_pallets.ajax.reload();
@@ -1313,6 +1329,7 @@
 
             $('#btn_start_scan').prop('disabled', true);
             $('#btn_delete_transaction').prop('disabled', true);
+            $('#btn_new_pallet').prop('disabled', true);
             $('#btn_transfer').prop('disabled', true);
             $('#btn_update').prop('disabled', true);
             $('#btn_broken_pallet').prop('disabled', true);
@@ -1824,6 +1841,39 @@
             } else {
                 _BoxPalletApp.swMsg("Please select a Pallet in Production with Rework Process.","warning");
             }
+        });
+
+        $('#btn_new_pallet').on('click', function() {
+            var target_no_of_pallet = parseInt($('#target_no_of_pallet').val());
+            var pallet_count = _BoxPalletApp.$tbl_pallets.rows().count();
+            var error = 0;
+            var param = {
+                _token: _BoxPalletApp.token,
+                model_id: $('#model_id').val(),
+                trans_id: $('#id').val(),
+                model: $('#model').val()
+            };
+
+            if (target_no_of_pallet == pallet_count || pallet_count > target_no_of_pallet) {
+                error++;
+                _BoxPalletApp.swMsg("Target Number of Pallets has already met.","warning");
+            }
+
+            if (target_no_of_pallet > pallet_count) {
+                _BoxPalletApp.$tbl_pallets.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                    var data = this.data();
+                    if (data.box_count_per_pallet > data.box_count) {
+                        error++;
+                        _BoxPalletApp.swMsg("Some Pallets are still not completed.","warning");
+                        return false;
+                    }
+                } );
+            }
+
+            if (error == 0) {
+                _BoxPalletApp.newPallet(param);
+            }
+            
         });
     });
 })();
