@@ -148,6 +148,8 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\WarehouseController::class, 'index'])->name('transactions.warehouse');
         Route::get('/get-customer-destinations', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_customer_destinations'])->name('transactions.warehouse.get-customer-destinations');
         Route::post('/get-models-for-ship', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_model_for_ship'])->name('transactions.warehouse.get-models-for-ship');
+        Route::post('/get-pallets', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_pallets'])->name('transactions.warehouse.get-pallets');
+        Route::get('/get-boxes', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_boxes'])->name('transactions.warehouse.get-boxes');
     });
 
     

@@ -24,9 +24,12 @@ Warehouse
 			<div class="col-4">
 				<form action="/transactions/warehouse/start-shipment" method="post" id="frm_whs_details">
 					@csrf
-					<input type="hidden" class="clear" id="id" name="id" value="">
+					{{-- <input type="hidden" class="clear" id="pallet_id" name="pallet_id" value="">
+					<input type="hidden" class="clear" id="transaction_id" name="transaction_id" value=""> --}}
+					<input type="hidden" class="clear" id="model_id" name="model_id" value="">
 					<input type="hidden" class="clear" id="model" name="model" value="">
-					<input type="hidden" class="clear" id="hs_qty" name="hs_qty" value="">
+					{{-- <input type="hidden" class="clear" id="pallet_qr" name="pallet_qr" value="">
+					<input type="hidden" class="clear" id="hs_qty" name="hs_qty" value=""> --}}
 
 					<div class="row">
 						<div class="col-12">
@@ -75,7 +78,7 @@ Warehouse
 								<button class="btn btn-success read-only" type="button" id="btn_start_shipment">Start Shipment</button>
 							</div>
 							<input type="hidden" class="" id="pallet_id" name="pallet_id"/>
-							<input type="text" class="form-control form-control-lg" placeholder="Scan Pallet QR" aria-describedby="btn_start_shipment" id="pallet_qr" name="pallet_qr" autocomplete="off" readonly>
+							<input type="text" class="form-control form-control-lg" placeholder="Scan Pallet QR" aria-describedby="btn_start_shipment" id="scan_pallet_qr" name="scan_pallet_qr" autocomplete="off" readonly>
 							<div id="pallet_qr_feedback"></div>
 						</div>
 					</div>
@@ -96,6 +99,7 @@ Warehouse
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
 						<table class="table table-sm table-hover" id="tbl_hs_models" style="width: 100%">
 							<thead>
+								<th width="10px"></th>
 								<th>Model Count: <span id="model_count">0</span></th>
 							</thead>
 						</table>
@@ -106,7 +110,7 @@ Warehouse
 			<div class="col-5">
 				<div class="row mb-2">
 					<div class="col-12" style="height: 48vh; max-height: 48vh; border: 1px solid #a7b6c1">
-						<table class="table table-sm table-hover" id="tbl_pallets" style="width: 100%">
+						<table class="table table-sm table-white" id="tbl_pallets" style="width: 100%">
 							<thead>
 								<th style="width: 10px;"></th>
 								<th>Available Pallet: <span id="available_pallet">0</span></th>

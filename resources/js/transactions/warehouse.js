@@ -10,6 +10,10 @@
         this.$tbl_hs_models = "";
         this.$tbl_pallets = "";
         this.$tbl_shipments = "";
+
+        this.token = $("meta[name=csrf-token]").attr("content");
+        this.read_only = $("meta[name=read-only]").attr("content");
+        this.authorize = $("meta[name=authorize]").attr("content");
     }
     Warehouse.prototype = {
         permission: function() {
@@ -50,7 +54,6 @@
                     } ],
                     select: {
                         style: 'single',
-                        selector: 'td:not(:last-child)'
                     },
                     ajax: {
                         url: "/transactions/warehouse/get-models-for-ship",
@@ -71,7 +74,7 @@
                             sortAscending: ": activate to sort column ascending",
                             sortDescending: ": activate to sort column descending"
                         },
-                        emptyTable: "No Box ID was scanned.",
+                        emptyTable: "No Pallets were transferred to warehouse yet.",
                         info: "Showing _START_ to _END_ of _TOTAL_ records",
                         infoEmpty: "No records found",
                         infoFiltered: "(filtered1 from _MAX_ total records)",
@@ -150,35 +153,151 @@
                         $('div.dataTables_scrollBody').scrollTop(pageScrollPos);
                         var data = this.fnGetData();
                         var data_count = data.length;
-                        $('#box_count').html(data_count);
-
-                        var inspected = 0;
-                        $.each(data, function(i, x) {
-                            if (x.box_qr_judgement > -1) {
-                                inspected = inspected+1;
-                            }
-                        });
-
-                        var box_judge = 0;
-                        $.each(data, function(i, x) {
-                            if (x.box_judgement > -1) {
-                                box_judge = box_judge+1;
-                            }
-                        });
-
-                        $('#box_tested').html(box_judge);
-
-                        $('[data-toggle="tooltip"]').tooltip();
-
-                        // if (inspected == data_count) {
-                        //     $('.remarks_td').css('background-color', '#ffffff');
-                        //     $('.remarks_td').css('color', '#333333');
-                        // }
+                        $('#model_count').html(data_count);
                     },
                 }).on('page.dt', function() {
                 });
             }
             return this;
+        },
+        drawPalletsDatatables: function() {
+            var self = this;
+            var pageScrollPos = "";
+            if (!$.fn.DataTable.isDataTable('#tbl_pallets')) {
+                self.$tbl_pallets = $('#tbl_pallets').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    columnDefs: [ {
+                        orderable: false,
+                        searchable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    } ],
+                    select: {
+                        style: 'single',
+                    },
+                    ajax: {
+                        url: "/transactions/warehouse/get-pallets",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.model_id = $('#model_id').val();
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "Please select model to display the pallets",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'id', render: function() {
+                                return '';
+                            }, name: 'id', searchable: false, orderable: false, width: '15px'
+                        },
+                        { 
+                            data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false,
+                        },
+                        {
+                            data: 'pallet_status', name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
+                        },
+                        { 
+                            data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center align-middle'
+                        }
+                    ],
+                    rowCallback: function(row, data) {
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.id);
+                        switch (data.pallet_dispo_status) {
+                            case 1:
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 2:
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 3:
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 4:
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            case 5:
+                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                            default:
+                                $(dataRow[0].cells[2]).css('background-color', '#FFDCAE');
+                                $(dataRow[0].cells[2]).css('color', '#000000');
+                                break;
+                        }
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+                    },
+                    preDrawCallback: function (settings) {
+                        pageScrollPos = $('div.dataTables_scrollBody').scrollTop();
+                    },
+                    fnDrawCallback: function() {
+                        $('div.dataTables_scrollBody').scrollTop(pageScrollPos);
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#available_pallet').val(data_count);
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
+        getBoxes: function(param, handle) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/transactions/warehouse/get-boxes";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                if (!response.hasOwnProperty('msg')) {
+                    console.log(response);
+                    handle(response);
+                }
+                
+            });
         },
     }
     Warehouse.init.prototype = $.extend(Warehouse.prototype, $D.init.prototype, $F.init.prototype);
@@ -189,6 +308,7 @@
         _Warehouse.permission();
         _Warehouse.RunDateTime();
         _Warehouse.drawModelsDatatables();
+        _Warehouse.drawPalletsDatatables();
 
         $('#destination').select2({
             allowClear: true,
@@ -217,6 +337,74 @@
                 },
             }
         }).val(null).trigger('change.select2');
+
+        _Warehouse.$tbl_hs_models.on('select', function ( e, dt, type, indexes ) {
+            var data = _Warehouse.$tbl_hs_models.row( indexes ).data();
+            $('#model_id').val(data.model_id);
+            $('#model').val(data.model);
+            _Warehouse.$tbl_pallets.ajax.reload();
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            $('#model_id').val('');
+            $('#model').val('');
+            _Warehouse.$tbl_pallets.ajax.reload();
+        });
+
+        _Warehouse.$tbl_pallets.on('select', function ( e, dt, type, indexes ) {
+            var data = _Warehouse.$tbl_pallets.row( indexes ).data();
+            
+            $('#pallet_id').val(data.id);
+            //$('#pallet_row_index').val(indexes[0]);
+            var row = "";
+
+            _Warehouse.getBoxes({
+                _token: _Warehouse.token,
+                pallet_id: data.id
+            }, function(response) {
+                row += '<tr id="r'+data.id+'_child_tr">'+
+                            '<td></td>'+
+                            '<td colspan="3" id="r'+data.id+'_child_td"></td>'+
+                        '</tr>';
+
+                $("#r"+data.id).after(row);
+                var table = '<table class="table table-sm" style="width:100%;">';
+                $.each(response, function(i,x) {
+                    var box_judgement = parseInt(data.box_judgement);
+                    var bgcolor = "";
+                    var ftcolor = "";
+                    var judgment = "";
+                    switch (box_judgement) {
+                        case 1:
+                            bgcolor = "#00acac";
+                            ftcolor = "#FFFFFF";
+                            judgment = "GOOD";
+                            break;
+                        case 0:
+                            bgcolor = "#ff5b57";
+                            ftcolor = "#FFFFFF";
+                            judgment = "NOT GOOD";
+                            break;
+                        default:
+                            bgcolor = "#ced4da";
+                            ftcolor = "#333333";
+                            judgment = "NOT YET INSPECTED";
+                            break;
+                    }
+                    table += '<tr><td>'+x.box_qr+'</td><td style="background-color: '+bgcolor+'; color: '+ftcolor+'">'+judgment+'</td></tr>';
+                });
+                table += '</table>';
+                
+                $('#r'+data.id+'_child_td').html(table);
+            });
+
+        })
+        .on('deselect', function ( e, dt, type, indexes ) {
+            var data = _Warehouse.$tbl_pallets.row( indexes ).data();
+
+            $('#r'+data.id+'_child_tr').remove();
+
+            
+        });
     });
 })();
 
