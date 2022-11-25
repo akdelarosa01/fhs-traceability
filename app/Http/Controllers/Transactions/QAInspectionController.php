@@ -189,6 +189,11 @@ class QAInspectionController extends Controller
                 array_push($pkg_hs,$pk->serial);
             }
 
+            DB::connection('mysql')->table('qa_inspected_box_not_detecteds')
+                    ->where('box_id', $req->box_id)
+                    ->where('box_qr',$req->box_qr)
+                    ->delete();
+
             foreach ($hs_serial as $key => $serial) {
                 if (!in_array($serial,$pkg_hs)) {
                     array_push($not_detected, [
@@ -246,11 +251,6 @@ class QAInspectionController extends Controller
             }
 
             if (count($not_detected) > 0) {
-                DB::connection('mysql')->table('qa_inspected_box_not_detecteds')
-                    ->where('box_id', $req->box_id)
-                    ->where('box_qr',$req->box_qr)
-                    ->delete();
-
                 $nd_insert = array_chunk($not_detected, 1000);
 
                 $saved = false;
