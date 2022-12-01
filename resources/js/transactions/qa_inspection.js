@@ -2007,12 +2007,22 @@
             var data = row_data[0];
             var index = row_indexes[0];
 
-            _QAInspection.TransferTo({
-                _token: _QAInspection.token,
-                pallet_id: data.id,
-                pallet_location: 'WAREHOUSE',
-                row_index: index
-            });
+            if (data.pallet_dispo_status == 2) {
+                if (data.is_printed > 0) {
+                    _QAInspection.TransferTo({
+                        _token: _QAInspection.token,
+                        pallet_id: data.id,
+                        pallet_location: 'WAREHOUSE',
+                        row_index: index
+                    });
+                } else {
+                    _QAInspection.swMsg("Please print the Pallet label first.","warning");
+                }
+            } else {
+                _QAInspection.swMsg("Only Pallets with GOOD judgments are allowed to transfer to Warehouse.","warning");
+            }
+
+           
         });
         
         $('#btn_set_shift').on('click', function() {

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Transactions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Events\PalletTransferred;
 use App\Models\PalletCustomer;
+use App\Models\PalletBoxPalletHdr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
@@ -174,6 +176,74 @@ class WarehouseController extends Controller
         }
         
                     
+        return response()->json($data);
+    }
+
+    public function transfer_to(Request $req)
+    {
+        $data = [
+			'msg' => "Transferring Pallet has failed.",
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+
+        try {
+            $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+            $pallet->pallet_location = $req->pallet_location;
+            $pallet->update_user = Auth::user()->id;
+
+            $msg = "";
+
+            if ($pallet->update()) {
+                if ($req->pallet_location == "Q.A.") {
+                    $msg = "Pallet ".$pallet->pallet_qr." was successfully transferred.";
+
+                    $content = [
+                        'title' => "Pallet Transferred to Q.A.",
+                        'message' => "Pallet ".$pallet->pallet_qr." was transferred to Q.A.."
+                    ];
+
+                    $pallet_data = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')
+                                    ->select(
+                                        'p.id',
+                                        'p.transaction_id',
+                                        'p.model_id',
+                                        'm.model',
+                                        DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
+                                        'p.pallet_qr',
+                                        'p.pallet_status',
+                                        'p.pallet_location',
+                                        'p.is_printed',
+                                        'p.created_at',
+                                        'p.updated_at'
+                                    )
+                                    ->join('pallet_model_matrices as m','m.id','=','p.model_id')
+                                    ->where('p.id', $req->pallet_id)->first();
+
+                    $recepients = $this->_helpers->qa_users();
+                    broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/qa-inspection/'));
+                }
+
+                $data = [
+                    'msg' => $msg,
+                    'data' => [],
+                    'success' => true,
+                    'msgType' => 'success',
+                    'msgTitle' => 'Success!'
+                ];
+            }
+
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
         return response()->json($data);
     }
 

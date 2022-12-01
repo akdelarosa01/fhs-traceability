@@ -299,6 +299,16 @@
                 
             });
         },
+        TransferTo: function (param) {
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/warehouse/transfer-to";
+            self.sendData().then(function() {
+                self.$tbl_pallets.row(param.row_index).remove().draw();
+                $('#modal_transfer_to').modal('hide');
+            });
+        },
     }
     Warehouse.init.prototype = $.extend(Warehouse.prototype, $D.init.prototype, $F.init.prototype);
     Warehouse.init.prototype = Warehouse.prototype;
@@ -309,6 +319,8 @@
         _Warehouse.RunDateTime();
         _Warehouse.drawModelsDatatables();
         _Warehouse.drawPalletsDatatables();
+
+        $('#btn_transfer').prop('disabled', true);
 
         $('#destination').select2({
             allowClear: true,
@@ -352,6 +364,8 @@
 
         _Warehouse.$tbl_pallets.on('select', function ( e, dt, type, indexes ) {
             var data = _Warehouse.$tbl_pallets.row( indexes ).data();
+
+            $('#btn_transfer').prop('disabled', false);
             
             $('#pallet_id').val(data.id);
             //$('#pallet_row_index').val(indexes[0]);
@@ -402,8 +416,31 @@
             var data = _Warehouse.$tbl_pallets.row( indexes ).data();
 
             $('#r'+data.id+'_child_tr').remove();
-
+            $('#btn_transfer').prop('disabled', true);
             
+        });
+
+        $('#btn_transfer').on('click', function() {
+            var row_data = _Warehouse.$tbl_pallets.rows({selected:  true}).data();
+            var data = row_data[0];
+
+            $('#transfer_pallet_id').val(data.id);
+            $('#modal_transfer_to').modal('show');
+        });
+
+        $('#btn_transfer_qa').on('click', function() {
+            var row_data = _Warehouse.$tbl_pallets.rows({selected:  true}).data();
+            var row_indexes = _Warehouse.$tbl_pallets.rows({selected:  true}).indexes();
+            var data = row_data[0];
+            var index = row_indexes[0];
+
+            _Warehouse.TransferTo({
+                _token: _Warehouse.token,
+                pallet_id: data.id,
+                pallet_location: 'Q.A.',
+                row_index: index
+            });
+            $('#modal_transfer_to').modal('show');
         });
     });
 })();
