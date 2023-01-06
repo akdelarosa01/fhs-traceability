@@ -3178,6 +3178,7 @@ B. Synopsis: Real Time Script
                     select: {
                         style: 'single',
                     },
+                    order: [[1]],
 					ajax: {
                         url: "/transactions/qa-inspection/get-pallets",
                         type: "POST",
