@@ -23,6 +23,81 @@
                 $(x).prop('disabled',$state);
             });
         },
+        viewState: function(state) {
+            var self = this;
+            switch (state) {
+                case 'SCAN':
+                    $('#destination').select2({
+                        disabled: true,
+                        allowClear: true,
+                        placeholder: 'Select Customer Destination',
+                        theme: 'bootstrap4',
+                        width: 'auto',
+                    });
+
+                    var title = $('#btn_start_shipment').html();
+                    if (title == "Start Shipment") {
+                        $('#btn_transfer').prop('disabled', true);
+                        $('#btn_sort_by').prop('disabled', true);
+                        $('#btn_close_shipment').prop('disabled', false);
+
+                        $('#btn_start_shipment').html("Stop Shipment");
+                        $('#btn_start_shipment').removeClass("btn-success");
+                        $('#btn_start_shipment').addClass("btn-danger");
+                        $('#scan_pallet_qr').prop('readonly', false);
+                        $('#scan_pallet_qr').val('');
+
+                        $('#tbl_hs_models').addClass('disabled');
+                        $('#tbl_pallets').addClass('disabled');
+
+                        self.hideInputErrors('scan_pallet_qr');
+                    } else {
+                        
+                        $('#btn_transfer').prop('disabled', false);
+                        $('#btn_sort_by').prop('disabled', false);
+                        $('#btn_close_shipment').prop('disabled', true);
+
+                        $('#btn_start_shipment').html("Start Shipment");
+                        $('#btn_start_shipment').removeClass("btn-danger");
+                        $('#btn_start_shipment').addClass("btn-success");
+                        $('#scan_pallet_qr').prop('readonly', true);
+                        $('#scan_pallet_qr').val('');
+
+                        $('#tbl_hs_models').removeClass('disabled');
+                        $('#tbl_pallets').removeClass('disabled');
+                        
+                        self.hideInputErrors('scan_pallet_qr');
+                    }
+                    
+                    break;
+                case 'MODEL_SELECTED':
+                    $('#btn_sort_by').prop('disabled', false);
+                    $('#btn_start_shipment').prop('disabled', false);
+                    break;
+                case 'MODEL_DESELECTED':
+                    $('#btn_sort_by').prop('disabled', true);
+                    $('#btn_start_shipment').prop('disabled', true);
+                    break;
+                default:
+                    $('#btn_transfer').prop('disabled', true);
+                    $('#btn_sort_by').prop('disabled', true);
+                    $('#btn_close_shipment').prop('disabled', true);
+                    $('#btn_start_shipment').prop('disabled', true);
+
+                    $('#btn_start_shipment').prop('disabled', false);
+                    $('#btn_start_shipment').html("Start Shipment");
+                    $('#btn_start_shipment').removeClass("btn-danger");
+                    $('#btn_start_shipment').addClass("btn-success");
+                    $('#scan_pallet_qr').prop('readonly', true);
+                    $('#scan_pallet_qr').val('');
+
+                    $('#tbl_hs_models').removeClass('disabled');
+                    $('#tbl_pallets').removeClass('disabled');
+                    
+                    self.hideInputErrors('scan_pallet_qr');
+                    break;
+            }
+        },
         RunDateTime: function() {
             const zeroFill = n => {
 				return ('0' + n).slice(-2);
@@ -285,6 +360,93 @@
             }
             return this;
         },
+        drawShipmentsDatatables: function() {
+            var self = this;
+            var pageScrollPos = "";
+            if (!$.fn.DataTable.isDataTable('#tbl_shipments')) {
+                self.$tbl_shipments = $('#tbl_shipments').DataTable({
+                    scrollY: "43vh",
+                    processing: true,
+                    searching: false, 
+                    paging: false, 
+                    info: false,
+                    sorting: false,
+                    select: {
+                        style: 'single',
+                    },
+                    ajax: {
+                        url: "/transactions/warehouse/get-shipments",
+                        type: "POST",
+                        dataType: "JSON",
+                        headers: {
+                            'X-CSRF-TOKEN': self.token
+                        },
+                        data: function(d) {
+                            d._token = self.token;
+                            d.model_id = $('#model_id').val();
+                        },
+                        error: function(response) {
+                            console.log(response);
+                        }
+                    },
+                    language: {
+                        aria: {
+                            sortAscending: ": activate to sort column ascending",
+                            sortDescending: ": activate to sort column descending"
+                        },
+                        emptyTable: "Please select model to display the pallets",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records found",
+                        infoFiltered: "(filtered1 from _MAX_ total records)",
+                        lengthMenu: "Show _MENU_",
+                        search: "Search:",
+                        zeroRecords: "No matching records found",
+                        paginate: {
+                            "previous": "Prev",
+                            "next": "Next",
+                            "last": "Last",
+                            "first": "First"
+                        }
+                    },
+                    deferRender: true,
+                    columns: [
+                        { 
+                            data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false,
+                        },
+                        {
+                            data: 'shipper', name: 'shipper', searchable: false, orderable: false, className: 'text-center'
+                        },
+                        { 
+                            data: 'shipped_at', name: 'shipped_at', searchable: false, orderable: false, className: 'text-center align-middle'
+                        }
+                    ],
+                    rowCallback: function(row, data) {
+                        var dataRow = $(row);
+                    },
+                    createdRow: function(row, data, dataIndex) {
+                    },
+                    initComplete: function() {
+                        $('.dataTables_scrollBody').slimscroll();
+                        $('.dataTables_scrollBody').css('height','43vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('height','43vh');
+
+                        $('.dataTables_scrollBody').css('min-height','10vh');
+                        $('.dataTables_scroll > .slimScrollDiv').css('min-height','10vh');
+                    },
+                    preDrawCallback: function (settings) {
+                        pageScrollPos = $('div.dataTables_scrollBody').scrollTop();
+                    },
+                    fnDrawCallback: function() {
+                        $('div.dataTables_scrollBody').scrollTop(pageScrollPos);
+                        var data = this.fnGetData();
+                        var data_count = data.length;
+                        $('#shipped_pallet_count').html(data_count);
+                    },
+                }).on('page.dt', function() {
+                });
+            }
+            return this;
+        },
         getBoxes: function(param, handle) {
             var self = this;
             self.submitType = "GET";
@@ -309,6 +471,10 @@
                 $('#modal_transfer_to').modal('hide');
             });
         },
+        addToShipment: function(param) {
+            var self = this;
+            self.$tbl_shipments.rows().add(param).draw();
+        }
     }
     Warehouse.init.prototype = $.extend(Warehouse.prototype, $D.init.prototype, $F.init.prototype);
     Warehouse.init.prototype = Warehouse.prototype;
@@ -316,11 +482,11 @@
     $(document).ready(function() {
         var _Warehouse = Warehouse();
         _Warehouse.permission();
+        _Warehouse.viewState('');
         _Warehouse.RunDateTime();
         _Warehouse.drawModelsDatatables();
         _Warehouse.drawPalletsDatatables();
-
-        $('#btn_transfer').prop('disabled', true);
+        _Warehouse.drawShipmentsDatatables();
 
         $('#destination').select2({
             allowClear: true,
@@ -354,11 +520,13 @@
             var data = _Warehouse.$tbl_hs_models.row( indexes ).data();
             $('#model_id').val(data.model_id);
             $('#model').val(data.model);
+            _Warehouse.viewState('MODEL_SELECTED');
             _Warehouse.$tbl_pallets.ajax.reload();
         })
         .on('deselect', function ( e, dt, type, indexes ) {
             $('#model_id').val('');
             $('#model').val('');
+            _Warehouse.viewState('MODEL_DESELECTED');
             _Warehouse.$tbl_pallets.ajax.reload();
         });
 
@@ -383,7 +551,7 @@
                 $("#r"+data.id).after(row);
                 var table = '<table class="table table-sm" style="width:100%;">';
                 $.each(response, function(i,x) {
-                    var box_judgement = parseInt(data.box_judgement);
+                    var box_judgement = parseInt(x.box_judgement);
                     var bgcolor = "";
                     var ftcolor = "";
                     var judgment = "";
@@ -401,7 +569,7 @@
                         default:
                             bgcolor = "#ced4da";
                             ftcolor = "#333333";
-                            judgment = "NOT YET INSPECTED";
+                            judgment = "PASS";
                             break;
                     }
                     table += '<tr><td>'+x.box_qr+'</td><td style="background-color: '+bgcolor+'; color: '+ftcolor+'">'+judgment+'</td></tr>';
@@ -442,7 +610,49 @@
             });
             $('#modal_transfer_to').modal('show');
         });
+
+        $('#btn_start_shipment').on('click', function() {
+            var destination = $('#destination').val();
+            var models_count = _Warehouse.$tbl_hs_models.row({selected: true}).count();
+            if (destination == null || destination == '') {
+                _Warehouse.swMsg("Please select Customer Destination first.","warning");
+            }
+            else if (models_count == 0) {
+                _Warehouse.swMsg("Please select Model first.","warning");
+            }
+            else {
+                _Warehouse.viewState('SCAN');
+            }
+        });
+
+        $('#scan_pallet_qr').on('change', function() {
+            var pallet_qr = $(this).val();
+            var shipper = $('#warehouse_pic').val();
+            pallet_qr = pallet_qr.replace(/\s/g, '');
+            var validated = false;
+
+            _Warehouse.$tbl_pallets.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                var data = this.data();
+                
+                if (data.pallet_qr == pallet_qr) {
+                    validated = true;
+                    return false;
+                }
+            });
+
+            if (!validated) {
+                _Warehouse.swMsg("Pallet ID is not belong in this model.","warning");
+            } else {
+                _Warehouse.addToShipment({
+                    'pallet_qr': pallet_qr,
+                    'shipper': shipper,
+                    'shipped_at': ""
+                });
+            }
+        });
     });
+
+    
 })();
 
 

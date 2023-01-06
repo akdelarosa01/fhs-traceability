@@ -179,6 +179,32 @@ class WarehouseController extends Controller
         return response()->json($data);
     }
 
+    public function get_shipments(Request $req)
+    {
+        $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+            DB::raw("p.id as id"),
+            DB::raw("p.model_id as model_id"),
+            DB::raw("m.model as model"),
+            DB::raw("p.transaction_id as transaction_id"),
+            DB::raw("p.pallet_status as pallet_dispo_status"),
+            DB::raw("p.pallet_qr as pallet_qr"),
+            DB::raw("p.new_box_count as new_box_count"),
+            DB::raw("p.pallet_location as pallet_location"),
+            DB::raw("p.is_printed as is_printed"),
+            DB::raw("p.created_at as created_at"),
+            DB::raw("p.updated_at as updated_at"),
+            DB::raw("p.shipped_at as shipped_at"),
+            DB::raw("CONCAT(u.firstname,' ',u.lastname) as shipper")
+        ])
+        ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+        ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+        ->leftJoin('users as u','p.update_user','=','u.id')
+        ->where('p.is_shipped','=', 1)
+        ->where('p.model_id', $req->model_id);
+
+        return Datatables::of($query)->make(true);
+    }
+
     public function transfer_to(Request $req)
     {
         $data = [

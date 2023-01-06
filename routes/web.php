@@ -149,8 +149,24 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-customer-destinations', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_customer_destinations'])->name('transactions.warehouse.get-customer-destinations');
         Route::post('/get-models-for-ship', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_model_for_ship'])->name('transactions.warehouse.get-models-for-ship');
         Route::post('/get-pallets', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_pallets'])->name('transactions.warehouse.get-pallets');
+        Route::post('/get-shipments', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_shipments'])->name('transactions.warehouse.get-shipments');
         Route::get('/get-boxes', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_boxes'])->name('transactions.warehouse.get-boxes');
         Route::post('/transfer-to', [App\Http\Controllers\Transactions\WarehouseController::class, 'transfer_to'])->name('transactions.warehouse.transfer-to');
+    });
+
+    Route::group(['prefix' => 'shipment'], function () {
+        Route::get('/', [App\Http\Controllers\Transactions\ShipmentController::class, 'index'])->name('transactions.shipment');
+        Route::get('/get-customer-destinations', [App\Http\Controllers\Transactions\ShipmentController::class, 'get_customer_destinations'])->name('transactions.shipment.get-customer-destinations');
+        Route::post('/get-models-for-ship', [App\Http\Controllers\Transactions\ShipmentController::class, 'get_models_for_ship'])->name('transactions.shipment.get-models-for-ship');
+        Route::post('/get-pallets', [App\Http\Controllers\Transactions\ShipmentController::class, 'get_pallets'])->name('transactions.shipment.get-pallets');
+        Route::post('/get-shipments', [App\Http\Controllers\Transactions\ShipmentController::class, 'get_shipments'])->name('transactions.shipment.get-shipments');
+        Route::post('/get-shipment-details', [App\Http\Controllers\Transactions\ShipmentController::class, 'get_shipment_details'])->name('transactions.shipment.get-shipment-details');
+        Route::post('/transfer-to', [App\Http\Controllers\Transactions\ShipmentController::class, 'transfer_to'])->name('transactions.shipment.transfer-to');
+        Route::post('/save-transaction', [App\Http\Controllers\Transactions\ShipmentController::class, 'save_transaction'])->name('transactions.shipment.save-transaction');
+        Route::post('/delete-transaction', [App\Http\Controllers\Transactions\ShipmentController::class, 'delete_transaction'])->name('transactions.shipment.delete-transaction');
+        Route::post('/complete-transaction', [App\Http\Controllers\Transactions\ShipmentController::class, 'complete_transaction'])->name('transactions.shipment.complete-transaction');
+        Route::post('/cancel-shipment', [App\Http\Controllers\Transactions\ShipmentController::class, 'cancel_shipment'])->name('transactions.shipment.cancel-shipment');
+        Route::post('/finish-shipment', [App\Http\Controllers\Transactions\ShipmentController::class, 'finish_shipment'])->name('transactions.shipment.finish-shipment');
     });
 
     

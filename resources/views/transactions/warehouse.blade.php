@@ -1,5 +1,18 @@
 @push('styles')
 	<link href="{{ asset('css/transactions/warehouse.css') }}" rel="stylesheet">
+	<style>
+		.check_pallet {
+			width: 20px;
+			height: 20px;
+		}
+		.disabled {
+			pointer-events: none;
+		}
+		.remarks_input {
+			border: none;
+			border-radius: 0px;
+		}
+	</style>
 @endpush
 
 @section('title')
@@ -145,12 +158,24 @@ Warehouse
 						<table class="table table-sm table-hover" id="tbl_shipments" style="width: 100%">
 							<thead>
 								<th>Real-time shipped Pallet: <span id="shipped_pallet_count">0</span></th>
+								<th>Shipper</th>
+								<th>Date & Time</th>
 							</thead>
 						</table>
 					</div>
 				</div>
 
 				<div class="row">
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="save_div">
+						<button type="button" class="btn btn-sm btn-block btn-primary" id="btn_save_shipment" disabled>
+							<i class="fa fa-truck"></i> Save Shipment
+						</button>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="save_div">
+						<button type="button" class="btn btn-sm btn-block btn-danger" id="btn_clear_shipment" disabled>
+							<i class="fa fa-truck"></i> Clear Shipment
+						</button>
+					</div>
 					<div class="col-md-4 col-sm-4 col-xs-12 mb-2" id="save_div">
 						<button type="button" class="btn btn-sm btn-block btn-secondary" id="btn_close_shipment" disabled>
 							<i class="fa fa-truck"></i> Close Shipment

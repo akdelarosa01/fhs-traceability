@@ -34,5 +34,7 @@
     "/js/transactions/qa_inspection.js": "/js/transactions/qa_inspection.js",
     "/css/transactions/qa_inspection.css": "/css/transactions/qa_inspection.css",
     "/js/transactions/warehouse.js": "/js/transactions/warehouse.js",
-    "/css/transactions/warehouse.css": "/css/transactions/warehouse.css"
+    "/css/transactions/warehouse.css": "/css/transactions/warehouse.css",
+    "/js/transactions/shipment.js": "/js/transactions/shipment.js",
+    "/css/transactions/shipment.css": "/css/transactions/shipment.css"
 }
