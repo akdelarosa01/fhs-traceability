@@ -336,6 +336,8 @@ class BoxAndPalletApplicationController extends Controller
         $this->validate($req, $rules, $customMessages);
 
         try {
+            DB::beginTransaction();
+
             $dtl = new PalletBoxPalletDtl();
 
             $dtl->transaction_id = $req->trans_id;
@@ -353,6 +355,12 @@ class BoxAndPalletApplicationController extends Controller
                             ->where('is_deleted',0)
                             ->count();
 
+                if ($req->total_box_qty == $count) {
+                    $this->change_to_ready_status($req);
+                }
+
+                DB::commit();
+
                 $data = [
                     'data' => [
                         'count' => $count,
@@ -363,6 +371,7 @@ class BoxAndPalletApplicationController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
+            DB::rollBack();
             $data = [
                 'msg' => $th->getMessage(),
                 'data' => [],
@@ -475,6 +484,13 @@ class BoxAndPalletApplicationController extends Controller
         return $query;
     }
 
+    private function change_to_ready_status($req)
+    {
+        $trans = PalletTransaction::find($req->selected_model_id);
+        $trans->model_status = 1;
+        $trans->update_user = Auth::user()->id;
+        $trans->update();
+    }
     
 
     public function transfer_to(Request $req)

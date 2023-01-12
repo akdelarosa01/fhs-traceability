@@ -901,7 +901,9 @@
                     pallet_id: param.pallet_id,
                     selected_model_id: param.selected_model_id,
                     box_qr: param.box_qr,
-                    trans_id: param.trans_id
+                    trans_id: param.trans_id,
+                    total_box_qty: param.total_box_qty,
+                    total_scanned_box_qty: param.total_scanned_box_qty
                 };
                 self.formAction = "/transactions/box-and-pallet/save-box";
                 self.sendData().then(function() {
@@ -942,65 +944,6 @@
                     $('#status_msg').removeClass('text-success')
                     break;
             }
-        },
-        printPallet: function(param) {
-            var self = this;
-            self.submitType = "POST";
-            self.jsonData = param;
-            self.formAction = "/transactions/box-and-pallet/print-pallet";
-            self.sendData().then(function() {
-                var response = self.responseData;
-                $('#btn_print_preview').prop('disabled',false);
-                $('#btn_reprint_pallet').prop('disabled',false);
-                $('#btn_print_pallet').prop('disabled',true);
-                $('#btn_preview_print').prop('disabled',true);
-                self.statusMsg("Pallet was already printed!","success");
-
-                console.log(response);
-
-                self.$tbl_transactions.row(param.row_index).data(response).draw();
-                self.$tbl_pallets.ajax.reload();
-
-                $('#pallet_id').val('');
-                $('#pallet_id_qr').val('');
-                $('#is_printed').val(0);
-                $('#box_per_pallet').val(0);
-                $('#box_count_full').html(0);
-
-                $('#btn_transfer').prop('disabled', true);
-                $('#btn_update').prop('disabled', true);
-                $('#btn_broken_pallet').prop('disabled', true);
-                $('#box_count').html(0);
-
-                $('#tbl_transactions').removeClass('disabled');
-                $('#tbl_pallets').removeClass('disabled');
-                $('#tbl_boxes').removeClass('disabled');
-
-                self.$tbl_boxes.ajax.reload();
-            });
-        },
-        printPreview: function(param) {
-            var self = this;
-            self.submitType = "GET";
-            self.jsonData = param;
-            self.formAction = "/transactions/box-and-pallet/print-preview";
-            self.sendData().then(function() {
-                var response = self.responseData;
-
-                $('#prv_model').html(response.model);
-                $('#prv_date').html(response.print_date);
-                $('#prv_box_count').html(response.box_qty);
-                $('#prv_pallet_id_val').html(response.pallet_qr);
-                $('#prv_lot_no').html(response.lot_no);
-
-                self.box_qr_code.clear();
-                self.box_qr_code.makeCode(response.box_qr);
-                
-                self.pallet_qr_code.clear();
-                self.pallet_qr_code.makeCode(response.pallet_qr);
-
-                $('#modal_print_preview').modal('show');
-            });
         },
         transferTo: function(param) {
             var self = this;
@@ -1487,116 +1430,23 @@
          * Scanning of Box ID
          */
         $('#box_qr').on('change', function() {
+            var total_scanned_box_qty = parseFloat($('#total_scanned_box_qty').val());
+            var total_box_qty = parseFloat($('#total_box_qty').val());
+
             var param = {
                 pallet_id: $('#pallet_id').val(),
                 selected_model_id: $('#selected_model_id').val(),
                 box_qr: $('#box_qr').val(),
                 box_per_pallet: $('#box_per_pallet').val(),
-                trans_id: $('#trans_id').val()
+                trans_id: $('#trans_id').val(),
+                total_scanned_box_qty: total_scanned_box_qty,
+                total_box_qty: total_box_qty
             };
-            var total_scanned_box_qty = parseFloat($('#total_scanned_box_qty').val());
-            var total_box_qty = parseFloat($('#total_box_qty').val());
 
             if (total_scanned_box_qty == total_box_qty) {
                 _BoxPalletApp.swMsg("Target Heat Sink Quantity has already met.","info");
             } else {
                 _BoxPalletApp.scanBoxQR(param);
-            }
-            
-        });
-
-        $('#btn_print_pallet, #btn_preview_print').on('click', function() {
-            var box_ids = "";
-            const month = moment().format('MMM');
-            var box_count = parseFloat($('#box_count').html());
-            var box_count_full = parseFloat($('#box_count_full').html());
-            var row_index = _BoxPalletApp.$tbl_transactions.rows({selected:  true}).indexes();
-
-            if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
-                if (box_count_full > box_count) {
-                    _BoxPalletApp.swMsg("Please scan more Box ID or set this pallet as Broken Pallet.","warning");
-                } else {
-                    _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                        box_ids += row.box_qr+";"+"\n";
-                    });
-        
-                    _BoxPalletApp.printPallet({
-                        _token: _BoxPalletApp.token,
-                        month: month.toUpperCase(),
-                        trans_id: $('#trans_id').val(),
-                        model_id: $('#selected_model_id').val(),
-                        pallet_id: $('#pallet_id').val(),
-                        model: $('#running_model').val(),
-                        lot_no: '------',
-                        box_qty: $('#box_count').html(),
-                        box_qr: box_ids,
-                        pallet_qr: $('#pallet_id_qr').val(),
-                        mode: 'print',
-                        row_index: row_index[0],
-                        target_no_of_pallet: $('#target_no_of_pallet').val(),
-                        total_box_qty: $('#total_box_qty').val(),
-                        total_scanned_box_qty: $('#total_scanned_box_qty').val(),
-                        box_per_pallet: $('#box_per_pallet').val()
-                    });
-                }
-            } else {
-                _BoxPalletApp.swMsg("Please select a pallet first.","warning");
-            }
-
-           
-            
-        });
-
-        $('#btn_reprint_pallet').on('click', function() {
-            var box_ids = "";
-            const month = moment().format('MMM');
-            var row_index = _BoxPalletApp.$tbl_transactions.rows({selected:  true}).indexes();
-
-            if (_BoxPalletApp.$tbl_pallets.rows({ selected: true }).any()) {
-                _BoxPalletApp.$tbl_boxes.rows().data().map((row) => {
-                    box_ids += row.box_qr+";"+"\r";
-                });
-
-                _BoxPalletApp.printPallet({
-                    _token: _BoxPalletApp.token,
-                    month: month.toUpperCase(),
-                    trans_id: $('#trans_id').val(),
-                    model_id: $('#selected_model_id').val(),
-                    pallet_id: $('#pallet_id').val(),
-                    model: $('#running_model').val(),
-                    lot_no: '------',
-                    box_qty: $('#box_count').html(),
-                    box_qr: box_ids,
-                    pallet_qr: $('#pallet_id_qr').val(),
-                    mode: 'reprint',
-                    row_index: row_index[0],
-                    target_no_of_pallet: $('#target_no_of_pallet').val(),
-                    total_box_qty: $('#total_box_qty').val(),
-                    total_scanned_box_qty: $('#total_scanned_box_qty').val(),
-                    box_per_pallet: $('#box_per_pallet').val()
-                });
-            } else {
-                _BoxPalletApp.swMsg("Please select a pallet first.","warning");
-            }
-        });
-
-        $('#btn_print_preview').on('click', function() {
-            var pallet_qr = $('#pallet_id_qr').val();
-            var pallet_id = $('#pallet_id').val();
-
-            if (pallet_qr != "") {
-                const month = moment().format('MMM');
-
-                $('#modal_form_title').html("Print Preview: " + pallet_qr);
-                $('#prv_label_title').html(month.toUpperCase() + " FTL PALLET LABEL");
-
-                _BoxPalletApp.printPreview({
-                    _token: _BoxPalletApp.token,
-                    pallet_id: pallet_id
-                });
-                
-            } else {
-                _BoxPalletApp.showWarning("Please click the pallet number to select.");
             }
             
         });

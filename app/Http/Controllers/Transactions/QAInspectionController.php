@@ -380,6 +380,18 @@ class QAInspectionController extends Controller
             'success' => true
         ];
 
+        $lot_nos = $this->lot_no($req);
+
+        $data = [
+            'data' => $lot_nos,
+            'success' => true
+        ];
+
+        return response()->json($data);
+    }
+
+    private function lot_no($req)
+    {
         $arr_boxes = [];
         $boxes = $this->boxes($req->pallet_id)->get();
 
@@ -393,14 +405,7 @@ class QAInspectionController extends Controller
             ->distinct()
             ->get();
 
-        // $lot_nos = $this->_helpers->lot_no($arr_boxes);
-
-        $data = [
-            'data' => $lot_nos,
-            'success' => true
-        ];
-
-        return response()->json($data);
+        return $lot_nos;
     }
 
     public function get_affected_serial_no(Request $req)
@@ -1544,22 +1549,21 @@ class QAInspectionController extends Controller
         ];
 
         try {
-            $box_qr = explode(";\n",$req->box_qr);
+            $box_serial_array = explode(";",$req->box_qr);
+            $box_qr = [];
 
-            for ($i=0; $i < count($box_qr); $i++) { 
-                $box_qr[$i] = str_replace(";","",$box_qr[$i]);
+            for ($i=0; $i < count($box_serial_array); $i++) {
+                if (str_replace(";","",$box_serial_array[$i]) !== "") {
+                    array_push($box_qr,str_replace(";","","'".$box_serial_array[$i]."'"));
+                }
             }
 
-            // $lot_nos = $this->_helpers->lot_no($box_qr);
-            $lot_nos = DB::connection('mysql')->table('tinspectionsheetprintdata')
-                            ->whereIn('BoxSerialNo',$box_qr)
-                            ->select('lot_no')
-                            ->distinct()
-                            ->get();
+            $lot_nos = $this->lot_no($req);
+
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= $lot->lot_no."\n\r";
+                $lots .= $lot->lot_no."\r";
             }
 
             $print_date = date('Y-m-d');
@@ -1686,7 +1690,7 @@ class QAInspectionController extends Controller
                 array_push($arr_box_qr, $b->box_qr);
             }
 
-            $lot_nos = $this->_helpers->lot_no($arr_box_qr);
+            $lot_nos = $this->lot_no($req);
             $lots = "";
 
             foreach ($lot_nos as $key => $lot) {
