@@ -90,6 +90,7 @@ Route::group(['prefix' => 'reports'], function () {
     Route::group(['prefix' => 'qa-data-query'], function () {
         Route::get('/', [App\Http\Controllers\Reports\QADataQueryController::class, 'index'])->name('reports.qa-data-query');
         Route::get('/generate-data', [App\Http\Controllers\Reports\QADataQueryController::class, 'generate_data'])->name('reports.qa-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\QADataQueryController::class, 'download_excel'])->name('reports.qa-data-query.download-excel');
     });
 });
 

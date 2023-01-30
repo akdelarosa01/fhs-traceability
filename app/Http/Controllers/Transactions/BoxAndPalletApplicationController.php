@@ -186,7 +186,9 @@ class BoxAndPalletApplicationController extends Controller
                 'model_id' => [
                     'required',
                     Rule::unique('pallet_transactions')->where(function ($query) use ($req) {
-                        return $query->where('model_id', $req->model_id)->whereRaw(DB::raw("DATE_FORMAT(created_at,'%Y-%m-%d') = '".date('Y-m-d')."'"));
+                        return $query->where('model_id', $req->model_id)
+                                ->where('is_deleted', '=', 0)
+                                ->whereRaw(DB::raw("DATE_FORMAT(created_at,'%Y-%m-%d') = '".date('Y-m-d')."'"));
                     })
                 ],
                 'target_hs_qty' => 'required|numeric|min:0|not_in:0',
@@ -325,12 +327,14 @@ class BoxAndPalletApplicationController extends Controller
                                 ['is_deleted','=', 0],
                                 ['pallet_history','=', 0]
                             ]);
-                        })
+                        }),
+                        'exists:tinspectionsheetprintdata,BoxSerialNo'
                     ], 
-                    'exists:tinspectionsheetprintdata,BoxSerialNo'
+                    
                 ];
         $customMessages = [
             'unique' => 'This Box ID was already scanned.',
+            'exists' => "This Box ID doesn't exist or was not scanned in Packaging System.",
         ];
 
         $this->validate($req, $rules, $customMessages);

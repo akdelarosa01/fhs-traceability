@@ -164,6 +164,9 @@
                         { data: 'product_60', name: 'product_60' },
                     ],
                     rowCallback: function(row, data) {
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.id);
+
                         var judgment = data.remarks;
                         if (judgment == 'NOT GOOD') {
                             $(row).css('background-color', '#ff6266');
@@ -230,6 +233,11 @@
                 });
                 $('.shift').hide().removeAttr('id name');
             }
+        });
+
+        $('#btn_export').on('click', function() {
+            var link = '/reports/qa-data-query/download-excel?_token='+ _QADataQuery.token;
+            window.location.href = link;
         });
     });
 })();
