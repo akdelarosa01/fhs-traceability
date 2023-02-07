@@ -147,12 +147,8 @@ Route::group(['prefix' => 'transactions'], function () {
 
     Route::group(['prefix' => 'warehouse'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\WarehouseController::class, 'index'])->name('transactions.warehouse');
-        Route::get('/get-customer-destinations', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_customer_destinations'])->name('transactions.warehouse.get-customer-destinations');
-        Route::post('/get-models-for-ship', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_model_for_ship'])->name('transactions.warehouse.get-models-for-ship');
         Route::post('/get-pallets', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_pallets'])->name('transactions.warehouse.get-pallets');
-        Route::post('/get-shipments', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_shipments'])->name('transactions.warehouse.get-shipments');
         Route::get('/get-boxes', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_boxes'])->name('transactions.warehouse.get-boxes');
-        Route::post('/transfer-to', [App\Http\Controllers\Transactions\WarehouseController::class, 'transfer_to'])->name('transactions.warehouse.transfer-to');
     });
 
     Route::group(['prefix' => 'shipment'], function () {
