@@ -1508,7 +1508,7 @@
             }, function(response) {
                 row += '<tr id="r'+data.id+'_child_tr">'+
                             '<td></td>'+
-                            '<td colspan="3" id="r'+data.id+'_child_td"></td>'+
+                            '<td colspan="3" id="r'+data.id+'_child_td" class="p-0"></td>'+
                         '</tr>';
 
                 $("#r"+data.id).after(row);
