@@ -1294,7 +1294,7 @@ class QAInspectionController extends Controller
                             DB::raw('o.lot_no as lot_no'),
                             DB::raw('o.machine as prod_line_no'),
                             DB::raw('o.test_result as carton_label_no'),
-                            DB::raw('m.hs_count_per_box as qty_per_box')
+                            DB::raw('o.qty as qty_per_box')
                         )
                         ->where('b.box_qr', $req->box_qr);
 

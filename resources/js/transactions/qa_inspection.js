@@ -551,6 +551,10 @@
                     },
                     fnDrawCallback: function() {
                         $('[data-toggle="tooltip"]').tooltip('toggle');
+                        var data = this.fnGetData();
+                        console.log(data);
+                        var data_count = data.length;
+                        $('#hs_scanned_count').html(data_count);
                     },
                 }).on('page.dt', function() {
                 });
@@ -1135,7 +1139,7 @@
                 $('#hs_total_count').html(response.qty_per_box);
 
                 var hs_scanned_count = self.$tbl_hs_serials_oba.rows().count()
-                $('#hs_scanned_count').html(hs_scanned_count);
+                // $('#hs_scanned_count').html(hs_scanned_count);
 
                 if (response.qty_per_box > hs_scanned_count) {
                     $('#box_judgment').removeClass("badge badge-pill badge-danger");
