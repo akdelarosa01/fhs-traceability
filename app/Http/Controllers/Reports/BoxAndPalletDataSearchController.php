@@ -42,7 +42,7 @@ class BoxAndPalletDataSearchController extends Controller
     {
         $search_type1 = "";
         $search_type2 = "";
-        $max_count = 0;
+        $max_count = "";
         $shipping_date = "";
         $production_date_from = "NULL";
         $production_date_to = "NULL";
