@@ -34,12 +34,86 @@ Warehouse
 	<div class="panel-body">
 
 		<div class="row mb-2">
-			<div class="col-4">
-			</div>
-			<div class="col-4">
-			</div>
-			<div class="col-4">
-			</div>
+			<form id="frm_search">
+				<div class="row mb-2">
+					<div class="col-md-12">
+						<div class="row">
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+								<div class="input-group input-group-sm mb-2">
+									<div class="input-group-prepend">
+										<span class="input-group-text">Search Type</span>
+									</div>
+									<select name="search_type" id="search_type" class="form-control clear-select">
+										<option value=""></option>
+
+										<option value="model">Model</option>
+										<option value="pallet_ID">Pallet ID</option>
+										<option value="box_count">Box Count / Pallet</option>
+										<option value="status">Status</option>
+									</select>
+									<div id="search_type_feedback"></div>
+								</div>
+							</div>
+	
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+								<div class="input-group input-group-sm mb-2">
+									<div class="input-group-prepend">
+										<span class="input-group-text">Search Value</span>
+									</div>
+									<input type="text" class="form-control form-control-sm clear normal" id="search_value" name="search_value" placeholder="Search Value" autocomplete="off">
+									<div id="search_value_feedback"></div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+								<div class="input-group input-group-sm mb-2">
+									<div class="input-group-prepend">
+										<span class="input-group-text">Update Date From</span>
+									</div>
+									<input type="date" class="form-control form-control-sm clear" id="update_date_from" name="update_date_from">
+									<div id="update_date_from_feedback"></div>
+								</div>
+							</div>
+	
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+								<div class="input-group input-group-sm mb-2">
+									<div class="input-group-append">
+										<span class="input-group-text">Update Date To</span>
+									</div>
+									<input type="date" class="form-control form-control-sm clear" id="update_Date_to" name="update_Date_to">
+									<div id="update_Date_to_feedback"></div>
+								</div>
+							</div>
+						
+							
+						</div>
+	
+						<div class="row">
+	
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+								<div class="input-group input-group-sm mb-2">
+									<div class="input-group-prepend">
+										<span class="input-group-text">Max count</span>
+									</div>
+									<input type="number" class="form-control form-control-sm clear" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
+									<div id="max_count_feedback"></div>
+								</div>
+							</div>
+	
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+								<button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
+									<i class="fa fa-search"></i> Search
+								</button>
+							</div>
+	
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+								<button type="button" class="btn btn-sm btn-success btn-block read-only" id="btn_export">
+									<i class="fa fa-download"></i> Export Report
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
 		</div>
 
 		<div class="row">

@@ -207,6 +207,7 @@
         });
 
         $('#btn_search').on('click', function() {
+          dd(yeah)
             var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
             var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
             if (search_type == "" || search_value == "") {

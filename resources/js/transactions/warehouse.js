@@ -126,7 +126,12 @@
                         },
                         data: function(d) {
                             d._token = self.token;
-                            d.trans_id = $('#trans_id').val()
+                            d.trans_id = $('#trans_id').val();
+                            d.search_type = $('#search_type').val();
+                            d.search_value = $('#search_value').val();
+                            d.max_count = $('#max_count').val();
+                            d.update_date_to = $('#update_date_to').val();
+                            d.update_date_from = $('#update_date_from').val();
                         },
                         error: function(response) {
                             console.log(response);
@@ -332,6 +337,17 @@
             
         });
         
+        $('#btn_search').on('click', function() {
+            _Warehouse.swMsg("Please Provide a the type of data to search","warning");
+            var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
+            if (search_type == "" || search_value == "") {
+                _Warehouse.swMsg("Please Provide a the type of data to search","warning");
+            } else {
+                //_QADataQuery.$tbl_data_search.ajax.reload(false);
+                console.log("yeah");
+            }
+        });
 
     });
 

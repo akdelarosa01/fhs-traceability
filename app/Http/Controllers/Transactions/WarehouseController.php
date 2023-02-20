@@ -35,7 +35,7 @@ class WarehouseController extends Controller
         ]);
     }
 
-    public function get_pallets()
+    public function get_pallets(Request $req)
     {
         $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
             DB::raw("p.id as id"),
@@ -62,7 +62,10 @@ class WarehouseController extends Controller
         ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
         ->where('p.pallet_location','=','WAREHOUSE');
 
-        return Datatables::of($query)->make(true);
+        $sql = "call Warehouse()";
+        $sql_data = collect(DB::select(DB::raw($sql)));
+        $sql_data = $sql_data->where('model','HS10813');
+        return Datatables::of($sql_data)->make(true);
     }
 
     public function get_boxes(Request $req)
