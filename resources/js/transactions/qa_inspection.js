@@ -1703,7 +1703,7 @@
 
                 $('#modal_change_judgment_reason').modal('show');
             } else {
-                if (box_tested_full > box_tested) {
+                if (box_tested_full >= box_tested) {
                     if (hs_total_count > hs_scanned_count) {
                         if (hs_serial != "" && hs_serial != null) {
                             $('#cr_type').val('NORMAL');
