@@ -147,8 +147,10 @@ Route::group(['prefix' => 'transactions'], function () {
 
     Route::group(['prefix' => 'warehouse'], function () {
         Route::get('/', [App\Http\Controllers\Transactions\WarehouseController::class, 'index'])->name('transactions.warehouse');
-        Route::post('/get-pallets', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_pallets'])->name('transactions.warehouse.get-pallets');
+        Route::get('/get-pallets', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_pallets'])->name('transactions.warehouse.get-pallets');
         Route::get('/get-boxes', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_boxes'])->name('transactions.warehouse.get-boxes');
+        Route::get('/send-to-shipment', [App\Http\Controllers\Transactions\WarehouseController::class, 'send_to_shipment'])->name('transactions.warehouse.send-to-shipment');
+        Route::post('/remove-to-warehouse',[App\Http\Controllers\Transactions\WarehouseController::class,'remove_from_warehouse'])->name('transactions.warehouse.remove-from-warehouse');
     });
 
     Route::group(['prefix' => 'shipment'], function () {

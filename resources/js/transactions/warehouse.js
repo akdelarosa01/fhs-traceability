@@ -119,7 +119,7 @@
                     },
                     ajax: {
                         url: "/transactions/warehouse/get-pallets",
-                        type: 'POST',
+                        type: 'GET',
                         dataType: "JSON",
                         headers: {
                             'X-CSRF-TOKEN': self.token
@@ -244,7 +244,31 @@
         },
         addToShipment: function(param) {
             var self = this;
-            self.$tbl_shipments.rows().add(param).draw();
+            let IDs = param.Data.map(i => i.id);
+                self.submitType = "GET";
+                self.jsonData = param;
+                self.formAction = "/transactions/warehouse/send-to-shipment";
+                self.sendData().then(function() {
+                    var response = self.msgType;
+                    if(reponse = 'success'){
+                        self.removeFromWarehouse(IDs);
+                    }
+                });
+        },
+
+        removeFromWarehouse:function(IDs){
+                var self = this;
+                let param = {_token:self.token,data:IDs};
+                self.submitType = "POST";
+                self.jsonData = param;
+                self.formAction = "/transactions/warehouse/remove-to-warehouse";
+                self.sendData().then(function() {
+                    self.$tbl_pallets.ajax.reload();
+                    // var response = self.msgType;
+                    // if(reponse = 'success'){
+
+                    // }
+                });
         }
     }
     Warehouse.init.prototype = $.extend(Warehouse.prototype, $D.init.prototype, $F.init.prototype);
@@ -338,16 +362,30 @@
         });
         
         $('#btn_search').on('click', function() {
-            _Warehouse.swMsg("Please Provide a the type of data to search","warning");
             var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
             var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
             if (search_type == "" || search_value == "") {
                 _Warehouse.swMsg("Please Provide a the type of data to search","warning");
             } else {
-                //_QADataQuery.$tbl_data_search.ajax.reload(false);
-                console.log("yeah");
+                _Warehouse.$tbl_pallets.ajax.reload(false);
             }
         });
+
+        $('#btn_shipment').on('click',function(e){
+            e.preventDefault();
+            var data = _Warehouse.$tbl_pallets.rows('.selected').data().toArray();
+            if(data.length == 0){
+                _Warehouse.swMsg("Please Select Pallet to transfer to Shipment","warning");
+            }else{
+                var param = {
+                    _token: _Warehouse.token,
+                    Data:data
+                }
+                _Warehouse.addToShipment(param);
+            }
+            
+        });
+
 
     });
 
