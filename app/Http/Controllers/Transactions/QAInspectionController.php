@@ -1558,10 +1558,10 @@ class QAInspectionController extends Controller
 
             $lot_nos = $this->lot_no($req);
 
-            $lots = "";
+            $lots = [];
 
             foreach ($lot_nos as $key => $lot) {
-                $lots .= $lot->lot_no."\r";
+                array_push($lots,$lot->lot_no);
             }
 
             $print_date = date('Y-m-d');
@@ -1587,7 +1587,9 @@ class QAInspectionController extends Controller
                             ->insert([
                                 'month' => $month,
                                 'model' => $req->model,
-                                'lot_no' => $lots,
+                                'lot_no1' => (isset($lots[0]))? $lots[0] : '',
+                                'lot_no2' => (isset($lots[1]))? $lots[1] : '',
+                                'lot_no3' => (isset($lots[2]))? $lots[2] : '',
                                 'box_qty' => $req->box_qty,
                                 'box_qr' => $req->box_qr,
                                 'pallet_qr' => $req->pallet_qr,
