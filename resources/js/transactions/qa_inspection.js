@@ -1889,7 +1889,7 @@
                 var hs_count_per_box = parseInt($('#b_qty_per_box').val());
 
                 if (hs_count_per_box == hs_count) {
-                    console.log(inspection_sheet_qr);
+                    console.log(inspection_sheet_qr_arr);
                     var data = _QAInspection.$tbl_boxes.row({selected:  true}).data();
                     var row_index = _QAInspection.$tbl_boxes.rows({selected:  true}).indexes();
         
