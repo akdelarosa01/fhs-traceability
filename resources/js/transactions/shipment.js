@@ -684,6 +684,36 @@
                 var response = self.responseData;
                 self.$tbl_shipments.ajax.reload();
             });
+        },
+        initModal: function(){
+            if($('#ship_qty').val() != ""){
+                $('#ship_qty').val("").trigger('change');
+            }
+            this.$tbl_models.rows( { selected: true }).deselect();
+            this.$tbl_shipment_details.clear().draw();
+            this.shipment_details_arr = [];
+            $("#control_no").val("");
+            $("#invoice_no").val("");
+            $("#container_no").val("");
+            $("#truck_plate_no").val("");
+            $("#shipping_seal_no").val("");
+            $("#peza_seal_no").val("");
+            $('#destination').val("").trigger('change');
+            
+        },
+        ValidatePallet:function(param){
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/shipment/validate-Palletqr";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                if(response == 0){
+                    self.addToShipmentDetails(self.shipment_details_arr);
+                }else{
+                    self.swMsg("Pallet is already on Loading","warning");
+                }
+            });
         }
 
     }
@@ -734,6 +764,9 @@
 
         $('#btn_create_shipment').on('click', function() {
             $('#modal_shipment').modal('show');
+            _Shipment.initModal();
+            $('#btn_delete_transaction').prop('disabled',true);
+            $('#btn_complete_transaction').prop('disabled',true);
         });
 
         _Shipment.$tbl_models.on('select', function ( e, dt, type, indexes ) {
@@ -814,6 +847,8 @@
             var pallet_id = 0;
             var box_qty = 0;
             var hs_qty = 0;
+            let ship_qty = $('#ship_qty').val();
+            let total_hs_qty = parseInt($('#total_ship_qty').html());
             var shipper = $('#warehouse_pic').val();
             pallet_qr = pallet_qr.replace(/\s/g, '');
             var validated = false;
@@ -829,7 +864,7 @@
                     return false;
                 }
             });
-
+            
             if (!validated) {
                 _Shipment.swMsg("Pallet ID is not belong in this model.","warning");
             } else {
@@ -842,9 +877,17 @@
                         return false;
                     }
                 });
-
+                if(hs_qty > ship_qty){
+                    _Shipment.swMsg("The ship quantity is not enough to for scanned pallet","warning");
+                    return;
+                }
+                if((ship_qty - total_hs_qty) < hs_qty){
+                    _Shipment.swMsg("The HS quantity of pallet is more than the total ship quantity ","warning");
+                    return;
+                }
                 if (already_scanned) {
                     _Shipment.swMsg("Pallet ID was already scanned.","warning");
+
                 } else {
                     _Shipment.shipment_details_arr.push({
                         'pallet_qr': pallet_qr,
@@ -852,7 +895,13 @@
                         'box_qty': box_qty,
                         'hs_qty': hs_qty
                     });
-                    _Shipment.addToShipmentDetails(_Shipment.shipment_details_arr);
+                    var param = {
+                        _token: _Shipment.token,
+                        qr:pallet_qr
+                    }
+                    _Shipment.ValidatePallet(param)
+                   
+                    
                 }
             }
 
@@ -897,12 +946,12 @@
             _Shipment.msg = msg;
             _Shipment.confirmAction(msg).then(function(approve) {
                 if (approve) {
-                    // var total_hs_qty = parseInt($('#total_ship_qty').html());
-                    // var ship_qty = parseInt($('#ship_qty').val());
+                    var total_hs_qty = parseInt($('#total_ship_qty').html());
+                    var ship_qty = parseInt($('#ship_qty').val());
 
-                    // if (ship_qty == total_hs_qty) {
-                    //     status = 1
-                    // }
+                    if (ship_qty == total_hs_qty) {
+                        status = 1
+                    }
 
                     var param = {
                         _token: _Shipment.token,
@@ -911,6 +960,7 @@
                         model_id: $('#model_id').val(),
                         model: $('#model').val(),
                         warehouse_pic: $('#warehouse_pic').val(),
+                        qc_pic:$("#qc_pic").val(),
                         destination: $('#destination').val(),
                         hs_qty: $('#hs_qty').val(),
                         model_hs_qty: $('#model_hs_qty').val(),
@@ -918,7 +968,12 @@
                         pallet_qty: $('#pallet_qty').val(),
                         box_qty: $('#box_qty').val(),
                         broken_pcs_qty: $('#broken_pcs_qty').val(),
-                        status: 0,
+                        status: status,
+                        container_no: $('#container_no').val(),
+                        invoice_no: $('#invoice_no').val(),
+                        shipping_seal_no: $('#shipping_seal_no').val(),
+                        truck_plate_no: $('#truck_plate_no').val(),
+                        peza_seal_no: $('#peza_seal_no').val(),
                         shipment_details: _Shipment.$tbl_shipment_details.rows().data().toArray()
                     };
                     _Shipment.saveTransaction(param);
@@ -932,6 +987,11 @@
 
             _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
 
+            $('#container_no').val(data.container_no);
+            $('#invoice_no').val(data.invoice_no);
+            $('#shipping_seal_no').val(data.shipping_seal_no);
+            $('#truck_plate_no').val(data.truck_plate_no);
+            $('#peza_seal_no').val(data.peza_seal_no);
             $('#id').val(data.id);
             $('#control_no').val(data.control_no);
             var destination = new Option(data.destination, data.destination, false, false);
@@ -1028,7 +1088,11 @@
             var data = _Shipment.$tbl_shipments.rows({selected: true}).data().toArray();
             var count = _Shipment.$tbl_shipments.rows({selected: true}).count();
             var msg = "Are you sure to finish this Shipment?";
-
+            var notCompleteArr = data.filter(i => i.shipment_status != 1)
+            if(notCompleteArr.length > 0){
+                _Shipment.swMsg("Contains Incomplete Pallet","warning");
+                return;
+            }
             if (count > 1) {
                 msg = "Are you sure to finish these Shipments?";
             }

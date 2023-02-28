@@ -187,6 +187,9 @@
                         {
                             data: 'updated_at', name: 'updated_at', searchable: false, orderable: false, className: 'text-center'
                         },
+                        {
+                            data: 'shipment_status', name: 'shipment_status', searchable: false, orderable: false, className: 'text-center'
+                        },
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
@@ -221,6 +224,20 @@
                                 $(dataRow[0].cells[5]).css('color', '#000000');
                                 break;
                         }
+
+                        switch(data.shipment_status){
+                            case 'FOR SHIPMENT':
+                                $(dataRow[0].cells[8]).css('background-color', 'green');
+                                $(dataRow[0].cells[8]).css('color', '#000000');
+                                break;
+                            case 'ONLOAD':
+                                $(dataRow[0].cells[8]).css('background-color', 'lightblue');
+                                $(dataRow[0].cells[8]).css('color', '#000000');
+                            break;
+                            default:
+                                $(dataRow[0].cells[8]).css('background-color', 'darkred');
+                                $(dataRow[0].cells[8]).css('color', '#000000');
+                        }
                     },
                     initComplete: function() {
                     },
@@ -249,10 +266,7 @@
                 self.jsonData = param;
                 self.formAction = "/transactions/warehouse/send-to-shipment";
                 self.sendData().then(function() {
-                    var response = self.msgType;
-                    if(reponse = 'success'){
-                        self.removeFromWarehouse(IDs);
-                    }
+                    self.$tbl_pallets.ajax.reload();
                 });
         },
 
@@ -373,9 +387,12 @@
 
         $('#btn_shipment').on('click',function(e){
             e.preventDefault();
-            var data = _Warehouse.$tbl_pallets.rows('.selected').data().toArray();
+            const data = _Warehouse.$tbl_pallets.rows('.selected').data().toArray();
+            const withForshipment = data.filter(i => i.shipment_status == 'FOR SHIPMENT' || i.shipment_status == 'ONLOAD');
             if(data.length == 0){
                 _Warehouse.swMsg("Please Select Pallet to transfer to Shipment","warning");
+            }else if (withForshipment.length > 0){
+                _Warehouse.swMsg("Please Unselect Pallet that is already sent to shipment","warning");
             }else{
                 var param = {
                     _token: _Warehouse.token,

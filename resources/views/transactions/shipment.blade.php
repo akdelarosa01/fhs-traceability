@@ -86,7 +86,7 @@ Shipment
 				<div class="row">
 					<div class="col-md-8 col-xs-12">
 						<div class="row">
-							<div class="col-4">
+							<div class="col-3">
 								<table class="table table-sm table-bordered table-light" id="tbl_models" style="width: 100%">
                                     <thead>
                                         <th width="10px"></th>
@@ -94,7 +94,7 @@ Shipment
                                     </thead>
 								</table>
 							</div>
-                            <div class="col-4">
+                            <div class="col-5">
 
                                 <div class="row">
                                     <div class="col-12">
@@ -123,7 +123,7 @@ Shipment
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <div class="input-group input-group-sm mb-2">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">Warehouse PIC</span>
@@ -131,6 +131,15 @@ Shipment
                                             <input type="text" class="form-control form-control-sm clear" id="warehouse_pic" name="warehouse_pic" placeholder="Warehouse PIC" autocomplete="off" value="{{Auth::user()->firstname
                                                 .' '.Auth::user()->lastname}}">
                                             <div id="warehouse_pic_feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="input-group input-group-sm mb-2">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">QC PIC</span>
+                                            </div>
+                                            <input type="text" class="form-control form-control-sm clear" id="qc_pic" name="qc_pic" placeholder="QC PIC" autocomplete="off" value="">
+                                            <div id="qc_pic_feedback"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -261,6 +270,60 @@ Shipment
 					</div>
 
 					<div class="col-md-4 col-xs-12">
+                        
+
+                            <div class="row">                             
+                                <div class="input-group input-group-sm mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Invoice No.#</span>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm clear" id="invoice_no" name="invoice_no" placeholder="Invoice No.#" autocomplete="off">
+                                    <div id="invoice_no_feedback"></div>
+                                </div>                                
+                            </div>
+
+                            <div class="row">                               
+                                <div class="col-6">
+                                    <div class="input-group input-group-sm mb-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Container No.#</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm clear" id="container_no" name="container_no" placeholder="Container No.#" autocomplete="off" >
+                                        <div id="container_no_feedback"></div>
+                                    </div>   
+                                </div>
+                                <div class="col-6">
+                                    <div class="input-group input-group-sm mb-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Truck Plate No.#</span>
+                                        </div>
+                                        <input type="text" oninput="this.value = this.value.toUpperCase()" class="form-control form-control-sm clear" id="truck_plate_no" name="truck_plate_no" placeholder="Truck Plate No.#" autocomplete="off" >
+                                        <div id="truck_plate_no_feedback"></div>
+                                    </div>       
+                                </div>                             
+                            </div>
+
+                            <div class="row">                              
+                                <div class="input-group input-group-sm mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Shipping Seal No.#</span>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm clear" id="shipping_seal_no" name="shipping_seal_no" placeholder="Shipping Seal No.#" autocomplete="off" >
+                                    <div id="shipping_seal_no_feedback"></div>
+                                </div>                             
+                            </div>
+
+                            <div class="row">                         
+                                <div class="input-group input-group-sm mb-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Peza Seal No.#</span>
+                                    </div>
+                                    <input type="text" class="form-control form-control-sm clear" id="peza_seal_no" name="peza_seal_no" placeholder="Peza Seal No.#" autocomplete="off" >
+                                    <div id="peza_seal_no_feedback"></div>
+                                </div>                               
+                            </div>
+
+                        
                         <table class="table table-sm table-bordered table-light" style="width: 100%" id="tbl_shipment_details">
                             <thead>
                                 <th style="width: 15px"><button type="button" id="btn_remove_shipment_details" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></th>

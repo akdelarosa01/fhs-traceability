@@ -128,6 +128,7 @@ Warehouse
 						<th>Status</th>
 						<th>Location</th>
 						<th>Update Date</th>
+						<th>Shipment Status</th>
 					</thead>
 				</table>
 			</div>

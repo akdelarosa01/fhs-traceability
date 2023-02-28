@@ -12,6 +12,7 @@ class WarehouseToShipment extends Model
     
     protected $fillable = [
         'model_id',
+        'pallet_id',
         'pallet_qr',
         'pallet_location',
         'is_shipped',

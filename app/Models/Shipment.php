@@ -20,9 +20,16 @@ class Shipment extends Model
         'broken_pcs_qty',
         'status',
         'shipper',
+        'qc_pic',
         'destination',
         'ship_date',
         'create_user',
-        'update_user'
+        'update_user',
+        'invoice_no',
+        'container_no',
+        'truck_plate_no',
+        'shipping_seal_no',
+        'peza_seal_no'
+
     ];
 }
