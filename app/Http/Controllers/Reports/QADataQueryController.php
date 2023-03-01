@@ -115,8 +115,8 @@ class QADataQueryController extends Controller
                                 b.inspection_sheet_qr as serial_nos,
                                 b.qty_per_box as qty_per_box,
                                 b.inspector as qc_incharge,
-                                bhs.hs_history as hs_history,
                                 bx.box_judgment as disposition,
+                                group_concat(concat(hs.OldBarcode,' -> ',hs.NewBarcode)) as hs_history,
                                 qa.qa_judgment as qa_judgment
                             FROM qa_inspected_boxes as b
                             JOIN pallet_box_pallet_dtls as bx
@@ -125,15 +125,8 @@ class QADataQueryController extends Controller
                             ON p.id = b.pallet_id
                             LEFT JOIN pallet_model_matrices as m
                             ON p.model_id = m.id
-                            LEFT JOIN (SELECT distinct group_concat(concat(hs.OldBarcode,' -> ',hs.NewBarcode)) as hs_history,
-                                            hs.ModelName as ModelName,
-                                            b.BoxSerialNo as BoxSerialNo
-                                    FROM furukawa.barcode_to_barcode as hs
-                                    JOIN furukawa.tinspectionsheetprintdata as b
-                                    ON hs.ModelName = b.fec_part_no
-                                    where b.qrBarcodes like concat('%',hs.OldBarcode,'%')
-                                    group by hs.ModelName,b.BoxSerialNo) as bhs
-                            ON bhs.ModelName = m.model_name and bhs.BoxSerialNo = b.box_qr
+                            left join furukawa.barcode_to_barcode as hs
+                            ON hs.ModelName = m.model and b.inspection_sheet_qr like concat('%',hs.OldBarcode,'%')
                             LEFT JOIN (SELECT box_id, 
                                             group_concat(concat(hs_serial,'=', CASE WHEN qa_judgment = 1 then 'GOOD'
                                                 WHEN qa_judgment = 0 then remarks
@@ -142,7 +135,26 @@ class QADataQueryController extends Controller
                                         FROM furukawa.qa_affected_serials
                                         group by box_id) AS qa
                             ON qa.box_id = b.box_id
-                            where 1=1 " .$oba_date.$exp_date.$max_count;
+                            where 1=1 " .$oba_date.$exp_date."
+                            group by DATE_FORMAT(b.updated_at, '%Y-%m-%d'),
+                                b.pallet_id,
+                                b.box_id,
+                                b.shift,
+                                b.box_qr,
+                                m.model,
+                                m.model_name,
+                                b.date_manufactured,
+                                b.date_expired,
+                                p.pallet_qr,
+                                b.customer_pn,
+                                b.lot_no,
+                                b.prod_line_no,
+                                box_no,
+                                b.inspection_sheet_qr,
+                                b.qty_per_box,
+                                b.inspector,
+                                bx.box_judgment,
+                                qa.qa_judgment ". $max_count;
         
                 $sql_data = collect(DB::select(DB::raw($sql)));
 
