@@ -43,43 +43,106 @@ class QADataQueryController extends Controller
 
     private function get_filtered_data($req)
     {
-        $search_type = "NULL";
-        $search_value = "NULL";
-        $max_count = 0;
-        $oba_date_from = "NULL";
-        $oba_date_to = "NULL";
-        $exp_date_from = "NULL";
-        $exp_date_to = "NULL";
+        $search_type = "";
+        $search_value = "";
+        $max_count = "";
+        $oba_date = "";
+        $exp_date = "";
 
         try {
             DB::beginTransaction();
             if (is_null($req->search_type) && is_null($req->oba_date_from) && is_null($req->exp_date_from)) {
                 return [];
             } else {
-                if (!is_null($req->search_type)) {
-                    $search_type = "'" . $req->search_type . "'";
+                if (!is_null($req->search_type) && !is_null($req->search_value)) {
+                    switch ($req->search_type) {
+                        case 'shift':
+                            $search_type = " AND b.shift REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'box_label':
+                            $search_type = " AND b.box_qr REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'model_code':
+                            $search_type = " AND m.model REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'model_name':
+                            $search_type = " AND m.model_name REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'pallet_label':
+                            $search_type = " AND p.pallet_qr REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'cutomer_pn':
+                            $search_type = " AND b.customer_pn REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'lot_no':
+                            $search_type = " AND b.lot_no REGEXP '".$req->search_value."' ";
+                            break;
+                        
+                        default:
+                            $search_type = " AND b.prod_line_no REGEXP '".$req->search_value."' ";
+                            break;
+                    }
                 }
         
                 if (!is_null($req->oba_date_from) && !is_null($req->oba_date_to)) {
-                    $oba_date_from = "'" . $req->oba_date_from . "'";
-                    $oba_date_to = "'" . $req->oba_date_to . "'";
+                    $oba_date= " AND DATE_FORMAT(b.updated_at,'%Y-%m-%d') BETWEEN '" . $req->oba_date_from . "' AND '" . $req->oba_date_to . "' ";
                 }
         
                 if (!is_null($req->exp_date_from) && !is_null($req->exp_date_to)) {
-                    $exp_date_from = "'" . $req->exp_date_from . "'";
-                    $exp_date_to = "'" . $req->exp_date_to . "'";
-                }
-        
-                if (!is_null($req->search_value)) {
-                    $search_value = "'" . $req->search_value . "'";
+                    $exp_date = " AND DATE_FORMAT(b.date_expired,'%Y-%m-%d') BETWEEN '" . $req->exp_date_from . "' AND '" . $req->exp_date_to . "' ";
                 }
         
                 if (!is_null($req->max_count)) {
-                    // $max_count = "LIMIT " . $req->max_count . "";
-                    $max_count = $req->max_count;
+                    $max_count = " LIMIT " . $req->max_count . "";
                 }
         
-                $sql = "call spQADataQuery_GenerateData(".$search_type.", ".$search_value.", ".$max_count.", ".$oba_date_from.", ".$oba_date_to.", ".$exp_date_from.", ".$exp_date_to.")";
+                //$sql = "call spQADataQuery_GenerateData(".$search_type.", ".$search_value.", ".$max_count.", ".$oba_date_from.", ".$oba_date_to.", ".$exp_date_from.", ".$exp_date_to.")";
+
+                $sql = "SELECT DISTINCT DATE_FORMAT(b.updated_at, '%Y-%m-%d') as oba_date,
+                                b.pallet_id as pallet_id,
+                                b.box_id as box_id,
+                                b.shift as shift,
+                                b.box_qr as box_label,
+                                m.model as model_code,
+                                m.model_name as model_name,
+                                b.date_manufactured as date_manufactured,
+                                b.date_expired as date_expired,
+                                p.pallet_qr as pallet_no,
+                                b.customer_pn as cutomer_pn,
+                                b.lot_no as lot_no,
+                                b.prod_line_no as prod_line_no,
+                                CASE WHEN right(b.box_qr,1) = 'R' then SUBSTRING(b.box_qr,-4,3) else right(b.box_qr,3) end as box_no,
+                                b.inspection_sheet_qr as serial_nos,
+                                b.qty_per_box as qty_per_box,
+                                b.inspector as qc_incharge,
+                                bhs.hs_history as hs_history,
+                                bx.box_judgment as disposition,
+                                qa.qa_judgment as qa_judgment
+                            FROM qa_inspected_boxes as b
+                            JOIN pallet_box_pallet_dtls as bx
+                            ON bx.id = b.box_id
+                            JOIN pallet_box_pallet_hdrs as p
+                            ON p.id = b.pallet_id
+                            LEFT JOIN pallet_model_matrices as m
+                            ON p.model_id = m.id
+                            LEFT JOIN (SELECT distinct group_concat(concat(hs.OldBarcode,' -> ',hs.NewBarcode)) as hs_history,
+                                            hs.ModelName as ModelName,
+                                            b.BoxSerialNo as BoxSerialNo
+                                    FROM furukawa.barcode_to_barcode as hs
+                                    JOIN furukawa.tinspectionsheetprintdata as b
+                                    ON hs.ModelName = b.fec_part_no
+                                    where b.qrBarcodes like concat('%',hs.OldBarcode,'%')
+                                    group by hs.ModelName,b.BoxSerialNo) as bhs
+                            ON bhs.ModelName = m.model_name and bhs.BoxSerialNo = b.box_qr
+                            LEFT JOIN (SELECT box_id, 
+                                            group_concat(concat(hs_serial,'=', CASE WHEN qa_judgment = 1 then 'GOOD'
+                                                WHEN qa_judgment = 0 then remarks
+                                                ELSE ''
+                                            END) SEPARATOR ',\n\r') AS qa_judgment
+                                        FROM furukawa.qa_affected_serials
+                                        group by box_id) AS qa
+                            ON qa.box_id = b.box_id
+                            where 1=1 " .$oba_date.$exp_date.$max_count;
         
                 $sql_data = collect(DB::select(DB::raw($sql)));
 
