@@ -167,6 +167,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/cancel-shipment', [App\Http\Controllers\Transactions\ShipmentController::class, 'cancel_shipment'])->name('transactions.shipment.cancel-shipment');
         Route::post('/finish-shipment', [App\Http\Controllers\Transactions\ShipmentController::class, 'finish_shipment'])->name('transactions.shipment.finish-shipment');
         Route::post('/validate-Palletqr', [App\Http\Controllers\Transactions\ShipmentController::class, 'validate_pallet'])->name('transactions.shipment.validate-pallet');
+        Route::post('/system-report',[App\Http\Controllers\Transactions\ShipmentController::class, 'system_report'])->name('transaction.shipment.system-report');
     });
 
     

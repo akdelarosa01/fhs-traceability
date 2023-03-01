@@ -11,8 +11,8 @@
         this.$tbl_pallets = "";
         this.$tbl_shipments = "";
         this.$tbl_shipment_details = "";
-        this.shipment_details_arr = [];
-
+        this.shipment_details_arr = {};
+        this.editstate = false;
         this.token = $("meta[name=csrf-token]").attr("content");
         this.read_only = $("meta[name=read-only]").attr("content");
         this.authorize = $("meta[name=authorize]").attr("content");
@@ -33,6 +33,12 @@
                     if (title == "Start Scan") {
                         $('#warehouse_pic').prop('readonly', true);
                         $('#ship_qty').prop('readonly', true);
+                        $('#qc_pic').prop('readonly', true);
+                        $('#invoice_no').prop('readonly', true);
+                        $('#container_no').prop('readonly', true);
+                        $('#truck_plate_no').prop('readonly', true);
+                        $('#shipping_seal_no').prop('readonly', true);
+                        $('#peza_seal_no').prop('readonly', true);
 
                         $('#btn_start_scan').html("Stop Scan");
                         $('#btn_start_scan').removeClass("btn-success");
@@ -59,6 +65,12 @@
                     } else {
                         $('#warehouse_pic').prop('readonly', false);
                         $('#ship_qty').prop('readonly', false);
+                        $('#qc_pic').prop('readonly', false);
+                        $('#invoice_no').prop('readonly', false);
+                        $('#container_no').prop('readonly', false);
+                        $('#truck_plate_no').prop('readonly', false);
+                        $('#shipping_seal_no').prop('readonly', false);
+                        $('#peza_seal_no').prop('readonly', false);
 
                         $('#btn_start_scan').html("Start Scan");
                         $('#btn_start_scan').removeClass("btn-danger");
@@ -222,6 +234,7 @@
                         },
                         data: function(d) {
                             d._token = self.token;
+                            d.state = self.editstate;
                         },
                         error: function(response) {
                             console.log(response);
@@ -278,6 +291,7 @@
                         var data = this.fnGetData();
                         var data_count = data.length;
                         $('#model_count').html(data_count);
+                        
                     },
                 }).on('page.dt', function() {
                 });
@@ -305,6 +319,7 @@
                         data: function(d) {
                             d._token = self.token;
                             d.model_id = $('#model_id').val();
+                            d.state = self.editstate;
                         },
                         error: function(response) {
                             console.log(response);
@@ -533,7 +548,10 @@
                         { data: 'total_ship_qty', name: 'total_ship_qty', searchable: false, orderable: false },
                         { data: 'destination', name: 'destination', searchable: false, orderable: false },
                         { data: 'shipper', name: 'shipper', searchable: false, orderable: false },
-                        { data: 'ship_date', name: 'ship_date', searchable: false, orderable: false }
+                        { data: 'ship_date', name: 'ship_date', searchable: false, orderable: false },
+                        { data: function(data) {
+                            return '<button type="button" class="btn btn-sm btn-green btn-block btn_print_shipment"><i class="fa fa-print"></i></button>';
+                        }, name: 'id', searchable: false, orderable: false, className: 'p-1' }
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
@@ -621,7 +639,7 @@
         },
         addToShipmentDetails: function(param) {
             var self = this;
-            self.$tbl_shipment_details.rows.add(param).draw();
+            self.$tbl_shipment_details.rows.add([param]).draw();
         },
         saveTransaction: function(param) {
             var self = this;
@@ -691,7 +709,7 @@
             }
             this.$tbl_models.rows( { selected: true }).deselect();
             this.$tbl_shipment_details.clear().draw();
-            this.shipment_details_arr = [];
+            this.shipment_details_arr = {};
             $("#control_no").val("");
             $("#invoice_no").val("");
             $("#container_no").val("");
@@ -699,6 +717,48 @@
             $("#shipping_seal_no").val("");
             $("#peza_seal_no").val("");
             $('#destination').val("").trigger('change');
+            $('#btn_start_scan').html("Start Scan");
+            $('#btn_start_scan').removeClass("btn-danger");
+            $('#btn_start_scan').addClass("btn-success");
+
+            $('#btn_start_scan').prop('disabled', false);
+            $('#warehouse_pic').prop('readonly', false);
+            $('#ship_qty').prop('readonly', false);
+            $('#pallet_qr').prop('readonly', true);
+            $('#pallet_qr').val('');
+
+            $('#tbl_models').removeClass('disabled');
+            $('#tbl_pallets').removeClass('disabled');
+            $('#destination').select2({
+                disabled:false,
+                allowClear: true,
+                placeholder: 'Select Customer Destination',
+                theme: 'bootstrap4',
+                width: 'auto',
+                ajax: {
+                    url: '/transactions/shipment/get-customer-destinations',
+                    data: function(params) {
+                        var query = "";
+                        return {
+                            q: params.term,
+                            id: '',
+                            text: '',
+                            table: '',
+                            condition: '',
+                            display: 'id&text',
+                            orderBy: '',
+                            sql_query: query,
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    },
+                }
+            }).val(null).trigger('change.select2');
+            $('#btn_remove_shipment_details').prop('disabled', false);
+            // this.viewState('SCAN');
             
         },
         ValidatePallet:function(param){
@@ -712,8 +772,19 @@
                     self.addToShipmentDetails(self.shipment_details_arr);
                 }else{
                     self.swMsg("Pallet is already on Loading","warning");
+                    self.shipment_details_arr = {};
                 }
             });
+        },
+        print:function(param){
+          let self = this;
+          self.submitType = "POST";
+          self.jsonData = param;
+          self.formAction = "/transactions/shipment/system-report";
+          self.sendData().then(function(){
+            var response = self.responseData;
+            console.log(response);
+          })
         }
 
     }
@@ -732,6 +803,9 @@
 
         $('.modal').on('shown.bs.modal', function (e) {
             $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+        });
+        $('.modal').on('hidden.bs.modal', function (e) {
+            
         });
 
         $('#destination').select2({
@@ -763,8 +837,9 @@
         }).val(null).trigger('change.select2');
 
         $('#btn_create_shipment').on('click', function() {
-            $('#modal_shipment').modal('show');
             _Shipment.initModal();
+            $('#modal_shipment').modal('show');
+            _Shipment.editstate = false;
             $('#btn_delete_transaction').prop('disabled',true);
             $('#btn_complete_transaction').prop('disabled',true);
         });
@@ -824,6 +899,11 @@
             var warehouse_pic = $('#warehouse_pic').val();
             var destination = $('#destination').val();
             var ship_qty = $('#ship_qty').val();
+            var container_no = $('#container_no').val();
+            var invoice_no = $('#invoice_no').val();
+            var truck_plate_no = $('#truck_plate_no').val();
+            var shipping_seal_no = $('#shipping_seal_no').val();
+            var Peza_seal_no = $('#Peza_seal_no').val();
 
             if (model == "") {
                 _Shipment.swMsg('Please select a Model','warning');
@@ -836,7 +916,23 @@
             }
             else if (ship_qty < 1 || ship_qty == "") {
                 _Shipment.swMsg('Please provide Target Shipment Qty.','warning');
-            } else {
+            }
+            else if (container_no == "") {
+                _Shipment.swMsg('Please provide Target Container No.','warning');
+            }
+            else if (invoice_no == "") {
+                _Shipment.swMsg('Please provide Target Invoice No.','warning');
+            }
+            else if (truck_plate_no == "") {
+                _Shipment.swMsg('Please provide Target Truck Plate No.','warning');
+            }
+            else if (shipping_seal_no == "") {
+                _Shipment.swMsg('Please provide Target Shipping Seal No.','warning');
+            }
+            else if (Peza_seal_no == "") {
+                _Shipment.swMsg('Please provide Target Peza Seal No.','warning');
+            }
+            else {
                 _Shipment.viewState('SCAN');
             }
             
@@ -889,12 +985,12 @@
                     _Shipment.swMsg("Pallet ID was already scanned.","warning");
 
                 } else {
-                    _Shipment.shipment_details_arr.push({
+                    _Shipment.shipment_details_arr = {
                         'pallet_qr': pallet_qr,
                         'pallet_id': pallet_id,
                         'box_qty': box_qty,
                         'hs_qty': hs_qty
-                    });
+                    };
                     var param = {
                         _token: _Shipment.token,
                         qr:pallet_qr
@@ -984,7 +1080,7 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             console.log(data);
-
+            _Shipment.editstate = true;
             _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
 
             $('#container_no').val(data.container_no);
@@ -992,6 +1088,7 @@
             $('#shipping_seal_no').val(data.shipping_seal_no);
             $('#truck_plate_no').val(data.truck_plate_no);
             $('#peza_seal_no').val(data.peza_seal_no);
+            $('#qc_pic').val(data.qc_pic);
             $('#id').val(data.id);
             $('#control_no').val(data.control_no);
             var destination = new Option(data.destination, data.destination, false, false);
@@ -1116,7 +1213,14 @@
             });
         });
 
-        
+        $('#tbl_shipments tbody').on('click', '.btn_print_shipment', function() {
+          data = _Shipment.$tbl_shipments.row($(this).closest('tr')).data() ; 
+         let param = {
+            _token:_Shipment.token,
+            Data:data
+         }
+         _Shipment.print(param);
+        });
     });
 
     

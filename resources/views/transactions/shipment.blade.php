@@ -65,6 +65,7 @@ Shipment
                         <th>Destination</th>
                         <th>Shipped By</th>
                         <th>Date Shipped</th>
+                        <th width="10px"></th>
                     </thead>
                 </table>
             </div>

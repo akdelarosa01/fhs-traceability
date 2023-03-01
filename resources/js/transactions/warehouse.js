@@ -376,13 +376,14 @@
         });
         
         $('#btn_search').on('click', function() {
-            var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
-            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
-            if (search_type == "" || search_value == "") {
-                _Warehouse.swMsg("Please Provide a the type of data to search","warning");
-            } else {
-                _Warehouse.$tbl_pallets.ajax.reload(false);
-            }
+            _Warehouse.$tbl_pallets.ajax.reload(false);
+            // var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
+            // var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
+            // if (search_type == "" || search_value == "") {
+            //     _Warehouse.swMsg("Please Provide a the type of data to search","warning");
+            // } else {
+            //     _Warehouse.$tbl_pallets.ajax.reload(false);
+            // }
         });
 
         $('#btn_shipment').on('click',function(e){

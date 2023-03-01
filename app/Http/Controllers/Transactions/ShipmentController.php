@@ -10,6 +10,7 @@ use App\Models\PalletCustomer;
 use App\Models\PalletBoxPalletHdr;
 use App\Models\Shipment;
 use App\Models\ShipmentDetail;
+use App\Models\WarehouseToShipment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
@@ -80,7 +81,7 @@ class ShipmentController extends Controller
         return $results;
     }
 
-    public function get_models_for_ship()
+    public function get_models_for_ship(Request $req)
     {
         $data = [];
         try {
@@ -94,8 +95,12 @@ class ShipmentController extends Controller
                     ])
                     ->join('pallet_model_matrices as m','p.model_id','=','m.id')
                     ->where('p.pallet_location','WAREHOUSE')
-                    ->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)')
+                    ->where('p.is_shipped',0)
+                    // ->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)')
                     ->distinct();
+                    // if ($req->state == "false") {
+                    //     $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)');
+                    // }
 
             return Datatables::of($query)->make(true);
         } catch (\Throwable $th) {
@@ -107,7 +112,7 @@ class ShipmentController extends Controller
 
     public function validate_pallet(Request $req){
         try {
-            $query = DB::connection('mysql')->select("select pallet_qr from shipment_details where pallet_qr = '".$req->qr."'");
+            $query = ShipmentDetail::where('pallet_qr',$req->qr)->get();
             $count = count($query);
             $data = [
                 'data' => $count,
@@ -145,11 +150,15 @@ class ShipmentController extends Controller
             $join->on('ins.BoxSerialNo', '=', 'b.box_qr');
             $join->on('ins.fec_part_no','=', 'm.model');
         })
-        ->where('p.pallet_location','=','WAREHOUSE')
+        ->where('p.pallet_location','WAREHOUSE')
+        ->where('p.is_shipped',0)
         ->where('p.model_id', $req->model_id)
-        ->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)')
         ->groupBy('p.pallet_id','p.model_id','m.model','p.pallet_qr');
 
+        if ($req->state == "false") {
+            $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)');
+        }
+        $get = $query->get();
         return Datatables::of($query)->make(true);
        } catch (\Throwable $th) {
         $data = [
@@ -182,6 +191,7 @@ class ShipmentController extends Controller
                     s.shipping_seal_no as shipping_seal_no,
                     s.truck_plate_no as truck_plate_no,
                     s.peza_seal_no as peza_seal_no,
+                    s.qc_pic as qc_pic,
                     sum(sd.hs_qty) as total_ship_qty
                 FROM shipments as s
                 join shipment_details as sd
@@ -202,7 +212,8 @@ class ShipmentController extends Controller
                     s.invoice_no,
                     s.shipping_seal_no,
                     s.truck_plate_no,
-                    s.peza_seal_no";
+                    s.peza_seal_no,
+                    s.qc_pic";
 
         $query = DB::select($sql);
         return Datatables::of($query)->make(true);
@@ -483,6 +494,17 @@ class ShipmentController extends Controller
                             'update_user' => Auth::user()->id,
                             'updated_at' => date('Y-m-d H:i:s')
                         ]);
+            foreach($req->ids as $id){
+                  $pallets =DB::table('shipment_details')->select('pallet_qr')->where('ship_id',$id)->get();
+                  foreach($pallets as $pallet){
+                    $query = DB::table('warehouse_to_shipments')->where('pallet_qr',$pallet->pallet_qr)->update([
+                          'is_shipped' => 1,
+                          'shipped_at' => date('Y-m-d H:i:s'),
+                          'update_user' => Auth::user()->id,
+                          'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                  };
+            };
 
             if ($update) {
                 DB::commit();
@@ -508,6 +530,35 @@ class ShipmentController extends Controller
         return response()->json($data);
     }
 
+    public function system_report(Request $req){
+       try {
+
+        $query = DB::table("shipment_details")->where('ship_id',$req->Data["id"])->select()->get();
+
+        foreach($query as $i){
+            $pallet_qr = $i->pallet_qr;
+            $hs_qty = $i->hs_qty;
+            $box_qty = $i->box_qty;
+            $scan_status = $i->created_at;
+        }
+        $data = [
+            'msg' => 'Shipment was successfully Printed.',
+            'data' => $req->Data,
+            'success' => true,
+            'msgType' => 'success',
+            'msgTitle' => 'Success!'
+        ];
+       } catch (\Throwable $th) {
+        $data = [
+            'msg' => $th->getMessage(),
+            'data' => [],
+            'success' => false,
+            'msgType' => 'error',
+            'msgTitle' => 'Error!'
+        ];
+       }
+       return response()->json($data);
+    }
 
     private function control_no($model)
     {
