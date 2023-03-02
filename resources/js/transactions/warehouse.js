@@ -227,11 +227,15 @@
 
                         switch(data.shipment_status){
                             case 'FOR SHIPMENT':
-                                $(dataRow[0].cells[8]).css('background-color', 'green');
+                                $(dataRow[0].cells[8]).css('background-color', '#32CD32');
                                 $(dataRow[0].cells[8]).css('color', '#000000');
                                 break;
                             case 'ONLOAD':
-                                $(dataRow[0].cells[8]).css('background-color', 'lightblue');
+                                $(dataRow[0].cells[8]).css('background-color', '#1E90FF');
+                                $(dataRow[0].cells[8]).css('color', '#000000');
+                                break;
+                            case 'SHIPPED':
+                                $(dataRow[0].cells[8]).css('background-color', '#00ACAC');
                                 $(dataRow[0].cells[8]).css('color', '#000000');
                                 break;
                             default:
