@@ -235,7 +235,7 @@
                                 $(dataRow[0].cells[8]).css('color', '#000000');
                             break;
                             default:
-                                $(dataRow[0].cells[8]).css('background-color', 'darkred');
+                                $(dataRow[0].cells[8]).css('background-color', 'white');
                                 $(dataRow[0].cells[8]).css('color', '#000000');
                         }
                     },
