@@ -104,7 +104,7 @@
                         { data: 'model_name', name: 'model_name', title: "Model Name" },
                         { data: 'date_manufactured', name: 'date_manufactured', title: "Date Manufactured" },
                         { data: 'date_expired', name: 'date_expired', title: "Exp. Date" },
-                        { data: 'pallet_no', name: 'pallet_no', title: "Pallat No." },
+                        { data: 'pallet_no', name: 'pallet_no', title: "Pallet No." },
                         { data: 'cutomer_pn', name: 'cutomer_pn', title: "Customer P/N" },
                         { data: 'lot_no', name: 'lot_no', title: "Lot No." },
                         { data: 'prod_line_no', name: 'prod_line_no', title: "Prod. Line No." },
