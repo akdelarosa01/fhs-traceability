@@ -156,7 +156,7 @@
                             "first": "First"
                         }
                     },
-                    order: [[7,'desc']],
+                    order: [[7,'asc']],
                     deferRender: true,
                     columns: [
                         { 
