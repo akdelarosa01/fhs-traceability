@@ -258,24 +258,45 @@ class QAInspectionController extends Controller
             }
 
             if ($matched > 0) {
-                // save box details
-                QaInspectedBoxes::create([
-                    'pallet_id' => $req->pallet_id,
-                    'box_id' => $req->box_id,
-                    'box_qr' => $req->box_qr,
-                    'date_manufactured' => $req->date_manufactured,
-                    'date_expired' => $req->date_expired,
-                    'customer_pn' => $req->customer_pn,
-                    'lot_no' => $req->lot_no,
-                    'prod_line_no' => $req->prod_line_no,
-                    'carton_no' => $req->carton_no,
-                    'qty_per_box' => $req->qty_per_box,
-                    'inspector' => $req->inspector,
-                    'shift' => $req->shift,
-                    'inspection_sheet_qr' => $req->inspection_sheet_qr,
-                    'create_user' => Auth::user()->id,
-                    'update_user' => Auth::user()->id
-                ]);
+                // check if palet and box is existing
+                $checker = QaInspectedBoxes::where('pallet_id', $req->pallet_id)->where('box_id', $req->box_id)->count();
+
+                if ($checker > 0) {
+                    QaInspectedBoxes::where('pallet_id', $req->pallet_id)->where('box_id', $req->box_id)->update([
+                        'box_qr' => $req->box_qr,
+                        'date_manufactured' => $req->date_manufactured,
+                        'date_expired' => $req->date_expired,
+                        'customer_pn' => $req->customer_pn,
+                        'lot_no' => $req->lot_no,
+                        'prod_line_no' => $req->prod_line_no,
+                        'carton_no' => $req->carton_no,
+                        'qty_per_box' => $req->qty_per_box,
+                        'inspector' => $req->inspector,
+                        'shift' => $req->shift,
+                        'inspection_sheet_qr' => $req->inspection_sheet_qr,
+                        'update_user' => Auth::user()->id
+                    ]);
+                } else {
+                     // save box details
+                    QaInspectedBoxes::create([
+                        'pallet_id' => $req->pallet_id,
+                        'box_id' => $req->box_id,
+                        'box_qr' => $req->box_qr,
+                        'date_manufactured' => $req->date_manufactured,
+                        'date_expired' => $req->date_expired,
+                        'customer_pn' => $req->customer_pn,
+                        'lot_no' => $req->lot_no,
+                        'prod_line_no' => $req->prod_line_no,
+                        'carton_no' => $req->carton_no,
+                        'qty_per_box' => $req->qty_per_box,
+                        'inspector' => $req->inspector,
+                        'shift' => $req->shift,
+                        'inspection_sheet_qr' => $req->inspection_sheet_qr,
+                        'create_user' => Auth::user()->id,
+                        'update_user' => Auth::user()->id
+                    ]);
+                }
+               
 
                 $box = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
                         ->select(

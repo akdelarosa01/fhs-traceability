@@ -1,5 +1,10 @@
 @push('styles')
 	<link href="{{ asset('css/reports/qa_data_query.css') }}" rel="stylesheet">
+    <style>
+        .dataTables_wrapper {
+            width: 100%;
+        }
+    </style>
 @endpush
 
 @section('title')
@@ -131,11 +136,11 @@ Q.A. Data Query
                             </button>
                         </div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                        {{-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
                             <button type="button" class="btn btn-sm btn-success btn-block read-only" id="btn_export">
                                 <i class="fa fa-download"></i> Export Report
                             </button>
-                        </div>
+                        </div> --}}
                     </div>
 
                     {{-- <div class="row justify-content-center">
@@ -159,8 +164,8 @@ Q.A. Data Query
 
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-sm table-hover table-bordered table-striped" id="tbl_data_search" style="width: 100%">
-                    <thead class="thead-dark">
+                <table class="table table-sm table-hover table-striped display nowrap" id="tbl_data_search" style="width: 100%">
+                    {{-- <thead>
                         <th>Date</th>
                         <th>Shift</th>
                         <th>Box Label</th>
@@ -179,12 +184,7 @@ Q.A. Data Query
                         <th>HS History</th>
                         <th>QA Remarks</th>
                         <th>QA Judgment</th>
-                        <?php
-                            for ($i=1; $i <= 60; $i++) { 
-                                echo '<th>Product '.$i.'</th>';
-                            }
-                        ?>
-                    </thead>
+                    </thead> --}}
                 </table>
             </div>
         </div>

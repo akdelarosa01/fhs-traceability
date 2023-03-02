@@ -18,6 +18,7 @@ const layoutCSS = [
     "resources/plugins/DataTables/Select-1.4.0/css/select.bootstrap4.min.css",
     "resources/plugins/DataTables/Buttons-2.2.3/css/buttons.bootstrap4.min.css",
     "resources/plugins/DataTables/FixedHeader-3.2.4/css/fixedHeader.bootstrap4.min.css",
+    "resources/plugins/DataTables/FixedColumns-4.1.0/css/fixedColumns.bootstrap4.min.css",
     // "resources/plugins/DataTables/RowGroup-1.2.0/css/rowGroup.bootstrap4.min.css",
     "public/css/app.css"
 ];
@@ -42,6 +43,9 @@ const layoutJS = [
     "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.print.min.js",
     "resources/plugins/DataTables/Buttons-2.2.3/js/buttons.colVis.min.js",
     "resources/plugins/DataTables/FixedHeader-3.2.4/js/dataTables.fixedHeader.min.js",
+    "resources/plugins/DataTables/FixedHeader-3.2.4/js/fixedHeader.bootstrap4.min.js",
+    "resources/plugins/DataTables/FixedColumns-4.1.0/js/dataTables.fixedColumns.min.js",
+    "resources/plugins/DataTables/FixedColumns-4.1.0/js/fixedColumns.bootstrap4.min.js",
     "resources/plugins/DataTables/dataTables.rowsGroup.js",
     // "resources/plugins/DataTables/RowGroup-1.2.0/js/dataTables.rowGroup.min.js",
     // "resources/plugins/DataTables/RowGroup-1.2.0/js/rowGroup.bootstrap4.min.js",
