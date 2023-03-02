@@ -1215,11 +1215,17 @@
 
         $('#tbl_shipments tbody').on('click', '.btn_print_shipment', function() {
           data = _Shipment.$tbl_shipments.row($(this).closest('tr')).data() ; 
-         let param = {
-            _token:_Shipment.token,
-            Data:data
+         
+         if(data.shipment_status == 1){
+            let param = {
+                _token:_Shipment.token,
+                Data:data
+             }
+            _Shipment.print(param);
+         }else{
+          _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
          }
-         _Shipment.print(param);
+         
         });
     });
 
