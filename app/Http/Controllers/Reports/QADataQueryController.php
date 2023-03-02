@@ -51,7 +51,7 @@ class QADataQueryController extends Controller
 
         try {
             DB::beginTransaction();
-            if (is_null($req->search_type) && is_null($req->oba_date_from) && is_null($req->exp_date_from)) {
+            if (is_null($req->search_type) && is_null($req->oba_date_from) && is_null($req->exp_date_from) && is_null($req->exp_date_from) && is_null($req->exp_date_to)) {
                 return [];
             } else {
                 if (!is_null($req->search_type) && !is_null($req->search_value)) {
@@ -98,7 +98,7 @@ class QADataQueryController extends Controller
         
                 //$sql = "call spQADataQuery_GenerateData(".$search_type.", ".$search_value.", ".$max_count.", ".$oba_date_from.", ".$oba_date_to.", ".$exp_date_from.", ".$exp_date_to.")";
 
-                $sql = "SELECT DISTINCT DATE_FORMAT(b.updated_at, '%Y-%m-%d') as oba_date,
+                $sql = "SELECT DATE_FORMAT(b.updated_at, '%Y-%m-%d') as oba_date,
                                 b.pallet_id as pallet_id,
                                 b.box_id as box_id,
                                 b.shift as shift,
@@ -135,7 +135,7 @@ class QADataQueryController extends Controller
                                         FROM furukawa.qa_affected_serials
                                         group by box_id) AS qa
                             ON qa.box_id = b.box_id
-                            where 1=1 " .$oba_date.$exp_date."
+                            where bx.is_deleted <> 1 " .$search_type.$oba_date.$exp_date."
                             group by DATE_FORMAT(b.updated_at, '%Y-%m-%d'),
                                 b.pallet_id,
                                 b.box_id,
@@ -162,7 +162,7 @@ class QADataQueryController extends Controller
     
                 $data = [];
                 $data_obj = [];
-                DB::table('qa_data_query')->where('token',$req->_token)->delete();
+                //DB::table('qa_data_query')->where('token',$req->_token)->delete();
 
                 foreach ($sql_data as $key => $box) {
                     $box_obj = [
@@ -189,9 +189,11 @@ class QADataQueryController extends Controller
     
                     $heat_sinks = collect(QaAffectedSerial::where([
                         ['pallet_id','=',$box->pallet_id],
-                        ['box_id','=',$box->box_id]
+                        ['box_id','=',$box->box_id],
+                        ['updated_at','LIKE', $box->oba_date.'%']
                     ])->select('hs_serial')->get());
     
+
                     $hs_obj = [];
                     for ($i=1; $i <= 60; $i++) { 
                         $key = $i-1;
@@ -201,10 +203,10 @@ class QADataQueryController extends Controller
                     }
     
                     $param = array_merge($box_obj,$hs_obj);
-                    DB::table('qa_data_query')->insert($param);
+                    // DB::table('qa_data_query')->insert($param);
 
-                    $data_obj = (object) $param;
-                    array_push($data, $data_obj);
+                    // $data_obj = (object) $param;
+                    array_push($data, $param);
                 }
                 
                 DB::commit();

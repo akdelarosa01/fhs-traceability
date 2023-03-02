@@ -132,6 +132,8 @@ table.dataTable>tbody>tr>.selected{background-color:rgba(2, 117, 216, 0.9);color
 
 table.dataTable.fixedHeader-floating,table.dataTable.fixedHeader-locked{background-color:white;margin-top:0 !important;margin-bottom:0 !important}table.dataTable.fixedHeader-locked{position:absolute !important}@media print{table.fixedHeader-floating{display:none}}
 
+table.dataTable thead tr>.dtfc-fixed-left,table.dataTable thead tr>.dtfc-fixed-right{z-index:1;background-color:white}table.dataTable tbody tr>.dtfc-fixed-left,table.dataTable tbody tr>.dtfc-fixed-right{z-index:1;background-color:white}div.dtfc-left-top-blocker,div.dtfc-right-top-blocker{background-color:white}div.dtfc-right-top-blocker,div.dtfc-left-top-blocker{margin-top:6px;border-bottom:0px solid #ddd !important}table.dataTable.table-bordered.dtfc-has-left{border-left:none}div.dataTables_scroll.dtfc-has-left table.table-bordered{border-left:none}div.dataTables_scrollBody{border-left:1px solid #ddd !important}div.dataTables_scrollFootInner table.table-bordered tr th:first-child,div.dataTables_scrollHeadInner table.table-bordered tr th:first-child{border-left:1px solid #ddd !important}
+
 /* cyrillic-ext */
 @font-face {
     font-family: 'Nunito';
