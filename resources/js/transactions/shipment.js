@@ -783,13 +783,23 @@
         },
         print:function(param){
           let self = this;
-          self.submitType = "POST";
-          self.jsonData = param;
-          self.formAction = "/transactions/shipment/system-report";
-          self.sendData().then(function(){
-            var response = self.responseData;
-            console.log(response);
-          })
+        //   self.submitType = "POST";
+        //   self.jsonData = param;
+        //   self.formAction = "/transactions/shipment/system-report";
+        //   self.sendData().then(function(){
+        //     var response = self.responseData;
+        //     console.log(response);
+        //   })
+
+          $.ajax({
+            url:"/transactions/shipment/system-report",
+            type:"POST",
+            data:param,
+            dataType:"JSON",
+            success:function(){
+                
+            }
+          });
         }
 
     }
