@@ -233,10 +233,11 @@
                             case 'ONLOAD':
                                 $(dataRow[0].cells[8]).css('background-color', 'lightblue');
                                 $(dataRow[0].cells[8]).css('color', '#000000');
-                            break;
+                                break;
                             default:
-                                $(dataRow[0].cells[8]).css('background-color', 'white');
+                                $(dataRow[0].cells[8]).css('background-color', '#FFC000');
                                 $(dataRow[0].cells[8]).css('color', '#000000');
+                                break;
                         }
                     },
                     initComplete: function() {
