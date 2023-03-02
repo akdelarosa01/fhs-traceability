@@ -716,6 +716,11 @@
             $("#truck_plate_no").val("");
             $("#shipping_seal_no").val("");
             $("#peza_seal_no").val("");
+            $("#invoice_no").prop('readonly', false);
+            $("#container_no").prop('readonly', false);
+            $("#truck_plate_no").prop('readonly', false);
+            $("#shipping_seal_no").prop('readonly', false);
+            $("#peza_seal_no").prop('readonly', false);
             $('#destination').val("").trigger('change');
             $('#btn_start_scan').html("Start Scan");
             $('#btn_start_scan').removeClass("btn-danger");

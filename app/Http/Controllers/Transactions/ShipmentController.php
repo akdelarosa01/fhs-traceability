@@ -113,7 +113,7 @@ class ShipmentController extends Controller
     public function validate_pallet(Request $req){
         try {
             $query = ShipmentDetail::where('pallet_qr',$req->qr)->get();
-            $count = count($query);
+            $count = $query->count();
             $data = [
                 'data' => $count,
                 'success' => true
