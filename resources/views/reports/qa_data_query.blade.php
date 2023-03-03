@@ -81,20 +81,6 @@ Q.A. Data Query
 								<div id="oba_date_to_feedback"></div>
 							</div>
 						</div>
-
-                        {{-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<span class="input-group-text">File Type</span>
-								</div>
-								<select name="file_type" id="file_type" class="form-control clear-select">
-                                    <option value="excel">Excel</option>
-                                    <option value="csv">CSV</option>
-                                    <option value="excel_csv">Excel & CSV</option>
-                                </select>
-								<div id="file_type_feedback"></div>
-							</div>
-						</div> --}}
 					</div>
 
                     <div class="row">
@@ -135,57 +121,14 @@ Q.A. Data Query
                                 <i class="fa fa-search"></i> Search
                             </button>
                         </div>
-
-                        {{-- <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                            <button type="button" class="btn btn-sm btn-success btn-block read-only" id="btn_export">
-                                <i class="fa fa-download"></i> Export Report
-                            </button>
-                        </div> --}}
                     </div>
-
-                    {{-- <div class="row justify-content-center">
-                        
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                            <button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
-                                <i class="fa fa-search"></i> Search
-                            </button>
-                        </div>
-                    
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                            <button type="button" class="btn btn-sm btn-success btn-block read-only" id="btn_export">
-                                <i class="fa fa-download"></i> Export Report
-                            </button>
-                        </div>
-                    </div> --}}
                 </div>
             </div>
         </form>
 
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-sm table-hover table-striped display nowrap" id="tbl_data_search" style="width: 100%">
-                    {{-- <thead>
-                        <th>Date</th>
-                        <th>Shift</th>
-                        <th>Box Label</th>
-                        <th>Model</th>
-                        <th>Model Name</th>
-                        <th>Manufacture Date</th>
-                        <th>Expired Date</th>
-                        <th>Pallet No.</th>
-                        <th>Customer P/N</th>
-                        <th>Lot No.</th>
-                        <th>Prod. Line No.</th>
-                        <th>Box ID</th>
-                        <th>Serial No</th>
-                        <th>Qty per Box</th>
-                        <th>QC In-charge</th>
-                        <th>HS History</th>
-                        <th>QA Remarks</th>
-                        <th>QA Judgment</th>
-                    </thead> --}}
-                </table>
+                <table class="table table-sm table-hover table-striped display nowrap" id="tbl_data_search" style="width: 100%"></table>
             </div>
         </div>
 	</div>

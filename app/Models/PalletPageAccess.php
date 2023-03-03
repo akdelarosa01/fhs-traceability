@@ -38,6 +38,7 @@ class PalletPageAccess extends Model
                         'pa.delete',
                         'pa.authorize'
                     )
+                    ->orderBy('parent_order')
                     ->orderBy('order')
                     ->get();
         return $pages;
