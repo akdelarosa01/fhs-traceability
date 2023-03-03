@@ -44,8 +44,7 @@ class BoxAndPalletDataSearchController extends Controller
         $search_type2 = "";
         $max_count = "";
         $shipping_date = "";
-        $production_date_from = "NULL";
-        $production_date_to = "NULL";
+        $production_date = "";
 
         if (is_null($req->search_type) && is_null($req->shipping_date_from) && is_null($req->production_date_from)) {
             return [];
@@ -97,8 +96,13 @@ class BoxAndPalletDataSearchController extends Controller
             }
     
             if (!is_null($req->production_date_from) && !is_null($req->production_date_to)) {
-                $production_date_from = "'" . $req->production_date_from . "'";
-                $production_date_to = "'" . $req->production_date_to . "'";
+                $production_date = " AND (
+                                            (DATE_FORMAT(qa.created_at,'%Y-%m-%d') BETWEEN ".$req->production_date_from." AND ".$req->production_date_to.") OR 
+                                            (DATE_FORMAT(b.created_at,'%Y-%m-%d') BETWEEN ".$req->production_date_from." AND ".$req->production_date_to.") OR 
+                                            (DATE_FORMAT(ifnull(STR_TO_DATE(fb.c1,'%Y/%m/%d %H:%i:%s'), fb.c1),'%Y-%m-%d') BETWEEN ".$req->production_date_from." AND ".$req->production_date_to.") OR 
+                                            (DATE_FORMAT(g.CreateDate,'%Y-%m-%d') BETWEEN ".$req->production_date_from." AND ".$req->production_date_to.") OR 
+                                            (DATE_FORMAT(STR_TO_DATE(ft.c1,'%Y/%m/%d %H:%i:%s'),'%Y-%m-%d') BETWEEN ".$req->production_date_from." AND ".$req->production_date_to.")
+                                        )";
             }
     
             if (!is_null($req->max_count)) {
@@ -146,17 +150,7 @@ class BoxAndPalletDataSearchController extends Controller
                     left join furukawa.pallet_box_pallet_hdrs as p on b.pallet_id = p.id
                     left join furukawa.qa_inspected_boxes as qa on qa.pallet_id = p.id and qa.box_id = b.id
                     left join furukawa.qa_affected_serials as qhs on qhs.pallet_id = p.id and qhs.box_id = b.id and qhs.hs_serial = ft.c28
-                    where case
-                        when ".$production_date_from." is not null then
-                            case
-                                when qa.created_at is not null then DATE_FORMAT(qa.created_at,'%Y-%m-%d')
-                                when b.created_at is not null then DATE_FORMAT(b.created_at,'%Y-%m-%d')
-                                when fb.c1 is not null then DATE_FORMAT(ifnull(STR_TO_DATE(fb.c1,'%Y/%m/%d %H:%i:%s'), fb.c1),'%Y-%m-%d')
-                                when g.CreateDate is not null then DATE_FORMAT(g.CreateDate,'%Y-%m-%d')
-                                else DATE_FORMAT(STR_TO_DATE(ft.c1,'%Y/%m/%d %H:%i:%s'),'%Y-%m-%d')
-                            end BETWEEN ".$production_date_from." AND ".$production_date_to."
-                        else 1=1
-                    end ".$shipping_date.$search_type1.$search_type2.$max_count;
+                    where b.is_deleted <> 1 ".$production_date.$shipping_date.$search_type1.$search_type2.$max_count;
     
             // $sql = "call spBoxPalletSearch_GenerateData(".$search_type.",
             //                         ".$search_value.",

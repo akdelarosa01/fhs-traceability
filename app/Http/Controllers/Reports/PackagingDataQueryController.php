@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
-class PalletTrackingHistoryController extends Controller
+class PackagingDataQueryController extends Controller
 {
     protected $_helpers;
 
@@ -21,13 +22,24 @@ class PalletTrackingHistoryController extends Controller
     public function index()
     {
         $pages = session('pages');
-        $permission = $this->_helpers->get_permission(Auth::user()->id, 'PalletTrackingHistory');
+        $permission = $this->_helpers->get_permission(Auth::user()->id, 'PackagingDataQuery');
 
-        return view('reports.pallet_tracking_history', [
+        return view('reports.packaging_data_query', [
             'pages' => $pages,
             'read_only' => $permission->read_only,
             'authorize' => $permission->authorize,
-            'current_url' => route('reports.pallet-tracking-history')
+            'current_url' => route('reports.packaging-data-query')
         ]);
+    }
+
+    public function generate_data(Request $req)
+    {
+        $data = $this->get_filtered_data($req);
+        return DataTables::of($data)->toJson();
+    }
+
+    private function get_filtered_data($req)
+    {
+
     }
 }
