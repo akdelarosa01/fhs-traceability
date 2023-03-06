@@ -250,4 +250,16 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/trx.css",
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
-    ], "public/css/transactions/shipment.css");
+    ], "public/css/transactions/shipment.css")
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/plugins/select2/dist/js/select2.full.min.js",
+        "resources/js/transactions/shipment.js"
+    ], "public/js/export.js")
+    .styles([
+        "public/css/theme.css",
+         "public/css/trx.css",
+        "resources/plugins/select2/dist/css/select2.min.css",
+        "resources/plugins/select2/dist/css/select2-bootstrap4.css",
+    ], "public/css/export.css");

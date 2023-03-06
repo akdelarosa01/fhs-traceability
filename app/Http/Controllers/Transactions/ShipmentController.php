@@ -14,6 +14,7 @@ use App\Models\WarehouseToShipment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ShipmentController extends Controller
 {
@@ -138,7 +139,7 @@ class ShipmentController extends Controller
             DB::raw("m.model as model"),
             DB::raw("p.pallet_qr as pallet_qr"),
             DB::raw("count(b.box_qr) as box_qty"),
-            DB::raw("sum(ins.qty) as hs_qty")
+            DB::raw("sum(ins.qty_per_box) as hs_qty")
             
         ])
         ->join('pallet_model_matrices as m','p.model_id','=','m.id')
@@ -146,9 +147,8 @@ class ShipmentController extends Controller
             $join->on('p.pallet_id', '=', 'b.pallet_id');
             $join->on('b.is_deleted','=', DB::raw(0));
         })
-        ->join('tinspectionsheetprintdata as ins', function($join) {
-            $join->on('ins.BoxSerialNo', '=', 'b.box_qr');
-            $join->on('ins.fec_part_no','=', 'm.model');
+        ->join('qa_inspected_boxes as ins', function($join) {
+            $join->on('ins.box_id', '=', 'b.id');
         })
         ->where('p.pallet_location','WAREHOUSE')
         ->where('p.is_shipped',0)
@@ -532,32 +532,15 @@ class ShipmentController extends Controller
 
     public function system_report(Request $req){
        try {
-
-        $query = DB::table("shipment_details")->where('ship_id',$req->Data["id"])->select()->get();
-
-        foreach($query as $i){
-            $pallet_qr = $i->pallet_qr;
-            $hs_qty = $i->hs_qty;
-            $box_qty = $i->box_qty;
-            $scan_status = $i->created_at;
-        }
-        $data = [
-            'msg' => 'Shipment was successfully Printed.',
-            'data' => $req->Data,
-            'success' => true,
-            'msgType' => 'success',
-            'msgTitle' => 'Success!'
-        ];
+        $shipment = DB::table('shipments')->where('id',$req->id)->select()->get()->toArray();
+        $shipment_details = DB::table("shipment_details")->where('ship_id',$req->id)->select()->get()->toArray();
+        $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
+        return $pdf->download('invoice.pdf');
+        //return view('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
        } catch (\Throwable $th) {
-        $data = [
-            'msg' => $th->getMessage(),
-            'data' => [],
-            'success' => false,
-            'msgType' => 'error',
-            'msgTitle' => 'Error!'
-        ];
+
        }
-       return response()->json($data);
+
     }
 
     private function control_no($model)

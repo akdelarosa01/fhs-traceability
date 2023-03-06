@@ -36,5 +36,7 @@
     "/js/transactions/warehouse.js": "/js/transactions/warehouse.js",
     "/css/transactions/warehouse.css": "/css/transactions/warehouse.css",
     "/js/transactions/shipment.js": "/js/transactions/shipment.js",
-    "/css/transactions/shipment.css": "/css/transactions/shipment.css"
+    "/css/transactions/shipment.css": "/css/transactions/shipment.css",
+    "/js/export.js": "/js/export.js",
+    "/css/export.css": "/css/export.css"
 }
