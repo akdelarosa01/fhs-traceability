@@ -70,128 +70,130 @@
         
     </style>
 <body>
-    <div style="margin-bottom:0px" class="row">
-        <div class="col-3">
-            <img src="{{url('/images/ftl.png')}}" alt="Image"/>
-        </div>
-        <div class="col-9">
-            <div class="col-12"><h1 style="font-size:20px">FURUKAWA ELECTRIC THERMAL MANAGEMENT SOLUTIONS AND PRODUCTS LAGUNA INC.</h1></div>
-            <div class="col-12"><p>Unit 9,10, 13,14 Metrococo Export Corp. Bldng 1,105 Industry Road,Phase 1, Laguna Technopark Brgy. Don Jose Santa Rosa Laguna</p></div>
-        </div>
+@if(count($shipment_details) > 20)
+    <div>yeahhh</div>
+@else
+<div style="margin-bottom:0px" class="row">
+    <div class="col-3">
+        <img src="{{url('/images/ftl.png')}}" alt="Image"/>
     </div>
-    <hr style="margin-top:0;margin-bottom:0">
-    <h2 style="text-align: center;margin-bottom:20px">SYSTEM REPORT</h2>
-    
-    <div class="row">
-        <div class="col-6">
-            <label style="margin-left:80px" for="model">Model:</label>
-            <input style="width:200px"class="input_users"name="model" type="text" value="{{$shipment->model}}">
-        </div>
-        <div class="col-6">
-            <label style="margin-left:23px">Container Number:</label>
-            <input style="width:200px" class="input_users"name="container_no" type="text" value="{{$shipment->container_no}}">
-        </div>
+    <div class="col-9">
+        <div class="col-12"><h1 style="font-size:20px">FURUKAWA ELECTRIC THERMAL MANAGEMENT SOLUTIONS AND PRODUCTS LAGUNA INC.</h1></div>
+        <div class="col-12"><p>Unit 9,10, 13,14 Metrococo Export Corp. Bldng 1,105 Industry Road,Phase 1, Laguna Technopark Brgy. Don Jose Santa Rosa Laguna</p></div>
     </div>
-    <div class="row mt-2">
-        <div class="col-6">
-            <label style="margin-left:35px" for="shipment_qty">Shipment Qty:</label>
-            <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$shipment->ship_qty}}">
-        </div>
-        <div class="col-6">
-            <label style="margin-left:14px" for="truck_plate_no">Truck Plate Number:</label>
-            <input style="width:200px" class="input_users"name="truck_plate_no" type="text" value="{{$shipment->truck_plate_no}}">
-        </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col-6">
-            <label style="margin-left:20px" for="control_no">Control Number:</label>
-            <input style="width:200px" class="input_users"name="control_no" type="text" value="{{$shipment->control_no}}">
-        </div>
-        <div class="col-6">
-            <label for="Shippng_seal_no">Shipping Seal Number:</label>
-            <input style="width:200px" class="input_users"name="Shippng_seal_no" type="text" value="{{$shipment->shipping_seal_no}}">
-        </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col-6">
-            <label style="margin-left:20px" for="incoive_no">Invoice Number:</label>
-            <input style="width:200px" class="input_users"name="incoive_no" type="text" value="{{$shipment->invoice_no}}">
-        </div>
-        <div class="col-6">
-            <label style="margin-left:20px" for="peza_seal_no">PEZA Seal Number:</label>
-            <input style="width:200px" class="input_users" name="peza_seal_no" type="text" value="{{$shipment->peza_seal_no}}">
-        </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col-12">
-            <label style="margin-left:45px" for="destination"><b>Destination:</b></label>
-            <input style="width:550px" name="destination" class="input_users" type="text" value="{{$shipment->destination}}">
-        </div>
-    </div>
-    
-    
- 
-    <table>
-        <thead>
-          <tr>
-            <th style="width:250px" scope="col">Pallet ID:</th>
-            <th style="width:50px" scope="col">Box Qty</th>
-            <th style="width:50px" scope="col">HS Qty</th>
-            <th scope="col">Scan Status</th>
-            <th scope="col">Verified By</th>
-          </tr>
-        </thead>
-        <tbody>
-            @foreach($shipment_details as $detail)
-            <tr>
-              <td>{{$detail->pallet_qr}}</td>
-              <td>{{$detail->box_qty}}</td>
-              <td>{{$detail->hs_qty}}</td>
-              <td>ON LOAD {{$detail->created_at}}</td>
-              <td>QA Inspection on Duty</td>
-            </tr>
-            @endforeach
-            @for ($i=count($shipment_details)-1;$i<20;$i++)
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-            @endfor
-          <tr style="background-color:white ">
-            <td >TOTAL</td>
-            <td>{{$shipment->box_qty}}</td>
-            <td>{{$shipment->ship_qty}}</td>
-            <td>1 OUT OF 1</td>
-            <td>COMPLETE</td>
-          </tr>
-        </tbody>
-      </table>
+</div>
+<hr style="margin-top:0;margin-bottom:0">
+<h2 style="text-align: center;margin-bottom:20px">SYSTEM REPORT</h2>
 
-      <div style="text-align: center" class="row mt-5">
-        <div  class="col-3">
-            <h5 style="text-align:center;margin-bottom:30px" >Prepared By:</h5>
-            <hr style="width:70%;background-color:black;">
-            <h5 style="text-align:center" >Whse PIC</h5>
-        </div>
-        <div class="col-3">
-            <h5 style="text-align:center;margin-bottom:30px" >Checked By:</h5>
-            <hr style="width:70%;background-color:black">
-            <h5 style="text-align:center" >Manager On Duty</h5>
-        </div>
-        <div class="col-3">
-            <h5 style="text-align:center;margin-bottom:30px" >Verified By:</h5>
-            <hr style="width:70%;background-color:black">
-            <h5 style="text-align:center" >QC SV on Duty</h5>
-        </div>
-        <div class="col-3">
-            <h5 style="text-align:center;margin-bottom:30px" >Acknowledge By:</h5>
-            <hr style="width:70%;background-color:black">
-            <h5 style="text-align:center" >Impex PIC</h5>
-        </div>
-      </div>
+<div class="row">
+    <div class="col-6">
+        <label style="margin-left:80px" for="model">Model:</label>
+        <input style="width:200px"class="input_users"name="model" type="text" value="{{$shipment->model}}">
+    </div>
+    <div class="col-6">
+        <label style="margin-left:23px">Container Number:</label>
+        <input style="width:200px" class="input_users"name="container_no" type="text" value="{{$shipment->container_no}}">
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-6">
+        <label style="margin-left:35px" for="shipment_qty">Shipment Qty:</label>
+        <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$shipment->ship_qty}}">
+    </div>
+    <div class="col-6">
+        <label style="margin-left:14px" for="truck_plate_no">Truck Plate Number:</label>
+        <input style="width:200px" class="input_users"name="truck_plate_no" type="text" value="{{$shipment->truck_plate_no}}">
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-6">
+        <label style="margin-left:20px" for="control_no">Control Number:</label>
+        <input style="width:200px" class="input_users"name="control_no" type="text" value="{{$shipment->control_no}}">
+    </div>
+    <div class="col-6">
+        <label for="Shippng_seal_no">Shipping Seal Number:</label>
+        <input style="width:200px" class="input_users"name="Shippng_seal_no" type="text" value="{{$shipment->shipping_seal_no}}">
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-6">
+        <label style="margin-left:20px" for="incoive_no">Invoice Number:</label>
+        <input style="width:200px" class="input_users"name="incoive_no" type="text" value="{{$shipment->invoice_no}}">
+    </div>
+    <div class="col-6">
+        <label style="margin-left:20px" for="peza_seal_no">PEZA Seal Number:</label>
+        <input style="width:200px" class="input_users" name="peza_seal_no" type="text" value="{{$shipment->peza_seal_no}}">
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-12">
+        <label style="margin-left:45px" for="destination"><b>Destination:</b></label>
+        <input style="width:550px" name="destination" class="input_users" type="text" value="{{$shipment->destination}}">
+    </div>
+</div>
+<table>
+    <thead>
+      <tr>
+        <th style="width:250px" scope="col">Pallet ID:</th>
+        <th style="width:50px" scope="col">Box Qty</th>
+        <th style="width:50px" scope="col">HS Qty</th>
+        <th scope="col">Scan Status</th>
+        <th scope="col">Verified By</th>
+      </tr>
+    </thead>
+    <tbody>
+        @foreach($shipment_details as $detail)
+        <tr>
+          <td>{{$detail->pallet_qr}}</td>
+          <td>{{$detail->box_qty}}</td>
+          <td>{{$detail->hs_qty}}</td>
+          <td>ON LOAD {{$detail->created_at}}</td>
+          <td>QA Inspection on Duty</td>
+        </tr>
+        @endforeach
+        @for ($i=count($shipment_details)-1;$i<20;$i++)
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+        @endfor
+      <tr style="background-color:white ">
+        <td >TOTAL</td>
+        <td>{{$shipment->box_qty}}</td>
+        <td>{{$shipment->ship_qty}}</td>
+        <td>1 OUT OF 1</td>
+        <td>COMPLETE</td>
+      </tr>
+    </tbody>
+</table>
+<div style="text-align: center" class="row mt-5">
+  <div style="margin-right:80px" style="margin" class="col-3">
+      <h5 style="text-align:center;margin-bottom:30px" >Prepared By:</h5>
+      <hr style="width:100%;background-color:black;">
+      <h5 style="text-align:center" >Whse PIC</h5>
+  </div>
+  <div style="margin-left:80px"class="col-3">
+      <h5 style="text-align:center;margin-bottom:30px" >Checked By:</h5>
+      <hr style="width:100%;background-color:black">
+      <h5 style="text-align:center" >Manager On Duty</h5>
+  </div>
+  <div style="margin-left:80px" class="col-3">
+      <h5 style="text-align:center;margin-bottom:30px" >Verified By:</h5>
+      <hr style="width:100%;background-color:black">
+      <h5 style="text-align:center" >QC SV on Duty</h5>
+  </div>
+  <div style="margin-left:80px" class="col-3">
+      <h5 style="text-align:center;margin-bottom:30px" >Acknowledge By:</h5>
+      <hr style="width:100%;background-color:black">
+      <h5 style="text-align:center" >Impex PIC</h5>
+  </div>
+</div>
+@endif
+  
+   
 </body>
 
 @push('scripts')
