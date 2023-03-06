@@ -189,8 +189,8 @@ class QADataQueryController extends Controller
     
                     $heat_sinks = collect(QaAffectedSerial::where([
                         ['pallet_id','=',$box->pallet_id],
-                        ['box_id','=',$box->box_id],
-                        ['updated_at','LIKE', $box->oba_date.'%']
+                        ['box_id','=',$box->box_id]
+                        // ['updated_at','LIKE', $box->oba_date.'%']
                     ])->select('hs_serial')->get());
     
 

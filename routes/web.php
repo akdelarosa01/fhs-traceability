@@ -87,10 +87,40 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/generate-data', [App\Http\Controllers\Reports\BoxAndPalletDataSearchController::class, 'generate_data'])->name('reports.box-pallet-data-search.generate-data');
     });
 
+    Route::group(['prefix' => 'rca-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\RCADataQueryController::class, 'index'])->name('reports.rca-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\RCADataQueryController::class, 'generate_data'])->name('reports.rca-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\RCADataQueryController::class, 'download_excel'])->name('reports.rca-data-query.download-excel');
+    });
+
+    Route::group(['prefix' => 'grease-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\GreaseDataQueryController::class, 'index'])->name('reports.grease-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\GreaseDataQueryController::class, 'generate_data'])->name('reports.grease-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\GreaseDataQueryController::class, 'download_excel'])->name('reports.grease-data-query.download-excel');
+    });
+
+    Route::group(['prefix' => 'packaging-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\PackagingDataQueryController::class, 'index'])->name('reports.packaging-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\PackagingDataQueryController::class, 'generate_data'])->name('reports.packaging-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\PackagingDataQueryController::class, 'download_excel'])->name('reports.packaging-data-query.download-excel');
+    });
+
+    Route::group(['prefix' => 'barcode-to-barcode-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\BarcodeToBarcodeDataQueryController::class, 'index'])->name('reports.barcode-to-barcode-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\BarcodeToBarcodeDataQueryController::class, 'generate_data'])->name('reports.barcode-to-barcode-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\BarcodeToBarcodeDataQueryController::class, 'download_excel'])->name('reports.barcode-to-barcode-data-query.download-excel');
+    });
+
     Route::group(['prefix' => 'qa-data-query'], function () {
         Route::get('/', [App\Http\Controllers\Reports\QADataQueryController::class, 'index'])->name('reports.qa-data-query');
         Route::get('/generate-data', [App\Http\Controllers\Reports\QADataQueryController::class, 'generate_data'])->name('reports.qa-data-query.generate-data');
         Route::get('/download-excel', [App\Http\Controllers\Reports\QADataQueryController::class, 'download_excel'])->name('reports.qa-data-query.download-excel');
+    });
+
+    Route::group(['prefix' => 'shipment-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'index'])->name('reports.shipment-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'generate_data'])->name('reports.shipment-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'download_excel'])->name('reports.shipment-data-query.download-excel');
     });
 });
 

@@ -86,11 +86,9 @@ mix.js('resources/js/app.js', 'public/js')
 
     .scripts([
         "public/js/theme.js",
-        // "public/js/trx.js",
     ], "public/js/auth.js")
     .styles([
         "public/css/theme.css",
-        // "public/css/trx.css",
     ], "public/css/auth.css")
 
     .scripts([
@@ -113,6 +111,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/masters/users.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -122,6 +122,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/masters/page.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -131,6 +133,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/masters/customer.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -142,6 +146,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/trx.css",
         "resources/plugins/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css",
     ], "public/css/masters/qa_disposition.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -154,6 +160,8 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/masters/disposition_reasons.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -163,6 +171,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/masters/box_pallet_model_matrix.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -173,15 +183,7 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/trx.css",
     ], "public/css/masters/hs_ng_reasons.css")
 
-    .scripts([
-        "public/js/theme.js",
-        "public/js/trx.js",
-        "resources/js/reports/pallet_tracking_history.js"
-    ], "public/js/reports/pallet_tracking_history.js")
-    .styles([
-        "public/css/theme.css",
-        "public/css/trx.css",
-    ], "public/css/reports/pallet_tracking_history.css")
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -191,6 +193,8 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/reports/box_pallet_data_search.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -200,6 +204,7 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/reports/qa_data_query.css")
+
 
     .scripts([
         "public/js/theme.js",
@@ -214,6 +219,8 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css"
     ], "public/css/transactions/box_and_pallet_application.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -227,6 +234,8 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/qa_inspection.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -239,6 +248,8 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/warehouse.css")
+
+
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -251,6 +262,7 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/shipment.css")
+<<<<<<< HEAD
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -263,3 +275,55 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/export.css");
+=======
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/rca_data_query.js"
+    ], "public/js/reports/rca_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/rca_data_query.css")
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/grease_data_query.js"
+    ], "public/js/reports/grease_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/grease_data_query.css")
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/packaging_data_query.js"
+    ], "public/js/reports/packaging_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/packaging_data_query.css")
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/barcode_to_barcode_data_query.js"
+    ], "public/js/reports/barcode_to_barcode_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/barcode_to_barcode_data_query.css")
+
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/shipment_data_query.js"
+    ], "public/js/reports/shipment_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/shipment_data_query.css");
+>>>>>>> e400eade32d249097a747dffa30ed7f25868934b

@@ -23,9 +23,9 @@
         showMenu: function(menuObj) {
             menuObj = JSON.parse(menuObj)
 
-            menuObj.sort((a, b) => {
-                return a.id - b.id;
-            });
+            // menuObj.sort((a, b) => {
+            //     return a.id - b.id;
+            // });
 
             var HomeMenu = "";
 

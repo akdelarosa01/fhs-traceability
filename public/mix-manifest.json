@@ -23,8 +23,6 @@
     "/css/masters/box_pallet_model_matrix.css": "/css/masters/box_pallet_model_matrix.css",
     "/js/masters/hs_ng_reasons.js": "/js/masters/hs_ng_reasons.js",
     "/css/masters/hs_ng_reasons.css": "/css/masters/hs_ng_reasons.css",
-    "/js/reports/pallet_tracking_history.js": "/js/reports/pallet_tracking_history.js",
-    "/css/reports/pallet_tracking_history.css": "/css/reports/pallet_tracking_history.css",
     "/js/reports/box_pallet_data_search.js": "/js/reports/box_pallet_data_search.js",
     "/css/reports/box_pallet_data_search.css": "/css/reports/box_pallet_data_search.css",
     "/js/reports/qa_data_query.js": "/js/reports/qa_data_query.js",
@@ -37,6 +35,19 @@
     "/css/transactions/warehouse.css": "/css/transactions/warehouse.css",
     "/js/transactions/shipment.js": "/js/transactions/shipment.js",
     "/css/transactions/shipment.css": "/css/transactions/shipment.css",
+<<<<<<< HEAD
     "/js/export.js": "/js/export.js",
     "/css/export.css": "/css/export.css"
+=======
+    "/js/reports/rca_data_query.js": "/js/reports/rca_data_query.js",
+    "/css/reports/rca_data_query.css": "/css/reports/rca_data_query.css",
+    "/js/reports/grease_data_query.js": "/js/reports/grease_data_query.js",
+    "/css/reports/grease_data_query.css": "/css/reports/grease_data_query.css",
+    "/js/reports/packaging_data_query.js": "/js/reports/packaging_data_query.js",
+    "/css/reports/packaging_data_query.css": "/css/reports/packaging_data_query.css",
+    "/js/reports/barcode_to_barcode_data_query.js": "/js/reports/barcode_to_barcode_data_query.js",
+    "/css/reports/barcode_to_barcode_data_query.css": "/css/reports/barcode_to_barcode_data_query.css",
+    "/js/reports/shipment_data_query.js": "/js/reports/shipment_data_query.js",
+    "/css/reports/shipment_data_query.css": "/css/reports/shipment_data_query.css"
+>>>>>>> e400eade32d249097a747dffa30ed7f25868934b
 }

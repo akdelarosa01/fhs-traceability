@@ -25,7 +25,7 @@
             if (!$.fn.DataTable.isDataTable('#tbl_data_search')) {
                 self.$tbl_data_search = $('#tbl_data_search').DataTable({
                     processing: true,
-                    scrollY: 600,
+                    scrollY: 500,
                     scrollX: true,
                     scrollCollapse: true,
                     paging: false,
@@ -215,14 +215,24 @@
             _QADataQuery.$tbl_data_search.fixedHeader.adjust();
         });
 
-        $('#shipping_date_from').on('change', function(e) {
+        $('#oba_date_from').on('change', function(e) {
             console.log(e.currentTarget.value);
-            $('#shipping_date_to').attr('min', e.currentTarget.value);
+            $('#oba_date_to').attr('min', e.currentTarget.value);
         });
 
-        $('#shipping_date_to').on('change', function(e) {
+        $('#oba_date_to').on('change', function(e) {
             console.log(e.currentTarget.value);
-            $('#shipping_date_from').attr('max', e.currentTarget.value);
+            $('#oba_date_from').attr('max', e.currentTarget.value);
+        });
+
+        $('#exp_date_from').on('change', function(e) {
+            console.log(e.currentTarget.value);
+            $('#exp_date_to').attr('min', e.currentTarget.value);
+        });
+
+        $('#exp_date_to').on('change', function(e) {
+            console.log(e.currentTarget.value);
+            $('#exp_date_from').attr('max', e.currentTarget.value);
         });
 
         $('#btn_search').on('click', function() {
