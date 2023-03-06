@@ -35,10 +35,8 @@
     "/css/transactions/warehouse.css": "/css/transactions/warehouse.css",
     "/js/transactions/shipment.js": "/js/transactions/shipment.js",
     "/css/transactions/shipment.css": "/css/transactions/shipment.css",
-<<<<<<< HEAD
     "/js/export.js": "/js/export.js",
-    "/css/export.css": "/css/export.css"
-=======
+    "/css/export.css": "/css/export.css",
     "/js/reports/rca_data_query.js": "/js/reports/rca_data_query.js",
     "/css/reports/rca_data_query.css": "/css/reports/rca_data_query.css",
     "/js/reports/grease_data_query.js": "/js/reports/grease_data_query.js",
@@ -49,5 +47,4 @@
     "/css/reports/barcode_to_barcode_data_query.css": "/css/reports/barcode_to_barcode_data_query.css",
     "/js/reports/shipment_data_query.js": "/js/reports/shipment_data_query.js",
     "/css/reports/shipment_data_query.css": "/css/reports/shipment_data_query.css"
->>>>>>> e400eade32d249097a747dffa30ed7f25868934b
 }
