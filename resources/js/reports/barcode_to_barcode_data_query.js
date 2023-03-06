@@ -84,7 +84,9 @@
                         { data: 'reason', name: 'reason', title: 'Reason' },
                         { data: 'transfer_status', name: 'transfer_status', title: 'Transfer Status' },
                         { data: 'machine_no', name: 'machine_no', title: 'Machine No.' },
-                        { data: 'num_of_repairs', name: 'num_of_repairs', title: 'No. of Repairs' }
+                        { data: 'num_of_repairs', name: 'num_of_repairs', title: 'No. of Repairs' },
+                        { data: 'process_type', name: 'process_type', title: 'Process Type' },
+                        { data: 'process_by', name: 'process_by', title: 'Process By' }
                     ],
                     rowCallback: function(row, data) {
                     },

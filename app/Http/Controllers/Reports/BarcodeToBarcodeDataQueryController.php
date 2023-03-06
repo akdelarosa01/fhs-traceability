@@ -52,19 +52,19 @@ class BarcodeToBarcodeDataQueryController extends Controller
                 if (!is_null($req->search_type) && !is_null($req->search_value)) {
                     switch ($req->search_type) {
                         case 'new_barcode':
-                            $search_type = " AND NewBarcode REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.NewBarcode REGEXP '".$req->search_value."' ";
                             break;
                         case 'old_barcode':
-                            $search_type = " AND OldBarcode REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.OldBarcode REGEXP '".$req->search_value."' ";
                             break;
                         case 'model_code':
-                            $search_type = " AND ModelName REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.ModelName REGEXP '".$req->search_value."' ";
                             break;
                         case 'machine_no':
-                            $search_type = " AND MachineNo REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.MachineNo REGEXP '".$req->search_value."' ";
                             break;
                         default: // reason
-                            $search_type = " AND Reason REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.Reason REGEXP '".$req->search_value."' ";
                             break;
                     }
                 }
@@ -77,15 +77,18 @@ class BarcodeToBarcodeDataQueryController extends Controller
                     $max_count = " LIMIT " . $req->max_count . "";
                 }
         
-                $sql = "SELECT DateTransfer as transfer_date,
-                        ModelName as model_code,
-                        OldBarcode as old_barcode,
-                        NewBarcode as new_barcode,
-                        Reason as reason,
-                        TransferStatus as transfer_status,
-                        MachineNo as machine_no,
-                        NumOfRepairs as num_of_repairs
-                        FROM furukawa.barcode_to_barcode
+                $sql = "SELECT b.DateTransfer as transfer_date,
+                        b.ModelName as model_code,
+                        b.OldBarcode as old_barcode,
+                        b.NewBarcode as new_barcode,
+                        b.Reason as reason,
+                        b.TransferStatus as transfer_status,
+                        b.MachineNo as machine_no,
+                        b.NumOfRepairs as num_of_repairs,
+                        b.ProcessType as process_type,
+                        concat(u.FirstName,' ',u.LastName) as process_by
+                        FROM furukawa.barcode_to_barcode as b
+                        join furukawa.musers as u on u.id = b.UserID
                         where 1=1 " .$search_type.$transfer_date.$max_count;
         
                 $data = collect(DB::select(DB::raw($sql)));
