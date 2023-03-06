@@ -86,9 +86,9 @@
                         { data: 'lot_no', name: 'lot_no', title: 'Lot No.' },
                         { data: 'old_hs_serial', name: 'old_hs_serial', title: 'Old H.S. Serial' },
                         { data: 'change_date', name: 'change_date', title: 'Change Date' },
-                        { data: 'operator', name: 'operator', title: 'Operator' },
+                        { data: 'leader_in_charge', name: 'leader_in_charge', title: 'Leader In Charge' },
                         { data: 'remarks', name: 'remarks', title: 'Remarks' },
-                        { data: 'work_user', name: 'work_user', title: 'User ID' },
+                        { data: 'operator', name: 'operator', title: 'Operator' },
                     ],
                     rowCallback: function(row, data) {
                     },

@@ -28,7 +28,7 @@ Packaging Data Query
             <div class="row mb-2">
                 <div class="col-md-12">
 					<div class="row">
-						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+						<div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Type</span>
@@ -40,14 +40,15 @@ Packaging Data Query
                                     <option value="machine_no">Machine No.</option>
                                     <option value="model_code">Model Code</option>
                                     <option value="hs_serial">H.S. Serial</option>
-                                    <option value="operatpr">Operator</option>
+                                    <option value="operator">Operator</option>
+                                    <option value="leader_in_charge">Leader In Charge</option>
                                     <option value="lot_no">Lot Number</option>
                                 </select>
 								<div id="search_type_feedback"></div>
 							</div>
 						</div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Value</span>
@@ -57,7 +58,7 @@ Packaging Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Max count</span>
@@ -71,7 +72,7 @@ Packaging Data Query
 					</div>
 
                     <div class="row">
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Packaging Date From</span>
@@ -81,7 +82,7 @@ Packaging Data Query
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-append">
                                     <span class="input-group-text">Packaging Date To</span>
@@ -91,7 +92,7 @@ Packaging Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
                                 <i class="fa fa-search"></i> Search
                             </button>

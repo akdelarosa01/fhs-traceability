@@ -28,7 +28,7 @@ RCA Thermal Data Query
             <div class="row mb-2">
                 <div class="col-md-12">
 					<div class="row">
-						<div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+						<div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Type</span>
@@ -45,7 +45,7 @@ RCA Thermal Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Value</span>
@@ -61,7 +61,7 @@ RCA Thermal Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Max count</span>
@@ -76,7 +76,7 @@ RCA Thermal Data Query
 
                     <div class="row">
 
-                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Inspection Date From</span>
@@ -86,7 +86,7 @@ RCA Thermal Data Query
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-append">
                                     <span class="input-group-text">Inspection Date To</span>
@@ -98,7 +98,7 @@ RCA Thermal Data Query
 
                         
 
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
                                 <i class="fa fa-search"></i> Search
                             </button>

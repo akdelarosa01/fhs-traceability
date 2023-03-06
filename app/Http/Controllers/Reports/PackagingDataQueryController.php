@@ -68,6 +68,9 @@ class PackagingDataQueryController extends Controller
                             $search_type = " AND c4 REGEXP '".$req->search_value."' ";
                             break;
                         case 'operator':
+                            $search_type = " AND c6 REGEXP '".$req->search_value."' ";
+                            break;
+                        case 'leader_in_charge':
                             $search_type = " AND c12 REGEXP '".$req->search_value."' ";
                             break;
                         default: // lot no
@@ -88,13 +91,13 @@ class PackagingDataQueryController extends Controller
                             c2 as machine_no,
                             c3 as model_code,
                             c4 as hs_serial,
-                            c6 as work_user,
+                            c6 as operator,
                             LPAD(c7,3,'0') as box_no,
                             c8 as work_order,
                             c9 as lot_no,
                             c10 as old_hs_serial,
                             c11 as change_date,
-                            c12 as operator,
+                            c12 as leader_in_charge,
                             c13 as remarks
                         FROM formal.barcode
                         where 1=1 " .$search_type.$packaging_date.$exp_date.$max_count;
