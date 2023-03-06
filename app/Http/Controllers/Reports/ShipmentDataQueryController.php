@@ -43,11 +43,11 @@ class ShipmentDataQueryController extends Controller
         $search_type = "";
         $max_count = "";
         $shipment_date = "";
-        $exp_date = "";
+        $create_date = "";
 
         try {
             DB::beginTransaction();
-            if (is_null($req->search_type) && is_null($req->shipment_date_from) && is_null($req->shipment_date_to)) {
+            if (is_null($req->search_type) && is_null($req->shipment_date_from) && is_null($req->shipment_date_to) && is_null($req->create_date_from) && is_null($req->create_date_to)) {
                 return [];
             } else {
                 if (!is_null($req->search_type) && !is_null($req->search_value)) {
@@ -79,6 +79,10 @@ class ShipmentDataQueryController extends Controller
                 if (!is_null($req->shipment_date_from) && !is_null($req->shipment_date_to)) {
                     $shipment_date= " AND DATE_FORMAT(s.ship_date,'%Y-%m-%d') BETWEEN '" . $req->shipment_date_from . "' AND '" . $req->shipment_date_to . "' ";
                 }
+
+                if (!is_null($req->create_date_from) && !is_null($req->create_date_to)) {
+                    $create_date = " AND DATE_FORMAT(s.created_at,'%Y-%m-%d') BETWEEN '" . $req->create_date_from . "' AND '" . $req->create_date_to . "' ";
+                }
         
                 if (!is_null($req->max_count)) {
                     $max_count = " LIMIT " . $req->max_count . "";
@@ -102,7 +106,7 @@ class ShipmentDataQueryController extends Controller
                         FROM furukawa.shipments as s
                         join furukawa.shipment_details as d
                         on d.ship_id = s.id
-                        where d.is_deleted <> 1 " .$search_type.$shipment_date.$exp_date.$max_count;
+                        where d.is_deleted <> 1 " .$search_type.$shipment_date.$create_date.$max_count;
         
                 $data = collect(DB::select(DB::raw($sql)));
         

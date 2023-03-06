@@ -38,7 +38,7 @@
                         'csv', 'excel'
                     ],
                     rowGroup: {
-                        dataSrc: 1
+                        dataSrc: 'control_no'
                     },
                     ajax: {
                         url: "/reports/shipment-data-query/generate-data",
@@ -50,6 +50,8 @@
                             d.max_count = $('#max_count').val();
                             d.shipment_date_from = $('#shipment_date_from').val();
                             d.shipment_date_to = $('#shipment_date_to').val();
+                            d.create_date_from = $('#create_date_from').val();
+                            d.create_date_to = $('#create_date_to').val();
                         },
                         error: function(response) {
                             console.log(response);
@@ -150,6 +152,16 @@
         $('#shipment_date_to').on('change', function(e) {
             console.log(e.currentTarget.value);
             $('#shipment_date_from').attr('max', e.currentTarget.value);
+        });
+
+        $('#create_date_from').on('change', function(e) {
+            console.log(e.currentTarget.value);
+            $('#create_date_to').attr('min', e.currentTarget.value);
+        });
+
+        $('#create_date_to').on('change', function(e) {
+            console.log(e.currentTarget.value);
+            $('#create_date_from').attr('max', e.currentTarget.value);
         });
 
         $('#btn_search').on('click', function() {

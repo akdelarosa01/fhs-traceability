@@ -57,20 +57,6 @@ Shipment Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<span class="input-group-text">Max count</span>
-								</div>
-								<input type="number" class="form-control form-control-sm clear" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
-								<div id="max_count_feedback"></div>
-							</div>
-						</div>
-
-                        
-					</div>
-
-                    <div class="row">
                         <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
@@ -88,6 +74,42 @@ Shipment Data Query
                                 </div>
                                 <input type="date" class="form-control form-control-sm clear" id="shipment_date_to" name="shipment_date_to">
 								<div id="shipment_date_to_feedback"></div>
+							</div>
+						</div>
+
+                        
+
+                        
+					</div>
+
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="input-group input-group-sm mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Create Date From</span>
+                                </div>
+                                <input type="date" class="form-control form-control-sm clear" id="create_date_from" name="create_date_from">
+                                <div id="create_date_from_feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-append">
+                                    <span class="input-group-text">Create Date To</span>
+                                </div>
+                                <input type="date" class="form-control form-control-sm clear" id="create_date_to" name="create_date_to">
+								<div id="create_date_to_feedback"></div>
+							</div>
+						</div>
+
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+							<div class="input-group input-group-sm mb-2">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Max count</span>
+								</div>
+								<input type="number" class="form-control form-control-sm clear" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
+								<div id="max_count_feedback"></div>
 							</div>
 						</div>
 
