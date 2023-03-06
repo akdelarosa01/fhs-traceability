@@ -38,7 +38,7 @@
                         'csv', 'excel'
                     ],
                     rowGroup: {
-                        dataSrc: 2
+                        dataSrc: 1
                     },
                     ajax: {
                         url: "/reports/shipment-data-query/generate-data",

@@ -11,10 +11,10 @@ use App\Models\PalletBoxPalletHdr;
 use App\Models\Shipment;
 use App\Models\ShipmentDetail;
 use App\Models\WarehouseToShipment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class ShipmentController extends Controller
 {
