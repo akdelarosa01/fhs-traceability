@@ -28,85 +28,82 @@ Shipment Data Query
             <div class="row mb-2">
                 <div class="col-md-12">
 					<div class="row">
-						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+						<div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Type</span>
 								</div>
 								<select name="search_type" id="search_type" class="form-control clear-select">
                                     <option value=""></option>
-                                    <option value="shift">Shift</option>
-                                    <option value="box_label">Box Label</option>
+                                    <option value="destination">Destination</option>
+                                    <option value="pallet_no">Pallet Number</option>
                                     <option value="model_code">Model Code</option>
-                                    <option value="model_name">Model Name</option>
-                                    <option value="pallet_label">Pallet No.</option>
-                                    <option value="cutomer_pn">Customer Part Number</option>
-                                    <option value="lot_no">Lot Number</option>
-                                    <option value="prod_line_no">Prod. Line Number</option>
+                                    <option value="truck_plate_no">Truck Plate No.</option>
+                                    <option value="shipping_seal_no">Shipping Seal No.</option>
+                                    <option value="peza_seal_no">PEZA Seal No.</option>
+                                    <option value="control_no">Control Number</option>
                                 </select>
 								<div id="search_type_feedback"></div>
 							</div>
 						</div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Search Value</span>
 								</div>
 								<input type="text" class="form-control form-control-sm clear normal" id="search_value" name="search_value" placeholder="Search Value" autocomplete="off">
-                                <select class="form-control form-control-sm clear shift" style="display:none;">
-                                    <option value="DS">Day Shift</option>
-                                    <option value="NS">Night Shift</option>
-                                </select>
 								<div id="search_value_feedback"></div>
 							</div>
 						</div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">OBA Date From</span>
+                                    <span class="input-group-text">Shipment Date From</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="oba_date_from" name="oba_date_from">
-                                <div id="oba_date_from_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="shipment_date_from" name="shipment_date_from">
+                                <div id="shipment_date_from_feedback"></div>
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-append">
-                                    <span class="input-group-text">OBA Date To</span>
+                                    <span class="input-group-text">Shipment Date To</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="oba_date_to" name="oba_date_to">
-								<div id="oba_date_to_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="shipment_date_to" name="shipment_date_to">
+								<div id="shipment_date_to_feedback"></div>
 							</div>
 						</div>
+
+                        
+
+                        
 					</div>
 
                     <div class="row">
-                        
-
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <div class="input-group input-group-sm mb-2">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">Expiration Date From</span>
+                                    <span class="input-group-text">Create Date From</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="exp_date_from" name="exp_date_from">
-                                <div id="exp_date_from_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="create_date_from" name="create_date_from">
+                                <div id="create_date_from_feedback"></div>
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
+                        <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-append">
-                                    <span class="input-group-text">Expiration Date To</span>
+                                    <span class="input-group-text">Create Date To</span>
                                 </div>
-                                <input type="date" class="form-control form-control-sm clear" id="exp_Date_to" name="exp_Date_to">
-								<div id="exp_Date_to_feedback"></div>
+                                <input type="date" class="form-control form-control-sm clear" id="create_date_to" name="create_date_to">
+								<div id="create_date_to_feedback"></div>
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
 							<div class="input-group input-group-sm mb-2">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Max count</span>
@@ -116,7 +113,7 @@ Shipment Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
                             <button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
                                 <i class="fa fa-search"></i> Search
                             </button>

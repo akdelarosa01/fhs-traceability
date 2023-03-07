@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
-
 class ShipmentController extends Controller
 {
     protected $_helpers;

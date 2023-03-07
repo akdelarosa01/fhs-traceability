@@ -19,7 +19,7 @@ const layoutCSS = [
     "resources/plugins/DataTables/Buttons-2.2.3/css/buttons.bootstrap4.min.css",
     "resources/plugins/DataTables/FixedHeader-3.2.4/css/fixedHeader.bootstrap4.min.css",
     "resources/plugins/DataTables/FixedColumns-4.1.0/css/fixedColumns.bootstrap4.min.css",
-    // "resources/plugins/DataTables/RowGroup-1.2.0/css/rowGroup.bootstrap4.min.css",
+    "resources/plugins/DataTables/RowGroup-1.2.0/css/rowGroup.bootstrap4.min.css",
     "public/css/app.css"
 ];
 
@@ -47,8 +47,8 @@ const layoutJS = [
     "resources/plugins/DataTables/FixedColumns-4.1.0/js/dataTables.fixedColumns.min.js",
     "resources/plugins/DataTables/FixedColumns-4.1.0/js/fixedColumns.bootstrap4.min.js",
     "resources/plugins/DataTables/dataTables.rowsGroup.js",
-    // "resources/plugins/DataTables/RowGroup-1.2.0/js/dataTables.rowGroup.min.js",
-    // "resources/plugins/DataTables/RowGroup-1.2.0/js/rowGroup.bootstrap4.min.js",
+    "resources/plugins/DataTables/RowGroup-1.2.0/js/dataTables.rowGroup.min.js",
+    "resources/plugins/DataTables/RowGroup-1.2.0/js/rowGroup.bootstrap4.min.js",
     "resources/js/menu.js"
 ];
 
@@ -274,6 +274,10 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/export.css")
+<<<<<<< HEAD
+=======
+
+>>>>>>> dce47aa70189717dac6226e3ec3a6715bf2450cf
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
