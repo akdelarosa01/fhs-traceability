@@ -35,8 +35,8 @@ Barcode to Barcode Data Query
 								</div>
 								<select name="search_type" id="search_type" class="form-control clear-select">
                                     <option value=""></option>
-                                    <option value="new_barcode">Box No.</option>
-                                    <option value="old_barcode">Work Order</option>
+                                    <option value="new_barcode">New Barcode</option>
+                                    <option value="old_barcode">Old Barcode</option>
                                     <option value="model_code">Model Code</option>
                                     <option value="machine_no">Machine No.</option>
                                     <option value="reason">Reason</option>
