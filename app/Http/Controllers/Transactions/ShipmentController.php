@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
 
+
 class ShipmentController extends Controller
 {
     protected $_helpers;
@@ -543,7 +544,6 @@ class ShipmentController extends Controller
         $shipment_details = DB::table("shipment_details")->where('ship_id',$req->id)->select()->get()->toArray();
         $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
         return $pdf->stream($control.'_system_report.pdf');
-        //return view('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
        } catch (\Throwable $th) {
 
        }
