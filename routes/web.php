@@ -181,6 +181,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::get('/get-boxes', [App\Http\Controllers\Transactions\WarehouseController::class, 'get_boxes'])->name('transactions.warehouse.get-boxes');
         Route::get('/send-to-shipment', [App\Http\Controllers\Transactions\WarehouseController::class, 'send_to_shipment'])->name('transactions.warehouse.send-to-shipment');
         Route::post('/remove-to-warehouse',[App\Http\Controllers\Transactions\WarehouseController::class,'remove_from_warehouse'])->name('transactions.warehouse.remove-from-warehouse');
+        Route::post('/send-to-qa',[App\Http\Controllers\Transactions\WarehouseController::class, 'send_to_qa'])->name('transaction.warehouse.send-to-qa');
     });
 
     Route::group(['prefix' => 'shipment'], function () {

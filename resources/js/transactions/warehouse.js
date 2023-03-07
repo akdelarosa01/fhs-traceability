@@ -288,6 +288,16 @@
 
                     // }
                 });
+        },
+        addToQA:function(param){
+            var self = this;
+            let IDs = param.Data.map(i => i.id);
+                self.submitType = "POST";
+                self.jsonData = param;
+                self.formAction = "/transactions/warehouse/send-to-qa";
+                self.sendData().then(function() {
+                    self.$tbl_pallets.ajax.reload();
+                });
         }
     }
     Warehouse.init.prototype = $.extend(Warehouse.prototype, $D.init.prototype, $F.init.prototype);
@@ -394,6 +404,7 @@
         $('#btn_shipment').on('click',function(e){
             e.preventDefault();
             const data = _Warehouse.$tbl_pallets.rows('.selected').data().toArray();
+            const ids = data.map(data => data.id);
             const withForshipment = data.filter(i => i.shipment_status == 'FOR SHIPMENT' || i.shipment_status == 'ONLOAD');
             if(data.length == 0){
                 _Warehouse.swMsg("Please Select Pallet to transfer to Shipment","warning");
@@ -402,12 +413,35 @@
             }else{
                 var param = {
                     _token: _Warehouse.token,
-                    Data:data
+                    Data:ids
                 }
                 _Warehouse.addToShipment(param);
             }
             
         });
+
+        $("#btn_qa").on("click",function(e){
+            e.preventDefault();
+            const data = _Warehouse.$tbl_pallets.rows('.selected').data().toArray();
+            const ids = data.map(data => data.id);
+            const withForshipment = data.filter(i => i.shipment_status == 'FOR SHIPMENT' || i.shipment_status == 'ONLOAD');
+            _Warehouse.msg = "Are you sure you want to send it back to QA";
+            _Warehouse.confirmAction(_Warehouse.msg).then(function(approve) {
+                if (approve) {
+                    if(data.length == 0){
+                        _Warehouse.swMsg("Please Select Pallet to transfer to Q.A.","warning");
+                    }else if (withForshipment.length > 0){
+                        _Warehouse.swMsg("Please Unselect Pallet that is already sent to shipment","warning");
+                    }else{
+                        var param = {
+                            _token: _Warehouse.token,
+                            Data:ids
+                        }
+                        _Warehouse.addToQA(param);
+                    }
+                }
+            });
+        })
 
 
     });

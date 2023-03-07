@@ -113,6 +113,9 @@ Warehouse
 				<button type="button" class="btn btn-sm btn-green btn-block" id="btn_shipment">
 					<i class="fa fa-truck"></i> Send to Shipment
 				</button>
+				<button type="button" class="btn btn-sm btn-blue btn-block" id="btn_qa">
+					<i class="fa fa-search"></i> Send to QA
+				</button>
 			</div>
 		</div>
 

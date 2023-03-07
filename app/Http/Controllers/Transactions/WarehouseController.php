@@ -116,13 +116,14 @@ class WarehouseController extends Controller
     public function send_to_shipment(Request $req){
         
         try {
+            $data = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->Data)->select()->get()->toArray();
             $user = Auth::user()->id;
-            foreach ($req->Data as $data){
+            foreach ($data as $data){
                 $qa = new WarehouseToShipment();
-                $qa->model_id = $data['model_id'];
-                $qa->pallet_id = $data['id'];
-                $qa->pallet_qr = $data['pallet_qr'];
-                $qa->pallet_location = $data['pallet_location'];
+                $qa->model_id = $data->model_id;
+                $qa->pallet_id = $data->id;
+                $qa->pallet_qr = $data->pallet_qr;
+                $qa->pallet_location = $data->pallet_location;
                 $qa->is_shipped = 0;
                 $qa->shipped_at = NULL;
                 $qa->create_user = $user;
@@ -148,6 +149,33 @@ class WarehouseController extends Controller
             ];
         }
         
+        return response()->json($data);
+    }
+
+    public function send_to_qa(Request $req){
+        try {
+            $user = Auth::user()->id;
+            foreach ($req->Data as $data){
+                $qa = DB::table('pallet_box_pallet_hdrs')->where('pallet_qr',$data)->update([
+                    'pallet_location' => 'Q.A.',
+                ]);
+            };
+            $data = [
+                'msg' => 'Transferring Pallet to Shipment was successful.',
+                'data' => [],
+                'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
         return response()->json($data);
     }
 

@@ -780,26 +780,6 @@
                     self.shipment_details_arr = {};
                 }
             });
-        },
-        print:function(param){
-          let self = this;
-        //   self.submitType = "POST";
-        //   self.jsonData = param;
-        //   self.formAction = "/transactions/shipment/system-report";
-        //   self.sendData().then(function(){
-        //     var response = self.responseData;
-        //     console.log(response);
-        //   })
-
-          $.ajax({
-            url:"/transactions/shipment/system-report",
-            type:"POST",
-            data:param,
-            dataType:"JSON",
-            success:function(response){
-              console.log(response)
-            }
-          });
         }
 
     }
@@ -1230,18 +1210,11 @@
 
         $('#tbl_shipments tbody').on('click', '.btn_print_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).closest('tr')).data() ; 
-
-            window.location.href = '/transactions/shipment/system-report?id='+data.id;
-         
-            // if(data.shipment_status == 1){
-            //     let param = {
-            //         _token:_Shipment.token,
-            //         Data:data
-            //     }
-            //     _Shipment.print(param);
-            // }else{
-            // _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
-            // }
+            if(data.shipment_status == 1){
+                window.open('/transactions/shipment/system-report?id='+data.id, '_tab');
+            }else{
+            _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
+            }
          
         });
     });

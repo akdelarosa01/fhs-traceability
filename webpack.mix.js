@@ -262,7 +262,6 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/transactions/shipment.css")
-<<<<<<< HEAD
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -274,9 +273,7 @@ mix.js('resources/js/app.js', 'public/js')
          "public/css/trx.css",
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
-    ], "public/css/export.css");
-=======
-
+    ], "public/css/export.css")
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",
@@ -326,4 +323,3 @@ mix.js('resources/js/app.js', 'public/js')
         "public/css/theme.css",
         "public/css/trx.css",
     ], "public/css/reports/shipment_data_query.css");
->>>>>>> e400eade32d249097a747dffa30ed7f25868934b

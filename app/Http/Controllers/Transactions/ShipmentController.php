@@ -493,8 +493,10 @@ class ShipmentController extends Controller
                             'status' => $req->status,
                             'ship_date' => date('Y-m-d H:i:s'),
                             'update_user' => Auth::user()->id,
-                            'updated_at' => date('Y-m-d H:i:s')
+                            'updated_at' => date('Y-m-d H:i:s'),
+                            ''
                         ]);
+           
             foreach($req->ids as $id){
                   $pallets =DB::table('shipment_details')->select('pallet_qr')->where('ship_id',$id)->get();
                   foreach($pallets as $pallet){
@@ -503,6 +505,10 @@ class ShipmentController extends Controller
                           'shipped_at' => date('Y-m-d H:i:s'),
                           'update_user' => Auth::user()->id,
                           'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                    $hdrs = DB::table("pallet_box_pallet_hdrs")->where('pallet_qr',$pallet->pallet_qr)->update([
+                        'is_shipped' => 1,
+                        'shipped_at' => date('Y-m-d H:i:s'),
                     ]);
                   };
             };
@@ -534,9 +540,10 @@ class ShipmentController extends Controller
     public function system_report(Request $req){
        try {
         $shipment = DB::table('shipments')->where('id',$req->id)->select()->get()->toArray();
+        $control = $shipment[0]->control_no;
         $shipment_details = DB::table("shipment_details")->where('ship_id',$req->id)->select()->get()->toArray();
         $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
-        return $pdf->download('invoice.pdf');
+        return $pdf->stream($control.'_system_report.pdf');
         //return view('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
        } catch (\Throwable $th) {
 
