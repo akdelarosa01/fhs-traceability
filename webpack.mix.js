@@ -274,10 +274,6 @@ mix.js('resources/js/app.js', 'public/js')
         "resources/plugins/select2/dist/css/select2.min.css",
         "resources/plugins/select2/dist/css/select2-bootstrap4.css",
     ], "public/css/export.css")
-<<<<<<< HEAD
-=======
-
->>>>>>> dce47aa70189717dac6226e3ec3a6715bf2450cf
     .scripts([
         "public/js/theme.js",
         "public/js/trx.js",

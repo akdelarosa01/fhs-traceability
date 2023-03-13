@@ -261,14 +261,28 @@ class ShipmentController extends Controller
 
                 if ($ship->update()) {
                     foreach ($req->shipment_details as $key => $sp) {
-                        ShipmentDetail::where('id', $sp['id'])->update([
-                            'pallet_qr' => $sp['pallet_qr'],
-                            'pallet_id' => $sp['pallet_id'],
-                            'box_qty' => $sp['box_qty'],
-                            'hs_qty' => $sp['hs_qty'],
-                            'is_deleted' => 0,
-                            'update_user' => Auth::user()->id
-                        ]);
+                        if (isset($sp['id'])){
+                            ShipmentDetail::where('id', $sp['id'])->update([
+                                'pallet_qr' => $sp['pallet_qr'],
+                                'pallet_id' => $sp['pallet_id'],
+                                'box_qty' => $sp['box_qty'],
+                                'hs_qty' => $sp['hs_qty'],
+                                'is_deleted' => 0,
+                                'update_user' => Auth::user()->id
+                            ]);
+                        }else{
+                            ShipmentDetail::create([
+                                'ship_id' => $ship->id,
+                                'pallet_qr' => $sp['pallet_qr'],
+                                'pallet_id' => $sp['pallet_id'],
+                                'box_qty' => $sp['box_qty'],
+                                'hs_qty' => $sp['hs_qty'],
+                                'is_deleted' => 0,
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id
+                            ]);
+                        }
+                        
                     }
 
                     DB::commit();
