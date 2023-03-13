@@ -560,7 +560,14 @@ class ShipmentController extends Controller
         $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details,"total_shipment"=>$total_shipment]);
         return $pdf->stream($control.'_system_report.pdf');
        } catch (\Throwable $th) {
-
+        $data = [
+            'msg' => $th->getMessage(),
+            'data' => [],
+            'success' => false,
+            'msgType' => 'error',
+            'msgTitle' => 'Error!'
+        ];
+        return response()->json($data);
        }
 
     }
