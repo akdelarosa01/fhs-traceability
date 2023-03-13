@@ -556,7 +556,8 @@ class ShipmentController extends Controller
         $shipment = DB::table('shipments')->where('id',$req->id)->select()->get()->toArray();
         $control = $shipment[0]->control_no;
         $shipment_details = DB::table("shipment_details")->where('ship_id',$req->id)->select()->get()->toArray();
-        $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
+        $total_shipment = DB::table("shipment_details")->where('ship_id',$req->id)->sum('hs_qty');
+        $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details,"total_shipment"=>$total_shipment]);
         return $pdf->stream($control.'_system_report.pdf');
        } catch (\Throwable $th) {
 
