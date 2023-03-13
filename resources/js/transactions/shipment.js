@@ -125,6 +125,11 @@
                     $('#btn_start_scan').prop('disabled', true);
                     $('#btn_save_transaction').prop('disabled', true);
                     $('#btn_delete_transaction').prop('disabled', true);
+
+                    if (state == "CANCELLED") {
+                        $('#btn_delete_transaction').prop('disabled', false);
+                    }
+                    
                     $('#btn_complete_transaction').prop('disabled', true);
                     break;
                 case 'COMPLETED':

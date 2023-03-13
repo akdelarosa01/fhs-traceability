@@ -228,7 +228,7 @@
 
             if (chkArray.length > 0) {
                 _Pages.msg = "Are you sure you want to delete this page/s?";
-                _Pages.confirmAction().then(function(approve) {
+                _Pages.confirmAction(_Pages.msg).then(function(approve) {
                     if (approve)
                         _Pages.delete_page(chkArray);
 

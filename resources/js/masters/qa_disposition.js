@@ -218,7 +218,7 @@
 
             if (chkArray.length > 0) {
                 _Disposition.msg = "Are you sure you want to delete this disposition/s?";
-                _Disposition.confirmAction().then(function(approve) {
+                _Disposition.confirmAction(_Disposition.msg).then(function(approve) {
                     if (approve)
                         _Disposition.delete_dispositions(chkArray);
 

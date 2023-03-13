@@ -232,7 +232,7 @@
 
             if (chkArray.length > 0) {
                 _Reason.msg = "Are you sure you want to delete this reason/s?";
-                _Reason.confirmAction().then(function(approve) {
+                _Reason.confirmAction(_Reason.msg).then(function(approve) {
                     if (approve)
                         _Reason.delete_reasons(chkArray);
 
