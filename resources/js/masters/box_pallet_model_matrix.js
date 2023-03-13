@@ -205,7 +205,7 @@
 
             if (chkArray.length > 0) {
                 _Model.msg = "Are you sure you want to delete this model/s?";
-                _Model.confirmAction().then(function(approve) {
+                _Model.confirmAction(_Model.msg).then(function(approve) {
                     if (approve)
                     _Model.delete_models(chkArray);
 

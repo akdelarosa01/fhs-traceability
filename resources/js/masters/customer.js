@@ -226,7 +226,7 @@
 
             if (chkArray.length > 0) {
                 _Customers.msg = "Are you sure you want to delete this customer/s?";
-                _Customers.confirmAction().then(function(approve) {
+                _Customers.confirmAction(_Customers.msg).then(function(approve) {
                     if (approve)
                         _Customers.delete_customers(chkArray);
 
