@@ -322,4 +322,14 @@ mix.js('resources/js/app.js', 'public/js')
     .styles([
         "public/css/theme.css",
         "public/css/trx.css",
-    ], "public/css/reports/shipment_data_query.css");
+    ], "public/css/reports/shipment_data_query.css")
+    
+    .scripts([
+        "public/js/theme.js",
+        "public/js/trx.js",
+        "resources/js/reports/box_pallet_data_query.js"
+    ], "public/js/reports/box_pallet_data_query.js")
+    .styles([
+        "public/css/theme.css",
+        "public/css/trx.css",
+    ], "public/css/reports/box_pallet_data_query.css");
