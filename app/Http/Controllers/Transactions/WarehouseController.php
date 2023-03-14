@@ -119,6 +119,13 @@ class WarehouseController extends Controller
             $data = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->Data)->select()->get()->toArray();
             $user = Auth::user()->id;
             foreach ($data as $data){
+                $pallet_data = $data;
+                $msg = "Pallet ".$data->pallet_qr." was successfully transferred.";
+                $content = [
+                    'title' => "Pallet Transferred to Shipment",
+                    'message' => "Pallet ".$data->pallet_qr." was transferred to Shipment."
+                ];
+
                 $qa = new WarehouseToShipment();
                 $qa->model_id = $data->model_id;
                 $qa->pallet_id = $data->id;
@@ -131,6 +138,9 @@ class WarehouseController extends Controller
                 $qa->update_user = $user;
                 $qa->updated_at = date('Y-m-d H:i:s');
                 $done = $qa->save();
+
+                $recepients = $this->_helpers->whs_users();
+                broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/shipment/'));
                 }
                     $data = [
                         'msg' => 'Transferring Pallet to Shipment was successful.',
@@ -154,14 +164,27 @@ class WarehouseController extends Controller
 
     public function send_to_qa(Request $req){
         try {
+            
+
             $user = Auth::user()->id;
             foreach ($req->Data as $data){
-                $qa = DB::table('pallet_box_pallet_hdrs')->where('pallet_qr',$data)->update([
+                 $pallet = DB::table('pallet_box_pallet_hdrs')->where('id',$data)->select()->get()->toArray()[0];
+                 $pallet_data = $pallet;
+                 $msg = "Pallet ".$pallet->pallet_qr." was successfully transferred.";
+
+                    $content = [
+                        'title' => "Pallet Transferred Back to Q.A",
+                        'message' => "Pallet ".$pallet->pallet_qr." was transferred for Q.A. Inspection."
+                    ];
+                $qa = DB::table('pallet_box_pallet_hdrs')->where('id',$data)->update([
                     'pallet_location' => 'Q.A.',
                 ]);
+                $recepients = $this->_helpers->whs_users();
+                broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/qa-inspection/'));
             };
+
             $data = [
-                'msg' => 'Transferring Pallet to Shipment was successful.',
+                'msg' => 'Transferring Pallet to Q.A was successful.',
                 'data' => [],
                 'success' => true,
                 'msgType' => 'success',
