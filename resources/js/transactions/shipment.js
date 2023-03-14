@@ -125,11 +125,6 @@
                     $('#btn_start_scan').prop('disabled', true);
                     $('#btn_save_transaction').prop('disabled', true);
                     $('#btn_delete_transaction').prop('disabled', true);
-
-                    if (state == "CANCELLED") {
-                        $('#btn_delete_transaction').prop('disabled', false);
-                    }
-                    
                     $('#btn_complete_transaction').prop('disabled', true);
                     break;
                 case 'COMPLETED':
@@ -951,7 +946,6 @@
 
             _Shipment.$tbl_pallets.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
                 var data = this.data();
-                
                 if (data.pallet_qr == pallet_qr) {
                     pallet_id = data.id;
                     box_qty = data.box_qty;

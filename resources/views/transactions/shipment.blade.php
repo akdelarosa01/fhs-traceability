@@ -129,7 +129,7 @@ Shipment
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text">Warehouse PIC</span>
                                             </div>
-                                            <input type="text" class="form-control form-control-sm clear" id="warehouse_pic" name="warehouse_pic" placeholder="Warehouse PIC" autocomplete="off" value="{{Auth::user()->firstname
+                                            <input type="text" class="form-control form-control-sm " id="warehouse_pic" name="warehouse_pic" placeholder="Warehouse PIC" autocomplete="off" value="{{Auth::user()->firstname
                                                 .' '.Auth::user()->lastname}}">
                                             <div id="warehouse_pic_feedback"></div>
                                         </div>

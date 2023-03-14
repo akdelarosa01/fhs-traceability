@@ -208,8 +208,8 @@
         <tr style="background-color:white ">
                 <td style="width:250px">TOTAL</td>
                 <td style="width:50px">{{$shipment->box_qty}}</td>
-                <td style="width:50px">{{$shipment->ship_qty}}</td>
-                <td style="width:166px">1 OUT OF 1</td>
+                <td style="width:50px">{{$total_shipment}}</td>
+                <td style="width:166px">{{$shipment->pallet_qty}} OUT OF {{$shipment->pallet_qty}}</td>
                 <td>COMPLETE</td>
               </tr>
     </table>

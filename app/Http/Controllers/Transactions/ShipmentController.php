@@ -261,14 +261,28 @@ class ShipmentController extends Controller
 
                 if ($ship->update()) {
                     foreach ($req->shipment_details as $key => $sp) {
-                        ShipmentDetail::where('id', $sp['id'])->update([
-                            'pallet_qr' => $sp['pallet_qr'],
-                            'pallet_id' => $sp['pallet_id'],
-                            'box_qty' => $sp['box_qty'],
-                            'hs_qty' => $sp['hs_qty'],
-                            'is_deleted' => 0,
-                            'update_user' => Auth::user()->id
-                        ]);
+                        if (isset($sp['id'])){
+                            ShipmentDetail::where('id', $sp['id'])->update([
+                                'pallet_qr' => $sp['pallet_qr'],
+                                'pallet_id' => $sp['pallet_id'],
+                                'box_qty' => $sp['box_qty'],
+                                'hs_qty' => $sp['hs_qty'],
+                                'is_deleted' => 0,
+                                'update_user' => Auth::user()->id
+                            ]);
+                        }else{
+                            ShipmentDetail::create([
+                                'ship_id' => $ship->id,
+                                'pallet_qr' => $sp['pallet_qr'],
+                                'pallet_id' => $sp['pallet_id'],
+                                'box_qty' => $sp['box_qty'],
+                                'hs_qty' => $sp['hs_qty'],
+                                'is_deleted' => 0,
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id
+                            ]);
+                        }
+                        
                     }
 
                     DB::commit();
@@ -542,10 +556,18 @@ class ShipmentController extends Controller
         $shipment = DB::table('shipments')->where('id',$req->id)->select()->get()->toArray();
         $control = $shipment[0]->control_no;
         $shipment_details = DB::table("shipment_details")->where('ship_id',$req->id)->select()->get()->toArray();
-        $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details]);
+        $total_shipment = DB::table("shipment_details")->where('ship_id',$req->id)->sum('hs_qty');
+        $pdf = Pdf::loadView('export',["shipment"=>$shipment[0],"shipment_details"=>$shipment_details,"total_shipment"=>$total_shipment]);
         return $pdf->stream($control.'_system_report.pdf');
        } catch (\Throwable $th) {
-
+        $data = [
+            'msg' => $th->getMessage(),
+            'data' => [],
+            'success' => false,
+            'msgType' => 'error',
+            'msgTitle' => 'Error!'
+        ];
+        return response()->json($data);
        }
 
     }
