@@ -46,5 +46,7 @@
     "/js/reports/barcode_to_barcode_data_query.js": "/js/reports/barcode_to_barcode_data_query.js",
     "/css/reports/barcode_to_barcode_data_query.css": "/css/reports/barcode_to_barcode_data_query.css",
     "/js/reports/shipment_data_query.js": "/js/reports/shipment_data_query.js",
-    "/css/reports/shipment_data_query.css": "/css/reports/shipment_data_query.css"
+    "/css/reports/shipment_data_query.css": "/css/reports/shipment_data_query.css",
+    "/js/reports/box_pallet_data_query.js": "/js/reports/box_pallet_data_query.js",
+    "/css/reports/box_pallet_data_query.css": "/css/reports/box_pallet_data_query.css"
 }

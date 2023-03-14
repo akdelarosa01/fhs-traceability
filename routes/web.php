@@ -122,6 +122,12 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/generate-data', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'generate_data'])->name('reports.shipment-data-query.generate-data');
         Route::get('/download-excel', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'download_excel'])->name('reports.shipment-data-query.download-excel');
     });
+
+    Route::group(['prefix' => 'box-pallet-data-query'], function () {
+        Route::get('/', [App\Http\Controllers\Reports\BoxPalletDataQueryController::class, 'index'])->name('reports.box-pallet-data-query');
+        Route::get('/generate-data', [App\Http\Controllers\Reports\BoxPalletDataQueryController::class, 'generate_data'])->name('reports.box-pallet-data-query.generate-data');
+        Route::get('/download-excel', [App\Http\Controllers\Reports\BoxPalletDataQueryController::class, 'download_excel'])->name('reports.box-pallet-data-query.download-excel');
+    });
 });
 
 Route::group(['prefix' => 'transactions'], function () {
