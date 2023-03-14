@@ -1593,16 +1593,17 @@ class QAInspectionController extends Controller
             $unformatted_date = explode('-',$exp_pal[1]);
             $formatted_date = substr($unformatted_date[0], 0, 4) . "-" . substr($unformatted_date[0], 4, 2) . "-" . substr($unformatted_date[0], 6, 2);
 
-            $print_date = date('Y-m-d', strtotime($formatted_date));
+            $init_print_date = date('Y-m-d', strtotime($formatted_date));
+            $date_today = date('Y-m-d');
             $month = $req->month;
 
             if ($req->mode == 'print') {
                 // $pallet->pallet_status = 1; // FOR OBA
-                $pallet->print_date = $print_date;
+                $pallet->print_date = $date_today;
             } else { // reprint
-                $date = ($pallet->print_date == null)? $print_date : $pallet->print_date;
+                $date = ($pallet->print_date == null)? $date_today : $pallet->print_date;
                 $print_date = date('Y/m/d',strtotime($date));
-                $month = strtoupper(date('M',strtotime($date)));
+                $month = strtoupper(date('M',strtotime($init_print_date)));
             }
 
             if ($pallet->update()) {
