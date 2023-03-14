@@ -507,8 +507,7 @@ class ShipmentController extends Controller
                             'status' => $req->status,
                             'ship_date' => date('Y-m-d H:i:s'),
                             'update_user' => Auth::user()->id,
-                            'updated_at' => date('Y-m-d H:i:s'),
-                            ''
+                            'updated_at' => date('Y-m-d H:i:s')
                         ]);
            
             foreach($req->ids as $id){
