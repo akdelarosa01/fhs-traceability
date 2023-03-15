@@ -51,6 +51,7 @@ Warehouse
 											<option value="pallet_qr">Pallet ID</option>
 											<option value="box_count_per_pallet">Box Count / Pallet</option>
 											<option value="pallet_status">Status</option>
+											<option value="shipment_status">Shipment Status</option>
 										</select>
 										<div id="search_type_feedback"></div>
 									</div>
