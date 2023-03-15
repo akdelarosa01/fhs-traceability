@@ -1209,7 +1209,7 @@
 
         $('#tbl_shipments tbody').on('click', '.btn_print_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).closest('tr')).data() ; 
-            if(data.shipment_status == 1){
+            if(data.shipment_status == 1 || data.shipment_status == 3){
                 window.open('/transactions/shipment/system-report?id='+data.id, '_tab');
             }else{
             _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
