@@ -383,7 +383,7 @@ class ShipmentController extends Controller
         ];
 
         try {
-            //$ship = Shipment::find($req->id);  $ship->delete() &&
+            $ship = Shipment::find($req->id);  $ship->delete() &&
             $shipdetail = ShipmentDetail::where('ship_id','=',$req->id);
             if ( $shipdetail->delete()) {
                 $data = [
