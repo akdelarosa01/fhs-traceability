@@ -134,7 +134,7 @@
         <div class="row mt-2">
             <div class="col-6">
                 <label style="margin-left:35px" for="shipment_qty">Shipment Qty:</label>
-                <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$shipment->ship_qty}}">
+                <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$total_shipment}}">
             </div>
             <div class="col-6">
                 <label style="margin-left:14px" for="truck_plate_no">Truck Plate Number:</label>
