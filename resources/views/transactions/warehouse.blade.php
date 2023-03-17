@@ -44,7 +44,7 @@ Warehouse
 										<div class="input-group-prepend">
 											<span class="input-group-text">Search Type</span>
 										</div>
-										<select name="search_type" id="search_type" class="form-control clear-select">
+										<select name="search_type" id="search_type" class="form-control clear-select clear">
 											<option value=""></option>
 	
 											<option value="model">Model</option>
@@ -95,7 +95,7 @@ Warehouse
 										<div class="input-group-prepend">
 											<span class="input-group-text">Max count</span>
 										</div>
-										<input type="number" class="form-control form-control-sm clear" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
+										<input type="number" class="form-control form-control-sm" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
 										<div id="max_count_feedback"></div>
 									</div>
 								</div>
