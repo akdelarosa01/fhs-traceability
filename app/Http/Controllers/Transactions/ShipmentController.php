@@ -114,7 +114,7 @@ class ShipmentController extends Controller
 
     public function validate_pallet(Request $req){
         try {
-            $query = ShipmentDetail::where('pallet_qr',$req->qr)->get();
+            $query = ShipmentDetail::where('pallet_qr',$req->qr)->where('is_deleted','<>',1)->get();
             $count = $query->count();
             $data = [
                 'data' => $count,
@@ -157,7 +157,7 @@ class ShipmentController extends Controller
         ->groupBy('p.pallet_id','p.model_id','m.model','p.pallet_qr');
 
         if ($req->state == "false") {
-            $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)');
+            $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details where is_deleted <> 1)');
         }
         $get = $query->get();
         return Datatables::of($query)->make(true);
@@ -383,9 +383,9 @@ class ShipmentController extends Controller
         ];
 
         try {
-            $ship = Shipment::find($req->id);
+            //$ship = Shipment::find($req->id);  $ship->delete() &&
             $shipdetail = ShipmentDetail::where('ship_id','=',$req->id);
-            if ($ship->delete() && $shipdetail->delete()) {
+            if ( $shipdetail->delete()) {
                 $data = [
                     'msg' => 'Shipment Transaction was successfully deleted.',
                     'data' => [],
@@ -464,8 +464,14 @@ class ShipmentController extends Controller
                             'update_user' => Auth::user()->id,
                             'updated_at' => date('Y-m-d H:i:s')
                         ]);
+            $update1 = DB::table('shipment_details')->whereIn('ship_id',$req->ids)
+                        ->update([
+                            'is_deleted' => 1,
+                            'update_user' => Auth::user()->id,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
 
-            if ($update) {
+            if ($update && $update1) {
                 DB::commit();
                 $data = [
                     'msg' => 'Shipment was successfully cancelled.',
