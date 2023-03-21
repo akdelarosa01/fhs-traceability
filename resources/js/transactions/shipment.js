@@ -1256,6 +1256,7 @@
             }else{
             _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
             }
+            setTimeout(()=>{ _Shipment.$tbl_shipments.row({selected: true}).deselect() },500);
          
         });
     });
