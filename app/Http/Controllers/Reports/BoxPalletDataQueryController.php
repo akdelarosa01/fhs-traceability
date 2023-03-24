@@ -53,46 +53,118 @@ class BoxPalletDataQueryController extends Controller
                 if (!is_null($req->search_type) && !is_null($req->search_value)) {
                     switch ($req->search_type) {
                         case 'pallet_no':
-                            $search_type = " AND ContainerNo REGEXP '".$req->search_value."' ";
+                            $search_type = " AND p.pallet_qr REGEXP '".$req->search_value."' ";
                             break;
                         case 'box_no':
-                            $search_type = " AND GreaseBatchNo REGEXP '".$req->search_value."' ";
+                            $search_type = " AND b.box_qr REGEXP '".$req->search_value."' ";
                             break;
                         case 'model_code':
-                            $search_type = " AND GreaseModel REGEXP '".$req->search_value."' ";
+                            $search_type = " AND m.model REGEXP '".$req->search_value."' ";
                             break;
                         case 'hs_serial':
-                            $search_type = " AND MachineNo REGEXP '".$req->search_value."' ";
+                            $search_type = " AND bd.HS_Serial REGEXP '".$req->search_value."' ";
                             break;
                     }
                 }
         
                 if (!is_null($req->bp_date_from) && !is_null($req->bp_date_to)) {
-                    $bp_date= " AND DATE_FORMAT(GreaseDate,'%Y-%m-%d') BETWEEN '" . $req->bp_date_from . "' AND '" . $req->bp_date_to . "' ";
-                }
-
-                if (!is_null($req->exp_date_from) && !is_null($req->exp_date_to)) {
-                    $exp_date= " AND DATE_FORMAT(GreaseExpDate,'%Y-%m-%d') BETWEEN '" . $req->exp_date_from . "' AND '" . $req->exp_date_to . "' ";
+                    $bp_date= " AND DATE_FORMAT(p.created_at,'%Y-%m-%d') BETWEEN '" . $req->bp_date_from . "' AND '" . $req->bp_date_to . "' ";
                 }
         
                 if (!is_null($req->max_count)) {
                     $max_count = " LIMIT " . $req->max_count . "";
                 }
-        
-                $sql = "SELECT GreaseDate as bp_date,
-                                Model as model_code,
-                                SerialNo as hs_serial,
-                                ContainerNo as container_no,
-                                GreaseBatchNo as grease_batch_no,
-                                GreaseModel as grease_model,
-                                GreaseExpDate as grease_exp_date,
-                                YieldCount as yield_count,
-                                BinCount as bin_count,
-                                Remarks as remarks,
-                                WorkUser as work_user,
-                                MachineNo as machine_no
-                            FROM furukawa.tgreasehs
-                            where 1=1 " .$search_type.$bp_date.$exp_date.$max_count;
+
+                switch ($req->search_type) {
+                    case 'pallet_no':
+                        $sql = "SELECT distinct p.id as id,
+                                    m.model as model,
+                                    m.model_name as model_name,
+                                    p.pallet_qr as pallet_qr,
+                                    p.pallet_status as pallet_status,
+                                    p.pallet_location as pallet_location,
+                                    p.created_at as created_at
+                                FROM furukawa.pallet_box_pallet_hdrs as p
+                                join furukawa.pallet_transactions as t
+                                on t.id = p.transaction_id
+                                join furukawa.pallet_model_matrices as m
+                                on m.id = p.model_id
+                                where t.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                        break;
+                    case 'box_no':
+                        $sql = "SELECT distinct p.id as id,
+                                    m.model as model,
+                                    m.model_name as model_name,
+                                    p.pallet_qr as pallet_qr,
+                                    p.pallet_status as pallet_status,
+                                    p.pallet_location as pallet_location,
+                                    b.box_qr as box_qr,
+                                    b.box_judgment as box_judgement,
+                                    p.created_at as created_at
+                                FROM furukawa.pallet_box_pallet_hdrs as p
+                                join furukawa.pallet_transactions as t
+                                on t.id = p.transaction_id
+                                join furukawa.pallet_model_matrices as m
+                                on m.id = p.model_id
+                                join furukawa.pallet_box_pallet_dtls as b
+                                on b.pallet_id = p.id
+                                where b.is_deleted <> 1".$search_type.$bp_date.$max_count;
+                        break;
+                    case 'model_code':
+                        $sql = "SELECT distinct p.id as id,
+                                    m.model as model,
+                                    m.model_name as model_name,
+                                    p.pallet_qr as pallet_qr,
+                                    p.pallet_status as pallet_status,
+                                    p.pallet_location as pallet_location,
+                                    p.created_at as created_at
+                                FROM furukawa.pallet_box_pallet_hdrs as p
+                                join furukawa.pallet_transactions as t
+                                on t.id = p.transaction_id
+                                join furukawa.pallet_model_matrices as m
+                                on m.id = p.model_id
+                                where t.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                        break;
+                    case 'hs_serial':
+                        $sql = "SELECT distinct p.id as id,
+                                    m.model as model,
+                                    m.model_name as model_name,
+                                    p.pallet_qr as pallet_qr,
+                                    p.pallet_status as pallet_status,
+                                    p.pallet_location as pallet_location,
+                                    b.box_qr as box_qr,
+                                    b.box_judgment as box_judgement,
+                                    bd.HS_Serial,
+                                    p.created_at as created_at
+                                FROM furukawa.pallet_box_pallet_hdrs as p
+                                join furukawa.pallet_transactions as t
+                                on t.id = p.transaction_id
+                                join furukawa.pallet_model_matrices as m
+                                on m.id = p.model_id
+                                join furukawa.pallet_box_pallet_dtls as b
+                                on b.pallet_id = p.id
+                                join furukawa.tboxqr as bb
+                                on bb.qrBarcode = b.box_qr
+                                join tboxqrdetails as bd
+                                on bd.Box_ID = bb.ID
+                                where b.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                        break;
+                    default:
+                        $sql = "SELECT distinct p.id as id,
+                                    m.model as model,
+                                    m.model_name as model_name,
+                                    p.pallet_qr as pallet_qr,
+                                    p.pallet_status as pallet_status,
+                                    p.pallet_location as pallet_location,
+                                    p.created_at as created_at
+                                FROM furukawa.pallet_box_pallet_hdrs as p
+                                join furukawa.pallet_transactions as t
+                                on t.id = p.transaction_id
+                                join furukawa.pallet_model_matrices as m
+                                on m.id = p.model_id
+                                where t.is_deleted <> 1 ".$bp_date.$max_count;
+                        break;
+                }
         
                 $data = collect(DB::select(DB::raw($sql)));
         
