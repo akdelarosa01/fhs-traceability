@@ -38,7 +38,7 @@
                         'csv', 'excel'
                     ],
                     ajax: {
-                        url: "/reports/grease-data-query/generate-data",
+                        url: "/reports/box-pallet-data-query/generate-data",
                         dataType: "JSON",
                         data: function(d) {
                             d._token = self.token;
@@ -140,11 +140,15 @@
             } else {
                 _BoxPalletDataQuery.$tbl_data_search.ajax.reload(false);
             }
+
+            if (search_type == 'pallet_no') {
+                
+            }
             
         });
 
         $('#btn_export').on('click', function() {
-            var link = '/reports/grease-data-query/download-excel?_token='+ _BoxPalletDataQuery.token;
+            var link = '/reports/box-pallet-data-query/download-excel?_token='+ _BoxPalletDataQuery.token;
             window.location.href = link;
         });
     });
