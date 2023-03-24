@@ -337,6 +337,13 @@
             }
         }).val(null).trigger('change.select2');
 
+        $('#search_type').select2({
+            allowClear: true,
+            placeholder: 'Select Search Type',
+            theme: 'bootstrap4',
+            width: 'auto',
+        }).val(null).trigger('change.select2');
+
         $('#tbl_pallets tbody').on('click', '.btn_view_boxes', function() {
             var data = _Warehouse.$tbl_pallets.row($(this).parents('tr')).data();
 
@@ -392,6 +399,8 @@
         
         $('#btn_search').on('click', function() {
             _Warehouse.$tbl_pallets.ajax.reload(false);
+            $('.clear').val('');
+            $('#search_type').val('').trigger('change');
             // var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
             // var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
             // if (search_type == "" || search_value == "") {

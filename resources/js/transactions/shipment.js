@@ -107,6 +107,31 @@
                     break;
                 case 'DELETED':
                 case 'SHIPPED':
+                    $('#tbl_models').addClass('disabled');
+                    $('#tbl_shipment_details').addClass('disabled');
+
+                    $('#destination').select2({
+                        disabled: true,
+                        allowClear: true,
+                        placeholder: 'Select Customer Destination',
+                        theme: 'bootstrap4',
+                        width: 'auto',
+                    });
+
+                    $('#warehouse_pic').prop('readonly', true);
+                    $('#ship_qty').prop('readonly', true);
+                    $('#invoice_no').prop('readonly', true);
+                    $('#container_no').prop('readonly', true);
+                    $('#shipping_seal_no').prop('readonly', true);
+                    $('#truck_plate_no').prop('readonly', true);
+                    $('#peza_seal_no').prop('readonly', true);
+                    $('#qc_pic').prop('readonly', true);
+
+                    $('#btn_start_scan').prop('disabled', true);
+                    $('#btn_save_transaction').prop('disabled', true);
+                    $('#btn_delete_transaction').prop('disabled', true);
+                    $('#btn_complete_transaction').prop('disabled', true);
+                    break;
                 case 'CANCELLED':
                     $('#tbl_models').addClass('disabled');
                     $('#tbl_shipment_details').addClass('disabled');
@@ -121,6 +146,12 @@
 
                     $('#warehouse_pic').prop('readonly', true);
                     $('#ship_qty').prop('readonly', true);
+                    $('#invoice_no').prop('readonly', true);
+                    $('#container_no').prop('readonly', true);
+                    $('#shipping_seal_no').prop('readonly', true);
+                    $('#truck_plate_no').prop('readonly', true);
+                    $('#peza_seal_no').prop('readonly', true);
+                    $('#qc_pic').prop('readonly', true);
 
                     $('#btn_start_scan').prop('disabled', true);
                     $('#btn_save_transaction').prop('disabled', true);
@@ -716,11 +747,13 @@
             $("#truck_plate_no").val("");
             $("#shipping_seal_no").val("");
             $("#peza_seal_no").val("");
+            $("#qc_pic").val("");
             $("#invoice_no").prop('readonly', false);
             $("#container_no").prop('readonly', false);
             $("#truck_plate_no").prop('readonly', false);
             $("#shipping_seal_no").prop('readonly', false);
             $("#peza_seal_no").prop('readonly', false);
+            $("#qc_pic").prop('readonly', false);
             $('#destination').val("").trigger('change');
             $('#btn_start_scan').html("Start Scan");
             $('#btn_start_scan').removeClass("btn-danger");
@@ -872,12 +905,21 @@
 
         _Shipment.$tbl_shipments.on('select', function ( e, dt, type, indexes ) {
             var count = _Shipment.$tbl_shipments.rows({selected: true}).count();
+            var data = _Shipment.$tbl_shipments.rows({selected: true}).data()[0];
 
             if (count > 0) {
                 $('#btn_create_shipment').prop('disabled', true);
                 $('#btn_cancel_shipment').prop('disabled', false);
                 $('#btn_finish_shipment').prop('disabled', false);
+
+                if(data.shipment_status == 3 || data.shipment_status == 2){
+                    $('#btn_create_shipment').prop('disabled', true);   
+                    $('#btn_cancel_shipment').prop('disabled', true);
+                    $('#btn_finish_shipment').prop('disabled', false);
+                }
             }
+
+            
         })
         .on('deselect', function ( e, dt, type, indexes ) {
             var count = _Shipment.$tbl_shipments.rows({selected: true}).count();
@@ -1209,11 +1251,12 @@
 
         $('#tbl_shipments tbody').on('click', '.btn_print_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).closest('tr')).data() ; 
-            if(data.shipment_status == 1){
+            if(data.shipment_status == 1 || data.shipment_status == 3){
                 window.open('/transactions/shipment/system-report?id='+data.id, '_tab');
             }else{
             _Shipment.swMsg("You cannot print the reports of not completed shipment","warning")
             }
+            setTimeout(()=>{ _Shipment.$tbl_shipments.row({selected: true}).deselect() },500);
          
         });
     });
