@@ -1596,10 +1596,12 @@ class QAInspectionController extends Controller
             $init_print_date = date('Y-m-d', strtotime($formatted_date));
             $date_today = date('Y-m-d');
             $month = $req->month;
+            $print_date = "";
 
             if ($req->mode == 'print') {
                 // $pallet->pallet_status = 1; // FOR OBA
                 $pallet->print_date = $date_today;
+                $print_date = $date_today;
             } else { // reprint
                 $date = ($pallet->print_date == null)? $date_today : $pallet->print_date;
                 $print_date = date('Y/m/d',strtotime($date));
