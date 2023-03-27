@@ -118,6 +118,12 @@ Shipment Data Query
                                 <i class="fa fa-search"></i> Search
                             </button>
                         </div>
+                        
+                        <div class="col-xl-2 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <button type="button" class="btn btn-sm btn-green btn-block" id="btn_export">
+                                <i class="fa fa-file-excel"></i> Export
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,7 +131,7 @@ Shipment Data Query
 
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-sm table-hover table-striped display nowrap" id="tbl_data_search" style="width: 100%"></table>
+                <table class="table table-sm display nowrap" id="tbl_data_search" style="width: 100%"></table>
             </div>
         </div>
 	</div>

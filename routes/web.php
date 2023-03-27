@@ -121,6 +121,8 @@ Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'index'])->name('reports.shipment-data-query');
         Route::get('/generate-data', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'generate_data'])->name('reports.shipment-data-query.generate-data');
         Route::get('/download-excel', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'download_excel'])->name('reports.shipment-data-query.download-excel');
+        Route::get('/get-boxes', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'get_boxes'])->name('reports.shipment-data-query.get-boxes');
+        Route::get('/get-heat-sinks', [App\Http\Controllers\Reports\ShipmentDataQueryController::class, 'get_heat_sinks'])->name('reports.shipment-data-query.get-heat-sinks');
     });
 
     Route::group(['prefix' => 'box-pallet-data-query'], function () {
