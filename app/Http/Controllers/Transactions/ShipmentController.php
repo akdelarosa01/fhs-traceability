@@ -195,7 +195,7 @@ class ShipmentController extends Controller
                     s.qc_pic as qc_pic,
                     sum(sd.hs_qty) as total_ship_qty
                 FROM shipments as s
-                join shipment_details as sd
+                left join shipment_details as sd
                 on sd.ship_id = s.id
                 group by s.id,
                     s.control_no,
@@ -228,6 +228,8 @@ class ShipmentController extends Controller
 
     public function save_transaction(Request $req)
     {
+        
+
         $data = [
 			'msg' => 'Saving Transaction has failed.',
             'data' => [],
@@ -259,31 +261,35 @@ class ShipmentController extends Controller
                 $ship->peza_seal_no = $req->peza_seal_no;
                 $ship->update_user = Auth::user()->id;
 
+                
                 if ($ship->update()) {
-                    foreach ($req->shipment_details as $key => $sp) {
-                        if (isset($sp['id'])){
-                            ShipmentDetail::where('id', $sp['id'])->update([
-                                'pallet_qr' => $sp['pallet_qr'],
-                                'pallet_id' => $sp['pallet_id'],
-                                'box_qty' => $sp['box_qty'],
-                                'hs_qty' => $sp['hs_qty'],
-                                'is_deleted' => 0,
-                                'update_user' => Auth::user()->id
-                            ]);
-                        }else{
-                            ShipmentDetail::create([
-                                'ship_id' => $ship->id,
-                                'pallet_qr' => $sp['pallet_qr'],
-                                'pallet_id' => $sp['pallet_id'],
-                                'box_qty' => $sp['box_qty'],
-                                'hs_qty' => $sp['hs_qty'],
-                                'is_deleted' => 0,
-                                'create_user' => Auth::user()->id,
-                                'update_user' => Auth::user()->id
-                            ]);
+                    if(isset($req->shipment_details)){
+                        foreach ($req->shipment_details as $key => $sp) {
+                            if (isset($sp['id'])){
+                                ShipmentDetail::where('id', $sp['id'])->update([
+                                    'pallet_qr' => $sp['pallet_qr'],
+                                    'pallet_id' => $sp['pallet_id'],
+                                    'box_qty' => $sp['box_qty'],
+                                    'hs_qty' => $sp['hs_qty'],
+                                    'is_deleted' => 0,
+                                    'update_user' => Auth::user()->id
+                                ]);
+                            }else{
+                                ShipmentDetail::create([
+                                    'ship_id' => $ship->id,
+                                    'pallet_qr' => $sp['pallet_qr'],
+                                    'pallet_id' => $sp['pallet_id'],
+                                    'box_qty' => $sp['box_qty'],
+                                    'hs_qty' => $sp['hs_qty'],
+                                    'is_deleted' => 0,
+                                    'create_user' => Auth::user()->id,
+                                    'update_user' => Auth::user()->id
+                                ]);
+                            }
+                            
                         }
-                        
                     }
+                    
 
                     DB::commit();
 
@@ -333,18 +339,21 @@ class ShipmentController extends Controller
                 $ship->update_user = Auth::user()->id;
 
                 if ($ship->save()) {
-                    foreach ($req->shipment_details as $key => $sp) {
-                        ShipmentDetail::create([
-                            'ship_id' => $ship->id,
-                            'pallet_qr' => $sp['pallet_qr'],
-                            'pallet_id' => $sp['pallet_id'],
-                            'box_qty' => $sp['box_qty'],
-                            'hs_qty' => $sp['hs_qty'],
-                            'is_deleted' => 0,
-                            'create_user' => Auth::user()->id,
-                            'update_user' => Auth::user()->id
-                        ]);
+                    if(isset($req->shipment_details)){
+                        foreach ($req->shipment_details as $key => $sp) {
+                            ShipmentDetail::create([
+                                'ship_id' => $ship->id,
+                                'pallet_qr' => $sp['pallet_qr'],
+                                'pallet_id' => $sp['pallet_id'],
+                                'box_qty' => $sp['box_qty'],
+                                'hs_qty' => $sp['hs_qty'],
+                                'is_deleted' => 0,
+                                'create_user' => Auth::user()->id,
+                                'update_user' => Auth::user()->id
+                            ]);
+                        }
                     }
+                    
 
                     DB::commit();
 

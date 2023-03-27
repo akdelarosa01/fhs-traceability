@@ -63,7 +63,8 @@
 
                         self.hideInputErrors('pallet_qr');
                     } else {
-                        $('#warehouse_pic').prop('readonly', false);
+                        if (this.authorize == 1){
+                            $('#warehouse_pic').prop('readonly', false);
                         $('#ship_qty').prop('readonly', false);
                         $('#qc_pic').prop('readonly', false);
                         $('#invoice_no').prop('readonly', false);
@@ -92,6 +93,38 @@
                             theme: 'bootstrap4',
                             width: 'auto',
                         });
+                        }else{
+                            $('#warehouse_pic').prop('readonly', true);
+                        $('#ship_qty').prop('readonly', true);
+                        $('#qc_pic').prop('readonly', true);
+                        $('#invoice_no').prop('readonly', true);
+                        $('#container_no').prop('readonly', true);
+                        $('#truck_plate_no').prop('readonly', true);
+                        $('#shipping_seal_no').prop('readonly', true);
+                        $('#peza_seal_no').prop('readonly', true);
+
+                        $('#btn_start_scan').html("Start Scan");
+                        $('#btn_start_scan').removeClass("btn-danger");
+                        $('#btn_start_scan').addClass("btn-success");
+                        $('#pallet_qr').prop('readonly', true);
+                        $('#pallet_qr').val('');
+
+                        $('#tbl_models').addClass('disabled');
+                        $('#tbl_pallets').removeClass('disabled');
+
+                        $('#btn_save_transaction').prop('disabled', false);
+                        $('#btn_delete_transaction').prop('disabled', true);
+                        $('#btn_complete_transaction').prop('disabled', true);
+
+                        $('#destination').select2({
+                            disabled: true,
+                            allowClear: true,
+                            placeholder: 'Select Customer Destination',
+                            theme: 'bootstrap4',
+                            width: 'auto',
+                        });
+                        }
+                        
                         
                         self.hideInputErrors('pallet_qr');
                     }
@@ -131,6 +164,7 @@
                     $('#btn_save_transaction').prop('disabled', true);
                     $('#btn_delete_transaction').prop('disabled', true);
                     $('#btn_complete_transaction').prop('disabled', true);
+                    $('#btn_remove_shipment_details').prop('disabled', true);
                     break;
                 case 'CANCELLED':
                     $('#tbl_models').addClass('disabled');
@@ -157,46 +191,86 @@
                     $('#btn_save_transaction').prop('disabled', true);
                     $('#btn_delete_transaction').prop('disabled', true);
                     $('#btn_complete_transaction').prop('disabled', true);
+                    $('#btn_remove_shipment_details').prop('disabled', true);
                     break;
                 case 'COMPLETED':
-                    $('#tbl_models').removeClass('disabled');
+                    $('#tbl_models').addClass('disabled');
                     $('#tbl_shipment_details').removeClass('disabled');
 
                     $('#destination').select2({
-                        disabled: false,
+                        disabled: true,
                         allowClear: true,
                         placeholder: 'Select Customer Destination',
                         theme: 'bootstrap4',
                         width: 'auto',
                     });
 
-                    $('#warehouse_pic').prop('readonly', false);
-                    $('#ship_qty').prop('readonly', false);
+                    $('#warehouse_pic').prop('readonly', true);
+                    $('#ship_qty').prop('readonly', true);
+                    $('#invoice_no').prop('readonly', true);
+                    $('#container_no').prop('readonly', true);
+                    $('#shipping_seal_no').prop('readonly', true);
+                    $('#truck_plate_no').prop('readonly', true);
+                    $('#peza_seal_no').prop('readonly', true);
+                    $('#qc_pic').prop('readonly', true);
 
-                    $('#btn_start_scan').prop('disabled', false);
+                    $('#btn_start_scan').prop('disabled', true);
                     $('#btn_save_transaction').prop('disabled', true);
                     $('#btn_delete_transaction').prop('disabled', true);
-                    $('#btn_complete_transaction').prop('disabled', false);
+                    $('#btn_complete_transaction').prop('disabled', true);
                     break;
                 case 'INCOMPLETE':
-                    $('#tbl_models').removeClass('disabled');
-                    $('#tbl_shipment_details').removeClass('disabled');
-
-                    $('#destination').select2({
-                        disabled: false,
-                        allowClear: true,
-                        placeholder: 'Select Customer Destination',
-                        theme: 'bootstrap4',
-                        width: 'auto',
-                    });
-
-                    $('#warehouse_pic').prop('readonly', false);
-                    $('#ship_qty').prop('readonly', false);
-
-                    $('#btn_start_scan').prop('disabled', false);
-                    $('#btn_save_transaction').prop('disabled', false);
-                    $('#btn_delete_transaction').prop('disabled', false);
-                    $('#btn_complete_transaction').prop('disabled', false);
+                    if(this.authorize == 1){
+                        $('#tbl_models').removeClass('disabled');
+                        $('#tbl_shipment_details').removeClass('disabled');
+    
+                        $('#destination').select2({
+                            disabled: false,
+                            allowClear: true,
+                            placeholder: 'Select Customer Destination',
+                            theme: 'bootstrap4',
+                            width: 'auto',
+                        });
+    
+                        $('#warehouse_pic').prop('readonly', false);
+                        $('#ship_qty').prop('readonly', false);
+                        $('#invoice_no').prop('readonly', false);
+                        $('#container_no').prop('readonly', false);
+                        $('#shipping_seal_no').prop('readonly', false);
+                        $('#truck_plate_no').prop('readonly', false);
+                        $('#peza_seal_no').prop('readonly', false);
+                        $('#qc_pic').prop('readonly', false);
+    
+                        $('#btn_start_scan').prop('disabled', false);
+                        $('#btn_save_transaction').prop('disabled', false);
+                        $('#btn_delete_transaction').prop('disabled', false);
+                        $('#btn_complete_transaction').prop('disabled', false);
+                    }else{
+                        $('#tbl_models').addClass('disabled');
+                        $('#tbl_shipment_details').removeClass('disabled');
+    
+                        $('#destination').select2({
+                            disabled: true,
+                            allowClear: true,
+                            placeholder: 'Select Customer Destination',
+                            theme: 'bootstrap4',
+                            width: 'auto',
+                        });
+    
+                        $('#warehouse_pic').prop('readonly', true);
+                        $('#ship_qty').prop('readonly', true);
+                        $('#invoice_no').prop('readonly', true);
+                        $('#container_no').prop('readonly', true);
+                        $('#shipping_seal_no').prop('readonly', true);
+                        $('#truck_plate_no').prop('readonly', true);
+                        $('#peza_seal_no').prop('readonly', true);
+                        $('#qc_pic').prop('readonly', true);
+    
+                        $('#btn_start_scan').prop('disabled', false);
+                        $('#btn_save_transaction').prop('disabled', false);
+                        $('#btn_delete_transaction').prop('disabled', true);
+                        $('#btn_complete_transaction').prop('disabled', true);
+                    }
                     break;
                 default:
                     $('#btn_transfer').prop('disabled', true);
@@ -813,6 +887,13 @@
                     self.shipment_details_arr = {};
                 }
             });
+        },
+        authorizedModal:function(auth){
+            if(auth){
+
+            }else{
+
+            }
         }
 
     }
@@ -828,6 +909,12 @@
         _Shipment.drawModelsDatatables();
         _Shipment.drawPalletsDatatables();
         _Shipment.drawShipmentDetailsDatatables();
+
+        if ( _Shipment.authorize == 1) {
+            $('#btn_create_shipment').prop('disabled', false);
+        }else{
+            $('#btn_create_shipment').prop('disabled', true);
+        }
 
         $('.modal').on('shown.bs.modal', function (e) {
             $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
@@ -907,7 +994,7 @@
             var count = _Shipment.$tbl_shipments.rows({selected: true}).count();
             var data = _Shipment.$tbl_shipments.rows({selected: true}).data()[0];
 
-            if (count > 0) {
+            if (count > 0 && _Shipment.authorize == 1) {
                 $('#btn_create_shipment').prop('disabled', true);
                 $('#btn_cancel_shipment').prop('disabled', false);
                 $('#btn_finish_shipment').prop('disabled', false);
@@ -917,6 +1004,10 @@
                     $('#btn_cancel_shipment').prop('disabled', true);
                     $('#btn_finish_shipment').prop('disabled', false);
                 }
+            }else{
+                $('#btn_create_shipment').prop('disabled', true);
+                $('#btn_cancel_shipment').prop('disabled', true);
+                $('#btn_finish_shipment').prop('disabled', true);
             }
 
             
@@ -924,8 +1015,12 @@
         .on('deselect', function ( e, dt, type, indexes ) {
             var count = _Shipment.$tbl_shipments.rows({selected: true}).count();
 
-            if (count == 0) {
+            if (count == 0 && _Shipment.authorize == 1) {
                 $('#btn_create_shipment').prop('disabled', false);
+                $('#btn_cancel_shipment').prop('disabled', true);
+                $('#btn_finish_shipment').prop('disabled', true);
+            }else{
+                $('#btn_create_shipment').prop('disabled', true);
                 $('#btn_cancel_shipment').prop('disabled', true);
                 $('#btn_finish_shipment').prop('disabled', true);
             }
@@ -1115,7 +1210,6 @@
 
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
-            console.log(data);
             _Shipment.editstate = true;
             _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
 
