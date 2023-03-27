@@ -243,7 +243,7 @@ class ShipmentDataQueryController extends Controller
                 $max_count = " LIMIT " . $req->max_count . "";
             }
     
-            $sql = "SELECT s.created_at, s.ship_date, ";
+            $sql = "SELECT s.created_at as ship_plan, s.ship_date, ";
             $sql .= "    s.control_no, ";
             $sql .= "    s.invoice_no, ";
             $sql .= "    s.model, ";
