@@ -35,7 +35,7 @@ class BoxPalletDataQueryController extends Controller
     public function generate_data(Request $req)
     {
         $data = $this->get_filtered_data($req);
-        return DataTables::of($data)->toJson();
+        return $data;
     }
 
     private function get_filtered_data($req)
@@ -66,14 +66,6 @@ class BoxPalletDataQueryController extends Controller
                             break;
                     }
                 }
-        
-                if (!is_null($req->bp_date_from) && !is_null($req->bp_date_to)) {
-                    $bp_date= " AND DATE_FORMAT(p.created_at,'%Y-%m-%d') BETWEEN '" . $req->bp_date_from . "' AND '" . $req->bp_date_to . "' ";
-                }
-        
-                if (!is_null($req->max_count)) {
-                    $max_count = " LIMIT " . $req->max_count . "";
-                }
 
                 switch ($req->search_type) {
                     case 'pallet_no':
@@ -82,14 +74,18 @@ class BoxPalletDataQueryController extends Controller
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
                                     p.pallet_status as pallet_status,
-                                    p.pallet_location as pallet_location,
+                                    CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
+                                    WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
+                                    else p.pallet_location end as pallet_location,
                                     p.created_at as created_at
                                 FROM furukawa.pallet_box_pallet_hdrs as p
                                 join furukawa.pallet_transactions as t
                                 on t.id = p.transaction_id
                                 join furukawa.pallet_model_matrices as m
                                 on m.id = p.model_id
-                                where t.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                                left join furukawa.shipment_details as s
+                                on s.pallet_id = p.id and s.is_deleted <> 1
+                                where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'box_no':
                         $sql = "SELECT distinct p.id as id,
@@ -108,7 +104,7 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 join furukawa.pallet_box_pallet_dtls as b
                                 on b.pallet_id = p.id
-                                where b.is_deleted <> 1".$search_type.$bp_date.$max_count;
+                                where b.is_deleted <> 1".$search_type;
                         break;
                     case 'model_code':
                         $sql = "SELECT distinct p.id as id,
@@ -123,7 +119,7 @@ class BoxPalletDataQueryController extends Controller
                                 on t.id = p.transaction_id
                                 join furukawa.pallet_model_matrices as m
                                 on m.id = p.model_id
-                                where t.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                                where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'hs_serial':
                         $sql = "SELECT distinct p.id as id,
@@ -147,7 +143,7 @@ class BoxPalletDataQueryController extends Controller
                                 on bb.qrBarcode = b.box_qr
                                 join tboxqrdetails as bd
                                 on bd.Box_ID = bb.ID
-                                where b.is_deleted <> 1 ".$search_type.$bp_date.$max_count;
+                                where b.is_deleted <> 1 ".$search_type;
                         break;
                     default:
                         $sql = "SELECT distinct p.id as id,
@@ -155,20 +151,27 @@ class BoxPalletDataQueryController extends Controller
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
                                     p.pallet_status as pallet_status,
-                                    p.pallet_location as pallet_location,
+                                    CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
+                                    WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
+                                    else p.pallet_location end as pallet_location,
                                     p.created_at as created_at
                                 FROM furukawa.pallet_box_pallet_hdrs as p
                                 join furukawa.pallet_transactions as t
                                 on t.id = p.transaction_id
                                 join furukawa.pallet_model_matrices as m
                                 on m.id = p.model_id
-                                where t.is_deleted <> 1 ".$bp_date.$max_count;
+                                left join furukawa.shipment_details as s
+                                on s.pallet_id = p.id and s.is_deleted <> 1
+                                where t.is_deleted <> 1 ";
                         break;
                 }
         
-                $data = collect(DB::select(DB::raw($sql)));
+                $data = DB::select(DB::raw($sql));
         
-                return $data;
+                return response()->json([
+                    'success' => true,
+                    'data' => $data
+                ]);
         
             }
         } catch (\Throwable $th) {

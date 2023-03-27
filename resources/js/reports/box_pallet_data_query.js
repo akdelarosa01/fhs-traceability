@@ -20,10 +20,13 @@
                 $(x).prop('disabled',$state);
             });
         },
-        drawDatatables: function() {
+        drawDatatables: function(arrData, columns) {
             var self = this;
+            
+            
             if (!$.fn.DataTable.isDataTable('#tbl_data_search')) {
-                self.$tbl_data_search = $('#tbl_data_search').DataTable({
+                $('#tbl_data_search').DataTable({
+                    destroy: true,
                     processing: true,
                     scrollY: 500,
                     scrollX: true,
@@ -33,27 +36,7 @@
                     fixedHeader: {
                         header: true,
                     },
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'csv', 'excel'
-                    ],
-                    ajax: {
-                        url: "/reports/box-pallet-data-query/generate-data",
-                        dataType: "JSON",
-                        data: function(d) {
-                            d._token = self.token;
-                            d.search_type = $('#search_type').val();
-                            d.search_value = $('#search_value').val();
-                            d.max_count = $('#max_count').val();
-                            d.grease_date_from = $('#grease_date_from').val();
-                            d.grease_date_to = $('#grease_date_to').val();
-                            d.exp_date_from = $('#exp_date_from').val();
-                            d.exp_date_to = $('#exp_date_to').val();
-                        },
-                        error: function(response) {
-                            console.log(response);
-                        }
-                    },
+                    data: arrData,
                     deferRender: true,
                     language: {
                         aria: {
@@ -75,23 +58,7 @@
                         }
                     },
                     //pageLength: 10,
-                    order: [
-                        [0, "desc"]
-                    ],
-                    columns: [
-                        { data: 'grease_date', name: 'grease_date', title: 'Grease Date' },
-                        { data: 'model_code', name: 'model_code', title: 'Model Code' },
-                        { data: 'hs_serial', name: 'hs_serial', title: 'H.S. Serial' },
-                        { data: 'container_no', name: 'container_no', title: 'Container No.' },
-                        { data: 'grease_batch_no', name: 'grease_batch_no', title: 'Grease Batch No.' },
-                        { data: 'grease_model', name: 'grease_model', title: 'Grease Model' },
-                        { data: 'grease_exp_date', name: 'grease_exp_date', title: 'Expiration Date' },
-                        { data: 'yield_count', name: 'yield_count', title: 'Yield Count' },
-                        { data: 'bin_count', name: 'bin_count', title: 'Bin Count' },
-                        { data: 'remarks', name: 'remarks', title: 'Remarks' },
-                        { data: 'work_user', name: 'work_user', title: 'Work User' },
-                        { data: 'machine_no', name: 'machine_no', title: 'Machine No.' }
-                    ],
+                    columns: columns,
                     rowCallback: function(row, data) {
                     },
                     createdRow: function(row, data, dataIndex) {
@@ -103,11 +70,71 @@
                     },
                 }).on('page.dt', function() {
                 });
+            } else {
+                // $('#tbl_data_search').DataTable().clear();
+                $('#tbl_data_search').DataTable().clear().destroy();
+                $("#tbl_data_search tbody").empty();
+                $("#tbl_data_search thead").empty();
 
-                self.$tbl_data_search.buttons().container().appendTo( '#tbl_data_search_wrapper .col-md-6:eq(0)' );
+                self.drawDatatables(arrData, columns);
             }
-            return this;
         },
+        search: function(param) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/reports/box-pallet-data-query/generate-data";
+            self.sendData().then(function() {
+                var response = self.responseData;
+
+                var columns = [];
+
+                switch (param.search_type) {
+                    case 'hs_serial':
+                        columns = [
+                            { data: 'created_at', name: 'created_at', title: 'Date' },
+                            { data: 'HS_Serial', name: 'HS_Serial', title: 'HS Serial' },
+                            { data: 'model', name: 'model', title: 'Model' },
+                            { data: 'model_name', name: 'model_name', title: 'Model Name' },
+                            { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
+                            { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
+                            { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
+                            { data: 'box_qr', name: 'box_qr', title: 'Box ID' },
+                            { data: 'box_judgement', name: 'box_judgement', title: 'Box Judgment' }
+                        ];
+
+                        break;
+                    case 'box_no':
+                        columns = [
+                            { data: 'created_at', name: 'created_at', title: 'Date' },
+                            { data: 'box_qr', name: 'box_qr', title: 'Box ID' },
+                            { data: 'box_judgement', name: 'box_judgement', title: 'Box Judgment' },
+                            { data: 'model', name: 'model', title: 'Model' },
+                            { data: 'model_name', name: 'model_name', title: 'Model Name' },
+                            { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
+                            { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
+                            { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
+                            
+                        ];
+                        break;
+                
+                    default:
+                        columns = [
+                            { data: 'created_at', name: 'created_at', title: 'Date' },
+                            { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
+                            { data: 'model', name: 'model', title: 'Model' },
+                            { data: 'model_name', name: 'model_name', title: 'Model Name' },
+                            { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
+                            { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
+                            
+                        ];
+                        break;
+                }
+
+                self.drawDatatables(response, columns);
+                $('#modal_print_preview').modal('show');
+            });
+        }
     }
     BoxPalletDataQuery.init.prototype = $.extend(BoxPalletDataQuery.prototype, $D.init.prototype);
     BoxPalletDataQuery.init.prototype = BoxPalletDataQuery.prototype;
@@ -115,7 +142,7 @@
     $(document).ready(function() {
         var _BoxPalletDataQuery = BoxPalletDataQuery();
         _BoxPalletDataQuery.permission();
-        _BoxPalletDataQuery.drawDatatables();
+        //_BoxPalletDataQuery.drawDatatables([],[]);
 
         $('.dataTables_scrollBody').on('scroll', function() {
             _BoxPalletDataQuery.$tbl_data_search.fixedHeader.adjust();
@@ -134,15 +161,14 @@
         $('#btn_search').on('click', function() {
             
             var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
-            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_value').val();
             if (search_type !== "" && search_value == "") {
                 _BoxPalletDataQuery.swMsg("Please Provide a the type of data to search","warning");
             } else {
-                _BoxPalletDataQuery.$tbl_data_search.ajax.reload(false);
-            }
-
-            if (search_type == 'pallet_no') {
-                
+                _BoxPalletDataQuery.search({
+                    search_type: search_type,
+                    search_value: search_value
+                });
             }
             
         });
