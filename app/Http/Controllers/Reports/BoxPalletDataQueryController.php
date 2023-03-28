@@ -70,7 +70,7 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
-                                    p.pallet_status as pallet_status,
+                                    CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
                                     else p.pallet_location end as pallet_location,
@@ -82,6 +82,8 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
+                                join pallet_qa_dispositions as qad
+                                on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'box_no':
@@ -147,7 +149,7 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
-                                    p.pallet_status as pallet_status,
+                                    CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
                                     else p.pallet_location end as pallet_location,
@@ -159,6 +161,8 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
+                                join pallet_qa_dispositions as qad
+                                on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ";
                         break;
                 }
