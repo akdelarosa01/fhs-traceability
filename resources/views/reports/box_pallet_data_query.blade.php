@@ -54,64 +54,19 @@ Box Pallet Data Query
 							</div>
 						</div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            <div class="input-group input-group-sm mb-2">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">Box Pallet Date From</span>
-                                </div>
-                                <input type="date" class="form-control form-control-sm clear" id="bp_date_from" name="bp_date_from">
-                                <div id="bp_date_from_feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-append">
-                                    <span class="input-group-text">Box Pallet Date To</span>
-                                </div>
-                                <input type="date" class="form-control form-control-sm clear" id="bp_date_to" name="bp_date_to">
-								<div id="bp_date_to_feedback"></div>
-							</div>
-						</div>
-					</div>
-
-                    <div class="row">
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2">
-							<div class="input-group input-group-sm mb-2">
-								<div class="input-group-prepend">
-									<span class="input-group-text">Max count</span>
-								</div>
-								<input type="number" class="form-control form-control-sm clear" id="max_count" name="max_count" placeholder="Max Data Count" autocomplete="off" value="50">
-								<div id="max_count_feedback"></div>
-							</div>
-						</div>
-
                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
                             <button type="button" class="btn btn-sm btn-primary btn-block" id="btn_search">
                                 <i class="fa fa-search"></i> Search
                             </button>
                         </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                            <button type="button" class="btn btn-sm btn-green btn-block" id="btn_export">
-                                <i class="fa fa-file-excel"></i> Export
-                            </button>
-                        </div>
-
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
-                            <button type="button" class="btn btn-sm btn-secondary btn-block" id="btn_clear">
-                                <i class="fa fa-undo"></i> Clear
-                            </button>
-                        </div>
-                    </div>
+					</div>
                 </div>
             </div>
         </form>
 
         <div class="row">
             <div class="col-md-12">
-                <table class="table table-sm table-hover table-striped display nowrap" id="tbl_data_search" style="width: 100%"></table>
+                <table class="table table-sm display nowrap" id="tbl_data_search" style="width: 100%"></table>
             </div>
         </div>
 	</div>

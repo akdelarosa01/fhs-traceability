@@ -41,9 +41,6 @@ class BoxPalletDataQueryController extends Controller
     private function get_filtered_data($req)
     {
         $search_type = "";
-        $max_count = "";
-        $bp_date = "";
-        $exp_date = "";
 
         try {
             DB::beginTransaction();
@@ -69,7 +66,7 @@ class BoxPalletDataQueryController extends Controller
 
                 switch ($req->search_type) {
                     case 'pallet_no':
-                        $sql = "SELECT distinct p.id as id,
+                        $sql = "SELECT distinct p.id as pallet_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
@@ -88,7 +85,7 @@ class BoxPalletDataQueryController extends Controller
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'box_no':
-                        $sql = "SELECT distinct p.id as id,
+                        $sql = "SELECT distinct b.id as box_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
@@ -107,7 +104,7 @@ class BoxPalletDataQueryController extends Controller
                                 where b.is_deleted <> 1".$search_type;
                         break;
                     case 'model_code':
-                        $sql = "SELECT distinct p.id as id,
+                        $sql = "SELECT distinct p.id as pallet_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
@@ -122,7 +119,7 @@ class BoxPalletDataQueryController extends Controller
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'hs_serial':
-                        $sql = "SELECT distinct p.id as id,
+                        $sql = "SELECT distinct p.id as pallet_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
@@ -146,7 +143,7 @@ class BoxPalletDataQueryController extends Controller
                                 where b.is_deleted <> 1 ".$search_type;
                         break;
                     default:
-                        $sql = "SELECT distinct p.id as id,
+                        $sql = "SELECT distinct p.id as pallet_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
@@ -178,5 +175,110 @@ class BoxPalletDataQueryController extends Controller
             DB::rollBack();
             throw $th;
         }
+    }
+
+    public function get_boxes(Request $req)
+    {
+        $data = [
+            'msg' => "Retrieving Pallet's boxes has failed.",
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+        try {
+            $sql = "SELECT pb.id as box_id, ";
+            $sql .= "   pb.pallet_id as pallet_id, ";
+            $sql .= "   pb.model_id as model_id, ";
+            $sql .= "   pb.box_qr as box_qr, ";
+            $sql .= "   pb.remarks as prod_remarks, ";
+            $sql .= "   IFNULL(pb.box_judgment, -1) AS box_judgement, ";
+            $sql .= "   i.production_date, ";
+            $sql .= "   i.lot_no, ";
+            $sql .= "   i.cust_part_no, ";
+            $sql .= "   i.fec_part_no, ";
+            $sql .= "   i.qty, ";
+            $sql .= "   i.weight ";
+            $sql .= "FROM pallet_box_pallet_dtls as pb ";
+            $sql .= "left join tinspectionsheetprintdata as i ";
+            $sql .= "on i.BoxSerialNo = pb.box_qr ";
+            $sql .= "where pb.is_deleted <> 1 ";
+            $sql .= "AND pb.pallet_id = ".$req->pallet_id;
+
+            $boxes = DB::connection('mysql')->select(DB::raw($sql));
+            
+            $data = [
+                'data' => $boxes,
+                'success' => true,
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
+    }
+
+    public function get_heat_sinks(Request $req)
+    {
+        $data = [
+            'msg' => "Retrieving Boxes's Heat Sinks has failed.",
+            'data' => [],
+			'success' => true,
+            'msgType' => 'warning',
+            'msgTitle' => 'Failed!'
+        ];
+        try {
+            $sql = "SELECT hs.c1 as date_scanned, ";
+            $sql .= "   hs.c4 as hs_serial, ";
+            $sql .= "   hs.c2 as production_line, ";
+            $sql .= "   hs.c6 as operator, ";
+            $sql .= "   hs.c8 as work_order, ";
+            $sql .= "   g.GreaseBatchNo as grease_batch, ";
+            $sql .= "   g.ContainerNo as grease_no, ";
+            $sql .= "   ins.c7 as rca_value, ";
+            $sql .= "   ins.c12 as rca_judgment, ";
+            $sql .= "   IFNULL(bb.OldBarcode,'') as old_barcode, ";
+            $sql .= "   IFNULL(bb.ProcessType,'') as process_type, ";
+            $sql .= "   IFNULL(bb.DateTransfer,'') as B2B_date ";
+            $sql .= "FROM furukawa.pallet_box_pallet_dtls as pb ";
+            $sql .= "join furukawa.tboxqr as tb ";
+            $sql .= "on tb.qrBarcode = pb.box_qr ";
+            $sql .= "join furukawa.tboxqrdetails as d ";
+            $sql .= "on d.Box_ID = tb.id ";
+            $sql .= "join formal.barcode as hs ";
+            $sql .= "on hs.c4 = d.HS_Serial ";
+            $sql .= "join furukawa.tgreasehs as g ";
+            $sql .= "on g.SerialNo = hs.c4 ";
+            $sql .= "join formal.thermal as ins ";
+            $sql .= "on ins.c28 = hs.c4 ";
+            $sql .= "left join furukawa.barcode_to_barcode as bb ";
+            $sql .= "on bb.NewBarcode = hs.c4 ";
+            $sql .= "where pb.is_deleted <> 1 ";
+            $sql .= "AND pb.pallet_id = ".$req->pallet_id."  ";
+            $sql .= "and pb.id = ".$req->box_id;
+
+            $hs = DB::select(DB::raw($sql));
+            
+            $data = [
+                'data' => $hs,
+                'success' => true,
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'msg' => $th->getMessage(),
+                'data' => [],
+                'success' => false,
+                'msgType' => 'error',
+                'msgTitle' => 'Error!'
+            ];
+        }
+
+        return response()->json($data);
     }
 }
