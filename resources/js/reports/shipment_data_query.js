@@ -33,13 +33,6 @@
                     fixedHeader: {
                         header: true,
                     },
-                    dom: 'Bfrtip',
-                    buttons: [
-                        'csv', 'excel'
-                    ],
-                    rowGroup: {
-                        dataSrc: 'control_no'
-                    },
                     ajax: {
                         url: "/reports/shipment-data-query/generate-data",
                         dataType: "JSON",
@@ -79,9 +72,14 @@
                     },
                     //pageLength: 10,
                     order: [
-                        [0, "desc"]
+                        [1, "desc"]
                     ],
                     columns: [
+                        { 
+                            data: function(data) {
+                                return '<button type="button" class="btn btn-sm btn-primary btn_view_boxes"><i class="fa fa-eye"></i></button>';
+                            }, name: 'pallet_id', searchable: false, orderable: false, target: 1 , width: '15px', title: ""
+                        },
                         { data: 'ship_date', name: 'ship_date', title: "Shipped Date" },
                         { data: 'control_no', name: 'control_no', title: "Control No." },
                         { data: 'model', name: 'model', title: "Model" },
@@ -116,6 +114,8 @@
                         { data: 'hs_qty', name: 'hs_qty', title: "HS Qty" }
                     ],
                     rowCallback: function(row, data) {
+                        var dataRow = $(row);
+                        dataRow.attr('id','r'+data.pallet_id);
                     },
                     createdRow: function(row, data, dataIndex) {
                     },
@@ -130,6 +130,26 @@
                 self.$tbl_data_search.buttons().container().appendTo( '#tbl_data_search_wrapper .col-md-6:eq(0)' );
             }
             return this;
+        },
+        getBoxes: function(param,handle) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/reports/shipment-data-query/get-boxes";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
+        },
+        getHeatSink: function(param,handle) {
+            var self = this;
+            self.submitType = "GET";
+            self.jsonData = param;
+            self.formAction = "/reports/shipment-data-query/get-heat-sinks";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                handle(response);
+            });
         },
     }
     ShipmentDataQuery.init.prototype = $.extend(ShipmentDataQuery.prototype, $D.init.prototype);
@@ -167,7 +187,7 @@
         $('#btn_search').on('click', function() {
             
             var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
-            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_value').val();
             if (search_type !== "" && search_value == "") {
                 _ShipmentDataQuery.swMsg("Please Provide a the type of data to search","warning");
             } else {
@@ -178,7 +198,123 @@
 
         $('#btn_export').on('click', function() {
             var link = '/reports/shipment-data-query/download-excel?_token='+ _ShipmentDataQuery.token;
-            window.location.href = link;
+
+            var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_value').val();
+            var shipment_date_from = $('#shipment_date_from').val();
+            var shipment_date_to = $('#shipment_date_to').val();
+            var create_date_from = $('#create_date_from').val();
+            var create_date_to = $('#create_date_to').val();
+            var max_count = $('#max_count').val();
+
+            if (search_type !== "" && search_value == "") {
+                _ShipmentDataQuery.swMsg("Please Provide a the type of data to search","warning");
+            } else {
+                window.location.href = link + "&search_type="+search_type+"&search_value="+search_value+
+                                        "&shipment_date_from="+shipment_date_from+"&shipment_date_to="+shipment_date_to+
+                                        "&create_date_from="+create_date_from+"&create_date_to="+create_date_to+
+                                        "&max_count="+max_count;
+            }
+
+            
+        });
+
+        $('#tbl_data_search tbody').on('click', '.btn_view_boxes', function() {
+            var data = _ShipmentDataQuery.$tbl_data_search.row($(this).parents('tr')).data();
+
+            if ($('#r'+data.pallet_id+'_child_tr').is(':visible')) {
+                $('#r'+data.pallet_id+'_child_tr').remove();
+            } else {
+                var row = "";
+                _ShipmentDataQuery.getBoxes({
+                    _token: _ShipmentDataQuery.token,
+                    pallet_id: data.pallet_id
+                }, function(response) {
+                    row += '<tr id="r'+data.pallet_id+'_child_tr">'+
+                                '<td style="width: 15px"></td>'+
+                                '<td colspan="15" id="r'+data.pallet_id+'_child_td" class="p-0"></td>'+
+                            '</tr>';
+
+                    $("#r"+data.pallet_id).after(row);
+                    var table = '<table class="table table-sm tbl_boxes" style="width:99%;">';
+                    table += '<thead>'+
+                                '<th width="20px"></th>'+
+                                '<th>Box ID</th>'+
+                                '<th>Qty / Box</th>'+
+                                '<th>Date Manufactured</th>'+
+                                '<th>Expiration Data</th>'+
+                                '<th>Lot No.</th>'+
+                                '<th>Production Line</th>'+
+                                '<th>Customer PN</th>'+
+                            '</thead>';
+                    $.each(response, function(i,x) {
+
+                        table += '<tr id="r'+x.box_id+'_box_tr" >'+
+                                    '<td>'+
+                                        '<button type="button" class="btn btn-sm btn-primary btn_view_hs" data-pallet_id="'+data.pallet_id+'" data-box_id="'+x.box_id+'">'+
+                                            '<i class="fa fa-eye"></i>'+
+                                        '</button>'+
+                                    '</td>'+
+                                    '<td>'+x.box_qr+'</td>'+
+                                    '<td>'+x.qty_per_box+'</td>'+
+                                    '<td>'+x.date_manufactured+'</td>'+
+                                    '<td>'+x.date_expired+'</td>'+
+                                    '<td>'+x.lot_no+'</td>'+
+                                    '<td>'+x.prod_line_no+'</td>'+
+                                    '<td>'+x.customer_pn+'</td>'+
+                                '</tr>';
+                    });
+                    table += '</table>';
+                    
+                    $('#r'+data.pallet_id+'_child_td').html(table);
+                });
+            }
+
+            
+        });
+
+        $('#tbl_data_search tbody').on('click', '.btn_view_hs', function() {
+            var pallet_id = $(this).attr('data-pallet_id');
+            var box_id = $(this).attr('data-box_id');
+
+            if ($('#r'+box_id+'_box_child_tr').is(':visible')) {
+                $('#r'+box_id+'_box_child_tr').remove();
+            } else {
+                var row = "";
+                _ShipmentDataQuery.getHeatSink({
+                    _token: _ShipmentDataQuery.token,
+                    box_id: box_id,
+                    pallet_id: pallet_id
+                }, function(response) {
+                    row += '<tr id="r'+box_id+'_box_child_tr">'+
+                                '<td style="width: 15px"></td>'+
+                                '<td colspan="7" id="r'+box_id+'_box_child_td" class="p-0"></td>'+
+                            '</tr>';
+
+                    $("#r"+box_id+"_box_tr").after(row);
+                    var table = '<table class="table table-sm tbl_heat_sink" style="width:99%;">';
+                    table += '<thead>'+
+                                '<th width="20px"></th>'+
+                                '<th>HS Serial No.</th>'+
+                                '<th>Production Date</th>'+
+                                '<th>Operator</th>'+
+                                '<th>Work Order</th>'+
+                            '</thead>';
+                    $.each(response, function(i,x) {
+
+                        table += '<tr id="r'+x.id+'_hs_tr" >'+
+                                    '<td>'+(i+1)+'</td>'+
+                                    '<td>'+x.hs_serial+'</td>'+
+                                    '<td>'+x.prod_date+'</td>'+
+                                    '<td>'+x.operator+'</td>'+
+                                    '<td>'+x.work_order+'</td>'+
+                                '</tr>';
+                    });
+                    table += '</table>';
+                    
+                    $('#r'+box_id+'_box_child_td').html(table);
+                });
+            }
         });
     });
 })();
