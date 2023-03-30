@@ -510,7 +510,7 @@
                         targets:   0
                     } ],
                     select: {
-                        style: 'single',
+                        style: 'multi',
                     },
                     ajax: {
                         url: "/transactions/shipment/get-shipment-details",
@@ -758,6 +758,7 @@
                 self.$tbl_models.rows({selected: true}).deselect();
                 self.$tbl_shipment_details.clear().draw();
                 self.$tbl_shipments.ajax.reload();
+                $('#modal_shipment').modal('hide');
             });
         },
         deleteTransaction: function(param) {
@@ -772,6 +773,7 @@
                 self.$tbl_models.rows({selected: true}).deselect();
                 self.$tbl_shipment_details.clear().draw();
                 self.$tbl_shipments.ajax.reload();
+                $('#modal_shipment').modal('hide');
             });
         },
         completeTransaction: function(param) {
@@ -786,6 +788,7 @@
                 self.$tbl_models.rows({selected: true}).deselect();
                 self.$tbl_shipment_details.clear().draw();
                 self.$tbl_shipments.ajax.reload();
+                $('#modal_shipment').modal('hide');
             });
         },
         cancelShipment: function(param) {
@@ -895,6 +898,17 @@
             }else{
 
             }
+        },
+        removePallet:function(param){
+            var self = this;
+            self.submitType = "POST";
+            self.jsonData = param;
+            self.formAction = "/transactions/shipment/remove-pallet";
+            self.sendData().then(function() {
+                var response = self.responseData;
+                self.$tbl_shipment_details.rows({selected: true}).remove().draw();
+                self.$tbl_pallets.ajax.reload();
+            });
         }
 
     }
@@ -953,10 +967,12 @@
         }).val(null).trigger('change.select2');
 
         $('#btn_create_shipment').on('click', function() {
+            _Shipment.editstate = false;
             _Shipment.initModal();
+            _Shipment.$tbl_models.ajax.reload();
             $('#id').val("");
             $('#modal_shipment').modal('show');
-            _Shipment.editstate = false;
+            
             $('#btn_delete_transaction').prop('disabled',true);
             $('#btn_complete_transaction').prop('disabled',true);
         });
@@ -1161,12 +1177,22 @@
 
         $('#btn_remove_shipment_details').on('click', function() {
             var msg = "Are you sure to remove all selected Pallets?";
+            let ids = [];
+            data = _Shipment.$tbl_shipment_details.rows({selected: true}).data().toArray();
+            data.forEach(data => (data.hasOwnProperty('id')) ? ids.push(data.id) : '');
             _Shipment.msg = msg;
             _Shipment.confirmAction(msg).then(function(approve) {
                 if (approve) {
-                    _Shipment.$tbl_shipment_details.rows({selected: true}).remove().draw();
+                    
+                    var param = {
+                        _token: _Shipment.token,
+                        ids: ids
+                    };
+                    _Shipment.removePallet(param);
+                    
                 }
             });
+            
         });
 
         $('#btn_save_transaction').on('click', function() {
@@ -1213,7 +1239,8 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             _Shipment.editstate = true;
-            _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
+            _Shipment.$tbl_models.ajax.reload();
+            
 
             $('#container_no').val(data.container_no);
             $('#invoice_no').val(data.invoice_no);
@@ -1225,7 +1252,10 @@
             $('#control_no').val(data.control_no);
             var destination = new Option(data.destination, data.destination, false, false);
             $('#destination').append(destination).trigger('change');
-            $('#ship_qty').val(data.ship_qty).trigger('change');
+            setTimeout(() => {
+                _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
+                $('#ship_qty').val(data.ship_qty).trigger('change');
+            }, 1000);
             $('#warehouse_pic').val(data.shipper);
 
             _Shipment.$tbl_shipment_details.ajax.reload();
@@ -1249,6 +1279,11 @@
                     break;
             }
 
+            
+
+            if($('#btn_start_scan').html() != 'Start Scan'){
+                _Shipment.viewState('SCAN');
+            }
             $('#modal_shipment').modal('show');
         });
 
