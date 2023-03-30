@@ -969,7 +969,7 @@
         $('#btn_create_shipment').on('click', function() {
             _Shipment.editstate = false;
             _Shipment.initModal();
-             _Shipment.$tbl_models.ajax.reload();
+            //  _Shipment.$tbl_models.ajax.reload();
             $('#id').val("");
             $('#modal_shipment').modal('show');
             
@@ -1239,7 +1239,7 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             _Shipment.editstate = true;
-             _Shipment.$tbl_models.ajax.reload();
+            //  _Shipment.$tbl_models.ajax.reload();
             
 
             $('#container_no').val(data.container_no);
