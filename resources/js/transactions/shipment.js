@@ -1239,7 +1239,7 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             _Shipment.editstate = true;
-            //  _Shipment.$tbl_models.ajax.reload();
+              _Shipment.$tbl_models.ajax.reload();
             
 
             $('#container_no').val(data.container_no);
