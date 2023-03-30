@@ -97,11 +97,12 @@ class ShipmentController extends Controller
                     ])
                     ->join('pallet_model_matrices as m','p.model_id','=','m.id')
                     ->where('p.pallet_location','WAREHOUSE')
-                    ->where('p.is_shipped',0)
+                    //  ->where('p.is_shipped',0)
                     // ->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)')
                     ->distinct();
                     if ($req->state == "false") {
-                        $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)');
+                        $query = $query->where('p.is_shipped',0);
+                        // $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details)');
                     }
 
             return Datatables::of($query)->make(true);
