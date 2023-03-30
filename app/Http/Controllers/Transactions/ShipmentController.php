@@ -114,10 +114,9 @@ class ShipmentController extends Controller
 
     public function validate_pallet(Request $req){
         try {
-            $query = ShipmentDetail::where('pallet_qr',$req->qr)->where('is_deleted','<>',1)->get();
-            $count = $query->count();
+            $query = ShipmentDetail::where('pallet_qr',$req->qr)->where('is_deleted','<>',1)->exists();
             $data = [
-                'data' => $count,
+                'data' => $query,
                 'success' => true
             ];
         } catch (\Throwable $th) {
@@ -148,17 +147,17 @@ class ShipmentController extends Controller
             $join->on('p.pallet_id', '=', 'b.pallet_id');
             $join->on('b.is_deleted','=', DB::raw(0));
         })
-        ->join('qa_inspected_boxes as ins', function($join) {
+        ->join(DB::raw('(SELECT DISTINCT qty_per_box,box_id from qa_inspected_boxes) as ins'), function($join) {
             $join->on('ins.box_id', '=', 'b.id');
         })
         ->where('p.pallet_location','WAREHOUSE')
         ->where('p.is_shipped',0)
         ->where('p.model_id', $req->model_id)
         ->groupBy('p.pallet_id','p.model_id','m.model','p.pallet_qr');
-
-        if ($req->state == "false") {
-            $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details where is_deleted <> 1)');
-        }
+        $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details where is_deleted <> 1)');
+        // if ($req->state == "false") {
+        //     $query = $query->whereRaw('p.pallet_qr NOT IN (select pallet_qr from shipment_details where is_deleted <> 1)');
+        // }
         $get = $query->get();
         return Datatables::of($query)->make(true);
        } catch (\Throwable $th) {

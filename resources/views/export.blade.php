@@ -134,7 +134,7 @@
         <div class="row mt-2">
             <div class="col-6">
                 <label style="margin-left:35px" for="shipment_qty">Shipment Qty:</label>
-                <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$total_shipment}}">
+                <input style="width:200px" class="input_users"name="shipment_qty" type="text" value="{{$shipment->ship_qty}}">
             </div>
             <div class="col-6">
                 <label style="margin-left:14px" for="truck_plate_no">Truck Plate Number:</label>
@@ -208,7 +208,7 @@
         <tr style="background-color:white ">
                 <td style="width:250px">TOTAL</td>
                 <td style="width:50px">{{$shipment->box_qty}}</td>
-                <td style="width:50px">{{$total_shipment}}</td>
+                <td style="width:50px">{{$shipment->ship_qty}}</td>
                 <td style="width:166px">{{$shipment->pallet_qty}} OUT OF {{$shipment->pallet_qty}}</td>
                 <td>COMPLETE</td>
               </tr>

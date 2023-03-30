@@ -870,6 +870,7 @@
                 }
             }).val(null).trigger('change.select2');
             $('#btn_remove_shipment_details').prop('disabled', false);
+            $('#btn_save_transaction').prop('disabled', false);
             // this.viewState('SCAN');
             
         },
@@ -880,7 +881,7 @@
             self.formAction = "/transactions/shipment/validate-Palletqr";
             self.sendData().then(function() {
                 var response = self.responseData;
-                if(response == 0){
+                if(!response){
                     self.addToShipmentDetails(self.shipment_details_arr);
                 }else{
                     self.swMsg("Pallet is already on Loading","warning");
@@ -953,6 +954,7 @@
 
         $('#btn_create_shipment').on('click', function() {
             _Shipment.initModal();
+            $('#id').val("");
             $('#modal_shipment').modal('show');
             _Shipment.editstate = false;
             $('#btn_delete_transaction').prop('disabled',true);
@@ -1224,6 +1226,7 @@
             var destination = new Option(data.destination, data.destination, false, false);
             $('#destination').append(destination).trigger('change');
             $('#ship_qty').val(data.ship_qty).trigger('change');
+            $('#warehouse_pic').val(data.shipper);
 
             _Shipment.$tbl_shipment_details.ajax.reload();
 
@@ -1254,6 +1257,9 @@
             _Shipment.msg = msg;
             _Shipment.confirmAction(msg).then(function(approve) {
                 if (approve) {
+                    $('#btn_create_shipment').prop('disabled', false);
+                    $('#btn_cancel_shipment').prop('disabled', true);
+                    $('#btn_finish_shipment').prop('disabled', true);
                     var id = $('#id').val();
 
                     var param = {
@@ -1272,7 +1278,13 @@
             _Shipment.confirmAction(msg).then(function(approve) {
                 if (approve) {
                     var id = $('#id').val();
+                    var total_hs_qty = parseInt($('#total_ship_qty').html());
+                    var ship_qty = parseInt($('#ship_qty').val());
 
+                    if (ship_qty != total_hs_qty) {
+                        _Shipment.swMsg("The Required Shipment Qty is not Match to Total Shipment Qty","warning")
+                        return;
+                    }
                     var param = {
                         _token: _Shipment.token,
                         id: id,
@@ -1327,6 +1339,9 @@
             _Shipment.msg = msg;
             _Shipment.confirmAction(msg).then(function(approve) {
                 if (approve) {
+                    $('#btn_create_shipment').prop('disabled', false);
+                    $('#btn_cancel_shipment').prop('disabled', true);
+                    $('#btn_finish_shipment').prop('disabled', true);
                     var ids = [];
 
                     $.each(data, function(i,x) {
