@@ -188,7 +188,7 @@
                   <td>{{$detail->box_qty}}</td>
                   <td>{{$detail->hs_qty}}</td>
                   <td>ON LOAD {{$detail->created_at}}</td>
-                  <td><input style="height:12px;display:inline-block;margin-bottom:0.2em"type="checkbox"> QA Inspection on Duty</td>
+                  <td><input style="height:12px;display:inline-block;margin-bottom:0.2em"type="checkbox"> {{$shipment->qc_pic}}</td>
                 </tr>
                 @endforeach
                 @for ($i=0;$i<20-(count($shipment_details)%20);$i++)
