@@ -63,7 +63,7 @@
                         var dataRow = $(row);
                         switch (search_type) {
                             case 'box_no':
-                                dataRow.attr('id','r'+data.id+'_box_tr');
+                                dataRow.attr('id','r'+data.box_id+'_box_tr');
                                 break;
                         
                             default:
@@ -76,7 +76,8 @@
                     createdRow: function(row, data, dataIndex) {
                     },
                     initComplete: function() {
-                        $('#tbl_data_search tbody').on('click', '.btn_view_boxes', function() {
+                        $('#tbl_data_search tbody').on('click', '.btn_view_boxes', function(e) {
+                            e.stopPropagation();
                             var data = self.$tbl_data_search.row($(this).parents('tr')).data();
                 
                             if ($('#r'+data.pallet_id+'_child_tr').is(':visible')) {
@@ -245,7 +246,7 @@
                     case 'box_no':
                         columns = [
                             { data: function(x) {
-                                return '<button type="button" class="btn btn-sm btn-primary btn_view_hs"><i class="fa fa-eye"></i></button>';
+                                return '<button type="button" class="btn btn-sm btn-primary btn_view_hs" data-pallet_id="'+x.pallet_id+'" data-box_id="'+x.box_id+'"><i class="fa fa-eye"></i></button>';
                             }, name: 'id', title: '', width: '20px' },
                             { data: 'created_at', name: 'created_at', title: 'Box-Pallet Entry' },
                             { data: 'box_qr', name: 'box_qr', title: 'Box ID' },

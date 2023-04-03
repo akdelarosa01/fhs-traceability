@@ -14,19 +14,15 @@
                 <th style="border: 1px solid black">{{ 'Shipment Date (Actual Pick-up)' }}</th>
                 <th style="border: 1px solid black">Invoice No.</th>
                 <th style="border: 1px solid black">Model Code</th>
-                <th style="border: 1px solid black">Pallet No.</th>
+                <th style="border: 1px solid black">FTL Pallet No.</th>
+                <th style="border: 1px solid black">Customer Pallet No.</th>
                 <th style="border: 1px solid black">Lot No.</th>
-                <th style="border: 1px solid black">Box No.</th>
+                <th style="border: 1px solid black">FTL Box No.</th>
 
-                <th style="border: 1px solid black">Carton ID</th>
+                <th style="border: 1px solid black">Customer Carton ID No.</th>
                 <th style="border: 1px solid black"></th>
-
-                <th style="border: 1px solid black">Model Checking</th>
-                <th style="border: 1px solid black">Serial No. vs. Carton ID Checking</th>
+                
                 <th style="border: 1px solid black">Pallet Information Sheet</th>
-                <th style="border: 1px solid black">WH Mgr/Sup Comment</th>
-                <th style="border: 1px solid black">FSKP Number</th>
-                <th style="border: 1px solid black"></th>
 
                 <th style="border: 1px solid black">Total Ship Qty</th>
                 <th style="border: 1px solid black">Pallet Qty</th>
@@ -56,6 +52,7 @@
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->invoice_no }}</td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->model }}</td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->pallet_qr }}</td>
+                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->lot_no }}</td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->box_qr }}</td>
                     
@@ -63,11 +60,6 @@
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
 
-                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
-                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
-                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
-                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
-                    <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}"></td>
 
                     <td style="border: 1px solid black" rowspan="{{$d->hs_count}}">{{ $d->total_ship_qty }}</td>

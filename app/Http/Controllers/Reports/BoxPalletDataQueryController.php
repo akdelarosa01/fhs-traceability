@@ -88,11 +88,14 @@ class BoxPalletDataQueryController extends Controller
                         break;
                     case 'box_no':
                         $sql = "SELECT distinct b.id as box_id,
+                                    b.pallet_id as pallet_id,
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
-                                    p.pallet_status as pallet_status,
-                                    p.pallet_location as pallet_location,
+                                    CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
+                                    CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
+                                    WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
+                                    else p.pallet_location end as pallet_location,
                                     b.box_qr as box_qr,
                                     b.box_judgment as box_judgement,
                                     p.created_at as created_at
@@ -103,6 +106,10 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 join furukawa.pallet_box_pallet_dtls as b
                                 on b.pallet_id = p.id
+                                left join furukawa.shipment_details as s
+                                on s.pallet_id = p.id and s.is_deleted <> 1
+                                join pallet_qa_dispositions as qad
+                                on p.pallet_status = qad.id
                                 where b.is_deleted <> 1".$search_type;
                         break;
                     case 'model_code':
@@ -110,14 +117,20 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
-                                    p.pallet_status as pallet_status,
-                                    p.pallet_location as pallet_location,
+                                    CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
+                                    CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
+                                    WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
+                                    else p.pallet_location end as pallet_location,
                                     p.created_at as created_at
                                 FROM furukawa.pallet_box_pallet_hdrs as p
                                 join furukawa.pallet_transactions as t
                                 on t.id = p.transaction_id
                                 join furukawa.pallet_model_matrices as m
                                 on m.id = p.model_id
+                                left join furukawa.shipment_details as s
+                                on s.pallet_id = p.id and s.is_deleted <> 1
+                                join pallet_qa_dispositions as qad
+                                on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
                     case 'hs_serial':
@@ -125,8 +138,10 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
-                                    p.pallet_status as pallet_status,
-                                    p.pallet_location as pallet_location,
+                                    CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
+                                    CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
+                                    WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
+                                    else p.pallet_location end as pallet_location,
                                     b.box_qr as box_qr,
                                     b.box_judgment as box_judgement,
                                     bd.HS_Serial,
@@ -142,6 +157,10 @@ class BoxPalletDataQueryController extends Controller
                                 on bb.qrBarcode = b.box_qr
                                 join tboxqrdetails as bd
                                 on bd.Box_ID = bb.ID
+                                left join furukawa.shipment_details as s
+                                on s.pallet_id = p.id and s.is_deleted <> 1
+                                join pallet_qa_dispositions as qad
+                                on p.pallet_status = qad.id
                                 where b.is_deleted <> 1 ".$search_type;
                         break;
                     default:
@@ -191,7 +210,7 @@ class BoxPalletDataQueryController extends Controller
             'msgTitle' => 'Failed!'
         ];
         try {
-            $sql = "SELECT pb.id as box_id, ";
+            $sql = "SELECT DISTINCT pb.id as box_id, ";
             $sql .= "   pb.pallet_id as pallet_id, ";
             $sql .= "   pb.model_id as model_id, ";
             $sql .= "   pb.box_qr as box_qr, ";
@@ -238,31 +257,25 @@ class BoxPalletDataQueryController extends Controller
             'msgTitle' => 'Failed!'
         ];
         try {
-            $sql = "SELECT hs.c1 as date_scanned, ";
-            $sql .= "   hs.c4 as hs_serial, ";
-            $sql .= "   hs.c2 as production_line, ";
-            $sql .= "   hs.c6 as operator, ";
-            $sql .= "   hs.c8 as work_order, ";
-            $sql .= "   g.GreaseBatchNo as grease_batch, ";
-            $sql .= "   g.ContainerNo as grease_no, ";
-            $sql .= "   ins.c7 as rca_value, ";
-            $sql .= "   ins.c12 as rca_judgment, ";
-            $sql .= "   IFNULL(bb.OldBarcode,'') as old_barcode, ";
-            $sql .= "   IFNULL(bb.ProcessType,'') as process_type, ";
-            $sql .= "   IFNULL(bb.DateTransfer,'') as B2B_date ";
+            $sql = "SELECT distinct hs.c1 as date_scanned, ";
+            $sql .= "       hs.c4 as hs_serial, ";
+            $sql .= "       hs.c2 as production_line, ";
+            $sql .= "       hs.c6 as operator, ";
+            $sql .= "       hs.c8 as work_order, ";
+            $sql .= "       g.GreaseBatchNo as grease_batch, ";
+            $sql .= "       g.ContainerNo as grease_no, ";
+            $sql .= "       ins.c7 as rca_value, ";
+            $sql .= "       ins.c12 as rca_judgment, ";
+            $sql .= "       IFNULL(bb.OldBarcode,'') as old_barcode, ";
+            $sql .= "       IFNULL(bb.ProcessType,'') as process_type, ";
+            $sql .= "       IFNULL(bb.DateTransfer,'') as B2B_date  ";
             $sql .= "FROM furukawa.pallet_box_pallet_dtls as pb ";
-            $sql .= "join furukawa.tboxqr as tb ";
-            $sql .= "on tb.qrBarcode = pb.box_qr ";
-            $sql .= "join furukawa.tboxqrdetails as d ";
-            $sql .= "on d.Box_ID = tb.id ";
-            $sql .= "join formal.barcode as hs ";
-            $sql .= "on hs.c4 = d.HS_Serial ";
-            $sql .= "join furukawa.tgreasehs as g ";
-            $sql .= "on g.SerialNo = hs.c4 ";
-            $sql .= "join formal.thermal as ins ";
-            $sql .= "on ins.c28 = hs.c4 ";
-            $sql .= "left join furukawa.barcode_to_barcode as bb ";
-            $sql .= "on bb.NewBarcode = hs.c4 ";
+            $sql .= "join furukawa.tinspectionsheetprintdata as insp ";
+            $sql .= "on pb.box_qr = insp.BoxSerialNo ";
+            $sql .= "join formal.barcode as hs on hs.c9 = insp.lot_no and hs.c7 = insp.test_result ";
+            $sql .= "left join furukawa.tgreasehs as g on g.SerialNo = hs.c4 ";
+            $sql .= "left join formal.thermal as ins on ins.c28 = hs.c4 ";
+            $sql .= "left join furukawa.barcode_to_barcode as bb on bb.NewBarcode = hs.c4 "; 
             $sql .= "where pb.is_deleted <> 1 ";
             $sql .= "AND pb.pallet_id = ".$req->pallet_id."  ";
             $sql .= "and pb.id = ".$req->box_id;
