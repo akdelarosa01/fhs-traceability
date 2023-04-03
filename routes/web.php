@@ -209,6 +209,7 @@ Route::group(['prefix' => 'transactions'], function () {
         Route::post('/finish-shipment', [App\Http\Controllers\Transactions\ShipmentController::class, 'finish_shipment'])->name('transactions.shipment.finish-shipment');
         Route::post('/validate-Palletqr', [App\Http\Controllers\Transactions\ShipmentController::class, 'validate_pallet'])->name('transactions.shipment.validate-pallet');
         Route::get('/system-report',[App\Http\Controllers\Transactions\ShipmentController::class, 'system_report'])->name('transaction.shipment.system-report');
+        Route::post('/remove-pallet',[App\Http\Controllers\Transactions\ShipmentController::class, 'remove_pallet'])->name('transaction.shipment.remove-pallet');
     });
 
     
