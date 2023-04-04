@@ -70,6 +70,9 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
+                                    CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet,
+                                    m.box_count_per_pallet as box_count_per_pallet,
+                                    IFNULL(p.new_box_count,'') as broken_pallet_qty,
                                     CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
@@ -92,6 +95,9 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
+                                    CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet,
+                                    m.box_count_per_pallet as box_count_per_pallet,
+                                    IFNULL(p.new_box_count,'') as broken_pallet_qty,
                                     CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
@@ -117,6 +123,9 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
+                                    CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet,
+                                    m.box_count_per_pallet as box_count_per_pallet,
+                                    IFNULL(p.new_box_count,'') as broken_pallet_qty,
                                     CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
@@ -138,6 +147,9 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
+                                    CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet,
+                                    m.box_count_per_pallet as box_count_per_pallet,
+                                    IFNULL(p.new_box_count,'') as broken_pallet_qty,
                                     CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'
@@ -168,6 +180,9 @@ class BoxPalletDataQueryController extends Controller
                                     m.model as model,
                                     m.model_name as model_name,
                                     p.pallet_qr as pallet_qr,
+                                    CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet,
+                                    m.box_count_per_pallet as box_count_per_pallet,
+                                    IFNULL(p.new_box_count,'') as broken_pallet_qty,
                                     CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status,
                                     CASE WHEN s.pallet_id is not null and p.is_shipped = 1 then 'SHIPPED'
                                     WHEN s.pallet_id is not null and p.is_shipped = 0 then 'FOR SHIPMENT'

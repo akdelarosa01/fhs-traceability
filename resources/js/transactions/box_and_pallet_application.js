@@ -415,21 +415,9 @@
                         var checkbox = $(dataRow[0].cells[0].firstChild);
                         switch (data.pallet_dispo_status) {
                             case 1:
-                                $(dataRow[0].cells[3]).css('background-color', data.color_hex);
-                                $(dataRow[0].cells[3]).css('color', '#000000');
-                                break;
                             case 2:
-                                $(dataRow[0].cells[3]).css('background-color', data.color_hex);
-                                $(dataRow[0].cells[3]).css('color', '#000000');
-                                break;
                             case 3:
-                                $(dataRow[0].cells[3]).css('background-color', data.color_hex);
-                                $(dataRow[0].cells[3]).css('color', '#000000');
-                                break;
                             case 4:
-                                $(dataRow[0].cells[3]).css('background-color', data.color_hex);
-                                $(dataRow[0].cells[3]).css('color', '#000000');
-                                break;
                             case 5:
                                 $(dataRow[0].cells[3]).css('background-color', data.color_hex);
                                 $(dataRow[0].cells[3]).css('color', '#000000');
@@ -438,6 +426,12 @@
                                 $(dataRow[0].cells[3]).css('background-color', '#FFDCAE');
                                 $(dataRow[0].cells[3]).css('color', '#000000');
                                 break;
+                        }
+
+                        if (data.is_broken_pallet) {
+                            $(dataRow[0].cells[2]).css('background-color', '#FFBF9B');
+                            $(dataRow[0].cells[2]).css('color', '#000000');
+                            $(dataRow[0].cells[2]).attr('title', "Broken Pallet")
                         }
                         
                         if (data.pallet_location != "PRODUCTION") {
@@ -1310,7 +1304,11 @@
             // if (total_box_qty > data.box_count_per_pallet) 
             //     _BoxPalletApp.swMsg("Please update Box Count per Pallet. Please use the function of 'Mark as Broken Pallet'.","info");
 
-            if (data.pallet_location == 'Q.A.') {
+            if (data.pallet_location == 2) {
+                $('#btn_broken_pallet').prop('disabled', true);
+            }
+
+            if (data.pallet_location != 'PRODUCTION') {
                 $('#btn_transfer').prop('disabled', true);
                 $('#btn_update').prop('disabled', true);
                 $('#btn_broken_pallet').prop('disabled', true);

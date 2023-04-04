@@ -51,6 +51,7 @@ class QAInspectionController extends Controller
             DB::raw("p.model_id as model_id"),
             DB::raw("m.model as model"),
             DB::raw("p.transaction_id as transaction_id"),
+            DB::raw("CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet"),
             DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
             DB::raw("p.pallet_status as pallet_dispo_status"),
             DB::raw("qad.disposition as disposition"),

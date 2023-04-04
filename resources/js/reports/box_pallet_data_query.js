@@ -90,12 +90,13 @@
                                 }, function(response) {
                                     row += '<tr id="r'+data.pallet_id+'_child_tr">'+
                                                 '<td style="width: 15px"></td>'+
-                                                '<td colspan="15" id="r'+data.pallet_id+'_child_td" class="p-0"></td>'+
+                                                '<td colspan="8" id="r'+data.pallet_id+'_child_td" class="p-0"></td>'+
                                             '</tr>';
                 
                                     $("#r"+data.pallet_id).after(row);
                                     var table = '<table class="table table-sm tbl_boxes" style="width:99%;">';
                                     table += '<thead>'+
+                                                '<th width="20px"></th>'+
                                                 '<th width="20px"></th>'+
                                                 '<th>Box ID</th>'+
                                                 '<th>Qty / Box</th>'+
@@ -120,6 +121,7 @@
                                         }
                 
                                         table += '<tr id="r'+x.box_id+'_box_tr" >'+
+                                                    '<td>'+(i+1)+'</td>'+
                                                     '<td>'+
                                                         '<button type="button" class="btn btn-sm btn-primary btn_view_hs" data-pallet_id="'+data.pallet_id+'" data-box_id="'+x.box_id+'">'+
                                                             '<i class="fa fa-eye"></i>'+
@@ -159,7 +161,7 @@
                                 }, function(response) {
                                     row += '<tr id="r'+box_id+'_box_child_tr">'+
                                                 '<td style="width: 15px"></td>'+
-                                                '<td colspan="8" id="r'+box_id+'_box_child_td" class="p-0"></td>'+
+                                                '<td colspan="9" id="r'+box_id+'_box_child_td" class="p-0"></td>'+
                                             '</tr>';
                 
                                     $("#r"+box_id+"_box_tr").after(row);
@@ -236,6 +238,8 @@
                             { data: 'model', name: 'model', title: 'Model' },
                             { data: 'model_name', name: 'model_name', title: 'Model Name' },
                             { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
+                            { data: 'box_count_per_pallet', name: 'box_count_per_pallet', title: 'Orig. Box Count / Pallet' },
+                            { data: 'broken_pallet_qty', name: 'broken_pallet_qty', title: 'Box Count / Broken Pallet' },
                             { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
                             { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
                             { data: 'box_qr', name: 'box_qr', title: 'Box ID' },
@@ -254,6 +258,8 @@
                             { data: 'model', name: 'model', title: 'Model' },
                             { data: 'model_name', name: 'model_name', title: 'Model Name' },
                             { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
+                            { data: 'box_count_per_pallet', name: 'box_count_per_pallet', title: 'Orig. Box Count / Pallet' },
+                            { data: 'broken_pallet_qty', name: 'broken_pallet_qty', title: 'Box Count / Broken Pallet' },
                             { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
                             { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
                             
@@ -269,6 +275,8 @@
                             { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },
                             { data: 'model', name: 'model', title: 'Model' },
                             { data: 'model_name', name: 'model_name', title: 'Model Name' },
+                            { data: 'box_count_per_pallet', name: 'box_count_per_pallet', title: 'Orig. Box Count / Pallet' },
+                            { data: 'broken_pallet_qty', name: 'broken_pallet_qty', title: 'Box Count / Broken Pallet' },
                             { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
                             { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
                             
