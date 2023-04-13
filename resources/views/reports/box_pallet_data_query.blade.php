@@ -59,6 +59,12 @@ Box Pallet Data Query
                                 <i class="fa fa-search"></i> Search
                             </button>
                         </div>
+
+						<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <button type="button" class="btn btn-sm btn-green btn-block" id="btn_export">
+                                <i class="fa fa-file-excel"></i> Export
+                            </button>
+                        </div>
 					</div>
                 </div>
             </div>

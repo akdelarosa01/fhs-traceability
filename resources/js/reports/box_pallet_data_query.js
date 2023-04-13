@@ -334,14 +334,14 @@
                     search_value: search_value
                 });
             }
-            
         });
 
         $('#btn_export').on('click', function() {
-            var link = '/reports/box-pallet-data-query/download-excel?_token='+ _BoxPalletDataQuery.token;
+            var search_type = ($('#search_type').val() == "" || $('#search_type').val() == null)? "" : $('#search_type').val();
+            var search_value = ($('#search_value').val() == "" || $('#search_value').val() == null)? "" : $('#search_value').val();
+            var link = '/reports/box-pallet-data-query/download-excel?_token='+ _BoxPalletDataQuery.token+'&search_type='+search_type+'&search_value='+search_value;
             window.location.href = link;
         });
-
         
     });
 })();

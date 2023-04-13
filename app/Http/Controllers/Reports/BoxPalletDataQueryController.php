@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Reports;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Common\Helpers;
+use App\Exports\BoxPalletDataQueryExport;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
+use Maatwebsite\Excel\Excel;
 
 class BoxPalletDataQueryController extends Controller
 {
@@ -35,7 +37,11 @@ class BoxPalletDataQueryController extends Controller
     public function generate_data(Request $req)
     {
         $data = $this->get_filtered_data($req);
-        return $data;
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'search_type' => $req->search_type
+        ]);
     }
 
     private function get_filtered_data($req)
@@ -203,10 +209,7 @@ class BoxPalletDataQueryController extends Controller
         
                 $data = DB::select(DB::raw($sql));
         
-                return response()->json([
-                    'success' => true,
-                    'data' => $data
-                ]);
+                return $data;
         
             }
         } catch (\Throwable $th) {
@@ -312,5 +315,13 @@ class BoxPalletDataQueryController extends Controller
         }
 
         return response()->json($data);
+    }
+
+    public function download_excel(Request $req, Excel $excel)
+    {
+        $data = $this->get_filtered_data($req);
+        $date = date('Ymd');
+        $fileName ='FTL_Traceability_'.$date.'.xlsx';
+        return $excel->download(new BoxPalletDataQueryExport($data, $req->search_type), $fileName);
     }
 }
