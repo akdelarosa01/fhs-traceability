@@ -292,7 +292,7 @@ class BoxPalletDataQueryController extends Controller
             $sql .= "on pb.box_qr = insp.BoxSerialNo ";
             $sql .= "join formal.barcode as hs on hs.c9 = insp.lot_no and hs.c7 = insp.test_result ";
             $sql .= "left join furukawa.tgreasehs as g on g.SerialNo = hs.c4 ";
-            $sql .= "left join formal.thermal as ins on ins.c28 = hs.c4 ";
+            $sql .= "left join formal.thermal as ins on ins.c28 = hs.c4 and ins.c12 REGEXP 'OK' ";
             $sql .= "left join furukawa.barcode_to_barcode as bb on bb.NewBarcode = hs.c4 "; 
             $sql .= "where pb.is_deleted <> 1 ";
             $sql .= "AND pb.pallet_id = ".$req->pallet_id."  ";
