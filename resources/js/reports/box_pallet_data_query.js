@@ -77,6 +77,7 @@
                     },
                     initComplete: function() {
                         $('#tbl_data_search tbody').on('click', '.btn_view_boxes', function(e) {
+                            e.preventDefault();
                             e.stopPropagation();
                             var data = self.$tbl_data_search.row($(this).parents('tr')).data();
                 
@@ -114,10 +115,13 @@
                                         switch (box_judgement) {
                                             case 0:
                                                 judgment = '<span style="color: #ff5b57" title="'+remarks+'">NG</span>';
+                                                break;
                                             case 1:
                                                 judgment = '<span style="color: #00acac" title="'+remarks+'">GOOD</span>';
+                                                break;
                                             default:
                                                 judgment = '';
+                                                break;
                                         }
                 
                                         table += '<tr id="r'+x.box_id+'_box_tr" >'+
@@ -146,7 +150,9 @@
                             
                         });
                 
-                        $('#tbl_data_search tbody').on('click', '.btn_view_hs', function() {
+                        $('#tbl_data_search tbody').on('click', '.btn_view_hs', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
                             var pallet_id = $(this).attr('data-pallet_id');
                             var box_id = $(this).attr('data-box_id');
                 
@@ -161,7 +167,7 @@
                                 }, function(response) {
                                     row += '<tr id="r'+box_id+'_box_child_tr">'+
                                                 '<td style="width: 15px"></td>'+
-                                                '<td colspan="9" id="r'+box_id+'_box_child_td" class="p-0"></td>'+
+                                                '<td colspan="10" id="r'+box_id+'_box_child_td" class="p-0"></td>'+
                                             '</tr>';
                 
                                     $("#r"+box_id+"_box_tr").after(row);
@@ -243,7 +249,21 @@
                             { data: 'pallet_status', name: 'pallet_status', title: 'Pallet Status' },
                             { data: 'pallet_location', name: 'pallet_location', title: 'Pallet Location' },
                             { data: 'box_qr', name: 'box_qr', title: 'Box ID' },
-                            { data: 'box_judgement', name: 'box_judgement', title: 'Box Judgment' }
+                            { data: function(x) {
+                                var box_judgement = parseInt(x.box_judgement);
+                                switch (box_judgement) {
+                                    case 0:
+                                        judgment = '<span style="color: #ff5b57">NG</span>';
+                                        break;
+                                    case 1:
+                                        judgment = '<span style="color: #00acac">GOOD</span>';
+                                        break;
+                                    default:
+                                        judgment = '';
+                                        break;
+                                }
+                                return judgment;
+                            }, name: 'box_judgement', title: 'Box Judgment' }
                         ];
 
                         break;
@@ -254,7 +274,22 @@
                             }, name: 'id', title: '', width: '20px' },
                             { data: 'created_at', name: 'created_at', title: 'Box-Pallet Entry' },
                             { data: 'box_qr', name: 'box_qr', title: 'Box ID' },
-                            { data: 'box_judgement', name: 'box_judgement', title: 'Box Judgment' },
+                            { data: function(x) {
+                                var box_judgement = parseInt(x.box_judgement);
+                                switch (box_judgement) {
+                                    case 0:
+                                        judgment = '<span style="color: #ff5b57">NG</span>';
+                                        break;
+                                    case 1:
+                                        judgment = '<span style="color: #00acac">GOOD</span>';
+                                        break;
+                                    default:
+                                        judgment = '';
+                                        break;
+                                }
+
+                                return judgment;
+                            }, name: 'box_judgement', title: 'Box Judgment' },
                             { data: 'model', name: 'model', title: 'Model' },
                             { data: 'model_name', name: 'model_name', title: 'Model Name' },
                             { data: 'pallet_qr', name: 'pallet_qr', title: 'Pallet ID' },

@@ -11,6 +11,7 @@
     
                 <?php
                 $sql = "";
+                $box_judgment = "";
                 switch ($search_type) {
                     case 'box_no':
                 ?>
@@ -32,11 +33,26 @@
                         <tbody>
                 <?php
                         foreach ($data as $key => $d) {
+                            $box_judgment = "";
+
+                            switch ((int)$d->box_judgement) {
+                                case 0:
+                                    $box_judgment = "NOT GOOD";
+                                    break;
+
+                                case 1:
+                                    $box_judgment = "GOOD";
+                                    break;
+                                
+                                default:
+                                    $box_judgment = "";
+                                    break;
+                            }
                 ?>
                             <tr>
                                 <td style="border: 1px solid black; background-color: #B0DAFF;" colspan="2">{{ $d->created_at }}</td>
                                 <td style="border: 1px solid black; background-color: #B0DAFF;" colspan="2">{{ $d->box_qr }}</td>
-                                <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $d->box_judgement }}</td>
+                                <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $box_judgment }}</td>
                                 <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $d->model }}</td>
                                 <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $d->model_name }}</td>
                                 <td style="border: 1px solid black; background-color: #B0DAFF;" colspan="2">{{ $d->pallet_qr }}</td>
@@ -140,6 +156,21 @@
                         <tbody>
                 <?php
                             foreach ($data as $key => $d) {
+                                $box_judgment = "";
+
+                                switch ((int)$d->box_judgement) {
+                                    case 0:
+                                        $box_judgment = "NOT GOOD";
+                                        break;
+
+                                    case 1:
+                                        $box_judgment = "GOOD";
+                                        break;
+                                    
+                                    default:
+                                        $box_judgment = "";
+                                        break;
+                                }
                 ?>
                                 <tr>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->created_at }}</td>
@@ -147,7 +178,7 @@
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->model }}</td>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->model_name }}</td>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->box_qr }}</td>
-                                    <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->box_judgement }}</td>
+                                    <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $box_judgment }}</td>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->pallet_qr }}</td>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->box_count_per_pallet }}</td>
                                     <td style="border: 1px solid black; background-color: #F7F5EB;">{{ $d->broken_pallet_qty }}</td>
@@ -233,6 +264,22 @@
 
                             foreach ($boxes as $key => $b) {
                                 $b_cnt = $key+1;
+
+                                $box_judgment = "";
+
+                                switch ((int)$b->box_judgement) {
+                                    case 0:
+                                        $box_judgment = "NOT GOOD";
+                                        break;
+
+                                    case 1:
+                                        $box_judgment = "GOOD";
+                                        break;
+                                    
+                                    default:
+                                        $box_judgment = "";
+                                        break;
+                                }
                                 ?>
                                     <tr>
                                         <th style="border: 1px solid black; font-weight: 700; background-color: #B0DAFF;"></th>
@@ -244,7 +291,7 @@
                                         <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $b->lot_no }}</td>
                                         <td style="border: 1px solid black; background-color: #B0DAFF;" colspan="2">{{ $b->cust_part_no }}</td>
                                         <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $b->fec_part_no }}</td>
-                                        <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $b->box_judgement }}</td>
+                                        <td style="border: 1px solid black; background-color: #B0DAFF;">{{ $box_judgment }}</td>
                                     </tr>
 
                                     <?php

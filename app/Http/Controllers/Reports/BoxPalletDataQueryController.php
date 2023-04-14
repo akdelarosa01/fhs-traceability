@@ -91,7 +91,7 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
-                                join pallet_qa_dispositions as qad
+                                left join furukawa.pallet_qa_dispositions as qad
                                 on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
@@ -120,7 +120,7 @@ class BoxPalletDataQueryController extends Controller
                                 on b.pallet_id = p.id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
-                                join pallet_qa_dispositions as qad
+                                left join furukawa.pallet_qa_dispositions as qad
                                 on p.pallet_status = qad.id
                                 where b.is_deleted <> 1".$search_type;
                         break;
@@ -144,7 +144,7 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
-                                join pallet_qa_dispositions as qad
+                                left join furukawa.pallet_qa_dispositions as qad
                                 on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ".$search_type;
                         break;
@@ -177,7 +177,7 @@ class BoxPalletDataQueryController extends Controller
                                 on bd.Box_ID = bb.ID
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
-                                join pallet_qa_dispositions as qad
+                                left join furukawa.pallet_qa_dispositions as qad
                                 on p.pallet_status = qad.id
                                 where b.is_deleted <> 1 ".$search_type;
                         break;
@@ -201,7 +201,7 @@ class BoxPalletDataQueryController extends Controller
                                 on m.id = p.model_id
                                 left join furukawa.shipment_details as s
                                 on s.pallet_id = p.id and s.is_deleted <> 1
-                                join pallet_qa_dispositions as qad
+                                left join furukawa.pallet_qa_dispositions as qad
                                 on p.pallet_status = qad.id
                                 where t.is_deleted <> 1 ";
                         break;
