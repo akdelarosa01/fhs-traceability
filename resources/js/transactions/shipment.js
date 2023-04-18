@@ -646,14 +646,14 @@
                         { data: function(data) {
                             return '<button type="button" class="btn btn-sm btn-blue btn_edit_shipment"><i class="fa fa-edit"></i></button>';
                         }, name: 'id', searchable: false, orderable: false, className: 'p-0' },
-                        { data: 'control_no', name: 'control_no', searchable: false, orderable: false },
-                        { data: 'model', name: 'model', searchable: false, orderable: false },
-                        { data: 'shipment_status', name: 'shipment_status', searchable: false, orderable: false },
-                        { data: 'ship_qty', name: 'ship_qty', searchable: false, orderable: false },
-                        { data: 'total_ship_qty', name: 'total_ship_qty', searchable: false, orderable: false },
-                        { data: 'destination', name: 'destination', searchable: false, orderable: false },
-                        { data: 'shipper', name: 'shipper', searchable: false, orderable: false },
-                        { data: 'ship_date', name: 'ship_date', searchable: false, orderable: false },
+                        { data: 'control_no', name: 'control_no', orderable: false },
+                        { data: 'model', name: 'model', orderable: false },
+                        { data: 'shipment_status', name: 'shipment_status', orderable: false },
+                        { data: 'ship_qty', name: 'ship_qty', orderable: false },
+                        { data: 'total_ship_qty', name: 'total_ship_qty', orderable: false },
+                        { data: 'destination', name: 'destination', orderable: false },
+                        { data: 'shipper', name: 'shipper', orderable: false },
+                        { data: 'ship_date', name: 'ship_date', orderable: false },
                         { data: function(data) {
                             return '<button type="button" class="btn btn-sm btn-green btn-block btn_print_shipment"><i class="fa fa-print"></i></button>';
                         }, name: 'id', searchable: false, orderable: false, className: 'p-1' }

@@ -170,25 +170,25 @@
                             }, name: 'id', searchable: false, orderable: false, target: 1 , width: '15px'
                         },
                         {
-                            data: 'model', name: 'model', searchable: false, orderable: false 
+                            data: 'model', name: 'model', orderable: false 
                         },
                         {
-                            data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false 
+                            data: 'pallet_qr', name: 'pallet_qr', orderable: false 
                         },
                         {
-                            data: 'box_count_per_pallet', name: 'box_count_per_pallet', searchable: false, orderable: false 
+                            data: 'box_count_per_pallet', name: 'box_count_per_pallet', orderable: false 
                         },
                         {
-                            data: 'pallet_status', name: 'pallet_status', searchable: false, orderable: false, className: 'text-center'
+                            data: 'pallet_status', name: 'pallet_status', orderable: false, className: 'text-center'
                         },
                         { 
-                            data: 'pallet_location', name: 'pallet_location', searchable: false, orderable: false, className: 'text-center'
+                            data: 'pallet_location', name: 'pallet_location', orderable: false, className: 'text-center'
                         },
                         {
-                            data: 'updated_at', name: 'updated_at', searchable: false, orderable: false, className: 'text-center'
+                            data: 'updated_at', name: 'updated_at', orderable: false, className: 'text-center'
                         },
                         {
-                            data: 'shipment_status', name: 'shipment_status', searchable: false, orderable: false, className: 'text-center'
+                            data: 'shipment_status', name: 'shipment_status', orderable: false, className: 'text-center'
                         },
                     ],
                     rowCallback: function(row, data) {
