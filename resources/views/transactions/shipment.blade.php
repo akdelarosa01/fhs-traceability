@@ -329,6 +329,8 @@ Shipment
                             <thead>
                                 <th style="width: 15px"><button type="button" id="btn_remove_shipment_details" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></th>
                                 <th>Total Ship Qty: <span id="total_ship_qty">0</span></th>
+                                <th>Box Qty</th>
+                                <th>HS Qty: </th>
                             </thead>
                         </table>
                     </div>

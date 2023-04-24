@@ -554,6 +554,12 @@
                         { 
                             data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false,
                         },
+                        { 
+                            data: 'box_qty', name: 'box_qty', searchable: false, orderable: false,
+                        },
+                        { 
+                            data: 'hs_qty', name: 'hs_qty', searchable: false, orderable: false,
+                        },
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
@@ -812,9 +818,12 @@
             });
         },
         initModal: function(){
-            if($('#ship_qty').val() != ""){
-                $('#ship_qty').val("").trigger('change');
-            }
+           
+            $('#ship_qty').val("");
+            $('#pallet_qty').val("");
+            $('#box_qty').val("");
+            $('#broken_pcs_qty').val("");
+            this.$tbl_models.ajax.reload();
             this.$tbl_models.rows( { selected: true }).deselect();
             this.$tbl_shipment_details.clear().draw();
             this.shipment_details_arr = {};
@@ -910,6 +919,7 @@
                 self.$tbl_pallets.ajax.reload();
             });
         }
+
 
     }
     Shipment.init.prototype = $.extend(Shipment.prototype, $D.init.prototype, $F.init.prototype);
@@ -1239,7 +1249,12 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             _Shipment.editstate = true;
-              _Shipment.$tbl_models.ajax.reload();
+            _Shipment.$tbl_models.ajax.reload(() => {
+                _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
+                setTimeout(() => {
+                    $('#ship_qty').val(data.ship_qty).trigger('change');
+                }, 500);
+            });
             
 
             $('#container_no').val(data.container_no);
@@ -1252,10 +1267,6 @@
             $('#control_no').val(data.control_no);
             var destination = new Option(data.destination, data.destination, false, false);
             $('#destination').append(destination).trigger('change');
-            setTimeout(() => {
-                _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
-                $('#ship_qty').val(data.ship_qty).trigger('change');
-            }, 1000);
             $('#warehouse_pic').val(data.shipper);
 
             _Shipment.$tbl_shipment_details.ajax.reload();
