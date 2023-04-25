@@ -122,7 +122,7 @@ Warehouse
 
 		<div class="row">
 			<div class="col-12">
-				<table class="table table-sm table-compact" id="tbl_pallets">
+				<table class="table table-sm table-compact" id="tbl_pallets" style="width: 100%">
 					<thead>
 						<th width="20px"></th>
 						<th width="20px"></th>

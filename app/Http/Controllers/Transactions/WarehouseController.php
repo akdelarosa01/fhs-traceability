@@ -51,7 +51,7 @@ class WarehouseController extends Controller
         $update_date_from = $req->update_date_from;
         $max_count = $req->max_count;
         $sql = "call spWarehouse_getPallets()";
-        $sql_data = collect(DB::select(DB::raw($sql)));
+        $sql_data = collect(DB::select(DB::raw($sql)))->where('shipment_status','<>','SHIPPED');
 
         if ($search_type == NULL && $search_value == NULL){
             return Datatables::of($sql_data)->make(true);
@@ -118,14 +118,11 @@ class WarehouseController extends Controller
         try {
             $data = DB::table('pallet_box_pallet_hdrs')->whereIn('id',$req->Data)->select()->get()->toArray();
             $user = Auth::user()->id;
+            $pallet_data = [];
+            $pallet_qr = "";
             foreach ($data as $data){
                 $pallet_data = $data;
-                $msg = "Pallet ".$data->pallet_qr." was successfully transferred.";
-                $content = [
-                    'title' => "Pallet Transferred to Shipment",
-                    'message' => "Pallet ".$data->pallet_qr." was transferred to Shipment."
-                ];
-
+                
                 $qa = new WarehouseToShipment();
                 $qa->model_id = $data->model_id;
                 $qa->pallet_id = $data->id;
@@ -139,16 +136,24 @@ class WarehouseController extends Controller
                 $qa->updated_at = date('Y-m-d H:i:s');
                 $done = $qa->save();
 
-                $recepients = $this->_helpers->whs_users();
-                broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/shipment/'));
-                }
-                    $data = [
-                        'msg' => 'Transferring Pallet to Shipment was successful.',
-                        'data' => [],
-                        'success' => true,
-                        'msgType' => 'success',
-                        'msgTitle' => 'Success!'
-                    ];
+                $pallet_qr .= $data->pallet_qr;
+            }
+
+            $content = [
+                'title' => "Pallet Transferred to Shipment",
+                'message' => "Pallet ".$pallet_qr." was transferred to Shipment."
+            ];
+            $recepients = $this->_helpers->whs_users();
+            broadcast(new PalletTransferred($content, $pallet_data, $recepients,'/transactions/shipment/'));
+
+
+            $data = [
+                'msg' => 'Transferring Pallet to Shipment was successful.',
+                'data' => [],
+                'success' => true,
+                'msgType' => 'success',
+                'msgTitle' => 'Success!'
+            ];
         } catch (\Throwable $th) {
             $data = [
                 'msg' => $th->getMessage(),

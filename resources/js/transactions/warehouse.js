@@ -358,7 +358,7 @@
                     row += '<tr id="r'+data.id+'_child_tr">'+
                                 '<td></td>'+
                                 '<td></td>'+
-                                '<td colspan="6" id="r'+data.id+'_child_td" class="p-0"></td>'+
+                                '<td colspan="7" id="r'+data.id+'_child_td" class="p-0"></td>'+
                             '</tr>';
 
                     $("#r"+data.id).after(row);
