@@ -554,6 +554,12 @@
                         { 
                             data: 'pallet_qr', name: 'pallet_qr', searchable: false, orderable: false,
                         },
+                        { 
+                            data: 'box_qty', name: 'box_qty', searchable: false, orderable: false,
+                        },
+                        { 
+                            data: 'hs_qty', name: 'hs_qty', searchable: false, orderable: false,
+                        },
                     ],
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
@@ -646,14 +652,14 @@
                         { data: function(data) {
                             return '<button type="button" class="btn btn-sm btn-blue btn_edit_shipment"><i class="fa fa-edit"></i></button>';
                         }, name: 'id', searchable: false, orderable: false, className: 'p-0' },
-                        { data: 'control_no', name: 'control_no', searchable: false, orderable: false },
-                        { data: 'model', name: 'model', searchable: false, orderable: false },
-                        { data: 'shipment_status', name: 'shipment_status', searchable: false, orderable: false },
-                        { data: 'ship_qty', name: 'ship_qty', searchable: false, orderable: false },
-                        { data: 'total_ship_qty', name: 'total_ship_qty', searchable: false, orderable: false },
-                        { data: 'destination', name: 'destination', searchable: false, orderable: false },
-                        { data: 'shipper', name: 'shipper', searchable: false, orderable: false },
-                        { data: 'ship_date', name: 'ship_date', searchable: false, orderable: false },
+                        { data: 'control_no', name: 'control_no', orderable: false },
+                        { data: 'model', name: 'model', orderable: false },
+                        { data: 'shipment_status', name: 'shipment_status', orderable: false },
+                        { data: 'ship_qty', name: 'ship_qty', orderable: false },
+                        { data: 'total_ship_qty', name: 'total_ship_qty', orderable: false },
+                        { data: 'destination', name: 'destination', orderable: false },
+                        { data: 'shipper', name: 'shipper', orderable: false },
+                        { data: 'ship_date', name: 'ship_date', orderable: false },
                         { data: function(data) {
                             return '<button type="button" class="btn btn-sm btn-green btn-block btn_print_shipment"><i class="fa fa-print"></i></button>';
                         }, name: 'id', searchable: false, orderable: false, className: 'p-1' }
@@ -812,9 +818,12 @@
             });
         },
         initModal: function(){
-            if($('#ship_qty').val() != ""){
-                $('#ship_qty').val("").trigger('change');
-            }
+           
+            $('#ship_qty').val("");
+            $('#pallet_qty').val("");
+            $('#box_qty').val("");
+            $('#broken_pcs_qty').val("");
+            this.$tbl_models.ajax.reload();
             this.$tbl_models.rows( { selected: true }).deselect();
             this.$tbl_shipment_details.clear().draw();
             this.shipment_details_arr = {};
@@ -910,6 +919,7 @@
                 self.$tbl_pallets.ajax.reload();
             });
         }
+
 
     }
     Shipment.init.prototype = $.extend(Shipment.prototype, $D.init.prototype, $F.init.prototype);
@@ -1239,7 +1249,12 @@
         $('#tbl_shipments tbody').on('click', '.btn_edit_shipment', function() {
             var data = _Shipment.$tbl_shipments.row($(this).parents('tr')).data();
             _Shipment.editstate = true;
-              _Shipment.$tbl_models.ajax.reload();
+            _Shipment.$tbl_models.ajax.reload(() => {
+                _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
+                setTimeout(() => {
+                    $('#ship_qty').val(data.ship_qty).trigger('change');
+                }, 500);
+            });
             
 
             $('#container_no').val(data.container_no);
@@ -1252,10 +1267,6 @@
             $('#control_no').val(data.control_no);
             var destination = new Option(data.destination, data.destination, false, false);
             $('#destination').append(destination).trigger('change');
-            setTimeout(() => {
-                _Shipment.$tbl_models.row(':contains("'+data.model+'")').select();
-                $('#ship_qty').val(data.ship_qty).trigger('change');
-            }, 1000);
             $('#warehouse_pic').val(data.shipper);
 
             _Shipment.$tbl_shipment_details.ajax.reload();

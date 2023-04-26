@@ -209,7 +209,7 @@
                 <td style="width:250px">TOTAL</td>
                 <td style="width:50px">{{$shipment->box_qty}}</td>
                 <td style="width:50px">{{$shipment->ship_qty}}</td>
-                <td style="width:166px">{{$shipment->pallet_qty}} OUT OF {{$shipment->pallet_qty}}</td>
+                <td style="width:222px">{{$shipment->pallet_qty}} OUT OF {{$shipment->pallet_qty}}</td>
                 <td>COMPLETE</td>
               </tr>
     </table>
