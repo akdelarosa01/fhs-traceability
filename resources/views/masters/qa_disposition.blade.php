@@ -61,7 +61,7 @@ Q.A. Disposition Master
 		
 
 		<div class="row justify-content-center">
-			<div class="col-xl-8 col-lg-8 col-md-10 col-sm-12 col-xs-12">
+			<div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 col-xs-12">
 				<table class="table table-sm table-striped table-hover table-bordered" id="tbl_dispositions" style="width: 100%;">
 					<thead>
 						<tr>

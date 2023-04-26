@@ -312,9 +312,13 @@ class UsersMasterController extends Controller
                     DB::raw("0 as read_only"),
                     DB::raw("0 as read_and_write"),
                     DB::raw("0 as `delete`"),
-                    DB::raw("0 as authorize")
+                    DB::raw("0 as authorize"),
+                    DB::raw("parent_order"),
+                    DB::raw("`order`"),
                 ])
                 ->where('is_deleted',0)
+                ->orderBy('parent_order','asc')
+                ->orderBy('order','asc')
                 ->get();
             }
 

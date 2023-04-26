@@ -52,7 +52,7 @@ class QAInspectionController extends Controller
             DB::raw("m.model as model"),
             DB::raw("p.transaction_id as transaction_id"),
             DB::raw("CASE WHEN p.new_box_count IS NOT NULL THEN 1 ELSE 0 END as is_broken_pallet"),
-            DB::raw("CASE WHEN p.pallet_status IN (1,2,3,4,5) THEN qad.disposition ELSE 'ON PROGRESS' END as pallet_status"),
+            DB::raw("CASE WHEN p.pallet_status = 0 THEN 'NOT STARTED' ELSE qad.disposition END as pallet_status"),
             DB::raw("p.pallet_status as pallet_dispo_status"),
             DB::raw("qad.disposition as disposition"),
             DB::raw("qad.color_hex as color_hex"),
@@ -297,8 +297,19 @@ class QAInspectionController extends Controller
                         'update_user' => Auth::user()->id
                     ]);
                 }
-               
 
+                $pallet = PalletBoxPalletHdr::find($req->pallet_id);
+
+                if ($pallet->pallet_status == 0) {
+                    $dispo = PalletQaDisposition::where('disposition','LIKE','%ON PROGRESS%')->orderBy('id','desc')->first();
+                    if ($dispo) {
+                        $pallet->pallet_status = 0;
+                        $pallet->pallet_location = "Q.A.";
+                        $pallet->update_user = Auth::user()->id;
+                        $pallet->update();
+                    }
+                }
+                
                 $box = DB::connection('mysql')->table('pallet_box_pallet_dtls as pb')
                         ->select(
                             DB::raw("pb.id as id"),

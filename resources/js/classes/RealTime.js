@@ -85,19 +85,15 @@ B. Synopsis: Real Time Script
                     rowCallback: function(row, data) {
                         var dataRow = $(row);
                         dataRow.attr('id','r'+data.id);
-                        switch (data.pallet_dispo_status) {
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                            case 5:
-                                $(dataRow[0].cells[2]).css('background-color', data.color_hex);
-                                $(dataRow[0].cells[2]).css('color', '#000000');
-                                break;
-                            default:
-                                $(dataRow[0].cells[2]).css('background-color', '#FFDCAE');
-                                $(dataRow[0].cells[2]).css('color', '#000000');
-                                break;
+
+                        if (data.color_hex == null || data.color_hex == "") {
+                            console.log(data.pallet_dispo_status);
+                            $(dataRow[0].cells[2]).css('background-color', '#ffffff');
+                            $(dataRow[0].cells[2]).css('color', '#000000');
+                        } else {
+                            
+                            $(dataRow[0].cells[2]).css('background-color', data.color_hex);
+                            $(dataRow[0].cells[2]).css('color', '#000000');
                         }
 
                         if (data.is_broken_pallet) {

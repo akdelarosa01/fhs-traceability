@@ -11,7 +11,7 @@ Heat Sink N.G. Reasons Master
 @section('content')
 
 <div class="row">
-    <div class="offset-md-2 col-md-8">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="panel panel-inverse">
             <div class="panel-heading">
                 <h4 class="panel-title">Heat Sink N.G. Reasons</h4>

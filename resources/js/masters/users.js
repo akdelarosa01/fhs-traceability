@@ -34,6 +34,7 @@
                     } ],
                     select: {
                         style: 'multiple',
+                        selector: 'td:not(:nth-child(2))'
                     },
                     ajax: {
                         url: "/masters/users/list",

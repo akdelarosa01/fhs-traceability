@@ -11,6 +11,7 @@ use App\Models\PalletBoxPalletHdr;
 use App\Models\PalletHistoryDtl;
 use App\Models\PalletHistoryHdr;
 use App\Models\PalletModelMatrix;
+use App\Models\PalletQaDisposition;
 use App\Models\PalletTransaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -286,10 +287,7 @@ class BoxAndPalletApplicationController extends Controller
                     DB::raw("CASE 
                                 WHEN p.new_box_count IS NOT NULL THEN 1
                                 ELSE 0 END as is_broken_pallet"),
-                    DB::raw("CASE 
-                                WHEN p.pallet_status IN (1,2,3,4,5) THEN 
-                                    qad.disposition 
-                                ELSE 'ON PROGRESS' END as pallet_status"),
+                    DB::raw("CASE WHEN p.pallet_status = 0 THEN 'NOT STARTED' ELSE qad.disposition END as pallet_status"),
                     DB::raw("p.pallet_status as pallet_dispo_status"),
                     DB::raw("qad.disposition as disposition"),
                     DB::raw("qad.color_hex as color_hex"),
@@ -355,6 +353,16 @@ class BoxAndPalletApplicationController extends Controller
             $dtl->update_user = Auth::user()->id;
 
             if ($dtl->save()) {
+                $dispo = PalletQaDisposition::where('disposition','LIKE','%ON PROGRESS%')->orderBy('id','desc')->first();
+
+                if ($dispo) {
+                    $hdr =  PalletBoxPalletHdr::find($dtl->pallet_id);
+                    if($hdr->pallet_status == 0) {
+                        $hdr->pallet_status = $dispo->id;
+                        $hdr->update();
+                    }
+                }
+                
                 $count = DB::table('pallet_box_pallet_hdrs as h')
                             ->join('pallet_box_pallet_dtls as d','d.pallet_id','=','h.id')
                             ->select('d.id')
@@ -512,6 +520,7 @@ class BoxAndPalletApplicationController extends Controller
 
         try {
             $pallet = PalletBoxPalletHdr::find($req->id);
+            $pallet->pallet_status = 0;
             $pallet->pallet_location = "Q.A.";
             $pallet->update_user = Auth::user()->id;
 
@@ -881,55 +890,68 @@ class BoxAndPalletApplicationController extends Controller
         ];
 
         try {
-            $hdr = new PalletBoxPalletHdr();
-            $hdr->transaction_id = $req->trans_id;
-            $hdr->model_id = $req->model_id;
-            $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
-            $hdr->pallet_status = 0;
-            $hdr->pallet_location = "PRODUCTION";
-            $hdr->create_user = Auth::user()->id;
-            $hdr->update_user = Auth::user()->id;
+            if (isset($req->trans_id)) {
+                $hdr = new PalletBoxPalletHdr();
+                $hdr->transaction_id = $req->trans_id;
+                $hdr->model_id = $req->model_id;
+                $hdr->pallet_qr = $this->generatePalletID($req->trans_id,$req);
+                $hdr->pallet_status = 0;
+                $hdr->pallet_location = "PRODUCTION";
+                $hdr->create_user = Auth::user()->id;
+                $hdr->update_user = Auth::user()->id;
 
-            if ($hdr->save()) {
-                $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
-                            DB::raw("p.id as id"),
-                            DB::raw("p.model_id as model_id"),
-                            DB::raw("m.model as model"),
-                            DB::raw("p.transaction_id as transaction_id"),
-                            DB::raw("CASE 
-                                        WHEN p.pallet_status IN (1,2,3,4,5) THEN 
-                                            qad.disposition 
-                                        ELSE 'ON PROGRESS' END as pallet_status"),
-                            DB::raw("p.pallet_status as pallet_dispo_status"),
-                            DB::raw("qad.disposition as disposition"),
-                            DB::raw("qad.color_hex as color_hex"),
-                            DB::raw("p.pallet_qr as pallet_qr"),
-                            DB::raw("p.new_box_count as new_box_count"),
-                            DB::raw("b.box_count as box_count"),
-                            DB::raw("p.pallet_location as pallet_location"),
-                            DB::raw("p.is_printed as is_printed"),
-                            DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
-                            DB::raw("p.created_at as created_at"),
-                            DB::raw("p.updated_at as updated_at"),
-                            DB::raw("r.disposition as reason"),
-                            DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
-                        ])
-                        ->join('pallet_model_matrices as m','p.model_id','=','m.id')
-                        ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
-                        ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
-                        ->leftJoin(DB::raw("(SELECT COUNT(box_qr) as box_count, pallet_id from pallet_box_pallet_dtls group by pallet_id) as b"),'b.pallet_id','=','p.id')
-                        ->where('p.id',$hdr->id)->first();
+                if ($hdr->save()) {
+                    $query = DB::connection('mysql')->table('pallet_box_pallet_hdrs as p')->select([
+                                DB::raw("p.id as id"),
+                                DB::raw("p.model_id as model_id"),
+                                DB::raw("m.model as model"),
+                                DB::raw("p.transaction_id as transaction_id"),
+                                DB::raw("CASE 
+                                            WHEN p.new_box_count IS NOT NULL THEN 1
+                                            ELSE 0 END as is_broken_pallet"),
+                                DB::raw("CASE WHEN p.pallet_status = 0 THEN 'NOT STARTED' ELSE qad.disposition END as pallet_status"),
+                                DB::raw("p.pallet_status as pallet_dispo_status"),
+                                DB::raw("qad.disposition as disposition"),
+                                DB::raw("qad.color_hex as color_hex"),
+                                DB::raw("p.pallet_qr as pallet_qr"),
+                                DB::raw("p.new_box_count as new_box_count"),
+                                DB::raw("b.box_count as box_count"),
+                                DB::raw("p.pallet_location as pallet_location"),
+                                DB::raw("p.is_printed as is_printed"),
+                                DB::raw("IFNULL(p.new_box_count, m.box_count_per_pallet) AS box_count_per_pallet"),
+                                DB::raw("p.created_at as created_at"),
+                                DB::raw("p.updated_at as updated_at"),
+                                DB::raw("r.disposition as reason"),
+                                DB::raw("(SELECT count(box_qr) from qa_inspected_boxes where pallet_id = p.id) as inspection_sheet_count")
+                            ])
+                            ->join('pallet_model_matrices as m','p.model_id','=','m.id')
+                            ->leftJoin('pallet_disposition_reasons as r','p.disposition_reason','=','r.id')
+                            ->leftJoin('pallet_qa_dispositions as qad','p.pallet_status','=','qad.id')
+                            ->leftJoin(DB::raw("(SELECT COUNT(box_qr) as box_count, pallet_id from pallet_box_pallet_dtls group by pallet_id) as b"),'b.pallet_id','=','p.id')
+                            ->where('p.id',$hdr->id)->first();
 
+                    $data = [
+                        'msg' => 'New Pallet was created successfully.',
+                        'data' => [
+                            'pallet' => $query
+                        ],
+                        'success' => true,
+                        'msgType' => 'success',
+                        'msgTitle' => 'Success!'
+                    ];
+                }
+            } else {
                 $data = [
-                    'msg' => 'New Pallet was created successfully.',
+                    'msg' => 'Please select a Model Transaction.',
                     'data' => [
-                        'pallet' => $query
+                        'pallet' => []
                     ],
                     'success' => true,
-                    'msgType' => 'success',
-                    'msgTitle' => 'Success!'
+                    'msgType' => 'failed',
+                    'msgTitle' => 'Failed!'
                 ];
             }
+            
 
             
         } catch (\Throwable $th) {

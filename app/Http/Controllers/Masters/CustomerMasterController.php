@@ -189,7 +189,7 @@ class CustomerMasterController extends Controller
                             ->update([
                                 'is_deleted' => 1,
                                 'update_user' => Auth::user()->id,
-                                'update_date' => date('Y-m-d H:i:s')
+                                'updated_at' => date('Y-m-d H:i:s')
                             ]);
                 if ($update) {
                     $data = [
