@@ -33,9 +33,9 @@
             height: 100px;
         }
 
-        tr:nth-of-type(20n) {
+        /* tr:nth-of-type(20n) {
             page-break-after: always;
-        }
+        } */
         .col-6{display:inline-block;max-width:50%}
         .col-7{display:inline-block;max-width:58.33333%}
         .col-3{display:inline-block;max-width:25%}
@@ -192,7 +192,6 @@
                 </tr>
                 @endforeach
                 @for ($i=0;$i<20-(count($shipment_details)%20);$i++)
-                {{-- @for ($i=count($shipment_details)-1;$i<39;$i++) --}}
                     <tr>
                         <td></td>
                         <td></td>
